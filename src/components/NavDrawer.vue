@@ -181,7 +181,7 @@
           <v-tooltip location="bottom">
             <template v-slot:activator="{ props: tooltip }">
               <v-btn
-                icon="mdi:mdi-view-grid-outline"
+                icon="mdi:mdi-dots-grid"
                 v-bind="mergeProps(menu, tooltip)"
               >
                 <v-icon />
