@@ -7,7 +7,6 @@
     :loading="loading"
     :search="search"
     item-value="name"
-    density="compact"
     show-select
     @update:options="loadItems"
   >
