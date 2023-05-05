@@ -4,11 +4,11 @@
       <v-row class="d-flex align-center justify-center">
         <v-col cols="auto" sm="7">
           <h1 class="text-h6 font-weight-regular text-grey-darken-2">
-            Dashboard Overview
+            Sales Overview
           </h1>
           <div class="text-caption font-weight-light mb-n1">
-            <span class="font-weight-medium">An Overview Performance</span> For
-            The Period Between
+            <span class="font-weight-medium">Sales Performance</span> For The
+            Period Between
             <span class="font-weight-medium">01/04/2023 - 30/04/2023</span>
           </div>
         </v-col>

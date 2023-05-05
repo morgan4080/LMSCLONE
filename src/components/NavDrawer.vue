@@ -1,80 +1,4 @@
 <template>
-  <v-navigation-drawer
-    style="background-color: hsla(210, 33%, 25%, 1)"
-    class="text-white"
-    v-model="drawer"
-    location="left"
-    width="230"
-    permanent
-  >
-    <v-col>
-      <v-img width="150" src="@/assets/presta-white-logo-full.png" />
-    </v-col>
-    <v-col>
-      <v-row no-gutters align="center" justify="space-between" class="pr-8">
-        <v-avatar
-          size="55"
-          image="@/assets/user.png"
-          style="border: 5px solid white"
-        ></v-avatar>
-        <div>
-          <div class="text-caption text-grey-lighten-1">Welcome,</div>
-          <div class="text-subtitle-2 font-weight-light text-white">
-            Morgan Mutugi
-          </div>
-        </div>
-      </v-row>
-    </v-col>
-
-    <v-list :lines="false" density="compact" nav>
-      <template v-for="(item, i) in items" :key="i">
-        <v-list-group
-          v-if="item.subItems.length > 0"
-          :value="item"
-          active-color="primary"
-          expand-icon="mdi:mdi-chevron-down"
-          collapse-icon="mdi:mdi-chevron-up"
-        >
-          <template v-slot:activator="{ props }">
-            <v-list-item v-bind="props" :title="item.text">
-              <template v-slot:prepend>
-                <v-icon :icon="item.icon"></v-icon>
-              </template>
-            </v-list-item>
-          </template>
-
-          <div class="py-1" />
-
-          <v-list-item
-            v-for="(it, i) in item.subItems"
-            :key="i"
-            :value="it"
-            active-color="primary"
-            class="subItems"
-            :href="it.href"
-          >
-            <v-list-item-title>{{ it.text }}</v-list-item-title>
-          </v-list-item>
-
-          <div class="py-1" />
-        </v-list-group>
-
-        <v-list-item
-          v-else
-          :key="i"
-          :value="item"
-          active-color="primary"
-          :href="item.href"
-        >
-          <template v-slot:prepend>
-            <v-icon :icon="item.icon"></v-icon>
-          </template>
-          <v-list-item-title>{{ item.text }}</v-list-item-title>
-        </v-list-item>
-      </template>
-    </v-list>
-  </v-navigation-drawer>
-
   <v-app-bar prominent>
     <v-toolbar flat density="default" content="">
       <v-app-bar-nav-icon
@@ -267,6 +191,82 @@
       </v-menu>
     </v-toolbar>
   </v-app-bar>
+
+  <v-navigation-drawer
+    style="background-color: hsla(210, 33%, 25%, 1)"
+    class="text-white"
+    v-model="drawer"
+    location="left"
+    width="230"
+    permanent
+  >
+    <v-col>
+      <v-img width="150" src="@/assets/presta-white-logo-full.png" />
+    </v-col>
+    <v-col>
+      <v-row no-gutters align="center" justify="space-between" class="pr-8">
+        <v-avatar
+          size="55"
+          image="@/assets/user.png"
+          style="border: 5px solid white"
+        ></v-avatar>
+        <div>
+          <div class="text-caption text-grey-lighten-1">Welcome,</div>
+          <div class="text-subtitle-2 font-weight-light text-white">
+            Morgan Mutugi
+          </div>
+        </div>
+      </v-row>
+    </v-col>
+
+    <v-list :lines="false" density="compact" nav>
+      <template v-for="(item, i) in items" :key="i">
+        <v-list-group
+          v-if="item.subItems.length > 0"
+          :value="item"
+          active-color="primary"
+          expand-icon="mdi:mdi-chevron-down"
+          collapse-icon="mdi:mdi-chevron-up"
+        >
+          <template v-slot:activator="{ props }">
+            <v-list-item v-bind="props" :title="item.text">
+              <template v-slot:prepend>
+                <v-icon :icon="item.icon"></v-icon>
+              </template>
+            </v-list-item>
+          </template>
+
+          <div class="py-1" />
+
+          <v-list-item
+            v-for="(it, i) in item.subItems"
+            :key="i"
+            :value="it"
+            active-color="primary"
+            class="subItems"
+            :href="it.href"
+          >
+            <v-list-item-title>{{ it.text }}</v-list-item-title>
+          </v-list-item>
+
+          <div class="py-1" />
+        </v-list-group>
+
+        <v-list-item
+          v-else
+          :key="i"
+          :value="item"
+          active-color="primary"
+          :href="item.href"
+        >
+          <template v-slot:prepend>
+            <v-icon :icon="item.icon"></v-icon>
+          </template>
+          <v-list-item-title>{{ item.text }}</v-list-item-title>
+        </v-list-item>
+      </template>
+    </v-list>
+  </v-navigation-drawer>
 </template>
 
 <script lang="ts" setup>
