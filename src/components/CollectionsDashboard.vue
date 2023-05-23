@@ -2,7 +2,10 @@
   <v-container class="fill-height bg-background">
     <v-responsive class="d-flex fill-height">
       <v-row class="d-flex align-center justify-center">
-        <v-col cols="auto" sm="7">
+        <v-col
+          cols="auto"
+          sm="7"
+        >
           <h1 class="text-h6 font-weight-regular text-grey-darken-2">
             Sales Overview
           </h1>
@@ -12,9 +15,52 @@
             <span class="font-weight-medium">01/04/2023 - 30/04/2023</span>
           </div>
         </v-col>
-        <v-col cols="auto" sm="5">
+        <v-col
+          cols="auto"
+          sm="5"
+        >
           <v-row class="d-flex justify-end">
-            <div v-for="(dropDown, i) in dropDownData" :key="i" class="px-3">
+            <div class="px-3">
+              <v-menu transition="slide-y-transition">
+                <template v-slot:activator="{ props }">
+                  <v-btn
+                    class="v-btn--size-default text-caption text-capitalize"
+                    density="default"
+                    append-icon="mdi:mdi-chevron-down"
+                    v-bind="props"
+                    flat
+                    style="border: 1px solid rgba(128, 128, 128, 0.25)"
+                  >
+                    All Branches
+                  </v-btn>
+                </template>
+                <v-sheet
+                  border
+                  rounded
+                >
+                  <v-list
+                    nav
+                    density="compact"
+                    role="listbox"
+                  >
+                    <v-list-item-group v-model="salesDashboardStore.branchIds">
+                      <v-list-item
+                        v-for="branch in salesDashboardStore.branches"
+                        :key="branch"
+                        :title="branch"
+                        :value="branch"
+                        density="compact"
+                      ></v-list-item>
+                    </v-list-item-group>
+                  </v-list>
+                </v-sheet>
+              </v-menu>
+            </div>
+            <div
+              v-for="(dropDown, i) in dropDownData"
+              :key="i"
+              class="px-3"
+            >
               <v-menu transition="slide-y-transition">
                 <template v-slot:activator="{ props }">
                   <v-btn
@@ -28,8 +74,15 @@
                     {{ dropDown.text }}
                   </v-btn>
                 </template>
-                <v-sheet border rounded>
-                  <v-list nav density="compact" role="listbox">
+                <v-sheet
+                  border
+                  rounded
+                >
+                  <v-list
+                    nav
+                    density="compact"
+                    role="listbox"
+                  >
                     <v-list-item
                       v-for="(dropDownMenu, it) in dropDown.menus"
                       :key="it"
@@ -45,7 +98,12 @@
         </v-col>
       </v-row>
       <v-row class="d-flex">
-        <v-col v-for="(data, i) in cardData" :key="i" cols="12" sm="4">
+        <v-col
+          v-for="(data, i) in cardData"
+          :key="i"
+          cols="12"
+          sm="4"
+        >
           <v-card :loading="false">
             <v-card-text>
               <div class="text-body-2 font-weight-light">
@@ -87,7 +145,10 @@
                         Summary Of Upcoming Collections
                       </div>
                     </v-col>
-                    <v-col class="d-flex align-start" sm="8">
+                    <v-col
+                      class="d-flex align-start"
+                      sm="8"
+                    >
                       <div
                         class="text-caption text-primary font-weight-regular text-decoration-underline pt-2"
                       >
@@ -112,7 +173,11 @@
                         type="text"
                         placeholder="Search Here"
                       />
-                      <v-btn variant="tonal" size="small" class="rounded-s-0">
+                      <v-btn
+                        variant="tonal"
+                        size="small"
+                        class="rounded-s-0"
+                      >
                         <span>GO</span>
                       </v-btn>
                     </template>
@@ -121,7 +186,10 @@
               </v-row>
 
               <v-row class="d-flex align-center justify-center mt-9">
-                <v-col cols="auto" sm="7">
+                <v-col
+                  cols="auto"
+                  sm="7"
+                >
                   <v-row class="d-flex justify-start">
                     <div
                       v-for="(dropDown, i) in upComingCollectionFilters"
@@ -141,8 +209,15 @@
                             {{ dropDown.text }}
                           </v-btn>
                         </template>
-                        <v-sheet border rounded>
-                          <v-list nav density="compact" role="listbox">
+                        <v-sheet
+                          border
+                          rounded
+                        >
+                          <v-list
+                            nav
+                            density="compact"
+                            role="listbox"
+                          >
                             <v-list-item
                               v-for="(dropDownMenu, it) in dropDown.menus"
                               :key="it"
@@ -156,7 +231,10 @@
                     </div>
                   </v-row>
                 </v-col>
-                <v-col cols="auto" sm="5">
+                <v-col
+                  cols="auto"
+                  sm="5"
+                >
                   <v-row class="d-flex justify-end">
                     <div
                       v-for="(dropDown, i) in upComingCollectionActions"
@@ -184,8 +262,15 @@
                             </template>
                           </v-btn>
                         </template>
-                        <v-sheet border rounded>
-                          <v-list nav density="compact" role="listbox">
+                        <v-sheet
+                          border
+                          rounded
+                        >
+                          <v-list
+                            nav
+                            density="compact"
+                            role="listbox"
+                          >
                             <v-list-item
                               v-for="(dropDownMenu, it) in dropDown.menus"
                               :key="it"
@@ -201,7 +286,7 @@
                 </v-col>
               </v-row>
               <v-row class="d-flex mt-9">
-                <ServerTable />
+                <UpcomingCollectionsTable />
               </v-row>
             </v-card-text>
           </v-card>
@@ -221,7 +306,10 @@
                         Summary Of All Recent Customers
                       </div>
                     </v-col>
-                    <v-col class="d-flex align-start" sm="8">
+                    <v-col
+                      class="d-flex align-start"
+                      sm="8"
+                    >
                       <div
                         class="text-caption text-primary font-weight-regular text-decoration-underline pt-2"
                       >
@@ -246,7 +334,11 @@
                         type="text"
                         placeholder="Search Here"
                       />
-                      <v-btn variant="tonal" size="small" class="rounded-s-0">
+                      <v-btn
+                        variant="tonal"
+                        size="small"
+                        class="rounded-s-0"
+                      >
                         <span>GO</span>
                       </v-btn>
                     </template>
@@ -255,7 +347,10 @@
               </v-row>
 
               <v-row class="d-flex align-center justify-center mt-9">
-                <v-col cols="auto" sm="7">
+                <v-col
+                  cols="auto"
+                  sm="7"
+                >
                   <v-row class="d-flex justify-start">
                     <div
                       v-for="(dropDown, i) in newCustomerFilters"
@@ -275,8 +370,15 @@
                             {{ dropDown.text }}
                           </v-btn>
                         </template>
-                        <v-sheet border rounded>
-                          <v-list nav density="compact" role="listbox">
+                        <v-sheet
+                          border
+                          rounded
+                        >
+                          <v-list
+                            nav
+                            density="compact"
+                            role="listbox"
+                          >
                             <v-list-item
                               v-for="(dropDownMenu, it) in dropDown.menus"
                               :key="it"
@@ -290,7 +392,10 @@
                     </div>
                   </v-row>
                 </v-col>
-                <v-col cols="auto" sm="5">
+                <v-col
+                  cols="auto"
+                  sm="5"
+                >
                   <v-row class="d-flex justify-end">
                     <div
                       v-for="(dropDown, i) in newCustomerActions"
@@ -318,8 +423,15 @@
                             </template>
                           </v-btn>
                         </template>
-                        <v-sheet border rounded>
-                          <v-list nav density="compact" role="listbox">
+                        <v-sheet
+                          border
+                          rounded
+                        >
+                          <v-list
+                            nav
+                            density="compact"
+                            role="listbox"
+                          >
                             <v-list-item
                               v-for="(dropDownMenu, it) in dropDown.menus"
                               :key="it"
@@ -335,7 +447,7 @@
                 </v-col>
               </v-row>
               <v-row class="d-flex mt-9">
-                <ServerTable />
+                <NewCustomersTable />
               </v-row>
             </v-card-text>
           </v-card>
@@ -346,8 +458,25 @@
 </template>
 
 <script lang="ts" setup>
-import { ref } from "vue";
+import { onBeforeMount, ref } from "vue";
 import ServerTable from "@/components/ServerTable.vue";
+import { useSalesDashboardStore } from "@/store/sales-dashboard";
+import UpcomingCollectionsTable from "@/components/UpcomingCollectionsTable.vue";
+import OverdueCollectionsTable from "@/layouts/OverdueCollectionsTable.vue";
+import NewCustomersTable from "@/components/NewCustomersTable.vue";
+
+const salesDashboardStore = useSalesDashboardStore();
+
+function initialize() {
+  Promise.all([
+    salesDashboardStore.getBranches(),
+    salesDashboardStore.getStats(),
+    salesDashboardStore.getUpcomingCollections(),
+    salesDashboardStore.getOverdueCollections(),
+  ]);
+}
+
+onBeforeMount(() => initialize());
 
 type CardDataType = {
   text: string;
@@ -355,13 +484,11 @@ type CardDataType = {
   color: string;
   captions: { metric: string; color: string }[];
 }[];
-
 const searchUpcomingCollections = ref("");
-
 const cardData = ref<CardDataType>([
   {
     text: "Total Upcoming Collections",
-    metric: "70,000 KES",
+    metric: salesDashboardStore.stats.upcomingCollections,
     color: "primary",
     captions: [
       {
@@ -369,14 +496,14 @@ const cardData = ref<CardDataType>([
         color: "normal",
       },
       {
-        metric: "20 Loans",
+        metric: `${salesDashboardStore.stats.overdueCollectionsCount} Loans`,
         color: "primary",
       },
     ],
   },
   {
     text: "Total Overdue Collections",
-    metric: "1,900,000 KES",
+    metric: salesDashboardStore.stats.overdueCollections,
     color: "red",
     captions: [
       {
@@ -384,14 +511,14 @@ const cardData = ref<CardDataType>([
         color: "normal",
       },
       {
-        metric: "17 Loans",
+        metric: `${salesDashboardStore.stats.overdueCollectionsCount} Loans`,
         color: "red",
       },
     ],
   },
   {
     text: "Total New Customers",
-    metric: "150,000 Customers",
+    metric: `${salesDashboardStore.stats.customersCount} Customers`,
     color: "success",
     captions: [
       {
@@ -399,29 +526,13 @@ const cardData = ref<CardDataType>([
         color: "normal",
       },
       {
-        metric: "+10%",
+        metric: salesDashboardStore.stats.customersCountIncrement,
         color: "success",
       },
     ],
   },
 ]);
-
 const dropDownData = ref([
-  {
-    text: "All Branches",
-    appendIcon: "mdi:mdi-chevron-down",
-    menus: [
-      {
-        text: "Op 1",
-      },
-      {
-        text: "Op 2",
-      },
-      {
-        text: "Op 3",
-      },
-    ],
-  },
   {
     text: "All Sales Rep",
     appendIcon: "mdi:mdi-chevron-down",
@@ -453,7 +564,6 @@ const dropDownData = ref([
     ],
   },
 ]);
-
 const upComingCollectionFilters = ref([
   {
     text: "All Branches",
@@ -501,7 +611,6 @@ const upComingCollectionFilters = ref([
     ],
   },
 ]);
-
 const upComingCollectionActions = ref([
   {
     text: "Export",
@@ -564,7 +673,6 @@ const upComingCollectionActions = ref([
     ],
   },
 ]);
-
 const newCustomerFilters = ref([
   {
     text: "Select Onboarding Status",
@@ -597,7 +705,6 @@ const newCustomerFilters = ref([
     ],
   },
 ]);
-
 const newCustomerActions = ref([
   {
     text: "Export",

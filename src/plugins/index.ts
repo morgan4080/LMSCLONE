@@ -38,6 +38,7 @@ const vuetifyConf = createVuetify({
           primary: "#3C7AB7",
           secondary: "#4d6d73",
           background: "#F5F7FB",
+          prestaBlue: "#4D99D4",
         },
       },
     },
