@@ -16,7 +16,7 @@
                 variant="flat"
                 color="success"
                 class="text-none text-caption"
-                @click="router.push({ name: 'all_scoring' })"
+                @click="router.push({ name: 'allScoring' })"
               >
                 All Statements
               </v-btn>

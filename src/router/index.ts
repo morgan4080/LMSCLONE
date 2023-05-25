@@ -22,8 +22,13 @@ const routes = [
       },
       {
         path: "/scoring/all",
-        name: "all_scoring",
+        name: "allScoring",
         component: () => import("@/views/Scoring/All.vue"),
+      },
+      {
+        path: "/scoring/mobile",
+        name: "singleMobileListing",
+        component: () => import("@/views/Scoring/MobileListing.vue"),
       },
     ],
   },
