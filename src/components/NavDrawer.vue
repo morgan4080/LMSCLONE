@@ -26,7 +26,7 @@
       </v-row>
     </v-col>
 
-    <v-list :lines="false" density="compact" nav>
+    <v-list :lines="false" nav>
       <template v-for="(item, i) in items" :key="i">
         <v-list-group
           v-if="item.subItems.length > 0"
@@ -36,9 +36,9 @@
           collapse-icon="mdi:mdi-chevron-up"
         >
           <template v-slot:activator="{ props }">
-            <v-list-item v-bind="props" :title="item.text">
+            <v-list-item v-bind="props" lines="one" :title="item.text">
               <template v-slot:prepend>
-                <v-icon :icon="item.icon"></v-icon>
+                <v-icon class="ml-0" :icon="item.icon"></v-icon>
               </template>
             </v-list-item>
           </template>
