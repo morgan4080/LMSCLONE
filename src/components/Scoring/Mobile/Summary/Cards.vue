@@ -5,7 +5,11 @@
     <v-container fluid>
       <v-row>
         <v-col>
-          <v-card variant="flat" color="white" class="rounded">
+          <v-card
+            variant="flat"
+            color="white"
+            class="rounded"
+          >
             <v-container>
               <v-row class="mx-2">
                 <v-col cols="auto">
@@ -25,7 +29,11 @@
           </v-card>
         </v-col>
         <v-col
-          ><v-card variant="flat" color="white" class="rounded">
+          ><v-card
+            variant="flat"
+            color="white"
+            class="rounded"
+          >
             <v-container>
               <v-row class="mx-2">
                 <v-col cols="auto">
@@ -45,7 +53,11 @@
           </v-card></v-col
         >
         <v-col
-          ><v-card variant="flat" color="white" class="rounded">
+          ><v-card
+            variant="flat"
+            color="white"
+            class="rounded"
+          >
             <v-container>
               <v-row class="mx-2">
                 <v-col cols="auto">
@@ -66,11 +78,18 @@
         >
       </v-row>
 
-      <v-row class="d-flex">
+      <v-row>
         <v-col>
-          <v-card variant="flat" color="white" class="rounded h-100">
+          <v-card
+            variant="flat"
+            color="white"
+            class="rounded h-100"
+          >
             <div class="mx-4">
-              <v-container fluid class="mx-auto">
+              <v-container
+                fluid
+                class="mx-auto"
+              >
                 <div>
                   <h1 class="text-h6 font-weight-regular">Mobile Loan Score</h1>
                   <h2
@@ -85,7 +104,10 @@
                     <h1 class="text-caption font-weight-bold">Title</h1>
                     <h1 class="text-caption font-weight-bold">Description</h1>
                   </div>
-                  <v-divider class="my-2" :thickness="3"></v-divider>
+                  <v-divider
+                    class="my-2"
+                    :thickness="3"
+                  ></v-divider>
                   <div class="d-flex justify-space-between mt-4">
                     <h1 class="text-caption">Score</h1>
                     <h1 class="text-caption">760 / 900</h1>
@@ -95,7 +117,10 @@
                     <h1 class="text-caption font-weight-medium">Risk Level</h1>
                     <h1 class="text-caption">Insignificant</h1>
                   </div>
-                  <v-divider class="my-2" :thickness="3"></v-divider>
+                  <v-divider
+                    class="my-2"
+                    :thickness="3"
+                  ></v-divider>
                   <div class="d-flex justify-space-between mt-4">
                     <h1 class="text-caption font-weight-medium">Highest</h1>
                     <h1 class="text-caption">KES 19,400.00</h1>
@@ -114,9 +139,16 @@
           </v-card>
         </v-col>
         <v-col>
-          <v-card variant="flat" color="white" class="rounded h-100">
+          <v-card
+            variant="flat"
+            color="white"
+            class="rounded h-100"
+          >
             <div class="mx-4">
-              <v-container fluid class="mx-auto">
+              <v-container
+                fluid
+                class="mx-auto"
+              >
                 <div>
                   <h1 class="text-h6 font-weight-regular">
                     Long Term Loan Score
@@ -133,7 +165,10 @@
                     <h1 class="text-caption font-weight-bold">Title</h1>
                     <h1 class="text-caption font-weight-bold">Description</h1>
                   </div>
-                  <v-divider class="my-2" :thickness="3"></v-divider>
+                  <v-divider
+                    class="my-2"
+                    :thickness="3"
+                  ></v-divider>
                   <div class="d-flex justify-space-between mt-4">
                     <h1 class="text-caption">Score</h1>
                     <h1 class="text-caption">860 / 900</h1>
@@ -143,7 +178,10 @@
                     <h1 class="text-caption font-weight-medium">Risk Level</h1>
                     <h1 class="text-caption">Insignificant</h1>
                   </div>
-                  <v-divider class="my-2" :thickness="3"></v-divider>
+                  <v-divider
+                    class="my-2"
+                    :thickness="3"
+                  ></v-divider>
                   <div class="d-flex justify-space-between mt-4">
                     <h1 class="text-caption font-weight-medium">Highest</h1>
                     <h1 class="text-caption">KES 0.00</h1>

@@ -37,4 +37,4 @@ export function formatMoney(money: string | number | null | undefined): string {
     .replace(/\B(?=(\d{3})+(?!\d))/g, ", ")}.${
     parseFloat(`${money}`).toFixed(2).split(".")[1]
   }`;
-
+}
