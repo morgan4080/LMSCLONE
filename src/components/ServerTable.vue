@@ -175,6 +175,7 @@ const loadItems = ({ page, itemsPerPage, sortBy }: any) => {
   FakeAPI.fetch({ page, itemsPerPage, sortBy }).then(
     ({ items, total }: any) => {
       serverItems.value = items;
+      console.log(items);
       totalItems.value = total;
       loading.value = false;
     }
