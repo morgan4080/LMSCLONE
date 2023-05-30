@@ -7,3 +7,6 @@ services:
       - '4173:80'
     networks:
       - keycloak_presta-network
+networks:
+  keycloak_presta-network:
+    external: true
