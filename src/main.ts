@@ -9,8 +9,18 @@ import axios from "axios";
 
 axios.defaults.withCredentials = true;
 
-const app = createApp(App);
-
-registerPlugins(app);
-
-app.mount("#app");
+const url = `${import.meta.env.VITE_APP_ROOT_AUTH}/authentication`;
+axios
+  .get(url)
+  .then((response: any): void => {
+    const app = createApp(App);
+    registerPlugins(app);
+    app.mount("#app");
+    console.log(response);
+  })
+  .catch((e: any) => {
+    const currentUrl = window.location.href;
+    window.location.href = `${
+      import.meta.env.VITE_APP_ROOT_AUTH
+    }?redirect_url=${currentUrl}`;
+  });
