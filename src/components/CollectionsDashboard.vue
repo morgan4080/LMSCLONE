@@ -153,7 +153,7 @@
               <div class="text-body-2 font-weight-light">
                 Total New Customers
               </div>
-              <div class="text-h6 font-weight-regular py-2 text-red">
+              <div class="text-h6 font-weight-regular py-2 text-success">
                 {{ salesDashboardStore.stats.customersCount }} Customers
               </div>
               <div class="d-flex justify-space-between">
