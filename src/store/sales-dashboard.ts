@@ -2,6 +2,7 @@ import { defineStore } from "pinia";
 import { SalesDashboardState } from "@/types/sales-dashboard";
 import axios from "axios";
 import moment from "moment";
+import { formatMoney } from "@/helpers";
 
 export const useSalesDashboardStore = defineStore("app", {
   state: (): SalesDashboardState => ({
@@ -99,8 +100,12 @@ export const useSalesDashboardStore = defineStore("app", {
           }`
         )
         .then(response => {
-          this.stats.upcomingCollections = response.data.upcomingCollections;
-          this.stats.overdueCollections = response.data.overdueCollections;
+          this.stats.upcomingCollections = formatMoney(
+            response.data.upcomingCollections
+          );
+          this.stats.overdueCollections = formatMoney(
+            response.data.overdueCollections
+          );
           this.stats.upcomingCollectionsCount =
             response.data.upcomingCollectionsCount;
           this.stats.overdueCollectionsCount =

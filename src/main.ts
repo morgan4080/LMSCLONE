@@ -16,7 +16,7 @@ axios
     const app = createApp(App);
     registerPlugins(app);
     app.mount("#app");
-    console.log(response);
+    console.log(response.data);
   })
   .catch((e: any) => {
     const currentUrl = window.location.href;

@@ -99,30 +99,69 @@
       </v-row>
       <v-row class="d-flex">
         <v-col
-          v-for="(data, i) in cardData"
-          :key="i"
           cols="12"
           sm="4"
         >
           <v-card :loading="false">
             <v-card-text>
               <div class="text-body-2 font-weight-light">
-                {{ data.text }}
+                Total Upcoming Collections
               </div>
-              <div
-                class="text-h6 font-weight-regular py-2"
-                :class="'text-' + data.color"
-              >
-                {{ data.metric }}
+              <div class="text-h6 font-weight-regular py-2 text-primary">
+                {{ salesDashboardStore.stats.upcomingCollections }}
               </div>
               <div class="d-flex justify-space-between">
-                <div
-                  v-for="(cap, i) in data.captions"
-                  :key="i"
-                  class="text-caption font-weight-regular"
-                  :class="'text-' + cap.color"
-                >
-                  {{ cap.metric }}
+                <div class="text-caption font-weight-regular text-normal">
+                  Next 30 Days
+                </div>
+                <div class="text-caption font-weight-regular text-primary">
+                  {{ salesDashboardStore.stats.upcomingCollectionsCount }} Loans
+                </div>
+              </div>
+            </v-card-text>
+          </v-card>
+        </v-col>
+        <v-col
+          cols="12"
+          sm="4"
+        >
+          <v-card :loading="false">
+            <v-card-text>
+              <div class="text-body-2 font-weight-light">
+                Total Overdue Collections
+              </div>
+              <div class="text-h6 font-weight-regular py-2 text-red">
+                {{ salesDashboardStore.stats.overdueCollections }}
+              </div>
+              <div class="d-flex justify-space-between">
+                <div class="text-caption font-weight-regular text-normal">
+                  Last 30 Days
+                </div>
+                <div class="text-caption font-weight-regular text-red">
+                  {{ salesDashboardStore.stats.overdueCollectionsCount }} Loans
+                </div>
+              </div>
+            </v-card-text>
+          </v-card>
+        </v-col>
+        <v-col
+          cols="12"
+          sm="4"
+        >
+          <v-card :loading="false">
+            <v-card-text>
+              <div class="text-body-2 font-weight-light">
+                Total New Customers
+              </div>
+              <div class="text-h6 font-weight-regular py-2 text-red">
+                {{ salesDashboardStore.stats.customersCount }} Customers
+              </div>
+              <div class="d-flex justify-space-between">
+                <div class="text-caption font-weight-regular text-normal">
+                  Last 30 Days
+                </div>
+                <div class="text-caption font-weight-regular text-success">
+                  {{ salesDashboardStore.stats.customersCountIncrement }} Loans
                 </div>
               </div>
             </v-card-text>
@@ -485,53 +524,7 @@ type CardDataType = {
   captions: { metric: string; color: string }[];
 }[];
 const searchUpcomingCollections = ref("");
-const cardData = ref<CardDataType>([
-  {
-    text: "Total Upcoming Collections",
-    metric: salesDashboardStore.stats.upcomingCollections,
-    color: "primary",
-    captions: [
-      {
-        metric: "Next 30 Days",
-        color: "normal",
-      },
-      {
-        metric: `${salesDashboardStore.stats.overdueCollectionsCount} Loans`,
-        color: "primary",
-      },
-    ],
-  },
-  {
-    text: "Total Overdue Collections",
-    metric: salesDashboardStore.stats.overdueCollections,
-    color: "red",
-    captions: [
-      {
-        metric: "Last 30 Days",
-        color: "normal",
-      },
-      {
-        metric: `${salesDashboardStore.stats.overdueCollectionsCount} Loans`,
-        color: "red",
-      },
-    ],
-  },
-  {
-    text: "Total New Customers",
-    metric: `${salesDashboardStore.stats.customersCount} Customers`,
-    color: "success",
-    captions: [
-      {
-        metric: "Last 30 Days",
-        color: "normal",
-      },
-      {
-        metric: salesDashboardStore.stats.customersCountIncrement,
-        color: "success",
-      },
-    ],
-  },
-]);
+
 const dropDownData = ref([
   {
     text: "All Sales Rep",
