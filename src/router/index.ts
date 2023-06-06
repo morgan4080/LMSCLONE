@@ -26,7 +26,7 @@ const routes = [
         component: () => import("@/views/Scoring/All.vue"),
       },
       {
-        path: "/scoring/mobile",
+        path: "/scoring/mobile/:slug",
         name: "singleMobileListing",
         component: () => import("@/views/Scoring/MobileListing.vue"),
       },

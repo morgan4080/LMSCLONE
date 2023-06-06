@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { da } from "vuetify/locale";
 
 const data = {
   total_sent: "KES 824,404",

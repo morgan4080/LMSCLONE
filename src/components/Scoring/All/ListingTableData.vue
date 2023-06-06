@@ -5,6 +5,7 @@ import {
   dateFromTimestamp,
   timeFromTimestamp,
 } from "@/helpers";
+import router from "@/router";
 
 const selected = ref([]);
 const tableData = ref([]);
@@ -19,12 +20,12 @@ const headers = ref<
     sortable: false,
     key: "id",
   },
-  { title: "Upload Date", key: "upload", align: "end", sortable: false },
-  { title: "Customer", key: "customer", align: "end", sortable: false },
-  { title: "Statement Type", key: "statement", align: "end", sortable: false },
-  { title: "Status", key: "status", align: "end", sortable: false },
-  { title: "Statement Period", key: "period", align: "end", sortable: false },
-  { title: "Password", key: "password", align: "end", sortable: false },
+  { title: "Upload Date", key: "upload", align: "start", sortable: false },
+  { title: "Customer", key: "customer", align: "start", sortable: false },
+  { title: "Statement Type", key: "statement", align: "start", sortable: false },
+  { title: "Status", key: "status", align: "start", sortable: false },
+  { title: "Statement Period", key: "period", align: "start", sortable: false },
+  { title: "Password", key: "password", align: "start", sortable: false },
   { title: "Actions", key: "actions", align: "end", sortable: false },
 ]);
 
@@ -60,17 +61,17 @@ async function loadData() {
     @update:options="loadData"
   >
     <template v-slot:item.statement="{ item }">
-      <span
-        class="text-caption text-white pa-1 rounded"
-        :class="
+        <span
+          class="text-caption text-white pa-1 rounded"
+          :class="
           item.props.title.statement_type.toLowerCase() === 'mobile'
             ? 'bg-green-darken-2'
             : 'bg-blue-darken-4'
         "
-      >
+        >
         {{ item.props.title.statement_type }}
       </span>
-      <span class="border text-blue pa-1 ml-2 rounded">
+        <span class="border text-blue pa-1 ml-2 rounded">
         {{ item.props.title.provider }}
       </span>
     </template>
@@ -116,9 +117,12 @@ async function loadData() {
     <template v-slot:item.password="{ item }">
       {{ item.props.title.password || "N/A" }}
     </template>
-    <template v-slot:item.actions>
+    <template v-slot:item.actions="{item}">
       <div class="d-flex justify-end">
-        <div class="border rounded px-1">
+        <div class="border rounded px-1" @click="router.push({
+                name: 'singleMobileListing',
+                params: { slug: item.props.title.id },
+              })">
           <v-icon size="x-small" icon="mdi:mdi-eye-outline" class=""></v-icon>
         </div>
         <div class="border rounded px-1 ml-1">

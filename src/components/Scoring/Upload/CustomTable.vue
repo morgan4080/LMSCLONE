@@ -22,14 +22,14 @@ const headers = ref<
   {
     title: "Statement Type",
     key: "statement",
-    align: "end",
+    align: "start",
     sortable: false,
   },
-  { title: "File Name", key: "file_name", align: "end", sortable: false },
-  { title: "Status", key: "status", align: "end", sortable: false },
-  { title: "Duration", key: "duration", align: "end", sortable: false },
-  { title: "Upload Date", key: "upload", align: "end", sortable: false },
-  { title: "Uploader", key: "uploader", align: "end", sortable: false },
+  { title: "File Name", key: "file_name", align: "start", sortable: false },
+  { title: "Status", key: "status", align: "start", sortable: false },
+  { title: "Duration", key: "duration", align: "start", sortable: false },
+  { title: "Upload Date", key: "upload", align: "start", sortable: false },
+  { title: "Uploader", key: "uploader", align: "start", sortable: false },
 ]);
 
 async function loadData() {
