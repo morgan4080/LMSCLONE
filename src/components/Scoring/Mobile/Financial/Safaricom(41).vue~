@@ -1,0 +1,12 @@
+<script setup lang="ts"></script>
+
+<template>
+  <v-container fluid>
+    <div
+      class="bg-blue-darken-3 px-4 py-1 rounded d-flex justify-space-between"
+    >
+      <p>Safaricom</p>
+      <v-icon icon="mdi:mdi-arrow-down-thin-circle-outline"></v-icon>
+    </div>
+  </v-container>
+</template>

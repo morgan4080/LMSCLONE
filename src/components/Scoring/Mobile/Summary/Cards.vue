@@ -1,4 +1,19 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+const customer = {
+  name:"Tom Kimani",
+  fileName:"MPesa_statement",
+  phone:"254712345678",
+  email:"tomkim@presta.co.ke",
+  documentType:"Mpesa Statement",
+  status:"Completed",
+  generatedOn:"DD/MM/YYYY HH:MM",
+  currency:"Kenyan Shilling",
+  receivedOn:"DD/MM/YYYY HH:MM",
+  age:"1",
+  period:"DD/MM/YYYY - DD/MM/YYYY",
+  duration:"12"
+}
+</script>
 
 <template>
   <v-responsive>
@@ -19,10 +34,10 @@
                   <h3 class="text-grey text-body-2 py-1">Email</h3>
                 </v-col>
                 <v-col
-                  ><h3 class="text-body-2 py-1 text-blue">Tom Kimani</h3>
-                  <h3 class="text-body-2 py-1">MPesa_statement</h3>
-                  <h3 class="text-body-2 py-1">254712345678</h3>
-                  <h3 class="text-body-2 py-1">tomkim@presta.co.ke</h3></v-col
+                  ><h3 class="text-body-2 py-1 text-blue">{{customer.name}}</h3>
+                  <h3 class="text-body-2 py-1">{{customer.fileName}}</h3>
+                  <h3 class="text-body-2 py-1">{{customer.phone}}</h3>
+                  <h3 class="text-body-2 py-1">{{customer.email}}</h3></v-col
                 >
               </v-row>
             </v-container>
@@ -43,10 +58,10 @@
                   <h3 class="text-grey text-body-2 py-1">Currency</h3>
                 </v-col>
                 <v-col
-                  ><h3 class="text-body-2 py-1 text-blue">Mpesa Statement</h3>
-                  <h3 class="text-body-2 py-1">Completed</h3>
-                  <h3 class="text-body-2 py-1">DD/MM/YYYY HH:MM</h3>
-                  <h3 class="text-body-2 py-1">Kenyan Shilling</h3></v-col
+                  ><h3 class="text-body-2 py-1 text-blue">{{customer.documentType}}</h3>
+                  <h3 class="text-body-2 py-1">{{customer.status}}</h3>
+                  <h3 class="text-body-2 py-1">{{customer.generatedOn}}</h3>
+                  <h3 class="text-body-2 py-1">{{customer.currency}}</h3></v-col
                 >
               </v-row>
             </v-container>
@@ -67,10 +82,10 @@
                   <h3 class="text-grey text-body-2 py-1">Duration</h3>
                 </v-col>
                 <v-col
-                  ><h3 class="text-body-2 py-1 text-blue">DD/MM/YYYY HH:MM</h3>
-                  <h3 class="text-body-2 py-1">1</h3>
-                  <h3 class="text-body-2 py-1">DD/MM/YYYY - DD/MM/YYYY</h3>
-                  <h3 class="text-body-2 py-1">12 Months</h3></v-col
+                  ><h3 class="text-body-2 py-1 text-blue">{{customer.receivedOn}}</h3>
+                  <h3 class="text-body-2 py-1">{{customer.age}}</h3>
+                  <h3 class="text-body-2 py-1">{{customer.period}}</h3>
+                  <h3 class="text-body-2 py-1">{{customer.duration}} Months</h3></v-col
                 >
               </v-row>
             </v-container>
