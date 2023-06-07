@@ -32,6 +32,7 @@ const headers = ref<
   { title: "Uploader", key: "uploader", align: "start", sortable: false },
 ]);
 
+//Load mock data
 async function loadData() {
   loading.value = true;
   const myHeaders = new Headers();

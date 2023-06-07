@@ -30,6 +30,11 @@ const routes = [
         name: "singleMobileListing",
         component: () => import("@/views/Scoring/MobileListing.vue"),
       },
+      {
+        path: "/scoring/bank",
+        name: "Bank Listing",
+        component: () => import("@/views/Scoring/Bank.vue"),
+      },
     ],
   },
 ];
