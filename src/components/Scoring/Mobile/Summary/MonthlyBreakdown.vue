@@ -1,5 +1,42 @@
 <script setup lang="ts">
+import {ref} from "vue";
+
 const options = ["Option 1", "Option 2", "Option 3", "Option 4"];
+
+const headers = ref<
+  { title: string; key: string; align: string; sortable: boolean }[]
+>([
+  {
+    title: "Month",
+    align: "start",
+    sortable: false,
+    key: "month",
+  },
+  {
+    title: "Debits (Dr)",
+    key: "debits",
+    align: "end",
+    sortable: false,
+  },
+  { title: "Credits (CR)", key: "credits", align: "end", sortable: false },
+  { title: "Closing", key: "closing", align: "end", sortable: false },
+]);
+const totalItems = ref(10)
+const tableData = ref([
+  {
+    month:"April 2023",
+    debits:"86,235",
+    credits:"23,521",
+    closing:"34,642"
+  },
+  {
+    month:"April 2023",
+    debits:"86,235",
+    credits:"23,521",
+    closing:"34,642"
+  },
+]);
+const loading = ref(false);
 </script>
 
 <template>
@@ -243,9 +280,21 @@ const options = ["Option 1", "Option 2", "Option 3", "Option 4"];
             </div>
 
             <div>
+              <v-data-table-server
+                class="text-caption px-4"
+                :headers="headers"
+                :items-length="totalItems"
+                :items="tableData"
+                :loading="loading"
+                loading-text="Loading...Please Wait"
+              >
+                <template v-slot:bottom>
+                </template>
+              </v-data-table-server>
             </div>
           </v-container>
         </div>
       </v-card>
   </v-container>
 </template>
+
