@@ -40,7 +40,10 @@ const loading = ref(false);
 </script>
 
 <template>
-  <v-container>
+  <v-container
+    fluid
+    class="my-4"
+  >
     <v-card
       variant="flat"
       color="white"
@@ -70,7 +73,7 @@ const loading = ref(false);
                       class="text-none text-caption ml-2"
                       style="border: 1px solid rgba(128, 128, 128, 0.25)"
                     >
-                      Upcoming Loans
+                      Select Year
                     </v-btn>
                   </template>
                   <v-sheet
@@ -100,37 +103,7 @@ const loading = ref(false);
                       class="text-none text-caption ml-2"
                       style="border: 1px solid rgba(128, 128, 128, 0.25)"
                     >
-                      Select Product
-                    </v-btn>
-                  </template>
-                  <v-sheet
-                    border
-                    rounded
-                  >
-                    <v-list
-                      nav
-                      density="compact"
-                      role="listbox"
-                    >
-                      <v-list-item
-                        v-for="(item, idx) in options"
-                        :key="idx"
-                        :value="item"
-                        >{{ item }}</v-list-item
-                      >
-                    </v-list>
-                  </v-sheet>
-                </v-menu>
-                <v-menu transition="slide-y-transition">
-                  <template v-slot:activator="{ props }">
-                    <v-btn
-                      variant="outlined"
-                      append-icon="mdi:mdi-chevron-down"
-                      v-bind="props"
-                      class="text-none text-caption ml-2"
-                      style="border: 1px solid rgba(128, 128, 128, 0.25)"
-                    >
-                      Select Status
+                      Select Month
                     </v-btn>
                   </template>
                   <v-sheet
@@ -193,36 +166,6 @@ const loading = ref(false);
                       style="border: 1px solid rgba(128, 128, 128, 0.25)"
                     >
                       Show / Hide
-                    </v-btn>
-                  </template>
-                  <v-sheet
-                    border
-                    rounded
-                  >
-                    <v-list
-                      nav
-                      density="compact"
-                      role="listbox"
-                    >
-                      <v-list-item
-                        v-for="(item, idx) in options"
-                        :key="idx"
-                        :value="item"
-                        >{{ item }}</v-list-item
-                      >
-                    </v-list>
-                  </v-sheet>
-                </v-menu>
-                <v-menu transition="slide-y-transition">
-                  <template v-slot:activator="{ props }">
-                    <v-btn
-                      variant="outlined"
-                      append-icon="mdi:mdi-chevron-down"
-                      v-bind="props"
-                      class="text-none text-caption ml-2"
-                      style="border: 1px solid rgba(128, 128, 128, 0.25)"
-                    >
-                      This Week
                     </v-btn>
                   </template>
                   <v-sheet
