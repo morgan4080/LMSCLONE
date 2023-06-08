@@ -8,10 +8,18 @@
     permanent
   >
     <v-col>
-      <v-img width="150" src="@/assets/presta-white-logo-full.png" />
+      <v-img
+        width="150"
+        src="@/assets/presta-white-logo-full.png"
+      />
     </v-col>
     <v-col>
-      <v-row no-gutters align="center" justify="space-between" class="pr-8">
+      <v-row
+        no-gutters
+        align="center"
+        justify="space-between"
+        class="pr-8"
+      >
         <v-avatar
           size="55"
           image="@/assets/user.png"
@@ -26,8 +34,14 @@
       </v-row>
     </v-col>
 
-    <v-list :lines="false" nav>
-      <template v-for="(item, i) in items" :key="i">
+    <v-list
+      :lines="false"
+      nav
+    >
+      <template
+        v-for="(item, i) in items"
+        :key="i"
+      >
         <v-list-group
           v-if="item.subItems.length > 0"
           :value="item"
@@ -36,9 +50,16 @@
           collapse-icon="mdi:mdi-chevron-up"
         >
           <template v-slot:activator="{ props }">
-            <v-list-item v-bind="props" lines="one" :title="item.text">
+            <v-list-item
+              v-bind="props"
+              lines="one"
+              :title="item.text"
+            >
               <template v-slot:prepend>
-                <v-icon class="ml-0" :icon="item.icon"></v-icon>
+                <v-icon
+                  class="ml-0"
+                  :icon="item.icon"
+                ></v-icon>
               </template>
             </v-list-item>
           </template>
@@ -75,7 +96,11 @@
     </v-list>
   </v-navigation-drawer>
   <v-app-bar prominent>
-    <v-toolbar flat density="default" content="">
+    <v-toolbar
+      flat
+      density="default"
+      content=""
+    >
       <v-app-bar-nav-icon
         variant="text"
         @click.stop="drawer = !drawer"
@@ -96,8 +121,15 @@
             Presta Capital
           </v-btn>
         </template>
-        <v-sheet border rounded>
-          <v-list nav density="compact" role="listbox">
+        <v-sheet
+          border
+          rounded
+        >
+          <v-list
+            nav
+            density="compact"
+            role="listbox"
+          >
             <v-list-item
               link
               href="https://accounts.presta.co.ke/"
@@ -124,8 +156,15 @@
             Morgan Mutugi
           </v-btn>
         </template>
-        <v-sheet border rounded>
-          <v-list nav density="compact" role="listbox">
+        <v-sheet
+          border
+          rounded
+        >
+          <v-list
+            nav
+            density="compact"
+            role="listbox"
+          >
             <v-list-subheader
               title="ACCOUNT"
               class="text-high-emphasis text-uppercase font-weight-black"
@@ -189,8 +228,15 @@
             <span>Presta Applications</span>
           </v-tooltip>
         </template>
-        <v-sheet border rounded>
-          <v-list nav density="compact" role="listbox">
+        <v-sheet
+          border
+          rounded
+        >
+          <v-list
+            nav
+            density="compact"
+            role="listbox"
+          >
             <v-list-subheader
               title="Presta Applications"
               class="text-high-emphasis text-uppercase font-weight-black"

@@ -71,9 +71,7 @@ const headers = ref<
           >
             <v-container fluid>
               <div class="mx-4">
-                <h1 class="text-h6 font-weight-regular">
-                  Hotels Transactions
-                </h1>
+                <h1 class="text-h6 font-weight-regular">Hotels Transactions</h1>
                 <h2 class="text-caption text-grey-darken-2 font-weight-regular">
                   Summary of Hotels Transactions
                 </h2>
@@ -135,9 +133,7 @@ const headers = ref<
             color="white"
           >
             <div class="px-8">
-              <h1 class="text-h6 font-weight-regular">
-                Hotels Transactions
-              </h1>
+              <h1 class="text-h6 font-weight-regular">Hotels Transactions</h1>
               <h2 class="text-caption text-grey-darken-2 font-weight-regular">
                 Summary of Hotels Transactions
               </h2>

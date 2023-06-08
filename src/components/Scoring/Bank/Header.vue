@@ -6,10 +6,7 @@ const emit = defineEmits(["clickedTab"]);
 const selectedTab = ref(0);
 
 const options = ["Option 1", "Option 2", "Option 3", "Option 4"];
-const tabs = [
-  "Summary",
-  "Classifications"
-];
+const tabs = ["Summary", "Classifications"];
 
 function onTabClick(id: number) {
   emit("clickedTab", id);
@@ -47,7 +44,7 @@ function onTabClick(id: number) {
                     v-for="(item, idx) in options"
                     :key="idx"
                     :value="item"
-                  >{{ item }}</v-list-item
+                    >{{ item }}</v-list-item
                   >
                 </v-list>
               </v-sheet>
@@ -77,7 +74,7 @@ function onTabClick(id: number) {
                     v-for="(item, idx) in options"
                     :key="idx"
                     :value="item"
-                  >{{ item }}</v-list-item
+                    >{{ item }}</v-list-item
                   >
                 </v-list>
               </v-sheet>
@@ -107,7 +104,7 @@ function onTabClick(id: number) {
                     v-for="(item, idx) in options"
                     :key="idx"
                     :value="item"
-                  >{{ item }}</v-list-item
+                    >{{ item }}</v-list-item
                   >
                 </v-list>
               </v-sheet>
@@ -156,7 +153,7 @@ function onTabClick(id: number) {
               :key="idx"
               :value="idx"
               class="text-none font-weight-regular text-caption"
-            >{{ tab }}</v-tab
+              >{{ tab }}</v-tab
             >
           </v-tabs>
         </v-row>

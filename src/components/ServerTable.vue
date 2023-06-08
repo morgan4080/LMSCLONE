@@ -146,7 +146,7 @@ const FakeAPI = {
     itemsPerPage: number;
     sortBy: { key: any; order: any }[];
   }) {
-    return new Promise((resolve) => {
+    return new Promise(resolve => {
       setTimeout(() => {
         const start = (page - 1) * itemsPerPage;
         const end = start + itemsPerPage;

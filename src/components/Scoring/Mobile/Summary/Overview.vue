@@ -1,5 +1,4 @@
 <script setup lang="ts">
-
 const data = {
   total_sent: "KES 824,404",
   total_received: "KES 24,404",

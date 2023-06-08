@@ -22,7 +22,12 @@ const headers = ref<
   },
   { title: "Upload Date", key: "upload", align: "start", sortable: false },
   { title: "Customer", key: "customer", align: "start", sortable: false },
-  { title: "Statement Type", key: "statement", align: "start", sortable: false },
+  {
+    title: "Statement Type",
+    key: "statement",
+    align: "start",
+    sortable: false,
+  },
   { title: "Status", key: "status", align: "start", sortable: false },
   { title: "Statement Period", key: "period", align: "start", sortable: false },
   { title: "Password", key: "password", align: "start", sortable: false },
@@ -39,11 +44,11 @@ async function loadData() {
     method: "GET",
     headers: myHeaders,
   })
-    .then((res) => {
+    .then(res => {
       if (res.ok) return res.json();
       throw new Error(res.statusText);
     })
-    .then((data) => {
+    .then(data => {
       tableData.value = data;
     })
     .finally(() => (loading.value = false));
@@ -62,17 +67,17 @@ async function loadData() {
     @update:options="loadData"
   >
     <template v-slot:item.statement="{ item }">
-        <span
-          class="text-caption text-white pa-1 rounded"
-          :class="
+      <span
+        class="text-caption text-white pa-1 rounded"
+        :class="
           item.props.title.statement_type.toLowerCase() === 'mobile'
             ? 'bg-green-darken-2'
             : 'bg-blue-darken-4'
         "
-        >
+      >
         {{ item.props.title.statement_type }}
       </span>
-        <span class="border text-blue pa-1 ml-2 rounded">
+      <span class="border text-blue pa-1 ml-2 rounded">
         {{ item.props.title.provider }}
       </span>
     </template>
@@ -118,13 +123,22 @@ async function loadData() {
     <template v-slot:item.password="{ item }">
       {{ item.props.title.password || "N/A" }}
     </template>
-    <template v-slot:item.actions="{item}">
+    <template v-slot:item.actions="{ item }">
       <div class="d-flex justify-end">
-        <div class="border rounded px-1" @click="router.push({
-                name: 'singleMobileListing',
-                params: { slug: item.props.title.id },
-              })">
-          <v-icon size="x-small" icon="mdi:mdi-eye-outline" class=""></v-icon>
+        <div
+          class="border rounded px-1"
+          @click="
+            router.push({
+              name: 'singleMobileListing',
+              params: { slug: item.props.title.id },
+            })
+          "
+        >
+          <v-icon
+            size="x-small"
+            icon="mdi:mdi-eye-outline"
+            class=""
+          ></v-icon>
         </div>
         <div class="border rounded px-1 ml-1">
           <v-icon

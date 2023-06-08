@@ -19,10 +19,10 @@ const formStatements = reactive({
 function onDropped(event: Event) {
   dragging.value = false;
   let files = [...event.dataTransfer.items]
-    .filter((item) => item.kind === "file")
-    .map((item) => item.getAsFile());
+    .filter(item => item.kind === "file")
+    .map(item => item.getAsFile());
 
-  files.forEach((file) => {
+  files.forEach(file => {
     media.value.unshift({
       file,
       progress: 0,
@@ -141,7 +141,10 @@ function inputForm() {
             <div class="mt-12">
               <v-divider></v-divider>
               <v-list>
-                <div v-for="(item, idx) in media" :key="idx">
+                <div
+                  v-for="(item, idx) in media"
+                  :key="idx"
+                >
                   <v-list-item>
                     <div class="d-flex justify-space-between">
                       {{ item.file.name }}

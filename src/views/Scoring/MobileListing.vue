@@ -14,7 +14,7 @@ const selected = ref(0);
   <Header @clickedTab="id => (selected = id)" />
   <Summary v-if="selected === 0" />
   <FinancialInstitutions v-if="selected === 1" />
-  <Lifestyle v-if="selected===2" />
-  <Utilities v-if="selected===3" />
-  <Transactions v-if="selected===4" />
+  <Lifestyle v-if="selected === 2" />
+  <Utilities v-if="selected === 3" />
+  <Transactions v-if="selected === 4" />
 </template>

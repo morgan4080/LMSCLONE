@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {ref} from "vue";
+import { ref } from "vue";
 
 const options = ["Option 1", "Option 2", "Option 3", "Option 4"];
 
@@ -21,19 +21,19 @@ const headers = ref<
   { title: "Credits (CR)", key: "credits", align: "end", sortable: false },
   { title: "Closing", key: "closing", align: "end", sortable: false },
 ]);
-const totalItems = ref(10)
+const totalItems = ref(10);
 const tableData = ref([
   {
-    month:"April 2023",
-    debits:"86,235",
-    credits:"23,521",
-    closing:"34,642"
+    month: "April 2023",
+    debits: "86,235",
+    credits: "23,521",
+    closing: "34,642",
   },
   {
-    month:"April 2023",
-    debits:"86,235",
-    credits:"23,521",
-    closing:"34,642"
+    month: "April 2023",
+    debits: "86,235",
+    credits: "23,521",
+    closing: "34,642",
   },
 ]);
 const loading = ref(false);
@@ -53,9 +53,7 @@ const loading = ref(false);
         >
           <div>
             <h1 class="text-h6 font-weight-regular">Monthly Breakdown</h1>
-            <h2
-              class="text-caption text-grey-darken-2 font-weight-regular"
-            >
+            <h2 class="text-caption text-grey-darken-2 font-weight-regular">
               Summary Of Upcoming Collections
             </h2>
           </div>
@@ -88,7 +86,7 @@ const loading = ref(false);
                         v-for="(item, idx) in options"
                         :key="idx"
                         :value="item"
-                      >{{ item }}</v-list-item
+                        >{{ item }}</v-list-item
                       >
                     </v-list>
                   </v-sheet>
@@ -118,7 +116,7 @@ const loading = ref(false);
                         v-for="(item, idx) in options"
                         :key="idx"
                         :value="item"
-                      >{{ item }}</v-list-item
+                        >{{ item }}</v-list-item
                       >
                     </v-list>
                   </v-sheet>
@@ -148,7 +146,7 @@ const loading = ref(false);
                         v-for="(item, idx) in options"
                         :key="idx"
                         :value="item"
-                      >{{ item }}</v-list-item
+                        >{{ item }}</v-list-item
                       >
                     </v-list>
                   </v-sheet>
@@ -180,7 +178,7 @@ const loading = ref(false);
                         v-for="(item, idx) in options"
                         :key="idx"
                         :value="item"
-                      >{{ item }}</v-list-item
+                        >{{ item }}</v-list-item
                       >
                     </v-list>
                   </v-sheet>
@@ -210,7 +208,7 @@ const loading = ref(false);
                         v-for="(item, idx) in options"
                         :key="idx"
                         :value="item"
-                      >{{ item }}</v-list-item
+                        >{{ item }}</v-list-item
                       >
                     </v-list>
                   </v-sheet>
@@ -240,7 +238,7 @@ const loading = ref(false);
                         v-for="(item, idx) in options"
                         :key="idx"
                         :value="item"
-                      >{{ item }}</v-list-item
+                        >{{ item }}</v-list-item
                       >
                     </v-list>
                   </v-sheet>
@@ -270,7 +268,7 @@ const loading = ref(false);
                         v-for="(item, idx) in options"
                         :key="idx"
                         :value="item"
-                      >{{ item }}</v-list-item
+                        >{{ item }}</v-list-item
                       >
                     </v-list>
                   </v-sheet>
@@ -288,8 +286,7 @@ const loading = ref(false);
               :loading="loading"
               loading-text="Loading...Please Wait"
             >
-              <template v-slot:bottom>
-              </template>
+              <template v-slot:bottom> </template>
             </v-data-table-server>
           </div>
         </v-container>
@@ -297,4 +294,3 @@ const loading = ref(false);
     </v-card>
   </v-container>
 </template>
-

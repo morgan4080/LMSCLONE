@@ -42,11 +42,11 @@ async function loadData() {
     method: "GET",
     headers: myHeaders,
   })
-    .then((res) => {
+    .then(res => {
       if (res.ok) return res.json();
       throw new Error(res.statusText);
     })
-    .then((data) => {
+    .then(data => {
       tableData.value = data;
     })
     .finally(() => (loading.value = false));

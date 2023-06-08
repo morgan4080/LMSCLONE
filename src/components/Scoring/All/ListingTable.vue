@@ -62,8 +62,15 @@ const filters = reactive({
                       Select Customer
                     </v-btn>
                   </template>
-                  <v-sheet border rounded>
-                    <v-list nav density="compact" role="listbox">
+                  <v-sheet
+                    border
+                    rounded
+                  >
+                    <v-list
+                      nav
+                      density="compact"
+                      role="listbox"
+                    >
                       <v-list-item
                         v-for="(item, idx) in options"
                         :key="idx"
@@ -85,8 +92,15 @@ const filters = reactive({
                       All Statements
                     </v-btn>
                   </template>
-                  <v-sheet border rounded>
-                    <v-list nav density="compact" role="listbox">
+                  <v-sheet
+                    border
+                    rounded
+                  >
+                    <v-list
+                      nav
+                      density="compact"
+                      role="listbox"
+                    >
                       <v-list-item
                         v-for="(item, idx) in options"
                         :key="idx"
@@ -112,8 +126,15 @@ const filters = reactive({
                       }}
                     </v-btn>
                   </template>
-                  <v-sheet border rounded>
-                    <v-list nav density="compact" role="listbox">
+                  <v-sheet
+                    border
+                    rounded
+                  >
+                    <v-list
+                      nav
+                      density="compact"
+                      role="listbox"
+                    >
                       <v-list-item
                         v-for="(item, idx) in status"
                         :key="idx"
@@ -137,8 +158,15 @@ const filters = reactive({
                       Export
                     </v-btn>
                   </template>
-                  <v-sheet border rounded>
-                    <v-list nav density="compact" role="listbox">
+                  <v-sheet
+                    border
+                    rounded
+                  >
+                    <v-list
+                      nav
+                      density="compact"
+                      role="listbox"
+                    >
                       <v-list-item
                         v-for="(item, idx) in options"
                         :key="idx"
@@ -160,8 +188,15 @@ const filters = reactive({
                       Show / Hide
                     </v-btn>
                   </template>
-                  <v-sheet border rounded>
-                    <v-list nav density="compact" role="listbox">
+                  <v-sheet
+                    border
+                    rounded
+                  >
+                    <v-list
+                      nav
+                      density="compact"
+                      role="listbox"
+                    >
                       <v-list-item
                         v-for="(item, idx) in options"
                         :key="idx"
@@ -182,8 +217,15 @@ const filters = reactive({
                       <v-icon icon="mdi:mdi-dots-vertical"></v-icon>
                     </v-btn>
                   </template>
-                  <v-sheet border rounded>
-                    <v-list nav density="compact" role="listbox">
+                  <v-sheet
+                    border
+                    rounded
+                  >
+                    <v-list
+                      nav
+                      density="compact"
+                      role="listbox"
+                    >
                       <v-list-item
                         v-for="(item, idx) in options"
                         :key="idx"
