@@ -1,16 +1,17 @@
 <script setup lang="ts">
 import { ref } from "vue";
-import DoughnutChart from "@/components/Scoring/Bank/Summary/DoughnutChart.vue";
+import DoughnutChart from "@/components/Scoring/DoughnutChart.vue";
+import LineChart from "@/components/Scoring/LineChart.vue";
 
 const inflow = ref({
   labels: ["January", "February", "March"],
-  data: [40, 20, 12],
+  data: ["40", "20", "12"],
 });
 const outflow = ref({
   labels: ["October", "November", "December"],
-  data: [80, 68, 10],
+  data: ["80", "68", "10"],
 });
-const flow = ref("Outflow");
+const flow = ref("Inflow");
 </script>
 
 <template>
@@ -61,14 +62,16 @@ const flow = ref("Outflow");
             >
           </div>
         </div>
-        <div>
-          <DoughnutChart
+        <div class="mt-3">
+          <LineChart
+            :propData="inflow"
             v-if="flow.toLowerCase() === 'inflow'"
-            class="h-25 w-25"
+            class="h-75 w-75"
           />
-          <DoughnutChart
+          <LineChart
+            :propData="outflow"
             v-if="flow.toLowerCase() === 'outflow'"
-            class="h-25 w-25"
+            class="h-75 w-75"
           />
         </div>
       </v-container>

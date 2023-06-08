@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Doughnut, Bar } from "vue-chartjs";
+import { Doughnut } from "vue-chartjs";
 import {
   Chart as ChartJS,
   Title,
@@ -10,7 +10,7 @@ import {
   CategoryScale,
   LinearScale,
 } from "chart.js";
-import { onBeforeMount, onMounted, ref } from "vue";
+import { onBeforeMount, ref } from "vue";
 ChartJS.register(
   Title,
   ArcElement,
@@ -21,13 +21,20 @@ ChartJS.register(
   LinearScale
 );
 
+const props = defineProps<{
+  propData: {
+    labels: string[];
+    data: string[];
+  };
+}>();
+
 const bgColors = ref<string[]>([]);
 const data = ref();
 const labels = ref<string[]>();
 const chartData = ref();
 const chartOptions = ref();
 
-function populateColors(arr: []) {
+function populateColors(arr: string[]) {
   arr.forEach(i => bgColors.value.push(randomColors()));
 }
 function randomColors() {
@@ -38,8 +45,8 @@ function randomColors() {
 }
 
 onBeforeMount(() => {
-  labels.value = ["January", "February", "March"];
-  data.value = [40, 20, 12];
+  labels.value = props.propData.labels;
+  data.value = props.propData.data;
   populateColors(data.value);
   chartData.value = {
     labels: labels,
