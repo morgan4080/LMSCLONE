@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { reactive, ref } from "vue";
+import { onMounted, reactive, ref } from "vue";
 
 const statements = ["Bank Statement", "Mobile Statement"];
 const banks = ["NCBA Bank", "KCB Bank", "Equity Bank", "Coop Bank"];
@@ -17,21 +17,45 @@ const formStatements = reactive({
 });
 
 function onDropped(event: Event) {
-  dragging.value = false;
-  let files = [...event.dataTransfer.items]
-    .filter(item => item.kind === "file")
-    .map(item => item.getAsFile());
+  if (formStatements.provider) {
+    dragging.value = false;
+    let files = [...event.dataTransfer.items]
+      .filter(item => item.kind === "file")
+      .map(item => item.getAsFile());
 
-  files.forEach(file => {
-    media.value.unshift({
-      file,
-      progress: 0,
+    files.forEach(file => {
+      media.value.unshift({
+        file,
+        progress: 5,
+        status: "pending",
+      });
     });
-  });
+  } else {
+    dragging.value = false;
+  }
 }
 
 function inputForm() {
   document.getElementById("file-input")!.click();
+}
+
+onMounted(() => {
+  document
+    .getElementById("file-input")!
+    .addEventListener("change", handleFiles, false);
+  function handleFiles() {
+    const fileList = this.files;
+    const file = fileList[0];
+    media.value.unshift({
+      file,
+      progress: 10,
+      status: "pending",
+    });
+  }
+});
+
+function logger(str: string) {
+  alert(str);
 }
 </script>
 
@@ -120,9 +144,9 @@ function inputForm() {
                     >Select PDF File To Upload</v-btn
                   >
                   <v-file-input
-                    class="d-none"
                     id="file-input"
                     label="File input"
+                    class="d-none"
                   ></v-file-input>
                   <p class="text-gray text-caption">
                     Or Drag & Drop PDF File Here
@@ -148,20 +172,96 @@ function inputForm() {
                   <v-list-item>
                     <div class="d-flex justify-space-between">
                       {{ item.file.name }}
-                      <div class="border rounded">
+                      <div
+                        class="my-1 d-flex"
+                        v-if="item.status === 'uploading'"
+                      >
+                        <div class="border rounded px-1">
+                          <v-icon
+                            size="x-small"
+                            icon="mdi:mdi-eye-outline"
+                            class=""
+                          ></v-icon>
+                        </div>
+                        <div
+                          class="border rounded px-1 ml-1"
+                          @click="item.status = 'cancelled'"
+                        >
+                          <v-icon
+                            size="x-small"
+                            icon="mdi:mdi-close"
+                            class=""
+                          ></v-icon>
+                        </div>
+                      </div>
+
+                      <div
+                        class="my-1 d-flex"
+                        v-if="item.status === 'pending'"
+                      >
+                        <p class="mx-4 text-caption">Confirm File?</p>
+                        <div
+                          class="border rounded px-1"
+                          @click="item.status = 'uploading'"
+                        >
+                          <v-icon
+                            color="green"
+                            size="x-small"
+                            icon="mdi:mdi-check"
+                            class=""
+                          ></v-icon>
+                        </div>
+                        <div
+                          class="border rounded px-1 ml-1"
+                          @click="item.status = 'uploading'"
+                        >
+                          <v-icon
+                            color="red"
+                            size="x-small"
+                            icon="mdi:mdi-close"
+                            class=""
+                          ></v-icon>
+                        </div>
+                      </div>
+
+                      <div
+                        class="my-1 d-flex"
+                        v-if="item.status === 'cancelled'"
+                      >
                         <v-icon
+                          color="info"
                           size="x-small"
-                          icon="mdi:mdi-eye-outline"
+                          icon="mdi:mdi-reload"
+                          class=""
                         ></v-icon>
                       </div>
                     </div>
                     <v-progress-linear
+                      v-if="item.status === 'uploading'"
                       color="info"
                       rounded
                       class="mt-1"
-                      model-value="20"
+                      :model-value="item.progress"
                     ></v-progress-linear>
-                    <p class="text-caption mt-1">48 sec left</p>
+                    <v-progress-linear
+                      v-if="item.status === 'cancelled'"
+                      color="red"
+                      rounded
+                      class="mt-1"
+                      model-value="100"
+                    ></v-progress-linear>
+                    <p
+                      v-if="item.status == 'uploading'"
+                      class="text-caption mt-1"
+                    >
+                      48 sec left
+                    </p>
+                    <p
+                      v-if="item.status == 'cancelled'"
+                      class="text-caption mt-1"
+                    >
+                      Cancelled By User
+                    </p>
                   </v-list-item>
                   <v-divider class="mb-2"></v-divider>
                 </div>

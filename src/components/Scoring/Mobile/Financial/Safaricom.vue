@@ -23,6 +23,70 @@ const fuliza = {
     paid: 76,
   },
 };
+const mshwari = {
+  count: {
+    loanDisburse: 182,
+    loanPaid: 76,
+    savingsDeposit: 76,
+    savingsWithdrawal: 76,
+  },
+  highest: {
+    loanDisburse: 182,
+    loanPaid: 76,
+    savingsDeposit: 76,
+    savingsWithdrawal: 76,
+  },
+  lastOn: {
+    loanDisburse: 182,
+    loanPaid: 76,
+    savingsDeposit: 76,
+    savingsWithdrawal: 76,
+  },
+  lastAmount: {
+    loanDisburse: 182,
+    loanPaid: 76,
+    savingsDeposit: 76,
+    savingsWithdrawal: 76,
+  },
+  total: {
+    loanDisburse: 182,
+    loanPaid: 76,
+    savingsDeposit: 76,
+    savingsWithdrawal: 76,
+  },
+};
+const kcb = {
+  count: {
+    loanDisburse: 182,
+    loanPaid: 76,
+    savingsDeposit: 76,
+    savingsWithdrawal: 76,
+  },
+  highest: {
+    loanDisburse: 182,
+    loanPaid: 76,
+    savingsDeposit: 76,
+    savingsWithdrawal: 76,
+  },
+  lastOn: {
+    loanDisburse: 182,
+    loanPaid: 76,
+    savingsDeposit: 76,
+    savingsWithdrawal: 76,
+  },
+  lastAmount: {
+    loanDisburse: 182,
+    loanPaid: 76,
+    savingsDeposit: 76,
+    savingsWithdrawal: 76,
+  },
+  total: {
+    loanDisburse: 182,
+    loanPaid: 76,
+    savingsDeposit: 76,
+    savingsWithdrawal: 76,
+  },
+};
 const open = ref(true);
 </script>
 
@@ -38,6 +102,150 @@ const open = ref(true);
         :class="open ? 'fa-rotate-180' : ''"
       ></v-icon>
     </div>
+    <v-row v-if="open">
+      <v-col class="my-2">
+        <v-card
+          class="rounded text-caption"
+          variant="flat"
+          color="white"
+        >
+          <v-container fluid>
+            <div class="mx-4">
+              <h1 class="text-h6 font-weight-regular">Mshwari</h1>
+              <h2 class="text-caption text-grey-darken-2 font-weight-regular">
+                Summary of Mshwari
+              </h2>
+            </div>
+            <div class="my-8 mx-4">
+              <v-row class="justify-space-between d-flex font-weight-bold">
+                <v-col>Title</v-col>
+                <v-col>Loan Disburse</v-col>
+                <v-col>Loan Paid</v-col>
+                <v-col>Savings Deposit</v-col>
+                <v-col>Savings Withdrawal</v-col>
+              </v-row>
+              <v-divider
+                class="my-3"
+                :thickness="3"
+              />
+              <v-row class="justify-space-between d-flex">
+                <v-col class="font-weight-medium">Count</v-col>
+                <v-col>{{ mshwari.count.loanDisburse }}</v-col>
+                <v-col>{{ mshwari.count.loanPaid }}</v-col>
+                <v-col>{{ mshwari.count.savingsDeposit }}</v-col>
+                <v-col>{{ mshwari.count.savingsWithdrawal }}</v-col>
+              </v-row>
+              <v-divider class="my-2" />
+              <v-row class="justify-space-between d-flex">
+                <v-col class="font-weight-medium">Highest</v-col>
+                <v-col>{{ mshwari.highest.loanDisburse }}</v-col>
+                <v-col>{{ mshwari.highest.loanPaid }}</v-col>
+                <v-col>{{ mshwari.highest.savingsDeposit }}</v-col>
+                <v-col>{{ mshwari.highest.savingsWithdrawal }}</v-col>
+              </v-row>
+              <v-divider class="my-2" />
+              <v-row class="justify-space-between d-flex">
+                <v-col class="font-weight-medium">Last On</v-col>
+                <v-col>{{ mshwari.lastOn.loanDisburse }}</v-col>
+                <v-col>{{ mshwari.lastOn.loanPaid }}</v-col>
+                <v-col>{{ mshwari.lastOn.savingsDeposit }}</v-col>
+                <v-col>{{ mshwari.lastOn.savingsWithdrawal }}</v-col>
+              </v-row>
+              <v-divider class="my-2" />
+              <v-row class="justify-space-between d-flex">
+                <v-col class="font-weight-medium">Last Amount</v-col>
+                <v-col>{{ mshwari.lastAmount.loanDisburse }}</v-col>
+                <v-col>{{ mshwari.lastAmount.loanPaid }}</v-col>
+                <v-col>{{ mshwari.lastAmount.savingsDeposit }}</v-col>
+                <v-col>{{ mshwari.lastAmount.savingsWithdrawal }}</v-col>
+              </v-row>
+              <v-divider
+                class="my-3"
+                :thickness="3"
+              />
+              <v-row class="font-weight-bold justify-space-between d-flex">
+                <v-col>Total</v-col>
+                <v-col>{{ mshwari.total.loanDisburse }}</v-col>
+                <v-col>{{ mshwari.total.loanPaid }}</v-col>
+                <v-col>{{ mshwari.total.savingsDeposit }}</v-col>
+                <v-col>{{ mshwari.total.savingsWithdrawal }}</v-col>
+              </v-row>
+            </div>
+          </v-container>
+        </v-card>
+      </v-col>
+      <v-col class="my-2">
+        <v-card
+          class="rounded text-caption"
+          variant="flat"
+          color="white"
+        >
+          <v-container fluid>
+            <div class="mx-4">
+              <h1 class="text-h6 font-weight-regular">KCB Mpesa</h1>
+              <h2 class="text-caption text-grey-darken-2 font-weight-regular">
+                Summary of KCB MPesa
+              </h2>
+            </div>
+            <div class="my-8 mx-4">
+              <v-row class="justify-space-between d-flex font-weight-bold">
+                <v-col>Title</v-col>
+                <v-col>Loan Disburse</v-col>
+                <v-col>Loan Paid</v-col>
+                <v-col>Savings Deposit</v-col>
+                <v-col>Savings Withdrawal</v-col>
+              </v-row>
+              <v-divider
+                class="my-3"
+                :thickness="3"
+              />
+              <v-row class="justify-space-between d-flex">
+                <v-col class="font-weight-medium">Count</v-col>
+                <v-col>{{ kcb.count.loanDisburse }}</v-col>
+                <v-col>{{ kcb.count.loanPaid }}</v-col>
+                <v-col>{{ kcb.count.savingsDeposit }}</v-col>
+                <v-col>{{ kcb.count.savingsWithdrawal }}</v-col>
+              </v-row>
+              <v-divider class="my-2" />
+              <v-row class="justify-space-between d-flex">
+                <v-col class="font-weight-medium">Highest</v-col>
+                <v-col>{{ kcb.highest.loanDisburse }}</v-col>
+                <v-col>{{ kcb.highest.loanPaid }}</v-col>
+                <v-col>{{ kcb.highest.savingsDeposit }}</v-col>
+                <v-col>{{ kcb.highest.savingsWithdrawal }}</v-col>
+              </v-row>
+              <v-divider class="my-2" />
+              <v-row class="justify-space-between d-flex">
+                <v-col class="font-weight-medium">Last On</v-col>
+                <v-col>{{ kcb.lastOn.loanDisburse }}</v-col>
+                <v-col>{{ kcb.lastOn.loanPaid }}</v-col>
+                <v-col>{{ kcb.lastOn.savingsDeposit }}</v-col>
+                <v-col>{{ kcb.lastOn.savingsWithdrawal }}</v-col>
+              </v-row>
+              <v-divider class="my-2" />
+              <v-row class="justify-space-between d-flex">
+                <v-col class="font-weight-medium">Last Amount</v-col>
+                <v-col>{{ kcb.lastAmount.loanDisburse }}</v-col>
+                <v-col>{{ kcb.lastAmount.loanPaid }}</v-col>
+                <v-col>{{ kcb.lastAmount.savingsDeposit }}</v-col>
+                <v-col>{{ kcb.lastAmount.savingsWithdrawal }}</v-col>
+              </v-row>
+              <v-divider
+                class="my-3"
+                :thickness="3"
+              />
+              <v-row class="font-weight-bold justify-space-between d-flex">
+                <v-col>Total</v-col>
+                <v-col>{{ kcb.total.loanDisburse }}</v-col>
+                <v-col>{{ kcb.total.loanPaid }}</v-col>
+                <v-col>{{ kcb.total.savingsDeposit }}</v-col>
+                <v-col>{{ kcb.total.savingsWithdrawal }}</v-col>
+              </v-row>
+            </div>
+          </v-container>
+        </v-card>
+      </v-col>
+    </v-row>
     <v-row v-if="open">
       <v-col class="my-2">
         <v-card
