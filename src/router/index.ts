@@ -31,7 +31,7 @@ const routes = [
         component: () => import("@/views/Scoring/MobileListing.vue"),
       },
       {
-        path: "/scoring/bank",
+        path: "/scoring/bank/:slug",
         name: "Bank Listing",
         component: () => import("@/views/Scoring/Bank.vue"),
       },

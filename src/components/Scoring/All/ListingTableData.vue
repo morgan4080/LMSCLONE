@@ -53,6 +53,7 @@ async function loadData() {
     })
     .finally(() => (loading.value = false));
 }
+const origin = window.location.origin;
 </script>
 
 <template>
@@ -128,10 +129,9 @@ async function loadData() {
         <div
           class="border rounded px-1"
           @click="
-            router.push({
-              name: 'singleMobileListing',
-              params: { slug: item.props.title.id },
-            })
+            router.push(
+              `${item.props.title.statement_type}/${item.props.title.id}`
+            )
           "
         >
           <v-icon
