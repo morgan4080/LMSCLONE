@@ -1,18 +1,48 @@
 <script setup lang="ts">
-const data = {
-  total_sent: "KES 824,404",
-  total_received: "KES 24,404",
-  total_agent_deposit: "KES 824,404",
-  total_agent_withdrawal: "KES 824,404",
-  total_paybill: "KES 82,404",
-  total_till: "KES 824",
-  total_paid_in: "KES 824,404",
-  total_paid_out: "KES 824,304",
-  total_paid_in_average: "KES 824,404",
-  total_paid_out_average: "KES 824,404",
-  total_others: "KES 824,404",
-  balance: "KES 404",
+import { ref, onMounted } from "vue";
+import axiosInstance from "@/services/api/axiosInstance";
+
+interface SummaryData {
+  total_send_amt: string;
+  total_received_amt: string;
+  total_agent_deposit: string;
+  total_agent_withdrawal: string;
+  total_lipa_na_mpesa_paybill: string;
+  total_lipa_na_mpesa_buygoods: number;
+  total_paid_in: number;
+  total_paid_out: number;
+  total_paid_in_average: number;
+  total_paid_out_average: number;
+  total_others: string;
+  mpesa_balance: string;
+}
+
+const summaryData = ref<SummaryData>({
+  total_send_amt: "",
+  total_received_amt: "",
+  total_agent_deposit: "",
+  total_agent_withdrawal: "",
+  total_lipa_na_mpesa_paybill: "",
+  total_lipa_na_mpesa_buygoods: 0,
+  total_paid_in: 0,
+  total_paid_out: 0,
+  total_paid_in_average: 0,
+  total_paid_out_average: 0,
+  total_others: "",
+  mpesa_balance: "",
+});
+
+// API Call: Get summary overview
+const loadData = async () => {
+  await axiosInstance
+    .get("/e_statement/account_summary")
+    .then(response => (summaryData.value = response.data[0]))
+    .catch(error => console.error(error));
 };
+
+onMounted(() => {
+  loadData();
+});
 </script>
 
 <template>
@@ -32,7 +62,7 @@ const data = {
           <v-container fluid>
             <h1 class="text-caption font-weight-regular">Total Sent (DR)</h1>
             <h3 class="text-subtitle-1 font-weight-regular text-blue">
-              {{ data.total_sent }}
+              {{ summaryData.total_send_amt }}
             </h3>
           </v-container>
         </v-card>
@@ -48,7 +78,7 @@ const data = {
               Total Received (CR)
             </h1>
             <h3 class="text-subtitle-1 font-weight-regular text-blue">
-              {{ data.total_received }}
+              {{ summaryData.total_received_amt }}
             </h3>
           </v-container>
         </v-card>
@@ -64,7 +94,7 @@ const data = {
               Total Agent Deposit (CR)
             </h1>
             <h3 class="text-subtitle-1 font-weight-regular text-blue">
-              {{ data.total_agent_deposit }}
+              {{ summaryData.total_agent_deposit }}
             </h3>
           </v-container>
         </v-card>
@@ -80,7 +110,7 @@ const data = {
               Total Agent Withdrawal (DR)
             </h1>
             <h3 class="text-subtitle-1 font-weight-regular text-blue">
-              {{ data.total_agent_withdrawal }}
+              {{ summaryData.total_agent_withdrawal }}
             </h3>
           </v-container>
         </v-card>
@@ -98,7 +128,7 @@ const data = {
               Total Lipa Na MPESA Paybill (DR)
             </h1>
             <h3 class="text-subtitle-1 font-weight-regular text-blue">
-              {{ data.total_paybill }}
+              {{ summaryData.total_lipa_na_mpesa_paybill }}
             </h3>
           </v-container>
         </v-card>
@@ -114,7 +144,7 @@ const data = {
               Total Lipa Na MPESA Buy Goods (DR)
             </h1>
             <h3 class="text-subtitle-1 font-weight-regular text-blue">
-              {{ data.total_till }}
+              {{ summaryData.total_lipa_na_mpesa_buygoods }}
             </h3>
           </v-container>
         </v-card>
@@ -128,7 +158,7 @@ const data = {
           <v-container fluid>
             <h1 class="text-caption font-weight-regular">Total Paid In (CR)</h1>
             <h3 class="text-subtitle-1 font-weight-regular text-blue">
-              {{ data.total_paid_in }}
+              {{ summaryData.total_paid_in }}
             </h3>
           </v-container>
         </v-card>
@@ -144,7 +174,7 @@ const data = {
               Total Paid Out (DR)
             </h1>
             <h3 class="text-subtitle-1 font-weight-regular text-blue">
-              {{ data.total_paid_out }}
+              {{ summaryData.total_paid_out }}
             </h3>
           </v-container>
         </v-card>
@@ -162,7 +192,7 @@ const data = {
               Total Paid In Average
             </h1>
             <h3 class="text-subtitle-1 font-weight-regular text-blue">
-              {{ data.total_paid_in_average }}
+              {{ summaryData.total_paid_in_average }}
             </h3>
           </v-container>
         </v-card>
@@ -178,7 +208,7 @@ const data = {
               Total Paid Out Average
             </h1>
             <h3 class="text-subtitle-1 font-weight-regular text-blue">
-              {{ data.total_paid_out_average }}
+              {{ summaryData.total_paid_out_average }}
             </h3>
           </v-container>
         </v-card>
@@ -192,7 +222,7 @@ const data = {
           <v-container fluid>
             <h1 class="text-caption font-weight-regular">Total Others</h1>
             <h3 class="text-subtitle-1 font-weight-regular text-blue">
-              {{ data.total_others }}
+              {{ summaryData.total_others }}
             </h3>
           </v-container>
         </v-card>
@@ -206,7 +236,7 @@ const data = {
           <v-container fluid>
             <h1 class="text-caption font-weight-regular">MPESA Balance</h1>
             <h3 class="text-subtitle-1 font-weight-regular text-blue">
-              {{ data.balance }}
+              {{ summaryData.mpesa_balance }}
             </h3>
           </v-container>
         </v-card>
