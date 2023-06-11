@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
+// import axiosInstance from "@/services/api/axiosInstance";
 
 const fuelStations = {
   count: {
@@ -47,6 +48,20 @@ const headers = ref<
   { title: "Last Draw", key: "duration", align: "end", sortable: false },
   { title: "Last Amount", key: "upload", align: "end", sortable: false },
 ]);
+
+// const fuelStnsTransData = ref([])
+
+// API Call: Get Fuel Stations Transactions Data
+const loadFuelStnsTransData = async () => {
+  // await axiosInstance
+  //   .get("/e_statement/")
+  //   .then(response => (fuelStnsTransData.value = response.data))
+  //   .catch(error => console.error(error));
+};
+
+onMounted(() => {
+  loadFuelStnsTransData() 
+})
 </script>
 
 <template>

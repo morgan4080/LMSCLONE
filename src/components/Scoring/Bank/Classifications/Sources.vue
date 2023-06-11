@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
+// import axiosInstance from "@/services/api/axiosInstance";
 
 const open = ref(true);
 const tableData = ref([]);
@@ -40,6 +41,20 @@ const headers = ref<
   { title: "Last On", key: "lastOn", align: "end", sortable: false },
 ]);
 const options = ["Option 1", "Option 2", "Option 3"];
+
+// const mobileMoneyData = ref([])
+
+// API Call: Get Mobile Money Data
+const loadMobileMoneyData = async () => {
+  // await axiosInstance
+  //   .get("/e_statement/")
+  //   .then(response => (mobileMoneyData.value = response.data))
+  //   .catch(error => console.error(error));
+};
+
+onMounted(() => {
+  loadMobileMoneyData() 
+})
 </script>
 
 <template>

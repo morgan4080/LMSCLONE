@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
+// import axiosInstance from "@/services/api/axiosInstance";
 
 const insurance = {
   count: {
@@ -47,6 +48,20 @@ const headers = ref<
   { title: "Last Draw", key: "duration", align: "end", sortable: false },
   { title: "Last Amount", key: "upload", align: "end", sortable: false },
 ]);
+
+// const insuranceTransData = ref([])
+
+// API Call: Get Insurance Transactions Data
+const loadInsuranceTransData = async () => {
+  // await axiosInstance
+  //   .get("/e_statement/")
+  //   .then(response => (insuranceTransData.value = response.data))
+  //   .catch(error => console.error(error));
+};
+
+onMounted(() => {
+  loadInsuranceTransData() 
+})
 </script>
 
 <template>

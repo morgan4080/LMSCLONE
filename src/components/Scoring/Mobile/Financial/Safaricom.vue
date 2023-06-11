@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
+import axiosInstance from "@/services/api/axiosInstance";
 
 const fuliza = {
   count: {
@@ -88,6 +89,50 @@ const kcb = {
   },
 };
 const open = ref(true);
+
+interface SafaricomDataItem {
+  count: number;
+  highest: string;
+  total: string;
+  last: string;
+  last_amount: string;
+  transactiontype: string;
+}
+
+const mshwariData = ref<SafaricomDataItem[]>([])
+const kcbMpesaData = ref<SafaricomDataItem[]>([])
+const fulizaData = ref<SafaricomDataItem[]>([])
+
+// API Call: Get Safaricom Mshwari Data
+const loadMshariData = async () => {
+  await axiosInstance
+    .get("/e_statement/mshwari_summary")
+    .then(response => (mshwariData.value = response.data))
+    .catch(error => console.error(error));
+};
+
+// API Call: Get Safaricom Mshwari Data
+const loadKcbMpesaData = async () => {
+  await axiosInstance
+    .get("/e_statement/kcb_mpesa_summary")
+    .then(response => (kcbMpesaData.value = response.data))
+    .catch(error => console.error(error));
+};
+
+// API Call: Get Safaricom Mshwari Data
+const loadFulizaData = async () => {
+  await axiosInstance
+    .get("/e_statement/fuliza_summary")
+    .then(response => (fulizaData.value = response.data))
+    .catch(error => console.error(error));
+};
+
+onMounted(() => {
+  loadMshariData() 
+  loadKcbMpesaData()
+  loadFulizaData()
+})
+
 </script>
 
 <template>

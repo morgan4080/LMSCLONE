@@ -1,7 +1,17 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, computed } from "vue";
+import axiosInstance from "@/services/api/axiosInstance";
 
 const options = ["Option 1", "Option 2", "Option 3", "Option 4"];
+
+interface MonthlyData {
+  month: string;
+  debits: number;
+  credits: number;
+  closing: number;
+}
+
+const tableData = ref<MonthlyData[]>([]);
 
 const headers = ref<
   { title: string; key: string; align: string; sortable: boolean }[]
@@ -21,22 +31,17 @@ const headers = ref<
   { title: "Credits (CR)", key: "credits", align: "end", sortable: false },
   { title: "Closing", key: "closing", align: "end", sortable: false },
 ]);
-const totalItems = ref(10);
-const tableData = ref([
-  {
-    month: "April 2023",
-    debits: "86,235",
-    credits: "23,521",
-    closing: "34,642",
-  },
-  {
-    month: "April 2023",
-    debits: "86,235",
-    credits: "23,521",
-    closing: "34,642",
-  },
-]);
+const itemsPerPage = ref("All");
+const totalItems = computed(() => tableData.value.length);
 const loading = ref(false);
+
+// API Call: Get monthly breakdown
+const loadMonthlyBreakdown = async () => {
+  await axiosInstance
+    .get("/income/income_expense_tabulated")
+    .then(response => (tableData.value = response.data))
+    .catch(error => console.error(error));
+};
 </script>
 
 <template>
@@ -221,16 +226,19 @@ const loading = ref(false);
           </div>
 
           <div>
-            <v-data-table-server
+            <VDataTableServer
+              v-model:items-per-page="itemsPerPage"
               class="text-caption px-4"
               :headers="headers"
               :items-length="totalItems"
               :items="tableData"
               :loading="loading"
+              item-value="name"
               loading-text="Loading...Please Wait"
+              @update:options="loadMonthlyBreakdown"
             >
               <template v-slot:bottom> </template>
-            </v-data-table-server>
+            </VDataTableServer>
           </div>
         </v-container>
       </div>

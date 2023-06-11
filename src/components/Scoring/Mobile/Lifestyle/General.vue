@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
+// import axiosInstance from "@/services/api/axiosInstance";
 
 const general = {
   count: {
@@ -47,6 +48,20 @@ const headers = ref<
   { title: "Last Draw", key: "duration", align: "end", sortable: false },
   { title: "Last Amount", key: "upload", align: "end", sortable: false },
 ]);
+
+// const generalTransData = ref([])
+
+// API Call: Get General Transactions Data
+const loadGeneralTransData = async () => {
+  // await axiosInstance
+  //   .get("/e_statement/")
+  //   .then(response => (generalTransData.value = response.data))
+  //   .catch(error => console.error(error));
+};
+
+onMounted(() => {
+  loadGeneralTransData() 
+})
 </script>
 
 <template>

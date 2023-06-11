@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
+// import axiosInstance from "@/services/api/axiosInstance";
 
 const education = {
   count: {
@@ -47,6 +48,20 @@ const headers = ref<
   { title: "Last Draw", key: "duration", align: "end", sortable: false },
   { title: "Last Amount", key: "upload", align: "end", sortable: false },
 ]);
+
+// const educationTransData = ref([])
+
+// API Call: Get Education Transactions Data
+const loadEducationTransData = async () => {
+  // await axiosInstance
+  //   .get("/e_statement/")
+  //   .then(response => (educationTransData.value = response.data))
+  //   .catch(error => console.error(error));
+};
+
+onMounted(() => {
+  loadEducationTransData() 
+})
 </script>
 
 <template>

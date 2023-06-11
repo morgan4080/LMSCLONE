@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
+// import axiosInstance from "@/services/api/axiosInstance";
 import DoughnutChart from "@/components/Scoring/DoughnutChart.vue";
 
 const inflow = ref({
@@ -11,6 +12,20 @@ const outflow = ref({
   data: ["80", "68", "10"],
 });
 const flow = ref("Inflow");
+
+// const flowData = ref([])
+
+// API Call: Get In-Out Flow Data
+const loadFlowData = async () => {
+  // await axiosInstance
+  //   .get("/e_statement/")
+  //   .then(response => (flowData.value = response.data))
+  //   .catch(error => console.error(error));
+};
+
+onMounted(() => {
+  loadFlowData() 
+})
 </script>
 
 <template>

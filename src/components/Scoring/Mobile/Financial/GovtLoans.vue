@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
+// import axiosInstance from "@/services/api/axiosInstance";
 
 const hustler = {
   count: {
@@ -24,6 +25,20 @@ const hustler = {
   },
 };
 const open = ref(true);
+
+// const hustlerData = ref([])
+
+// API Call: Get Govt Loans Data
+const loadHustlerData = async () => {
+  // await axiosInstance
+  //   .get("/e_statement/")
+  //   .then(response => (hustlerData.value = response.data))
+  //   .catch(error => console.error(error));
+};
+
+onMounted(() => {
+  loadHustlerData() 
+})
 </script>
 
 <template>

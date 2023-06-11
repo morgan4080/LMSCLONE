@@ -1,4 +1,7 @@
 <script setup lang="ts">
+import { onMounted } from "vue";
+// import axiosInstance from "@/services/api/axiosInstance";
+
 const customer = {
   name: "Tom Kimani",
   fileName: "NCBA_statement",
@@ -24,6 +27,20 @@ const balances = {
   closing: 1500,
   uncleared: 2000,
 };
+
+// const customerInfoData = ref([])
+
+// API Call: Get Customer Information Data
+const loadCustomerInfoData = async () => {
+  // await axiosInstance
+  //   .get("/e_statement/")
+  //   .then(response => (customerInfoData.value = response.data))
+  //   .catch(error => console.error(error));
+};
+
+onMounted(() => {
+  loadCustomerInfoData() 
+})
 </script>
 
 <template>
