@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
+// import axiosInstance from "@/services/api/axiosInstance";
 
 const banks = {
   count: {
@@ -48,6 +49,20 @@ const headers = ref<
   { title: "Upload Date", key: "upload", align: "end", sortable: false },
   { title: "Uploader", key: "uploader", align: "end", sortable: false },
 ]);
+
+// const bankTransData = ref([])
+
+// API Call: Get Bank Transactions Data
+const loadBankTransData = async () => {
+  // await axiosInstance
+  //   .get("/e_statement/")
+  //   .then(response => (bankTransData.value = response.data))
+  //   .catch(error => console.error(error));
+};
+
+onMounted(() => {
+  loadBankTransData() 
+})
 </script>
 
 <template>

@@ -1,9 +1,26 @@
 <script setup lang="ts">
+import { onMounted } from "vue";
+// import axiosInstance from "@/services/api/axiosInstance";
+
 const data = {
   totalInflow: "738,530.00",
   totalOutflow: "720,686.00",
   monthlyDisposable: "736,892.00",
 };
+
+// const overviewData = ref([])
+
+// API Call: Get Overview Data
+const loadOverviewData = async () => {
+  // await axiosInstance
+  //   .get("/e_statement/")
+  //   .then(response => (overviewData.value = response.data))
+  //   .catch(error => console.error(error));
+};
+
+onMounted(() => {
+  loadOverviewData() 
+})
 </script>
 
 <template>

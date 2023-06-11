@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
+// import axiosInstance from "@/services/api/axiosInstance";
 
 const options = ["Option 1", "Option 2", "Option 3", "Option 4"];
 
@@ -37,6 +38,20 @@ const tableData = ref([
   },
 ]);
 const loading = ref(false);
+
+// const monthlyBreakdownData = ref([])
+
+// API Call: Get Monthly Breakdown Data
+const loadMonthlyBreakdownData = async () => {
+  // await axiosInstance
+  //   .get("/e_statement/")
+  //   .then(response => (monthlyBreakdownData.value = response.data))
+  //   .catch(error => console.error(error));
+};
+
+onMounted(() => {
+  loadMonthlyBreakdownData() 
+})
 </script>
 
 <template>
