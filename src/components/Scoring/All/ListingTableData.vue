@@ -9,7 +9,7 @@ import {
 import router from "@/router"
 
 const tableData = ref([])
-const loading = ref(true)
+const loading = ref(false)
 const itemsPerPage = ref(5)
 const totalItems = computed(() => tableData.value.length)
 const headers = ref<
