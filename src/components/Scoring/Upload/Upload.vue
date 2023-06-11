@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import { onMounted, reactive, ref } from "vue";
 
+import FileUpload from "@/components/Scoring/Upload/FileUpload.vue";
+
 const statements = ["Bank Statement", "Mobile Statement"];
 const banks = ["NCBA Bank", "KCB Bank", "Equity Bank", "Coop Bank"];
-const mobile = ["M-Pesa", "Airtel Money"];
-const customers = ["Duggan Kimani", "Tom Kimani"];
+const mobile = ["MPesa", "Airtel Money"];
+// const customers = ["Duggan Kimani", "Tom Kimani"];
 
 const media = ref<any[]>([]);
 
@@ -54,9 +56,6 @@ onMounted(() => {
   }
 });
 
-function logger(str: string) {
-  alert(str);
-}
 </script>
 
 <template>
@@ -112,7 +111,7 @@ function logger(str: string) {
                   variant="outlined"
                 ></v-select>
               </div>
-              <div>
+              <!-- <div>
                 <label class="text-black">Assign To</label>
                 <v-select
                   class="mt-3"
@@ -123,7 +122,7 @@ function logger(str: string) {
                   :items="customers"
                   variant="outlined"
                 ></v-select>
-              </div>
+              </div> -->
               <div
                 @drop.prevent.stop="onDropped"
                 @dragover.prevent.stop="dragging = true"
@@ -165,104 +164,8 @@ function logger(str: string) {
             <div class="mt-12">
               <v-divider></v-divider>
               <v-list>
-                <div
-                  v-for="(item, idx) in media"
-                  :key="idx"
-                >
-                  <v-list-item>
-                    <div class="d-flex justify-space-between">
-                      {{ item.file.name }}
-                      <div
-                        class="my-1 d-flex"
-                        v-if="item.status === 'uploading'"
-                      >
-                        <div class="border rounded px-1">
-                          <v-icon
-                            size="x-small"
-                            icon="mdi:mdi-eye-outline"
-                            class=""
-                          ></v-icon>
-                        </div>
-                        <div
-                          class="border rounded px-1 ml-1"
-                          @click="item.status = 'cancelled'"
-                        >
-                          <v-icon
-                            size="x-small"
-                            icon="mdi:mdi-close"
-                            class=""
-                          ></v-icon>
-                        </div>
-                      </div>
-
-                      <div
-                        class="my-1 d-flex"
-                        v-if="item.status === 'pending'"
-                      >
-                        <p class="mx-4 text-caption">Confirm File?</p>
-                        <div
-                          class="border rounded px-1"
-                          @click="item.status = 'uploading'"
-                        >
-                          <v-icon
-                            color="green"
-                            size="x-small"
-                            icon="mdi:mdi-check"
-                            class=""
-                          ></v-icon>
-                        </div>
-                        <div
-                          class="border rounded px-1 ml-1"
-                          @click="item.status = 'uploading'"
-                        >
-                          <v-icon
-                            color="red"
-                            size="x-small"
-                            icon="mdi:mdi-close"
-                            class=""
-                          ></v-icon>
-                        </div>
-                      </div>
-
-                      <div
-                        class="my-1 d-flex"
-                        v-if="item.status === 'cancelled'"
-                      >
-                        <v-icon
-                          color="info"
-                          size="x-small"
-                          icon="mdi:mdi-reload"
-                          class=""
-                        ></v-icon>
-                      </div>
-                    </div>
-                    <v-progress-linear
-                      v-if="item.status === 'uploading'"
-                      color="info"
-                      rounded
-                      class="mt-1"
-                      :model-value="item.progress"
-                    ></v-progress-linear>
-                    <v-progress-linear
-                      v-if="item.status === 'cancelled'"
-                      color="red"
-                      rounded
-                      class="mt-1"
-                      model-value="100"
-                    ></v-progress-linear>
-                    <p
-                      v-if="item.status == 'uploading'"
-                      class="text-caption mt-1"
-                    >
-                      48 sec left
-                    </p>
-                    <p
-                      v-if="item.status == 'cancelled'"
-                      class="text-caption mt-1"
-                    >
-                      Cancelled By User
-                    </p>
-                  </v-list-item>
+                <div v-for="(upload, i) in media" :key="i">
+                  <FileUpload :statement="{document: '', provider: '', file: upload.file}" @clear="media.splice(i, 1);"></FileUpload>
                   <v-divider class="mb-2"></v-divider>
                 </div>
               </v-list>
