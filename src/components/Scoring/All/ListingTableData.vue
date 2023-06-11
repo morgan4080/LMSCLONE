@@ -1,136 +1,114 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, computed } from "vue"
+import axiosInstance from "@/services/api/axiosInstance"
 import {
   dateDiffInMonths,
   dateFromTimestamp,
   timeFromTimestamp,
 } from "@/helpers";
-import router from "@/router";
+import router from "@/router"
 
-const selected = ref([]);
-const tableData = ref([]);
-const loading = ref(false);
-const totalItems = ref(30);
+const tableData = ref([])
+const loading = ref(true)
+const itemsPerPage = ref(5)
+const totalItems = computed(() => tableData.value.length)
 const headers = ref<
   { title: string; key: string; align: string; sortable: boolean }[]
 >([
-  {
-    title: "#",
-    align: "start",
-    sortable: false,
-    key: "id",
-  },
-  { title: "Upload Date", key: "upload", align: "start", sortable: false },
-  { title: "Customer", key: "customer", align: "start", sortable: false },
+  { title: "#", key: "id", align: "start", sortable: false },
+  { title: "Upload Date", key: "createdAt", align: "start", sortable: false },
+  { title: "Customer", key: "identifier", align: "start", sortable: false },
   {
     title: "Statement Type",
-    key: "statement",
+    key: "document_type",
     align: "start",
     sortable: false,
   },
   { title: "Status", key: "status", align: "start", sortable: false },
   { title: "Statement Period", key: "period", align: "start", sortable: false },
-  { title: "Password", key: "password", align: "start", sortable: false },
+  { title: "Password", key: "decrypter", align: "start", sortable: false },
   { title: "Actions", key: "actions", align: "end", sortable: false },
-]);
+])
 
-///Load Mock Data
-async function loadData() {
-  loading.value = true;
-  const myHeaders = new Headers();
-  myHeaders.append("Content-Type", "application/json");
-
-  await fetch("http://localhost:5000/lms", {
-    method: "GET",
-    headers: myHeaders,
-  })
-    .then(res => {
-      if (res.ok) return res.json();
-      throw new Error(res.statusText);
-    })
-    .then(data => {
-      tableData.value = data;
-    })
-    .finally(() => (loading.value = false));
+// API Call: Get all uploaded statements
+const loadData = async () => {
+  loading.value = true
+  await axiosInstance
+    .get("/e_statement/get_upload_requests")
+    .then(response => tableData.value = response.data)
+    .catch(error => console.error(error))
+    .finally(() => loading.value = false)
 }
-const origin = window.location.origin;
 </script>
 
 <template>
-  <v-data-table-server
+  <VDataTableServer
     class="text-caption"
-    v-model="selected"
+    v-model:items-per-page="itemsPerPage"
     :headers="headers"
     :items-length="totalItems"
     :items="tableData"
     :loading="loading"
     loading-text="Loading...Please Wait"
+    item-value="name"
     @update:options="loadData"
   >
-    <template v-slot:item.statement="{ item }">
+    <template v-slot:[`item.createdAt`]="{ item }">
+      <p>{{ dateFromTimestamp(item.columns.createdAt) }}</p>
+      <p>{{ timeFromTimestamp(item.columns.createdAt) }}</p>
+    </template>
+    <template v-slot:[`item.identifier`]="{ item }">
+      <p>{{ item.columns.identifier }}</p>
+      <p>07......</p>
+    </template>
+    <template v-slot:[`item.document_type`]="{ item }">
       <span
         class="text-caption text-white pa-1 rounded"
         :class="
-          item.props.title.statement_type.toLowerCase() === 'mobile'
+          item.columns.document_type.toLowerCase() !== 'mobile'
             ? 'bg-green-darken-2'
             : 'bg-blue-darken-4'
         "
       >
-        {{ item.props.title.statement_type }}
+        Mobile
       </span>
       <span class="border text-blue pa-1 ml-2 rounded">
-        {{ item.props.title.provider }}
+        {{ item.columns.document_type }}
       </span>
     </template>
-    <template v-slot:item.status="{ item }">
+    <template v-slot:[`item.status`]="{ item }">
       <span
         class="py-1 px-3 rounded"
         :class="{
-          'bg-red-lighten-5 text-red':
-            item.props.title.status.toLowerCase() === 'failed',
-          'bg-green-lighten-5 text-green':
-            item.props.title.status.toLowerCase() === 'completed',
-          'bg-blue-lighten-5 text-blue':
-            item.props.title.status.toLowerCase() === 'processing',
+          'bg-red-lighten-5 text-red': item.columns.status === 'Failed',
+          'bg-green-lighten-5 text-green': item.columns.status === 'Completed',
+          'bg-blue-lighten-5 text-blue': item.columns.status !== 'Processing',
           'bg-yellow-lighten-5 text-yellow-darken-3':
-            item.props.title.status.toLowerCase() === 'waiting',
+            item.columns.status === 'Waiting',
         }"
-        >{{ item.props.title.status }}</span
+        >Pending</span
       >
     </template>
-    <template v-slot:item.period="{ item }">
+    <template v-slot:[`item.period`]="{ item }">
       <p>
-        {{ item.props.title.statement_start_period }} -
-        {{ item.props.title.statement_end_period }}
+        {{ item.columns.createdAt }} -
+        {{ item.columns.createdAt }}
       </p>
       <p>
-        {{
-          dateDiffInMonths(
-            item.props.title.statement_start_period,
-            item.props.title.statement_end_period
-          )
-        }}
+        {{ dateDiffInMonths(item.columns.createdAt, item.columns.createdAt) }}
         Months
       </p>
     </template>
-    <template v-slot:item.upload="{ item }">
-      <p>{{ dateFromTimestamp(item.props.title.upload_time) }}</p>
-      <p>{{ timeFromTimestamp(item.props.title.upload_time) }}</p>
+    <template v-slot:[`item.decrypter`]="{ item }">
+      {{ item.columns.decrypter || "N/A" }}
     </template>
-    <template v-slot:item.customer="{ item }">
-      <p>{{ item.props.title.full_name }}</p>
-      <p>{{ item.props.title.phone_number }}</p>
-    </template>
-    <template v-slot:item.password="{ item }">
-      {{ item.props.title.password || "N/A" }}
-    </template>
-    <template v-slot:item.actions="{ item }">
+    <template v-slot:[`item.actions`]="{ item }">
       <div class="d-flex justify-end">
         <div
           class="border rounded px-1"
           @click="
             router.push(
-              `${item.props.title.statement_type}/${item.props.title.id}`
+              `/scoring/mobile/${item.columns.id}`
             )
           "
         >
@@ -166,5 +144,5 @@ const origin = window.location.origin;
         </div>
       </div>
     </template>
-  </v-data-table-server>
+  </VDataTableServer>
 </template>
