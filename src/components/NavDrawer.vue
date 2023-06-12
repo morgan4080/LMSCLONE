@@ -456,7 +456,7 @@ const items = ref<
       },
       {
         text: "Scoring",
-        href: "/scoring",
+        href: "scoring",
       },
     ],
   },
