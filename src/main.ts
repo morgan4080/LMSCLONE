@@ -5,6 +5,8 @@ import router from "@/router";
 import stores from "./store";
 
 const app = createApp(App);
+registerPlugins(app);
+app.mount("#app");
 
 const { authStore } = stores;
 router.beforeEach(to => {
@@ -19,7 +21,7 @@ router.beforeEach(to => {
         alert(JSON.stringify(e));
         const currentUrl = window.location.href;
         window.location.href = `${
-          import.meta.env.VITE_APP_ROOT_AUTH
+          import.meta.env.VITE_APP_ROOT
         }?redirect_url=${currentUrl}`;
       })
       .catch((e: any) => {
@@ -32,10 +34,7 @@ router.beforeEach(to => {
     const currentUrl = window.location.href;
     authStore.setLoading(true);
     window.location.href = `${
-      import.meta.env.VITE_APP_AUTH
+      import.meta.env.VITE_APP_ROOT
     }?redirect_url=${currentUrl}`;
   }
 });
-
-registerPlugins(app);
-app.mount("#app");
