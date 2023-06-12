@@ -498,10 +498,8 @@
 
 <script lang="ts" setup>
 import { onBeforeMount, ref } from "vue";
-import ServerTable from "@/components/ServerTable.vue";
 import { useSalesDashboardStore } from "@/store/sales-dashboard";
 import UpcomingCollectionsTable from "@/components/UpcomingCollectionsTable.vue";
-import OverdueCollectionsTable from "@/layouts/OverdueCollectionsTable.vue";
 import NewCustomersTable from "@/components/NewCustomersTable.vue";
 
 const salesDashboardStore = useSalesDashboardStore();

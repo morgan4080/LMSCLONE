@@ -454,6 +454,10 @@ const items = ref<
         text: "Sales Representatives",
         href: "https://lending.presta.co.ke/kopesha/lender/index.html#/customers/sales_representatives",
       },
+      {
+        text: "Scoring",
+        href: "/scoring",
+      },
     ],
   },
   {

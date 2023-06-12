@@ -4,10 +4,11 @@
   "private": true,
   "scripts": {
     "dev": "vite",
-    "build": "vite build --base=/sales-dashboard/",
+    "development": "vite build --base=/lms/ --mode development",
+    "staging": "vite build --base=/lms/ --mode staging",
     "clean": "rm -rf node_modules",
     "reinstall": "npm run clean && npm install",
-    "preview": "vite preview",
+    "preview": "vite preview  --host 0.0.0.0",
     "lint": "eslint . --fix --ignore-path .gitignore",
     "format": "prettier .  --write"
   },

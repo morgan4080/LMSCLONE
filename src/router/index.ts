@@ -40,7 +40,7 @@ const routes = [
 ];
 
 const router = createRouter({
-  history: createWebHistory("/sales-dashboard/"),
+  history: createWebHistory("/lms/"),
   routes,
 });
 

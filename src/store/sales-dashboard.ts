@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import { SalesDashboardState } from "@/types/sales-dashboard";
+import { SalesDashboardState } from "@/types/lms";
 import axios from "axios";
 import moment from "moment";
 import { formatMoney } from "@/helpers";

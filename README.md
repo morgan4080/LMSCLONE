@@ -1,57 +1,12 @@
-# essentials
-
-## Project setup
-
+## Production Build
 ```
-# yarn
-yarn
-
-# npm
-npm install
-
-# pnpm
-pnpm install
+docker build -t presta-lms/latest .
 ```
-
-### Compiles and hot-reloads for development
-
+## Staging Build
 ```
-# yarn
-yarn dev
-
-# npm
-npm run dev
-
-# pnpm
-pnpm dev
+docker build --build-arg env=staging -t presta-lms/latest .
 ```
-
-### Compiles and minifies for production
-
+## Local Build
 ```
-# yarn
-yarn build
-
-# npm
-npm run build
-
-# pnpm
-pnpm build
+docker build --build-arg env=local -t presta-lms/latest .
 ```
-
-### Lints and fixes files
-
-```
-# yarn
-yarn lint
-
-# npm
-npm run lint
-
-# pnpm
-pnpm lint
-```
-
-### Customize configuration
-
-See [Configuration Reference](https://vitejs.dev/config/).
