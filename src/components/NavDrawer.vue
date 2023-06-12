@@ -630,8 +630,8 @@ const items = ref<
 
 const redirectAuth = () => {
   authStore.setAuthPrompt(false);
-  /*const currentUrl = window.location.href;
-  window.location.href = `${
+  const currentUrl = window.location.href;
+  /*window.location.href = `${
     import.meta.env.VITE_APP_ROOT
   }?redirect_url=${currentUrl}`;*/
 };
