@@ -21,9 +21,9 @@ router.beforeEach(to => {
         authStore.setAuthPrompt(true);
         setTimeout(() => {
           const currentUrl = window.location.href;
-          window.location.href = `${
+          /*window.location.href = `${
             import.meta.env.VITE_APP_ROOT
-          }?redirect_url=${currentUrl}`;
+          }?redirect_url=${currentUrl}`;*/
         }, 5000);
       })
       .catch((e: any) => {

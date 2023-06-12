@@ -1,9 +1,19 @@
 <script setup lang="ts">
-import { reactive, ref } from "vue";
+import { onMounted, reactive, ref, watch } from "vue";
 import CustomTable from "@/components/Scoring/Upload/CustomTable.vue";
-
+import stores from "@/store";
+const scoringStore = stores.scoringStore;
 const banks = ["NCBA Bank", "KCB Bank", "Equity Bank", "Coop Bank"];
-const statements = ["Bank Statement", "Mobile Statement"];
+const statements = ref<{ id: number; name: string }[]>([
+  {
+    id: 1,
+    name: "Bank Statement",
+  },
+  {
+    id: 2,
+    name: "Mobile Statement",
+  },
+]);
 const options = ["Option 1", "Option 2", "Option 3", "Option 4"];
 const status = [
   {
@@ -33,6 +43,14 @@ const filters = reactive({
   provider: null,
   status: null,
 });
+
+const selectedStatement = ref<{ id: number; name: string }>(
+  statements.value[0]
+);
+
+watch(selectedStatement, () => {
+  console.log(selectedStatement.value, "selectedStatement");
+});
 </script>
 
 <template>
@@ -60,7 +78,7 @@ const filters = reactive({
                       class="text-none text-caption"
                       style="border: 1px solid rgba(128, 128, 128, 0.25)"
                     >
-                      {{ filters.type }}
+                      {{ selectedStatement.name }}
                     </v-btn>
                   </template>
                   <v-sheet
@@ -73,10 +91,11 @@ const filters = reactive({
                       role="listbox"
                     >
                       <v-list-item
+                        @click="selectedStatement = item"
                         v-for="(item, idx) in statements"
                         :key="idx"
                         :value="item"
-                        >{{ item }}</v-list-item
+                        >{{ item.name }}</v-list-item
                       >
                     </v-list>
                   </v-sheet>
