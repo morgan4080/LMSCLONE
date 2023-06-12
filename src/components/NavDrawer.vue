@@ -28,7 +28,11 @@
         <div>
           <div class="text-caption text-grey-lighten-1">Welcome,</div>
           <div class="text-subtitle-2 font-weight-light text-white">
-            Morgan Mutugi
+            {{
+              authStore.getLoggedInUser
+                ? `${authStore.getLoggedInUser.firstName} ${authStore.getLoggedInUser.lastName}`
+                : "loading.."
+            }}
           </div>
         </div>
       </v-row>
@@ -118,7 +122,11 @@
             append-icon="mdi:mdi-chevron-down"
             v-bind="props"
           >
-            Presta Capital
+            {{
+              authStore.getLoggedInUser
+                ? authStore.getLoggedInUser.companyName
+                : "loading ..."
+            }}
           </v-btn>
         </template>
         <v-sheet
@@ -153,7 +161,11 @@
             append-icon="mdi:mdi-chevron-down"
             v-bind="props"
           >
-            Morgan Mutugi
+            {{
+              authStore.getLoggedInUser
+                ? `${authStore.getLoggedInUser.firstName} ${authStore.getLoggedInUser.lastName}`
+                : "loading.."
+            }}
           </v-btn>
         </template>
         <v-sheet
@@ -186,14 +198,18 @@
             <v-list-item
               link
               href="https://accounts.presta.co.ke/"
-              title="Account No: 1000"
+              :title="
+                authStore.getLoggedInUser
+                  ? `Account No. ${authStore.getLoggedInUser.tenantId}`
+                  : 'loading..'
+              "
               density="compact"
             >
             </v-list-item>
             <v-list-item
               link
               href="https://accounts.presta.co.ke/"
-              title="Version (Production)"
+              title="Version (Staging)"
               density="compact"
             >
             </v-list-item>
@@ -318,6 +334,9 @@
 import { mergeProps, ref } from "vue";
 
 import { useBreakpoints } from "@vueuse/core";
+import stores from "../store";
+
+const authStore = stores.authStore;
 
 const breakpoints = useBreakpoints({
   mobile: 320,

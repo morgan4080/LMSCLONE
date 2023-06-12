@@ -1,10 +1,10 @@
 import { defineStore } from "pinia";
-import { SalesDashboardState } from "@/types/lms";
+import { SalesDashboardState } from "@/types/sales-dashboard";
 import axios from "axios";
 import moment from "moment";
 import { formatMoney } from "@/helpers";
 
-export const useSalesDashboardStore = defineStore("app", {
+export const useSalesDashboardStore = defineStore("sales-dashboard-store", {
   state: (): SalesDashboardState => ({
     branchIds: ["Upper Hill"],
     salesRepIds: ["y5gQa6UklgxcYd8C"],

@@ -1,31 +1,41 @@
 import App from "./App.vue";
-
-// Composables
 import { createApp } from "vue";
-
-// Plugins
 import { registerPlugins } from "@/plugins";
-import axios from "axios";
-
-axios.defaults.withCredentials = true;
-
-const url = `${import.meta.env.VITE_APP_ROOT_AUTH}/authentication`;
-// axios
-//   .get(url)
-//   .then((response: any): void => {
-//     const app = createApp(App);
-//     registerPlugins(app);
-//     app.mount("#app");
-//     console.log(response.data);
-//   })
-//   .catch((e: any) => {
-//     const currentUrl = window.location.href;
-//     console.log(e)
-//     // window.location.href = `${
-//     //   import.meta.env.VITE_APP_ROOT_AUTH
-//     // }?redirect_url=${currentUrl}`;
-//   });
+import router from "@/router";
+import stores from "./store";
 
 const app = createApp(App);
+
+const { authStore } = stores;
+router.beforeEach(to => {
+  authStore.setLoading(true);
+  if (to.meta.requiresAuth) {
+    authStore
+      .initialize()
+      .then((data: any) => {
+        authStore.setAuthState(data);
+      })
+      .catch((e: any) => {
+        alert(JSON.stringify(e));
+        const currentUrl = window.location.href;
+        window.location.href = `${
+          import.meta.env.VITE_APP_ROOT_AUTH
+        }?redirect_url=${currentUrl}`;
+      })
+      .catch((e: any) => {
+        console.log(JSON.stringify(e));
+      })
+      .finally(() => {
+        authStore.setLoading(true);
+      });
+  } else {
+    const currentUrl = window.location.href;
+    authStore.setLoading(true);
+    window.location.href = `${
+      import.meta.env.VITE_APP_AUTH
+    }?redirect_url=${currentUrl}`;
+  }
+});
+
 registerPlugins(app);
 app.mount("#app");
