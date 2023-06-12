@@ -31,10 +31,6 @@ router.beforeEach(to => {
         authStore.setLoading(true);
       });
   } else {
-    const currentUrl = window.location.href;
-    authStore.setLoading(true);
-    window.location.href = `${
-      import.meta.env.VITE_APP_ROOT
-    }?redirect_url=${currentUrl}`;
+    console.log("requiresAuth", to.meta.requiresAuth);
   }
 });

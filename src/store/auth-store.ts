@@ -47,9 +47,9 @@ export const useAuthStore = defineStore("auth-store", {
         });
 
         if (response.status === 200) {
-          return Promise.resolve(response.json());
+          return response.json();
         } else {
-          return Promise.reject(response.status);
+          throw new Error("User Auth Error" + response.status);
         }
       } catch (e: any) {
         return Promise.reject(e.message);

@@ -36,6 +36,7 @@ const routes = [
         component: () => import("@/views/Scoring/Bank.vue"),
       },
     ],
+    meta: { requiresAuth: true },
   },
 ];
 
