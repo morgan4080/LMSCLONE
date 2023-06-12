@@ -22,23 +22,25 @@ const headers = ref<
   },
   {
     title: "Statement Type",
-    key: "document_type",
+    key: "statementtype",
     align: "start",
     sortable: false,
   },
-  { title: "File Name", key: "file_name", align: "start", sortable: false },
+  { title: "File Name", key: "fileName", align: "start", sortable: false },
   { title: "Status", key: "status", align: "start", sortable: false },
-  { title: "Duration", key: "updatedAt", align: "start", sortable: false },
-  { title: "Upload Date", key: "createdAt", align: "start", sortable: false },
-  { title: "Uploader", key: "identifier", align: "start", sortable: false },
+  { title: "Duration", key: "duration", align: "start", sortable: false },
+  { title: "Upload Date", key: "uploadDate", align: "start", sortable: false },
+  { title: "Uploader", key: "uploadedBy", align: "start", sortable: false },
 ]);
 
 // API Call: Get recently uploaded statements
 const loadData = async () => {
   loading.value = true;
   await axiosInstance
-    .get("/e_statement/get_upload_requests")
-    .then(response => (tableData.value = response.data))
+    .get(`/e_statement/get_uploaded_statements?pageSize=${itemsPerPage.value}&sortBy=id`)
+    .then(response => {
+      tableData.value = response.data.content
+    })
     .catch(error => console.error(error))
     .finally(() => (loading.value = false));
 };
@@ -56,11 +58,11 @@ const loadData = async () => {
     item-value="name"
     @update:options="loadData"
   >
-    <template v-slot:[`item.document_type`]="{ item }">
+    <template v-slot:[`item.statementtype`]="{ item }">
       <span
         class="text-caption text-white pa-1 rounded"
         :class="
-          item.columns.document_type !== 'mobile'
+          item.columns.statementtype !== 'mobile'
             ? 'bg-green-darken-2'
             : 'bg-blue-darken-4'
         "
@@ -68,7 +70,7 @@ const loadData = async () => {
         Mobile
       </span>
       <span class="border text-blue pa-1 ml-2 rounded">
-        {{ item.columns.document_type }}
+        {{ item.columns.statementtype }}
       </span>
     </template>
     <template v-slot:[`item.status`]="{ item }">
@@ -84,13 +86,13 @@ const loadData = async () => {
         >Processing</span
       >
     </template>
-    <template v-slot:[`item.updatedAt`]="{ item }">
-      {{ dateDiffInMonths(item.columns.updatedAt, item.columns.updatedAt) }}
+    <template v-slot:[`item.duration`]="{ item }">
+      {{ dateDiffInMonths('2023-01-12', item.columns.uploadDate) }}
       Months
     </template>
-    <template v-slot:[`item.createdAt`]="{ item }">
-      <p>{{ dateFromTimestamp(item.columns.createdAt) }}</p>
-      <p>{{ timeFromTimestamp(item.columns.createdAt) }}</p>
+    <template v-slot:[`item.uploadDate`]="{ item }">
+      <p>{{ dateFromTimestamp(item.columns.uploadDate) }}</p>
+      <p>{{ timeFromTimestamp(item.columns.uploadDate) }}</p>
     </template>
     <template v-slot:[`item.identifier`]="{ item }">
       <p>{{ item.columns.identifier }}</p>
