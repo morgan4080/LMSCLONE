@@ -1,6 +1,6 @@
 export function dateDiffInMonths(start: string, end: string) {
-  let date1 = new Date(start);
-  let date2 = new Date(end);
+  const date1 = new Date(start);
+  const date2 = new Date(end);
 
   let monthsApart = (date2.getFullYear() - date1.getFullYear()) * 12;
   monthsApart -= date1.getMonth();
