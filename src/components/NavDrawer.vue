@@ -328,6 +328,37 @@
       </v-menu>
     </v-toolbar>
   </v-app-bar>
+
+  <v-overlay
+    v-model="authStore.getAuthPrompt"
+    contained
+    class="pt-16 align-start justify-center"
+    scroll-strategy="block"
+  >
+    <v-card
+      class="pa-2 mt-8"
+      style="width: 66.6vh"
+    >
+      <v-card-title class="text-subtitle-2"
+        >Please Login To Continue</v-card-title
+      >
+      <v-card-text>
+        <v-divider></v-divider>
+        <v-img
+          class="pa-12 mx-auto"
+          width="150"
+          src="@/assets/presta_logo.png"
+        />
+      </v-card-text>
+      <v-card-actions class="justify-center">
+        <v-btn
+          @click="redirectAuth"
+          class="bg-green-lighten-1 w-100"
+          >Click here to login</v-btn
+        >
+      </v-card-actions>
+    </v-card>
+  </v-overlay>
 </template>
 
 <script lang="ts" setup>
@@ -595,6 +626,13 @@ const items = ref<
     ],
   },
 ]);
+
+const redirectAuth = () => {
+  const currentUrl = window.location.href;
+  window.location.href = `${
+    import.meta.env.VITE_APP_ROOT
+  }?redirect_url=${currentUrl}`;
+};
 </script>
 
 <style scoped>

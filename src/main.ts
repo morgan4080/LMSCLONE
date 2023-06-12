@@ -17,12 +17,14 @@ router.beforeEach(to => {
       .then((data: any) => {
         authStore.setAuthState(data);
       })
-      .catch((e: any) => {
-        alert(JSON.stringify(e));
-        const currentUrl = window.location.href;
-        window.location.href = `${
-          import.meta.env.VITE_APP_ROOT
-        }?redirect_url=${currentUrl}`;
+      .catch(() => {
+        authStore.setAuthPrompt(true);
+        setTimeout(() => {
+          const currentUrl = window.location.href;
+          window.location.href = `${
+            import.meta.env.VITE_APP_ROOT
+          }?redirect_url=${currentUrl}`;
+        }, 5000);
       })
       .catch((e: any) => {
         console.log(JSON.stringify(e));
