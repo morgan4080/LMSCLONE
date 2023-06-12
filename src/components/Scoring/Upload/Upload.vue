@@ -1,10 +1,12 @@
 <script setup lang="ts">
-import { reactive, ref } from "vue";
+import { onMounted, reactive, ref } from "vue";
+
+import FileUpload from "@/components/Scoring/Upload/FileUpload.vue";
 
 const statements = ["Bank Statement", "Mobile Statement"];
 const banks = ["NCBA Bank", "KCB Bank", "Equity Bank", "Coop Bank"];
-const mobile = ["M-Pesa", "Airtel Money"];
-const customers = ["Duggan Kimani", "Tom Kimani"];
+const mobile = ["MPesa", "Airtel Money"];
+// const customers = ["Duggan Kimani", "Tom Kimani"];
 
 const media = ref<any[]>([]);
 
@@ -17,22 +19,43 @@ const formStatements = reactive({
 });
 
 function onDropped(event: Event) {
-  dragging.value = false;
-  let files = [...event.dataTransfer.items]
-    .filter((item) => item.kind === "file")
-    .map((item) => item.getAsFile());
+  if (formStatements.provider) {
+    dragging.value = false;
+    let files = [...event.dataTransfer.items]
+      .filter(item => item.kind === "file")
+      .map(item => item.getAsFile());
 
-  files.forEach((file) => {
-    media.value.unshift({
-      file,
-      progress: 0,
+    files.forEach(file => {
+      media.value.unshift({
+        file,
+        progress: 5,
+        status: "pending",
+      });
     });
-  });
+  } else {
+    dragging.value = false;
+  }
 }
 
 function inputForm() {
   document.getElementById("file-input")!.click();
 }
+
+onMounted(() => {
+  document
+    .getElementById("file-input")!
+    .addEventListener("change", handleFiles, false);
+  function handleFiles() {
+    const fileList = this.files;
+    const file = fileList[0];
+    media.value.unshift({
+      file,
+      progress: 10,
+      status: "pending",
+    });
+  }
+});
+
 </script>
 
 <template>
@@ -88,7 +111,7 @@ function inputForm() {
                   variant="outlined"
                 ></v-select>
               </div>
-              <div>
+              <!-- <div>
                 <label class="text-black">Assign To</label>
                 <v-select
                   class="mt-3"
@@ -99,7 +122,7 @@ function inputForm() {
                   :items="customers"
                   variant="outlined"
                 ></v-select>
-              </div>
+              </div> -->
               <div
                 @drop.prevent.stop="onDropped"
                 @dragover.prevent.stop="dragging = true"
@@ -120,9 +143,9 @@ function inputForm() {
                     >Select PDF File To Upload</v-btn
                   >
                   <v-file-input
-                    class="d-none"
                     id="file-input"
                     label="File input"
+                    class="d-none"
                   ></v-file-input>
                   <p class="text-gray text-caption">
                     Or Drag & Drop PDF File Here
@@ -141,25 +164,8 @@ function inputForm() {
             <div class="mt-12">
               <v-divider></v-divider>
               <v-list>
-                <div v-for="(item, idx) in media" :key="idx">
-                  <v-list-item>
-                    <div class="d-flex justify-space-between">
-                      {{ item.file.name }}
-                      <div class="border rounded">
-                        <v-icon
-                          size="x-small"
-                          icon="mdi:mdi-eye-outline"
-                        ></v-icon>
-                      </div>
-                    </div>
-                    <v-progress-linear
-                      color="info"
-                      rounded
-                      class="mt-1"
-                      model-value="20"
-                    ></v-progress-linear>
-                    <p class="text-caption mt-1">48 sec left</p>
-                  </v-list-item>
+                <div v-for="(upload, i) in media" :key="i">
+                  <FileUpload :statement="{document: '', provider: '', file: upload.file}" @clear="media.splice(i, 1);"></FileUpload>
                   <v-divider class="mb-2"></v-divider>
                 </div>
               </v-list>

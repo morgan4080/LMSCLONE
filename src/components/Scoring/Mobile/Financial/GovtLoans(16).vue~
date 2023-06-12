@@ -1,0 +1,93 @@
+GetNativeSet = tryGetNativeSet;
+    })(NativeCollections || (NativeCollections = {}));
+    /* @internal */
+    ts.Map = NativeCollections.tryGetNativeMap();
+    /* @internal */
+    ts.Set = NativeCollections.tryGetNativeSet();
+})(ts || (ts = {}));
+/* @internal */
+var ts;
+(function (ts) {
+    function getIterator(iterable) {
+        if (iterable) {
+            if (isArray(iterable))
+                return arrayIterator(iterable);
+            if (iterable instanceof ts.Map)
+                return iterable.entries();
+            if (iterable instanceof ts.Set)
+                return iterable.values();
+            throw new Error("Iteration not supported.");
+        }
+    }
+    ts.getIterator = getIterator;
+    ts.emptyArray = [];
+    ts.emptyMap = new ts.Map();
+    ts.emptySet = new ts.Set();
+    function length(array) {
+        return array ? array.length : 0;
+    }
+    ts.length = length;
+    /**
+     * Iterates through 'array' by index and performs the callback on each element of array until the callback
+     * returns a truthy value, then returns that value.
+     * If no such value is found, the callback is applied to each element of array and undefined is returned.
+     */
+    function forEach(array, callback) {
+        if (array) {
+            for (var i = 0; i < array.length; i++) {
+                var result = callback(array[i], i);
+                if (result) {
+                    return result;
+                }
+            }
+        }
+        return undefined;
+    }
+    ts.forEach = forEach;
+    /**
+     * Like `forEach`, but iterates in reverse order.
+     */
+    function forEachRight(array, callback) {
+        if (array) {
+            for (var i = array.length - 1; i >= 0; i--) {
+                var result = callback(array[i], i);
+                if (result) {
+                    return result;
+                }
+            }
+        }
+        return undefined;
+    }
+    ts.forEachRight = forEachRight;
+    /** Like `forEach`, but suitable for use with numbers and strings (which may be falsy). */
+    function firstDefined(array, callback) {
+        if (array === undefined) {
+            return undefined;
+        }
+        for (var i = 0; i < array.length; i++) {
+            var result = callback(array[i], i);
+            if (result !== undefined) {
+                return result;
+            }
+        }
+        return undefined;
+    }
+    ts.firstDefined = firstDefined;
+    function firstDefinedIterator(iter, callback) {
+        while (true) {
+            var iterResult = iter.next();
+            if (iterResult.done) {
+                return undefined;
+            }
+            var result = callback(iterResult.value);
+            if (result !== undefined) {
+                return result;
+            }
+        }
+    }
+    ts.firstDefinedIterator = firstDefinedIterator;
+    function reduceLeftIterator(iterator, f, initial) {
+        var result = initial;
+        if (iterator) {
+            for (var step = iterator.next(), pos = 0; !step.done; step = iterator.next(), pos++) {
+                result = f(result, step.value, pos

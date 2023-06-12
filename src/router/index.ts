@@ -26,16 +26,21 @@ const routes = [
         component: () => import("@/views/Scoring/All.vue"),
       },
       {
-        path: "/scoring/mobile",
+        path: "/scoring/mobile/:slug",
         name: "singleMobileListing",
         component: () => import("@/views/Scoring/MobileListing.vue"),
+      },
+      {
+        path: "/scoring/bank/:slug",
+        name: "Bank Listing",
+        component: () => import("@/views/Scoring/Bank.vue"),
       },
     ],
   },
 ];
 
 const router = createRouter({
-  history: createWebHistory('/sales-dashboard/'),
+  history: createWebHistory("/sales-dashboard/"),
   routes,
 });
 

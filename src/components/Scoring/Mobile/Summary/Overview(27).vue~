@@ -1,0 +1,7 @@
+<script setup lang="ts"></script>
+
+<template>
+  <v-responsive>
+    <v-container fluid> </v-container>
+  </v-responsive>
+</template>

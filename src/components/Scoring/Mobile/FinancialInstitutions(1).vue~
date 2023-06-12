@@ -1,0 +1,7 @@
+<script setup lang="ts">
+import Safaricom from "@/components/Scoring/Mobile/Financial/Safaricom.vue";
+</script>
+
+<template>
+  <Safaricom />
+</template>

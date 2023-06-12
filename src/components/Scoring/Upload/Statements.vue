@@ -63,8 +63,15 @@ const filters = reactive({
                       {{ filters.type }}
                     </v-btn>
                   </template>
-                  <v-sheet border rounded>
-                    <v-list nav density="compact" role="listbox">
+                  <v-sheet
+                    border
+                    rounded
+                  >
+                    <v-list
+                      nav
+                      density="compact"
+                      role="listbox"
+                    >
                       <v-list-item
                         v-for="(item, idx) in statements"
                         :key="idx"
@@ -90,8 +97,15 @@ const filters = reactive({
                       }}
                     </v-btn>
                   </template>
-                  <v-sheet border rounded>
-                    <v-list nav density="compact" role="listbox">
+                  <v-sheet
+                    border
+                    rounded
+                  >
+                    <v-list
+                      nav
+                      density="compact"
+                      role="listbox"
+                    >
                       <v-list-item
                         v-for="(item, idx) in banks"
                         :key="idx"
@@ -117,8 +131,15 @@ const filters = reactive({
                       }}
                     </v-btn>
                   </template>
-                  <v-sheet border rounded>
-                    <v-list nav density="compact" role="listbox">
+                  <v-sheet
+                    border
+                    rounded
+                  >
+                    <v-list
+                      nav
+                      density="compact"
+                      role="listbox"
+                    >
                       <v-list-item
                         v-for="(item, idx) in status"
                         :key="idx"
@@ -142,8 +163,15 @@ const filters = reactive({
                       Show / Hide
                     </v-btn>
                   </template>
-                  <v-sheet border rounded>
-                    <v-list nav density="compact" role="listbox">
+                  <v-sheet
+                    border
+                    rounded
+                  >
+                    <v-list
+                      nav
+                      density="compact"
+                      role="listbox"
+                    >
                       <v-list-item
                         v-for="(item, idx) in options"
                         :key="idx"
@@ -164,8 +192,15 @@ const filters = reactive({
                       <v-icon icon="mdi:mdi-dots-vertical"></v-icon>
                     </v-btn>
                   </template>
-                  <v-sheet border rounded>
-                    <v-list nav density="compact" role="listbox">
+                  <v-sheet
+                    border
+                    rounded
+                  >
+                    <v-list
+                      nav
+                      density="compact"
+                      role="listbox"
+                    >
                       <v-list-item
                         v-for="(item, idx) in options"
                         :key="idx"

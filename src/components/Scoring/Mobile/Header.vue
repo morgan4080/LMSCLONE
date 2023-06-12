@@ -37,8 +37,15 @@ function onTabClick(id: number) {
                   Customer Name
                 </v-btn>
               </template>
-              <v-sheet border rounded>
-                <v-list nav density="compact" role="listbox">
+              <v-sheet
+                border
+                rounded
+              >
+                <v-list
+                  nav
+                  density="compact"
+                  role="listbox"
+                >
                   <v-list-item
                     v-for="(item, idx) in options"
                     :key="idx"
@@ -60,8 +67,15 @@ function onTabClick(id: number) {
                   Mobile Name
                 </v-btn>
               </template>
-              <v-sheet border rounded>
-                <v-list nav density="compact" role="listbox">
+              <v-sheet
+                border
+                rounded
+              >
+                <v-list
+                  nav
+                  density="compact"
+                  role="listbox"
+                >
                   <v-list-item
                     v-for="(item, idx) in options"
                     :key="idx"
@@ -83,8 +97,15 @@ function onTabClick(id: number) {
                   #001 (MPesa)
                 </v-btn>
               </template>
-              <v-sheet border rounded>
-                <v-list nav density="compact" role="listbox">
+              <v-sheet
+                border
+                rounded
+              >
+                <v-list
+                  nav
+                  density="compact"
+                  role="listbox"
+                >
                   <v-list-item
                     v-for="(item, idx) in options"
                     :key="idx"
@@ -95,7 +116,10 @@ function onTabClick(id: number) {
               </v-sheet>
             </v-menu>
           </v-col>
-          <v-col cols="auto" class="d-flex align-center">
+          <v-col
+            cols="auto"
+            class="d-flex align-center"
+          >
             <v-row class="d-flex justify-end">
               <v-btn
                 variant="plain"
@@ -125,7 +149,10 @@ function onTabClick(id: number) {
           </v-col>
         </v-row>
         <v-row class="mx-2">
-          <v-tabs color="blue" v-model="selectedTab">
+          <v-tabs
+            color="blue"
+            v-model="selectedTab"
+          >
             <v-tab
               @click="onTabClick(idx)"
               v-for="(tab, idx) in tabs"

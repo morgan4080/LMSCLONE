@@ -9,7 +9,10 @@
               Upload Bank Or Mobile Money Statements Below
             </h2>
           </v-col>
-          <v-col cols="auto" class="d-flex align-center">
+          <v-col
+            cols="auto"
+            class="d-flex align-center"
+          >
             <v-row class="d-flex justify-end">
               <v-btn
                 prepend-icon="mdi:mdi-file-outline"

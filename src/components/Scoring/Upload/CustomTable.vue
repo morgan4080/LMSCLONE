@@ -1,15 +1,16 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, computed } from "vue"
+import axiosInstance from "@/services/api/axiosInstance"
 import {
   dateDiffInMonths,
   dateFromTimestamp,
   timeFromTimestamp,
-} from "@/helpers";
+} from "@/helpers"
 
-const selected = ref([]);
-const tableData = ref([]);
-const loading = ref(false);
-const totalItems = ref(30);
+const tableData = ref([])
+const loading = ref(true)
+const itemsPerPage = ref(5)
+const totalItems = computed(() => tableData.value.length)
 const headers = ref<
   { title: string; key: string; align: string; sortable: boolean }[]
 >([
@@ -21,95 +22,81 @@ const headers = ref<
   },
   {
     title: "Statement Type",
-    key: "statement",
-    align: "end",
+    key: "statementtype",
+    align: "start",
     sortable: false,
   },
-  { title: "File Name", key: "file_name", align: "end", sortable: false },
-  { title: "Status", key: "status", align: "end", sortable: false },
-  { title: "Duration", key: "duration", align: "end", sortable: false },
-  { title: "Upload Date", key: "upload", align: "end", sortable: false },
-  { title: "Uploader", key: "uploader", align: "end", sortable: false },
+  { title: "File Name", key: "fileName", align: "start", sortable: false },
+  { title: "Status", key: "status", align: "start", sortable: false },
+  { title: "Duration", key: "duration", align: "start", sortable: false },
+  { title: "Upload Date", key: "uploadDate", align: "start", sortable: false },
+  { title: "Uploader", key: "uploadedBy", align: "start", sortable: false },
 ]);
 
-async function loadData() {
+// API Call: Get recently uploaded statements
+const loadData = async () => {
   loading.value = true;
-  const myHeaders = new Headers();
-  myHeaders.append("Content-Type", "application/json");
-
-  await fetch("http://localhost:5000/lms", {
-    method: "GET",
-    headers: myHeaders,
-  })
-    .then((res) => {
-      if (res.ok) return res.json();
-      throw new Error(res.statusText);
+  await axiosInstance
+    .get(`/e_statement/get_uploaded_statements?pageSize=${itemsPerPage.value}&sortBy=id`)
+    .then(response => {
+      tableData.value = response.data.content
     })
-    .then((data) => {
-      tableData.value = data;
-    })
+    .catch(error => console.error(error))
     .finally(() => (loading.value = false));
-}
+};
 </script>
 
 <template>
-  <v-data-table-server
+  <VDataTableServer
     class="text-caption"
-    v-model="selected"
+    v-model:items-per-page="itemsPerPage"
     :headers="headers"
     :items-length="totalItems"
     :items="tableData"
     :loading="loading"
     loading-text="Loading...Please Wait"
+    item-value="name"
     @update:options="loadData"
   >
-    <template v-slot:item.statement="{ item }">
+    <template v-slot:[`item.statementtype`]="{ item }">
       <span
         class="text-caption text-white pa-1 rounded"
         :class="
-          item.props.title.statement_type.toLowerCase() === 'mobile'
+          item.columns.statementtype !== 'mobile'
             ? 'bg-green-darken-2'
             : 'bg-blue-darken-4'
         "
       >
-        {{ item.props.title.statement_type }}
+        Mobile
       </span>
       <span class="border text-blue pa-1 ml-2 rounded">
-        {{ item.props.title.provider }}
+        {{ item.columns.statementtype }}
       </span>
     </template>
-    <template v-slot:item.status="{ item }">
+    <template v-slot:[`item.status`]="{ item }">
       <span
         class="py-1 px-3 rounded"
         :class="{
-          'bg-red-lighten-5 text-red':
-            item.props.title.status.toLowerCase() === 'failed',
-          'bg-green-lighten-5 text-green':
-            item.props.title.status.toLowerCase() === 'completed',
-          'bg-blue-lighten-5 text-blue':
-            item.props.title.status.toLowerCase() === 'processing',
+          'bg-red-lighten-5 text-red': item.columns.status === 'failed',
+          'bg-green-lighten-5 text-green': item.columns.status === 'completed',
+          'bg-blue-lighten-5 text-blue': item.columns.status !== 'processing',
           'bg-yellow-lighten-5 text-yellow-darken-3':
-            item.props.title.status.toLowerCase() === 'waiting',
+            item.columns.status === 'waiting',
         }"
-        >{{ item.props.title.status }}</span
+        >Processing</span
       >
     </template>
-    <template v-slot:item.duration="{ item }">
-      {{
-        dateDiffInMonths(
-          item.props.title.statement_start_period,
-          item.props.title.statement_end_period
-        )
-      }}
+    <template v-slot:[`item.duration`]="{ item }">
+      {{ dateDiffInMonths('2023-01-12', item.columns.uploadDate) }}
       Months
     </template>
-    <template v-slot:item.upload="{ item }">
-      <p>{{ dateFromTimestamp(item.props.title.upload_time) }}</p>
-      <p>{{ timeFromTimestamp(item.props.title.upload_time) }}</p>
+    <template v-slot:[`item.uploadDate`]="{ item }">
+      <p>{{ dateFromTimestamp(item.columns.uploadDate) }}</p>
+      <p>{{ timeFromTimestamp(item.columns.uploadDate) }}</p>
     </template>
-    <template v-slot:item.uploader="{ item }">
-      <p>{{ item.props.title.full_name }}</p>
-      <p>{{ item.props.title.phone_number }}</p>
+    <template v-slot:[`item.identifier`]="{ item }">
+      <p>{{ item.columns.identifier }}</p>
+      <p>07....</p>
     </template>
-  </v-data-table-server>
+  </VDataTableServer>
 </template>

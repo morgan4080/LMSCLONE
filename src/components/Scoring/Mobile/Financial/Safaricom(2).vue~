@@ -1,0 +1,7 @@
+<script setup lang="ts"></script>
+
+<template>
+  <v-container fluid>
+    <div class="bg-blue">Safaricom</div>
+  </v-container>
+</template>
