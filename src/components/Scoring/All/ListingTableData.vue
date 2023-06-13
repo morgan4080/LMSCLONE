@@ -1,46 +1,47 @@
 <script setup lang="ts">
-import { ref, computed } from "vue"
-import axiosInstance from "@/services/api/axiosInstance"
+import { ref, computed, toRef, watch } from "vue";
+import axiosInstance from "@/services/api/axiosInstance";
 import {
   dateDiffInMonths,
   dateFromTimestamp,
   timeFromTimestamp,
 } from "@/helpers";
-import router from "@/router"
+import router from "@/router";
 
-const tableData = ref([])
-const loading = ref(false)
-const itemsPerPage = ref(5)
-const totalItems = computed(() => tableData.value.length)
-const headers = ref<
-  { title: string; key: string; align: string; sortable: boolean }[]
->([
-  { title: "#", key: "id", align: "start", sortable: false },
-  { title: "Upload Date", key: "uploadDate", align: "start", sortable: false },
-  { title: "Customer", key: "customername", align: "start", sortable: false },
-  {
-    title: "Statement Type",
-    key: "statementtype",
-    align: "start",
-    sortable: false,
-  },
-  { title: "Status", key: "status", align: "start", sortable: false },
-  { title: "Statement Period", key: "statementPeriod", align: "start", sortable: false },
-  { title: "Password", key: "password", align: "start", sortable: false },
-  { title: "Actions", key: "actions", align: "end", sortable: false },
-])
+const props = defineProps<{
+  headers: {
+    title: string;
+    key: string;
+    align: string;
+    sortable: boolean;
+    visible: boolean;
+  }[];
+  params: string;
+}>();
+const tableData = ref([]);
+const loading = ref(false);
+const itemsPerPage = ref(5);
+const totalItems = computed(() => tableData.value.length);
+const headers = toRef(props, "headers");
+const params = toRef(props, "params");
 
 // API Call: Get all uploaded statements
-const loadData = async () => {
-  loading.value = true
+const loadData = async (filters?: string) => {
+  loading.value = true;
+  let url = `/e_statement/get_uploaded_statements?pageSize=${itemsPerPage.value}&sortBy=id`;
+  if (filters) url += filters;
   await axiosInstance
-    .get(`/e_statement/get_uploaded_statements?pageSize=${itemsPerPage.value}&sortBy=id`)
+    .get(url)
     .then(response => {
-      tableData.value = response.data.content
+      tableData.value = response.data.content;
     })
     .catch(error => console.error(error))
-    .finally(() => loading.value = false)
-}
+    .finally(() => (loading.value = false));
+};
+
+watch(params, () => {
+  loadData(params.value);
+});
 </script>
 
 <template>
@@ -55,6 +56,23 @@ const loadData = async () => {
     item-value="name"
     @update:options="loadData"
   >
+    <template v-slot:[`headers`]="{ columns }">
+      <tr>
+        <template
+          v-for="column in columns"
+          :key="column.key"
+        >
+          <td>
+            <span
+              class="mr-2"
+              v-if="column.visible"
+              >{{ column.title }}</span
+            >
+          </td>
+        </template>
+      </tr>
+    </template>
+
     <template v-slot:[`item.uploadDate`]="{ item }">
       <p>{{ dateFromTimestamp(item.columns.uploadDate) }}</p>
       <p>{{ timeFromTimestamp(item.columns.uploadDate) }}</p>
@@ -96,7 +114,7 @@ const loadData = async () => {
         {{ item.columns.statementPeriod }}
       </p>
       <p>
-        {{ dateDiffInMonths('2023-01-12', item.columns.uploadDate) }}
+        {{ dateDiffInMonths("2023-01-12", item.columns.uploadDate) }}
         Months
       </p>
     </template>
@@ -107,11 +125,7 @@ const loadData = async () => {
       <div class="d-flex justify-end">
         <div
           class="border rounded px-1"
-          @click="
-            router.push(
-              `/scoring/mobile/${item.columns.id}`
-            )
-          "
+          @click="router.push(`/scoring/mobile/${item.columns.id}`)"
         >
           <v-icon
             size="x-small"

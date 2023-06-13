@@ -3,8 +3,9 @@ import { reactive, ref, watch } from "vue";
 import CustomTable from "@/components/Scoring/Upload/CustomTable.vue";
 import ListingTableData from "@/components/Scoring/All/ListingTableData.vue";
 
-const banks = ["NCBA Bank", "KCB Bank", "Equity Bank", "Coop Bank"];
+const banks = ["NCBA", "KCB", "Equity", "Coop"];
 const mobile = ["Mpesa", "Airtel Money"];
+const params = ref("");
 const statements = ref<{ id: number; name: string }[]>([
   {
     id: 1,
@@ -16,6 +17,66 @@ const statements = ref<{ id: number; name: string }[]>([
   },
 ]);
 const options = ["Option 1", "Option 2", "Option 3", "Option 4"];
+const headers = ref<
+  {
+    title: string;
+    key: string;
+    align: string;
+    sortable: boolean;
+    visible: boolean;
+  }[]
+>([
+  { title: "#", key: "id", align: "start", sortable: false, visible: true },
+  {
+    title: "Upload Date",
+    key: "uploadDate",
+    align: "start",
+    sortable: false,
+    visible: true,
+  },
+  {
+    title: "Customer",
+    key: "customername",
+    align: "start",
+    sortable: false,
+    visible: true,
+  },
+  {
+    title: "Statement Type",
+    key: "statementtype",
+    align: "start",
+    sortable: false,
+    visible: true,
+  },
+  {
+    title: "Status",
+    key: "status",
+    align: "start",
+    sortable: false,
+    visible: true,
+  },
+  {
+    title: "Statement Period",
+    key: "statementPeriod",
+    align: "start",
+    sortable: false,
+    visible: true,
+  },
+  {
+    title: "Password",
+    key: "password",
+    align: "start",
+    sortable: false,
+    visible: true,
+  },
+  {
+    title: "Actions",
+    key: "actions",
+    align: "end",
+    sortable: false,
+    visible: true,
+  },
+]);
 const status = [
   {
     text: "Failed",
@@ -49,15 +110,20 @@ const filters = reactive<{
   status: null,
 });
 
+function changeVisibility(key: string) {
+  headers.value.forEach(header => {
+    if (header.key === key) header.visible = !header.visible;
+  });
+}
+
 watch(filters, () => {
-  let params = "";
+  params.value = "";
   filters.type &&
     filters.type.toLowerCase() != "all" &&
-    (params += `&type=${filters.type}`);
+    (params.value += `&type=${filters.type}`);
 
-  filters.provider && (params += `&statementtype=${filters.provider}`);
-  filters.status && (params += `&status=${filters.status}`);
-  console.log(params);
+  filters.provider && (params.value += `&statementtype=${filters.provider}`);
+  filters.status && (params.value += `&status=${filters.status}`);
 });
 </script>
 
@@ -244,7 +310,7 @@ watch(filters, () => {
                       {{
                         filters.status === null
                           ? "Select Status"
-                          : filters.provider
+                          : filters.status
                       }}
                     </v-btn>
                   </template>
@@ -258,7 +324,13 @@ watch(filters, () => {
                       role="listbox"
                     >
                       <v-list-item
+                        @click="filters.status = null"
+                        value="null"
+                        >View All</v-list-item
+                      >
+                      <v-list-item
                         v-for="(item, idx) in status"
+                        @click="filters.status = item.text"
                         :key="idx"
                         :value="item.text"
                         >{{ item.text }}</v-list-item
@@ -320,10 +392,16 @@ watch(filters, () => {
                       role="listbox"
                     >
                       <v-list-item
-                        v-for="(item, idx) in options"
+                        v-for="(item, idx) in headers"
+                        @click="changeVisibility(item.key)"
                         :key="idx"
                         :value="item"
-                        >{{ item }}</v-list-item
+                      >
+                        <v-icon
+                          v-if="item.visible"
+                          icon="mdi:mdi-check"
+                        />
+                        {{ item.title }}</v-list-item
                       >
                     </v-list>
                   </v-sheet>
@@ -359,7 +437,10 @@ watch(filters, () => {
                 </v-menu>
               </v-col>
             </v-row>
-            <ListingTableData />
+            <ListingTableData
+              :headers="headers"
+              :params="params"
+            />
           </v-container>
         </v-col>
       </v-row>
