@@ -125,8 +125,6 @@ watch(filters, () => {
 
   filters.provider && (params.value += `&statementtype=${filters.provider}`);
   filters.status && (params.value += `&status=${filters.status}`);
-  changeVisibility("status");
-  console.log(params.value);
 });
 </script>
 
