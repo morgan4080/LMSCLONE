@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { reactive, ref, watch } from "vue";
-import CustomTable from "@/components/Scoring/Upload/CustomTable.vue";
+// import CustomTable from "@/components/Scoring/Upload/CustomTable.vue";
 import ListingTableData from "@/components/Scoring/All/ListingTableData.vue";
 
 const banks = ["NCBA", "KCB", "Equity", "Coop"];
-const mobile = ["Mpesa", "Airtel Money"];
+const mobile = ["MPESA", "Airtel Money"];
 const params = ref("");
 const statements = ref<{ id: number; name: string }[]>([
   {
@@ -36,14 +36,14 @@ const headers = ref<
   },
   {
     title: "Customer",
-    key: "customername",
+    key: "customer",
     align: "start",
     sortable: false,
     visible: true,
   },
   {
     title: "Statement Type",
-    key: "statementtype",
+    key: "statement",
     align: "start",
     sortable: false,
     visible: true,
@@ -122,7 +122,7 @@ watch(filters, () => {
     filters.type.toLowerCase() != "all" &&
     (params.value += `&type=${filters.type}`);
 
-  filters.provider && (params.value += `&statementtype=${filters.provider}`);
+  filters.provider && (params.value += `&statementType=${filters.provider}`);
   filters.status && (params.value += `&status=${filters.status}`);
 });
 </script>

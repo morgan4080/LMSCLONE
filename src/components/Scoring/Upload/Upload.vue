@@ -1,10 +1,18 @@
 <script setup lang="ts">
 import { onMounted, reactive, ref } from "vue";
+import axiosInstance from "@/services/api/axiosInstance";
 
 import FileUpload from "@/components/Scoring/Upload/FileUpload.vue";
 
+interface Bank {
+  bankName: string;
+  bankCode: string;
+}
+
 const statements = ["Bank Statement", "Mobile Statement"];
 const banks = ["NCBA Bank", "KCB Bank", "Equity Bank", "Coop Bank"];
+// const banks = ref<Bank[]>([ ]);
+const selectedBank = ref<string>('');
 const mobile = ["MPesa", "Airtel Money"];
 // const customers = ["Duggan Kimani", "Tom Kimani"];
 
@@ -41,7 +49,18 @@ function inputForm() {
   document.getElementById("file-input")!.click();
 }
 
+// API Call: Get list of banks
+const loadBanks = async () => {
+  // await axiosInstance
+  //   .get("/banks/list")
+  //   .then(response => {
+  //     banks.value = response.data;
+  //   })
+  //   .catch(error => console.error(error));
+};
+
 onMounted(() => {
+  loadBanks();
   document
     .getElementById("file-input")!
     .addEventListener("change", handleFiles, false);
@@ -55,7 +74,6 @@ onMounted(() => {
     });
   }
 });
-
 </script>
 
 <template>
@@ -81,6 +99,18 @@ onMounted(() => {
                   :items="statements"
                   variant="outlined"
                 ></v-select>
+              </div>
+              <div>
+                <!-- <v-select
+                  v-model="selectedBank"
+                  :items="banks"
+                  item-title="bankName"
+                  item-value="bankCode"
+                  variant="outlined"
+                  density="compact"
+                  label="Select Bank"
+                  class="mt-3"
+                ></v-select> -->
               </div>
               <div>
                 <label class="text-black"
@@ -164,8 +194,18 @@ onMounted(() => {
             <div class="mt-12">
               <v-divider></v-divider>
               <v-list>
-                <div v-for="(upload, i) in media" :key="i">
-                  <FileUpload :statement="{document: '', provider: '', file: upload.file}" @clear="media.splice(i, 1);"></FileUpload>
+                <div
+                  v-for="(upload, i) in media"
+                  :key="i"
+                >
+                  <FileUpload
+                    :statement="{
+                      document: '',
+                      provider: '',
+                      file: upload.file,
+                    }"
+                    @clear="media.splice(i, 1)"
+                  ></FileUpload>
                   <v-divider class="mb-2"></v-divider>
                 </div>
               </v-list>
