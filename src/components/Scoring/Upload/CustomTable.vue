@@ -1,49 +1,40 @@
 <script setup lang="ts">
-import { ref, computed } from "vue"
-import axiosInstance from "@/services/api/axiosInstance"
+import { ref, computed, watch, toRef, inject } from "vue";
+import axiosInstance from "@/services/api/axiosInstance";
 import {
   dateDiffInMonths,
   dateFromTimestamp,
   timeFromTimestamp,
-} from "@/helpers"
+} from "@/helpers";
 
-const tableData = ref([])
-const loading = ref(true)
-const itemsPerPage = ref(5)
-const totalItems = computed(() => tableData.value.length)
-const headers = ref<
-  { title: string; key: string; align: string; sortable: boolean }[]
->([
-  {
-    title: "#",
-    align: "start",
-    sortable: false,
-    key: "id",
-  },
-  {
-    title: "Statement Type",
-    key: "statementtype",
-    align: "start",
-    sortable: false,
-  },
-  { title: "File Name", key: "fileName", align: "start", sortable: false },
-  { title: "Status", key: "status", align: "start", sortable: false },
-  { title: "Duration", key: "duration", align: "start", sortable: false },
-  { title: "Upload Date", key: "uploadDate", align: "start", sortable: false },
-  { title: "Uploader", key: "uploadedBy", align: "start", sortable: false },
-]);
+const props = defineProps<{
+  headers: { title: string; key: string; align: string; sortable: boolean }[];
+  params: string;
+}>();
+const tableData = ref([]);
+const loading = ref(true);
+const itemsPerPage = ref(5);
+const totalItems = computed(() => tableData.value.length);
+const headers = toRef(props, "headers");
+const params = toRef(props, "params");
 
 // API Call: Get recently uploaded statements
-const loadData = async () => {
+const loadData = async (filters?: string) => {
   loading.value = true;
+  let url = `/e_statement/get_uploaded_statements?pageSize=${itemsPerPage.value}&sortBy=id`;
+  if (filters) url += filters;
+
   await axiosInstance
-    .get(`/e_statement/get_uploaded_statements?pageSize=${itemsPerPage.value}&sortBy=id`)
+    .get(url)
     .then(response => {
-      tableData.value = response.data.content
+      tableData.value = response.data.content;
     })
     .catch(error => console.error(error))
     .finally(() => (loading.value = false));
 };
+watch(params, () => {
+  loadData(params.value);
+});
 </script>
 
 <template>
@@ -56,8 +47,25 @@ const loadData = async () => {
     :loading="loading"
     loading-text="Loading...Please Wait"
     item-value="name"
-    @update:options="loadData"
+    @update:options="loadData()"
   >
+    <template v-slot:[`headers`]="{ columns }">
+      <tr>
+        <template
+          v-for="column in columns"
+          :key="column.key"
+        >
+          <td>
+            <span
+              class="mr-2"
+              v-if="column.visible"
+              >{{ column.title }}</span
+            >
+          </td>
+        </template>
+      </tr>
+    </template>
+
     <template v-slot:[`item.statementtype`]="{ item }">
       <span
         class="text-caption text-white pa-1 rounded"
@@ -87,7 +95,7 @@ const loadData = async () => {
       >
     </template>
     <template v-slot:[`item.duration`]="{ item }">
-      {{ dateDiffInMonths('2023-01-12', item.columns.uploadDate) }}
+      {{ dateDiffInMonths("2023-01-12", item.columns.uploadDate) }}
       Months
     </template>
     <template v-slot:[`item.uploadDate`]="{ item }">

@@ -1,10 +1,20 @@
 <script setup lang="ts">
-import { reactive, ref } from "vue";
+import { reactive, ref, watch } from "vue";
 import CustomTable from "@/components/Scoring/Upload/CustomTable.vue";
 import ListingTableData from "@/components/Scoring/All/ListingTableData.vue";
 
 const banks = ["NCBA Bank", "KCB Bank", "Equity Bank", "Coop Bank"];
-const statements = ["Bank Statement", "Mobile Statement"];
+const mobile = ["Mpesa", "Airtel Money"];
+const statements = ref<{ id: number; name: string }[]>([
+  {
+    id: 1,
+    name: "Bank",
+  },
+  {
+    id: 2,
+    name: "Mobile",
+  },
+]);
 const options = ["Option 1", "Option 2", "Option 3", "Option 4"];
 const status = [
   {
@@ -29,10 +39,25 @@ const status = [
   },
 ];
 
-const filters = reactive({
-  type: "Bank Statement",
+const filters = reactive<{
+  type: string | null;
+  provider: string | null;
+  status: string | null;
+}>({
+  type: "All",
   provider: null,
   status: null,
+});
+
+watch(filters, () => {
+  let params = "";
+  filters.type &&
+    filters.type.toLowerCase() != "all" &&
+    (params += `&type=${filters.type}`);
+
+  filters.provider && (params += `&statementtype=${filters.provider}`);
+  filters.status && (params += `&status=${filters.status}`);
+  console.log(params);
 });
 </script>
 
@@ -50,6 +75,37 @@ const filters = reactive({
             </div>
             <v-row class="mt-12">
               <v-col>
+                <!--                <v-menu transition="slide-y-transition">-->
+                <!--                  <template v-slot:activator="{ props }">-->
+                <!--                    <v-btn-->
+                <!--                      variant="outlined"-->
+                <!--                      append-icon="mdi:mdi-chevron-down"-->
+                <!--                      v-bind="props"-->
+                <!--                      class="text-none text-caption"-->
+                <!--                      style="border: 1px solid rgba(128, 128, 128, 0.25)"-->
+                <!--                    >-->
+                <!--                      Select Customer-->
+                <!--                    </v-btn>-->
+                <!--                  </template>-->
+                <!--                  <v-sheet-->
+                <!--                    border-->
+                <!--                    rounded-->
+                <!--                  >-->
+                <!--                    <v-list-->
+                <!--                      nav-->
+                <!--                      density="compact"-->
+                <!--                      role="listbox"-->
+                <!--                    >-->
+                <!--                      <v-list-item-->
+                <!--                        v-for="(item, idx) in options"-->
+                <!--                        :key="idx"-->
+                <!--                        :value="item"-->
+                <!--                        >{{ item }}</v-list-item-->
+                <!--                      >-->
+                <!--                    </v-list>-->
+                <!--                  </v-sheet>-->
+                <!--                </v-menu>-->
+
                 <v-menu transition="slide-y-transition">
                   <template v-slot:activator="{ props }">
                     <v-btn
@@ -59,7 +115,7 @@ const filters = reactive({
                       class="text-none text-caption"
                       style="border: 1px solid rgba(128, 128, 128, 0.25)"
                     >
-                      Select Customer
+                      {{ filters.type || "All" }} Statements
                     </v-btn>
                   </template>
                   <v-sheet
@@ -72,15 +128,27 @@ const filters = reactive({
                       role="listbox"
                     >
                       <v-list-item
-                        v-for="(item, idx) in options"
+                        @click="
+                          (filters.type = 'All') && (filters.provider = null)
+                        "
+                        value="All"
+                        >All</v-list-item
+                      >
+                      <v-list-item
+                        @click="filters.type = item.name"
+                        v-for="(item, idx) in statements"
                         :key="idx"
                         :value="item"
-                        >{{ item }}</v-list-item
+                        >{{ item.name }}</v-list-item
                       >
                     </v-list>
                   </v-sheet>
                 </v-menu>
-                <v-menu transition="slide-y-transition">
+
+                <v-menu
+                  transition="slide-y-transition"
+                  v-if="filters.type.toLowerCase() === 'bank'"
+                >
                   <template v-slot:activator="{ props }">
                     <v-btn
                       variant="outlined"
@@ -89,7 +157,11 @@ const filters = reactive({
                       class="text-none text-caption ml-4"
                       style="border: 1px solid rgba(128, 128, 128, 0.25)"
                     >
-                      All Statements
+                      {{
+                        filters.provider === null
+                          ? "Select Bank"
+                          : filters.provider
+                      }}
                     </v-btn>
                   </template>
                   <v-sheet
@@ -102,7 +174,13 @@ const filters = reactive({
                       role="listbox"
                     >
                       <v-list-item
-                        v-for="(item, idx) in options"
+                        @click="filters.provider = null"
+                        value="null"
+                        >View All</v-list-item
+                      >
+                      <v-list-item
+                        v-for="(item, idx) in banks"
+                        @click="filters.provider = item"
                         :key="idx"
                         :value="item"
                         >{{ item }}</v-list-item
@@ -110,6 +188,50 @@ const filters = reactive({
                     </v-list>
                   </v-sheet>
                 </v-menu>
+                <v-menu
+                  transition="slide-y-transition"
+                  v-if="filters.type.toLowerCase() === 'mobile'"
+                >
+                  <template v-slot:activator="{ props }">
+                    <v-btn
+                      variant="outlined"
+                      append-icon="mdi:mdi-chevron-down"
+                      v-bind="props"
+                      class="text-none text-caption ml-4"
+                      style="border: 1px solid rgba(128, 128, 128, 0.25)"
+                    >
+                      {{
+                        filters.provider === null
+                          ? "Select Mobile"
+                          : filters.provider
+                      }}
+                    </v-btn>
+                  </template>
+                  <v-sheet
+                    border
+                    rounded
+                  >
+                    <v-list
+                      nav
+                      density="compact"
+                      role="listbox"
+                    >
+                      <v-list-item
+                        @click="filters.provider = null"
+                        value="null"
+                        >View All</v-list-item
+                      >
+                      <v-list-item
+                        v-for="(item, idx) in mobile"
+                        @click="filters.provider = item"
+                        :key="idx"
+                        :value="item"
+                        >{{ item }}</v-list-item
+                      >
+                    </v-list>
+                  </v-sheet>
+                </v-menu>
+
                 <v-menu transition="slide-y-transition">
                   <template v-slot:activator="{ props }">
                     <v-btn
