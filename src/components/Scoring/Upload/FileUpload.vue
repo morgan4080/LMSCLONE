@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue';
-import axiosInstance from "@/services/api/axiosInstance"
 import axios from 'axios';
+import axiosInstance from "@/services/api/axiosInstance"
+import { useUploadStore } from "@/store/uploadStore";
 
 interface Statement {
   document: string;
@@ -22,6 +23,8 @@ const props = defineProps({
     required: true
   }
 });
+
+const uploadStore  = useUploadStore()
 
 const confirmed = ref(false)
 const uploading = ref(false)
@@ -59,7 +62,13 @@ const uploadFile = async () => {
       },
     })
       .then(response => {
-        uploaded.value = response.data.status === "200" ? true : false
+        if( response.data.status === "200"){
+          uploaded.value = true
+          uploadStore.setUploadTrue()
+        }else{
+            uploaded.value = false
+        }
+        
         message.value = response.data.message
       })
       .catch(error => {
@@ -100,13 +109,15 @@ const cancelUpload = () => controller.abort();
         </div>
       </div>
       <div class="my-1 d-flex" v-if="uploading">
-        <div class="border rounded px-1"><v-icon size="x-small" icon="mdi:mdi-eye-outline" class=""></v-icon></div>
         <div class="border rounded px-1 ml-1" @click="cancelUpload"><v-icon size="x-small" icon="mdi:mdi-close"
             class=""></v-icon>
         </div>
       </div>
-      <div class="my-1 d-flex" v-if="confirmed && !uploading && !uploaded">
-        <v-icon color="info" size="x-small" icon="mdi:mdi-reload" class="" @click="retryUpload"></v-icon>
+      <div class="my-1 d-flex" v-if="uploaded">
+        <div class="border rounded px-1" @click="$router.push(`/scoring/mobile/1`)"><v-icon size="x-small" icon="mdi:mdi-eye-outline" class=""></v-icon></div>
+      </div>
+      <div class="my-1 d-flex"  @click="retryUpload" v-if="confirmed && !uploading && !uploaded">
+        <v-icon color="info" size="x-small" icon="mdi:mdi-reload" class=""></v-icon>
       </div>
     </div>
     <v-progress-linear v-if="uploading" color="info" rounded class="mt-1" :model-value="progressbar"

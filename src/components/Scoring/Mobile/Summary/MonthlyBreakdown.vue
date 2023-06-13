@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, computed } from "vue";
+import { useRoute } from "vue-router";
 import axiosInstance from "@/services/api/axiosInstance";
 
 const options = ["Option 1", "Option 2", "Option 3", "Option 4"];
@@ -10,7 +11,7 @@ interface MonthlyData {
   credits: number;
   closing: number;
 }
-
+const route = useRoute();
 const tableData = ref<MonthlyData[]>([]);
 
 const headers = ref<
@@ -31,15 +32,15 @@ const headers = ref<
   { title: "Credits (CR)", key: "credits", align: "end", sortable: false },
   { title: "Closing", key: "closing", align: "end", sortable: false },
 ]);
-const itemsPerPage = ref("All");
+const itemsPerPage = ref(100);
 const totalItems = computed(() => tableData.value.length);
 const loading = ref(false);
 
 // API Call: Get monthly breakdown
 const loadMonthlyBreakdown = async () => {
   await axiosInstance
-    .get("/income/income_expense_tabulated")
-    .then(response => (tableData.value = response.data))
+    .get(`income/income_expense_tabulated?idNumber=${route.params.slug}&pageSize=100&sortBy=id`)
+    .then(response => (tableData.value = response.data.content))
     .catch(error => console.error(error));
 };
 </script>

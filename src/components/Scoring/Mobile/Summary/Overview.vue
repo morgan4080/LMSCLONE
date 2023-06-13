@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
+import { useRoute } from "vue-router";
 import axiosInstance from "@/services/api/axiosInstance";
 
 interface SummaryData {
@@ -16,6 +17,8 @@ interface SummaryData {
   total_others: string;
   mpesa_balance: string;
 }
+
+const route = useRoute();
 
 const summaryData = ref<SummaryData>({
   total_send_amt: "",
@@ -35,8 +38,8 @@ const summaryData = ref<SummaryData>({
 // API Call: Get summary overview
 const loadData = async () => {
   await axiosInstance
-    .get("/e_statement/account_summary")
-    .then(response => (summaryData.value = response.data[0]))
+    .get(`/e_statement/account_summary?idNumber=${route.params.slug}`)
+    .then(response => (summaryData.value = response.data.content[0]))
     .catch(error => console.error(error));
 };
 
