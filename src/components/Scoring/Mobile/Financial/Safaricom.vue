@@ -1,94 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
+import { useRoute } from "vue-router";
 import axiosInstance from "@/services/api/axiosInstance";
-
-const fuliza = {
-  count: {
-    received: 182,
-    paid: 76,
-  },
-  highest: {
-    received: 182,
-    paid: 76,
-  },
-  lowest: {
-    received: 182,
-    paid: 76,
-  },
-  last: {
-    received: 182,
-    paid: 76,
-  },
-  total: {
-    received: 182,
-    paid: 76,
-  },
-};
-const mshwari = {
-  count: {
-    loanDisburse: 182,
-    loanPaid: 76,
-    savingsDeposit: 76,
-    savingsWithdrawal: 76,
-  },
-  highest: {
-    loanDisburse: 182,
-    loanPaid: 76,
-    savingsDeposit: 76,
-    savingsWithdrawal: 76,
-  },
-  lastOn: {
-    loanDisburse: 182,
-    loanPaid: 76,
-    savingsDeposit: 76,
-    savingsWithdrawal: 76,
-  },
-  lastAmount: {
-    loanDisburse: 182,
-    loanPaid: 76,
-    savingsDeposit: 76,
-    savingsWithdrawal: 76,
-  },
-  total: {
-    loanDisburse: 182,
-    loanPaid: 76,
-    savingsDeposit: 76,
-    savingsWithdrawal: 76,
-  },
-};
-const kcb = {
-  count: {
-    loanDisburse: 182,
-    loanPaid: 76,
-    savingsDeposit: 76,
-    savingsWithdrawal: 76,
-  },
-  highest: {
-    loanDisburse: 182,
-    loanPaid: 76,
-    savingsDeposit: 76,
-    savingsWithdrawal: 76,
-  },
-  lastOn: {
-    loanDisburse: 182,
-    loanPaid: 76,
-    savingsDeposit: 76,
-    savingsWithdrawal: 76,
-  },
-  lastAmount: {
-    loanDisburse: 182,
-    loanPaid: 76,
-    savingsDeposit: 76,
-    savingsWithdrawal: 76,
-  },
-  total: {
-    loanDisburse: 182,
-    loanPaid: 76,
-    savingsDeposit: 76,
-    savingsWithdrawal: 76,
-  },
-};
-const open = ref(true);
 
 interface SafaricomDataItem {
   count: number;
@@ -99,47 +12,59 @@ interface SafaricomDataItem {
   transactiontype: string;
 }
 
-const mshwariData = ref<SafaricomDataItem[]>([])
-const kcbMpesaData = ref<SafaricomDataItem[]>([])
-const fulizaData = ref<SafaricomDataItem[]>([])
+interface FulizaDataItem {
+  count: number;
+  highest: string;
+  total: string;
+  last: string;
+  last_amount: string;
+  status: string;
+}
+
+const route = useRoute();
+
+const open = ref(true);
+
+const mshwariData = ref<SafaricomDataItem[]>([]);
+const kcbMpesaData = ref<SafaricomDataItem[]>([]);
+const fulizaData = ref<FulizaDataItem[]>([]);
 
 // API Call: Get Safaricom Mshwari Data
 const loadMshariData = async () => {
   await axiosInstance
-    .get("/e_statement/mshwari_summary")
-    .then(response => (mshwariData.value = response.data))
+    .get(`/e_statement/mshwari_summary?/e_statement/mshwari_summary?idNumber=${route.params.slug}&pageSize=100&sortBy=id`)
+    .then(response => (mshwariData.value = response.data.content))
     .catch(error => console.error(error));
 };
 
 // API Call: Get Safaricom Mshwari Data
 const loadKcbMpesaData = async () => {
   await axiosInstance
-    .get("/e_statement/kcb_mpesa_summary")
-    .then(response => (kcbMpesaData.value = response.data))
+    .get(`/e_statement/kcb_mpesa_summary?/e_statement/kcb_mpesa_summary?idNumber=${route.params.slug}&pageSize=100&sortBy=id`)
+    .then(response => (kcbMpesaData.value = response.data.content))
     .catch(error => console.error(error));
 };
 
 // API Call: Get Safaricom Mshwari Data
 const loadFulizaData = async () => {
   await axiosInstance
-    .get("/e_statement/fuliza_summary")
-    .then(response => (fulizaData.value = response.data))
+    .get(`/e_statement/fuliza_summary?/e_statement/fuliza_summary?idNumber=${route.params.slug}&pageSize=100&sortBy=id`)
+    .then(response => (fulizaData.value = response.data.content))
     .catch(error => console.error(error));
 };
 
 onMounted(() => {
-  loadMshariData() 
-  loadKcbMpesaData()
-  loadFulizaData()
-})
-
+  loadMshariData();
+  loadKcbMpesaData();
+  loadFulizaData();
+});
 </script>
 
 <template>
   <v-container fluid>
     <div
       @click="open = !open"
-      class="bg-blue-darken-2 px-6 py-2 rounded d-flex justify-space-between hover-cursor-pointer"
+      class="px-6 py-2 rounded bg-blue-darken-2 d-flex justify-space-between hover-cursor-pointer"
     >
       <p>Safaricom</p>
       <v-icon
@@ -161,13 +86,13 @@ onMounted(() => {
                 Summary of Mshwari
               </h2>
             </div>
-            <div class="my-8 mx-4">
+            <div class="mx-4 my-8">
               <v-row class="justify-space-between d-flex font-weight-bold">
                 <v-col>Title</v-col>
-                <v-col>Loan Disburse</v-col>
-                <v-col>Loan Paid</v-col>
-                <v-col>Savings Deposit</v-col>
-                <v-col>Savings Withdrawal</v-col>
+                <v-col>{{ mshwariData[0]?.transactiontype }}</v-col>
+                <v-col>{{ mshwariData[1]?.transactiontype }}</v-col>
+                <v-col>{{ mshwariData[2]?.transactiontype }}</v-col>
+                <v-col>{{ mshwariData[3]?.transactiontype }}</v-col>
               </v-row>
               <v-divider
                 class="my-3"
@@ -175,34 +100,34 @@ onMounted(() => {
               />
               <v-row class="justify-space-between d-flex">
                 <v-col class="font-weight-medium">Count</v-col>
-                <v-col>{{ mshwari.count.loanDisburse }}</v-col>
-                <v-col>{{ mshwari.count.loanPaid }}</v-col>
-                <v-col>{{ mshwari.count.savingsDeposit }}</v-col>
-                <v-col>{{ mshwari.count.savingsWithdrawal }}</v-col>
+                <v-col>{{ mshwariData[0]?.count }}</v-col>
+                <v-col>{{ mshwariData[1]?.count }}</v-col>
+                <v-col>{{ mshwariData[2]?.count }}</v-col>
+                <v-col>{{ mshwariData[3]?.count }}</v-col>
               </v-row>
               <v-divider class="my-2" />
               <v-row class="justify-space-between d-flex">
                 <v-col class="font-weight-medium">Highest</v-col>
-                <v-col>{{ mshwari.highest.loanDisburse }}</v-col>
-                <v-col>{{ mshwari.highest.loanPaid }}</v-col>
-                <v-col>{{ mshwari.highest.savingsDeposit }}</v-col>
-                <v-col>{{ mshwari.highest.savingsWithdrawal }}</v-col>
+                <v-col>{{ mshwariData[0]?.highest }}</v-col>
+                <v-col>{{ mshwariData[1]?.highest }}</v-col>
+                <v-col>{{ mshwariData[2]?.highest }}</v-col>
+                <v-col>{{ mshwariData[3]?.highest }}</v-col>
               </v-row>
               <v-divider class="my-2" />
               <v-row class="justify-space-between d-flex">
                 <v-col class="font-weight-medium">Last On</v-col>
-                <v-col>{{ mshwari.lastOn.loanDisburse }}</v-col>
-                <v-col>{{ mshwari.lastOn.loanPaid }}</v-col>
-                <v-col>{{ mshwari.lastOn.savingsDeposit }}</v-col>
-                <v-col>{{ mshwari.lastOn.savingsWithdrawal }}</v-col>
+                <v-col>{{ mshwariData[0]?.last }}</v-col>
+                <v-col>{{ mshwariData[1]?.last }}</v-col>
+                <v-col>{{ mshwariData[2]?.last }}</v-col>
+                <v-col>{{ mshwariData[3]?.last }}</v-col>
               </v-row>
               <v-divider class="my-2" />
               <v-row class="justify-space-between d-flex">
                 <v-col class="font-weight-medium">Last Amount</v-col>
-                <v-col>{{ mshwari.lastAmount.loanDisburse }}</v-col>
-                <v-col>{{ mshwari.lastAmount.loanPaid }}</v-col>
-                <v-col>{{ mshwari.lastAmount.savingsDeposit }}</v-col>
-                <v-col>{{ mshwari.lastAmount.savingsWithdrawal }}</v-col>
+                <v-col>{{ mshwariData[0]?.last_amount }}</v-col>
+                <v-col>{{ mshwariData[1]?.last_amount }}</v-col>
+                <v-col>{{ mshwariData[2]?.last_amount }}</v-col>
+                <v-col>{{ mshwariData[3]?.last_amount }}</v-col>
               </v-row>
               <v-divider
                 class="my-3"
@@ -210,10 +135,10 @@ onMounted(() => {
               />
               <v-row class="font-weight-bold justify-space-between d-flex">
                 <v-col>Total</v-col>
-                <v-col>{{ mshwari.total.loanDisburse }}</v-col>
-                <v-col>{{ mshwari.total.loanPaid }}</v-col>
-                <v-col>{{ mshwari.total.savingsDeposit }}</v-col>
-                <v-col>{{ mshwari.total.savingsWithdrawal }}</v-col>
+                <v-col>{{ mshwariData[0]?.total }}</v-col>
+                <v-col>{{ mshwariData[1]?.total }}</v-col>
+                <v-col>{{ mshwariData[2]?.total }}</v-col>
+                <v-col>{{ mshwariData[3]?.total }}</v-col>
               </v-row>
             </div>
           </v-container>
@@ -232,13 +157,13 @@ onMounted(() => {
                 Summary of KCB MPesa
               </h2>
             </div>
-            <div class="my-8 mx-4">
+            <div class="mx-4 my-8">
               <v-row class="justify-space-between d-flex font-weight-bold">
                 <v-col>Title</v-col>
-                <v-col>Loan Disburse</v-col>
-                <v-col>Loan Paid</v-col>
-                <v-col>Savings Deposit</v-col>
-                <v-col>Savings Withdrawal</v-col>
+                <v-col>{{ kcbMpesaData[0]?.transactiontype }}</v-col>
+                <v-col>{{ kcbMpesaData[1]?.transactiontype }}</v-col>
+                <v-col>{{ kcbMpesaData[2]?.transactiontype }}</v-col>
+                <v-col>{{ kcbMpesaData[3]?.transactiontype }}</v-col>
               </v-row>
               <v-divider
                 class="my-3"
@@ -246,34 +171,34 @@ onMounted(() => {
               />
               <v-row class="justify-space-between d-flex">
                 <v-col class="font-weight-medium">Count</v-col>
-                <v-col>{{ kcb.count.loanDisburse }}</v-col>
-                <v-col>{{ kcb.count.loanPaid }}</v-col>
-                <v-col>{{ kcb.count.savingsDeposit }}</v-col>
-                <v-col>{{ kcb.count.savingsWithdrawal }}</v-col>
+                <v-col>{{ kcbMpesaData[0]?.count }}</v-col>
+                <v-col>{{ kcbMpesaData[1]?.count }}</v-col>
+                <v-col>{{ kcbMpesaData[2]?.count }}</v-col>
+                <v-col>{{ kcbMpesaData[3]?.count }}</v-col>
               </v-row>
               <v-divider class="my-2" />
               <v-row class="justify-space-between d-flex">
                 <v-col class="font-weight-medium">Highest</v-col>
-                <v-col>{{ kcb.highest.loanDisburse }}</v-col>
-                <v-col>{{ kcb.highest.loanPaid }}</v-col>
-                <v-col>{{ kcb.highest.savingsDeposit }}</v-col>
-                <v-col>{{ kcb.highest.savingsWithdrawal }}</v-col>
+                <v-col>{{ kcbMpesaData[0]?.highest }}</v-col>
+                <v-col>{{ kcbMpesaData[1]?.highest }}</v-col>
+                <v-col>{{ kcbMpesaData[2]?.highest }}</v-col>
+                <v-col>{{ kcbMpesaData[3]?.highest }}</v-col>
               </v-row>
               <v-divider class="my-2" />
               <v-row class="justify-space-between d-flex">
                 <v-col class="font-weight-medium">Last On</v-col>
-                <v-col>{{ kcb.lastOn.loanDisburse }}</v-col>
-                <v-col>{{ kcb.lastOn.loanPaid }}</v-col>
-                <v-col>{{ kcb.lastOn.savingsDeposit }}</v-col>
-                <v-col>{{ kcb.lastOn.savingsWithdrawal }}</v-col>
+                <v-col>{{ kcbMpesaData[0]?.last }}</v-col>
+                <v-col>{{ kcbMpesaData[1]?.last }}</v-col>
+                <v-col>{{ kcbMpesaData[2]?.last }}</v-col>
+                <v-col>{{ kcbMpesaData[3]?.last }}</v-col>
               </v-row>
               <v-divider class="my-2" />
               <v-row class="justify-space-between d-flex">
                 <v-col class="font-weight-medium">Last Amount</v-col>
-                <v-col>{{ kcb.lastAmount.loanDisburse }}</v-col>
-                <v-col>{{ kcb.lastAmount.loanPaid }}</v-col>
-                <v-col>{{ kcb.lastAmount.savingsDeposit }}</v-col>
-                <v-col>{{ kcb.lastAmount.savingsWithdrawal }}</v-col>
+                <v-col>{{ kcbMpesaData[0]?.last_amount }}</v-col>
+                <v-col>{{ kcbMpesaData[1]?.last_amount }}</v-col>
+                <v-col>{{ kcbMpesaData[2]?.last_amount }}</v-col>
+                <v-col>{{ kcbMpesaData[3]?.last_amount }}</v-col>
               </v-row>
               <v-divider
                 class="my-3"
@@ -281,10 +206,10 @@ onMounted(() => {
               />
               <v-row class="font-weight-bold justify-space-between d-flex">
                 <v-col>Total</v-col>
-                <v-col>{{ kcb.total.loanDisburse }}</v-col>
-                <v-col>{{ kcb.total.loanPaid }}</v-col>
-                <v-col>{{ kcb.total.savingsDeposit }}</v-col>
-                <v-col>{{ kcb.total.savingsWithdrawal }}</v-col>
+                <v-col>{{ kcbMpesaData[0]?.total }}</v-col>
+                <v-col>{{ kcbMpesaData[1]?.total }}</v-col>
+                <v-col>{{ kcbMpesaData[2]?.total }}</v-col>
+                <v-col>{{ kcbMpesaData[3]?.total }}</v-col>
               </v-row>
             </div>
           </v-container>
@@ -305,11 +230,11 @@ onMounted(() => {
                 Summary of Fuliza
               </h2>
             </div>
-            <div class="my-8 mx-4">
+            <div class="mx-4 my-8">
               <v-row class="justify-space-between d-flex font-weight-bold">
                 <v-col>Title</v-col>
-                <v-col>Received</v-col>
-                <v-col>Paid</v-col>
+                <v-col>{{ fulizaData[0]?.status }}</v-col>
+                <v-col>{{ fulizaData[1]?.status }}</v-col>
               </v-row>
               <v-divider
                 class="my-3"
@@ -317,26 +242,26 @@ onMounted(() => {
               />
               <v-row class="justify-space-between d-flex">
                 <v-col class="font-weight-medium">Count</v-col>
-                <v-col>{{ fuliza.count.received }}</v-col>
-                <v-col>{{ fuliza.count.paid }}</v-col>
+                <v-col>{{ fulizaData[0]?.count }}</v-col>
+                <v-col>{{ fulizaData[1]?.count }}</v-col>
               </v-row>
               <v-divider class="my-2" />
               <v-row class="justify-space-between d-flex">
                 <v-col class="font-weight-medium">Highest</v-col>
-                <v-col>{{ fuliza.highest.received }}</v-col>
-                <v-col>{{ fuliza.highest.paid }}</v-col>
+                <v-col>{{ fulizaData[0]?.highest }}</v-col>
+                <v-col>{{ fulizaData[1]?.highest }}</v-col>
               </v-row>
               <v-divider class="my-2" />
               <v-row class="justify-space-between d-flex">
-                <v-col class="font-weight-medium">Lowest</v-col>
-                <v-col>{{ fuliza.lowest.received }}</v-col>
-                <v-col>{{ fuliza.lowest.paid }}</v-col>
+                <v-col class="font-weight-medium">Last On</v-col>
+                <v-col>{{ fulizaData[0]?.last }}</v-col>
+                <v-col>{{ fulizaData[1]?.last }}</v-col>
               </v-row>
               <v-divider class="my-2" />
               <v-row class="justify-space-between d-flex">
-                <v-col class="font-weight-medium">Last</v-col>
-                <v-col>{{ fuliza.last.received }}</v-col>
-                <v-col>{{ fuliza.last.paid }}</v-col>
+                <v-col class="font-weight-medium">Last Amount</v-col>
+                <v-col>{{ fulizaData[0]?.last_amount }}</v-col>
+                <v-col>{{ fulizaData[1]?.last_amount }}</v-col>
               </v-row>
               <v-divider
                 class="my-3"
@@ -344,8 +269,8 @@ onMounted(() => {
               />
               <v-row class="font-weight-bold justify-space-between d-flex">
                 <v-col>Total</v-col>
-                <v-col>{{ fuliza.total.received }}</v-col>
-                <v-col>{{ fuliza.total.paid }}</v-col>
+                <v-col>{{ fulizaData[0]?.total }}</v-col>
+                <v-col>{{ fulizaData[1]?.total }}</v-col>
               </v-row>
             </div>
           </v-container>

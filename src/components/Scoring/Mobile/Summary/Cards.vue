@@ -11,25 +11,25 @@ interface CustomerInformation {
   statement_period: string;
 }
 
-const route = useRoute();
+interface CustomerStatement {
+  file_type: string;
+  bank_name: string;
+  account_number: string;
+  duration: number;
+  timestamp: string;
+  state_name: string;
+  documentName: string;
+  status: string;
+  date: string;
+  email: string;
+  phone: string;
+}
 
-// const customer = {
-//   documentType: "Mpesa Statement",
-//   status: "Completed",
-//   generatedOn: "DD/MM/YYYY HH:MM",
-//   currency: "Kenyan Shilling",
-//   receivedOn: "DD/MM/YYYY HH:MM",
-//   age: "1",
-//   duration: "12",
-// };
-
-const customerInformation = ref<CustomerInformation>({
-  customer_names: "",
-  identity_number: "",
-  email: "",
-  phone_number: "",
-  statement_period: "",
-});
+interface CustomerAnalysis {
+  submission_age_in_days: number;
+  received_on: string;
+  duration_in_months: string;
+}
 
 interface MobileScore {
   net_score: number;
@@ -37,13 +37,6 @@ interface MobileScore {
   risk_level: string;
   loanable: number;
 }
-
-const mobileScore = ref<MobileScore>({
-  net_score: 0,
-  gross_score: 0,
-  risk_level: "",
-  loanable: 0,
-});
 
 interface LongTermScore {
   net_score: number;
@@ -55,21 +48,37 @@ interface LongTermScore {
   highest: number;
 }
 
-const longTermScore = ref<LongTermScore>({
-  net_score: 0,
-  gross_score: 0,
-  risk_level: "",
-  net_loanable_highest: 0,
-  loanable_highest: 0,
-  loanable: 0,
-  highest: 0,
-});
+const route = useRoute();
+
+const customerInformation = ref<CustomerInformation[]>([]);
+const customerStatement = ref<CustomerStatement[]>([]);
+const customerAnalysis = ref<CustomerAnalysis[]>([]);
+const mobileScore = ref<MobileScore[]>([]);
+const longTermScore = ref<LongTermScore[]>([]);
 
 // API Call: Get customer information
 const loadCustomerInformation = async () => {
   await axiosInstance
     .get(`/e_statement/customer_information?idNumber=${route.params.slug}`)
-    .then(response => (customerInformation.value = response.data[0]))
+    .then(response => (customerInformation.value = response.data))
+    .catch(error => console.error(error));
+};
+
+// API Call: Get customer statement
+const loadCustomerStatement = async () => {
+  await axiosInstance
+    .get(`/e_statement/analysis_customer_details?idNumber=${route.params.slug}`)
+    .then(response => (customerStatement.value = response.data.content))
+    .catch(error => console.error(error));
+};
+
+// API Call: Get customer analysis
+const loadCustomerAnalysis = async () => {
+  await axiosInstance
+    .get(
+      `/e_statement/get_personal_info_boundaries?idNumber=${route.params.slug}`
+    )
+    .then(response => (customerAnalysis.value = response.data.content))
     .catch(error => console.error(error));
 };
 
@@ -77,7 +86,7 @@ const loadCustomerInformation = async () => {
 const loadMobileScore = async () => {
   await axiosInstance
     .get(`/score/mobile_score?idNumber=${route.params.slug}`)
-    .then(response => (mobileScore.value = response.data.content[0]))
+    .then(response => (mobileScore.value = response.data.content))
     .catch(error => console.error(error));
 };
 
@@ -85,12 +94,14 @@ const loadMobileScore = async () => {
 const loadLongTermScore = async () => {
   await axiosInstance
     .get(`/score/g_long_term?idNumber=${route.params.slug}`)
-    .then(response => (longTermScore.value = response.data.content[0]))
+    .then(response => (longTermScore.value = response.data.content))
     .catch(error => console.error(error));
 };
 
 onMounted(() => {
   loadCustomerInformation();
+  loadCustomerStatement();
+  loadCustomerAnalysis();
   loadMobileScore();
   loadLongTermScore();
 });
@@ -109,21 +120,21 @@ onMounted(() => {
             <v-container>
               <v-row class="mx-2">
                 <v-col cols="auto">
-                  <h3 class="text-grey text-body-2 py-1">Customer</h3>
-                  <h3 class="text-grey text-body-2 py-1">File Name</h3>
-                  <h3 class="text-grey text-body-2 py-1">Phone</h3>
-                  <h3 class="text-grey text-body-2 py-1">Email</h3>
+                  <h3 class="py-1 text-grey text-body-2">Customer</h3>
+                  <h3 class="py-1 text-grey text-body-2">File Name</h3>
+                  <h3 class="py-1 text-grey text-body-2">Phone</h3>
+                  <h3 class="py-1 text-grey text-body-2">Email</h3>
                 </v-col>
                 <v-col
-                  ><h3 class="text-body-2 py-1 text-blue">
-                    {{ customerInformation.customer_names }}
+                  ><h3 class="py-1 text-body-2 text-blue">
+                    {{ customerInformation[0]?.customer_names }}
                   </h3>
-                  <h3 class="text-body-2 py-1"></h3>
-                  <h3 class="text-body-2 py-1">
-                    {{ customerInformation.phone_number }}
+                  <h3 class="py-1 text-body-2">{{ customerStatement[0]?.file_type }}</h3>
+                  <h3 class="py-1 text-body-2">
+                    {{ customerInformation[0]?.phone_number }}
                   </h3>
-                  <h3 class="text-body-2 py-1">
-                    {{ customerInformation.email }}
+                  <h3 class="py-1 text-body-2">
+                    {{ customerInformation[0]?.email }}
                   </h3></v-col
                 >
               </v-row>
@@ -139,16 +150,16 @@ onMounted(() => {
             <v-container>
               <v-row class="mx-2">
                 <v-col cols="auto">
-                  <h3 class="text-grey text-body-2 py-1">Document Type</h3>
-                  <h3 class="text-grey text-body-2 py-1">Status</h3>
-                  <h3 class="text-grey text-body-2 py-1">Generated On</h3>
-                  <h3 class="text-grey text-body-2 py-1">Currency</h3>
+                  <h3 class="py-1 text-grey text-body-2">Document Type</h3>
+                  <h3 class="py-1 text-grey text-body-2">Status</h3>
+                  <h3 class="py-1 text-grey text-body-2">Generated On</h3>
+                  <h3 class="py-1 text-grey text-body-2">Currency</h3>
                 </v-col>
                 <v-col
-                  ><h3 class="text-body-2 py-1 text-blue"></h3>
-                  <h3 class="text-body-2 py-1"></h3>
-                  <h3 class="text-body-2 py-1"></h3>
-                  <h3 class="text-body-2 py-1"></h3
+                  ><h3 class="py-1 text-body-2 text-blue">{{ customerStatement[0]?.documentName }}</h3>
+                  <h3 class="py-1 text-body-2">{{ customerStatement[0]?.status }}</h3>
+                  <h3 class="py-1 text-body-2">{{ customerStatement[0]?.date }}</h3>
+                  <h3 class="py-1 text-body-2"></h3
                 ></v-col>
               </v-row>
             </v-container> </v-card
@@ -162,18 +173,18 @@ onMounted(() => {
             <v-container>
               <v-row class="mx-2">
                 <v-col cols="auto">
-                  <h3 class="text-grey text-body-2 py-1">Received On</h3>
-                  <h3 class="text-grey text-body-2 py-1">Submission Age</h3>
-                  <h3 class="text-grey text-body-2 py-1">Period</h3>
-                  <h3 class="text-grey text-body-2 py-1">Duration</h3>
+                  <h3 class="py-1 text-grey text-body-2">Received On</h3>
+                  <h3 class="py-1 text-grey text-body-2">Submission Age</h3>
+                  <h3 class="py-1 text-grey text-body-2">Period</h3>
+                  <h3 class="py-1 text-grey text-body-2">Duration</h3>
                 </v-col>
                 <v-col
-                  ><h3 class="text-body-2 py-1 text-blue"></h3>
-                  <h3 class="text-body-2 py-1"></h3>
-                  <h3 class="text-body-2 py-1">
-                    {{ customerInformation.statement_period }}
+                  ><h3 class="py-1 text-body-2 text-blue">{{ customerAnalysis[0]?.received_on }}</h3>
+                  <h3 class="py-1 text-body-2"></h3>
+                  <h3 class="py-1 text-body-2">
+                    {{ customerInformation[0]?.statement_period }}
                   </h3>
-                  <h3 class="text-body-2 py-1">Months</h3></v-col
+                  <h3 class="py-1 text-body-2">{{ customerAnalysis[0]?.duration_in_months }} Months</h3></v-col
                 >
               </v-row>
             </v-container>
@@ -203,7 +214,7 @@ onMounted(() => {
                 </div>
 
                 <div class="my-10">
-                  <div class="d-flex justify-space-between mt-4">
+                  <div class="mt-4 d-flex justify-space-between">
                     <h1 class="text-caption font-weight-bold">Title</h1>
                     <h1 class="text-caption font-weight-bold">Description</h1>
                   </div>
@@ -211,32 +222,36 @@ onMounted(() => {
                     class="my-2"
                     :thickness="3"
                   ></v-divider>
-                  <div class="d-flex justify-space-between mt-4">
+                  <div class="mt-4 d-flex justify-space-between">
                     <h1 class="text-caption">Score</h1>
                     <h1 class="text-caption">
-                      {{ mobileScore.net_score }} /
-                      {{ mobileScore.gross_score }}
+                      {{ mobileScore[0]?.net_score }} /
+                      {{ mobileScore[0]?.gross_score }}
                     </h1>
                   </div>
                   <v-divider class="my-2"></v-divider>
-                  <div class="d-flex justify-space-between mt-4">
+                  <div class="mt-4 d-flex justify-space-between">
                     <h1 class="text-caption font-weight-medium">Risk Level</h1>
-                    <h1 class="text-caption">{{ mobileScore.risk_level }}</h1>
+                    <h1 class="text-caption">
+                      {{ mobileScore[0]?.risk_level }}
+                    </h1>
                   </div>
                   <v-divider
                     class="my-2"
                     :thickness="3"
                   ></v-divider>
-                  <div class="d-flex justify-space-between mt-4">
+                  <div class="mt-4 d-flex justify-space-between">
                     <h1 class="text-caption font-weight-medium">Highest</h1>
                     <h1 class="text-caption">KES</h1>
                   </div>
                   <v-divider class="my-2"></v-divider>
-                  <div class="d-flex justify-space-between mt-4">
+                  <div class="mt-4 d-flex justify-space-between">
                     <h1 class="text-caption font-weight-medium">
                       Loanable (R)
                     </h1>
-                    <h1 class="text-caption">KES {{ mobileScore.loanable }}</h1>
+                    <h1 class="text-caption">
+                      KES {{ mobileScore[0]?.loanable }}
+                    </h1>
                   </div>
                   <v-divider class="my-2"></v-divider>
                 </div>
@@ -266,7 +281,7 @@ onMounted(() => {
                   </h2>
                 </div>
                 <div class="my-10">
-                  <div class="d-flex justify-space-between mt-4">
+                  <div class="mt-4 d-flex justify-space-between">
                     <h1 class="text-caption font-weight-bold">Title</h1>
                     <h1 class="text-caption font-weight-bold">Description</h1>
                   </div>
@@ -274,37 +289,37 @@ onMounted(() => {
                     class="my-2"
                     :thickness="3"
                   ></v-divider>
-                  <div class="d-flex justify-space-between mt-4">
+                  <div class="mt-4 d-flex justify-space-between">
                     <h1 class="text-caption">Score</h1>
                     <h1 class="text-caption">
-                      {{ longTermScore.net_score }} /
-                      {{ longTermScore.gross_score }}
+                      {{ longTermScore[0]?.net_score }} /
+                      {{ longTermScore[0]?.gross_score }}
                     </h1>
                   </div>
                   <v-divider class="my-2"></v-divider>
-                  <div class="d-flex justify-space-between mt-4">
+                  <div class="mt-4 d-flex justify-space-between">
                     <h1 class="text-caption font-weight-medium">Risk Level</h1>
-                    <h1 class="text-caption">{{ longTermScore.risk_level }}</h1>
+                    <h1 class="text-caption">{{ longTermScore[0]?.risk_level }}</h1>
                   </div>
                   <v-divider
                     class="my-2"
                     :thickness="3"
                   ></v-divider>
-                  <div class="d-flex justify-space-between mt-4">
+                  <div class="mt-4 d-flex justify-space-between">
                     <h1 class="text-caption font-weight-medium">Highest</h1>
                     <h1 class="text-caption">
-                      KES {{ longTermScore.highest }}
+                      KES {{ longTermScore[0]?.highest }}
                     </h1>
                   </div>
                   <v-divider class="my-2"></v-divider>
-                  <div class="d-flex justify-space-between mt-4">
+                  <div class="mt-4 d-flex justify-space-between">
                     <h1 class="text-caption font-weight-medium">
                       Gross Loanable (R)
                     </h1>
                     <h1 class="text-caption">KES -</h1>
                   </div>
                   <v-divider class="my-2"></v-divider>
-                  <div class="d-flex justify-space-between mt-4">
+                  <div class="mt-4 d-flex justify-space-between">
                     <h1 class="text-caption font-weight-medium">
                       Net Loanable (R)
                     </h1>
