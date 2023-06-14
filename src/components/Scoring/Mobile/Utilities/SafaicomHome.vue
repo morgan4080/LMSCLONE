@@ -1,29 +1,18 @@
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
-// import axiosInstance from "@/services/api/axiosInstance";
+import { useRoute } from "vue-router";
+import axiosInstance from "@/services/api/axiosInstance";
 
-const safaricomHome = {
-  count: {
-    received: 182,
-    paid: 76,
-  },
-  highest: {
-    received: 182,
-    paid: 76,
-  },
-  lowest: {
-    received: 182,
-    paid: 76,
-  },
-  last: {
-    received: 182,
-    paid: 76,
-  },
-  total: {
-    received: 182,
-    paid: 76,
-  },
-};
+interface SafHomeDataItem {
+  count: number;
+  highest: string;
+  lowest: string;
+  total: string;
+  last: string;
+}
+
+const route = useRoute();
+
 const open = ref(true);
 const tableData = ref([]);
 const loading = ref(false);
@@ -49,14 +38,14 @@ const headers = ref<
   { title: "Last Amount", key: "upload", align: "end", sortable: false },
 ]);
 
-// const safHomeTransData = ref([])
+const safHomeTransData = ref<SafHomeDataItem[]>([])
 
 // API Call: Get Safaricom Home Transactions Data
 const loadSafHomeTransData = async () => {
-  // await axiosInstance
-  //   .get("/e_statement/")
-  //   .then(response => (safHomeTransData.value = response.data))
-  //   .catch(error => console.error(error));
+  await axiosInstance
+    .get(`/e_statement/airtime_summary?idNumber=${route.params.slug}&pageSize=100&sortBy=id`)
+    .then(response => (safHomeTransData.value = response.data.content))
+    .catch(error => console.error(error));
 };
 
 onMounted(() => {
@@ -68,7 +57,7 @@ onMounted(() => {
   <v-container fluid>
     <div
       @click="open = !open"
-      class="bg-blue-darken-2 hover-cursor-pointer px-6 py-2 rounded d-flex justify-space-between hover-cursor-pointer"
+      class="px-6 py-2 rounded bg-blue-darken-2 hover-cursor-pointer d-flex justify-space-between"
     >
       <p>Safaricom Home</p>
       <v-icon
@@ -93,7 +82,7 @@ onMounted(() => {
                   Summary of Safaricom Home Transactions
                 </h2>
               </div>
-              <div class="my-8 mx-4">
+              <div class="mx-4 my-8">
                 <v-row class="justify-space-between d-flex font-weight-bold">
                   <v-col>Title</v-col>
                   <v-col>Received</v-col>
@@ -105,26 +94,26 @@ onMounted(() => {
                 />
                 <v-row class="justify-space-between d-flex">
                   <v-col class="font-weight-medium">Count</v-col>
-                  <v-col>{{ safaricomHome.count.received }}</v-col>
-                  <v-col>{{ safaricomHome.count.paid }}</v-col>
+                  <v-col>{{ safHomeTransData[0]?.count }}</v-col>
+                  <v-col>{{  }}</v-col>
                 </v-row>
                 <v-divider class="my-2" />
                 <v-row class="justify-space-between d-flex">
                   <v-col class="font-weight-medium">Highest</v-col>
-                  <v-col>{{ safaricomHome.highest.received }}</v-col>
-                  <v-col>{{ safaricomHome.highest.paid }}</v-col>
+                  <v-col>{{ safHomeTransData[0]?.highest }}</v-col>
+                  <v-col>{{  }}</v-col>
                 </v-row>
                 <v-divider class="my-2" />
                 <v-row class="justify-space-between d-flex">
                   <v-col class="font-weight-medium">Lowest</v-col>
-                  <v-col>{{ safaricomHome.lowest.received }}</v-col>
-                  <v-col>{{ safaricomHome.lowest.paid }}</v-col>
+                  <v-col>{{ safHomeTransData[0]?.lowest }}</v-col>
+                  <v-col>{{  }}</v-col>
                 </v-row>
                 <v-divider class="my-2" />
                 <v-row class="justify-space-between d-flex">
                   <v-col class="font-weight-medium">Last</v-col>
-                  <v-col>{{ safaricomHome.last.received }}</v-col>
-                  <v-col>{{ safaricomHome.last.paid }}</v-col>
+                  <v-col>{{ safHomeTransData[0]?.last }}</v-col>
+                  <v-col>{{  }}</v-col>
                 </v-row>
                 <v-divider
                   class="my-3"
@@ -132,8 +121,8 @@ onMounted(() => {
                 />
                 <v-row class="font-weight-bold justify-space-between d-flex">
                   <v-col>Total</v-col>
-                  <v-col>{{ safaricomHome.total.received }}</v-col>
-                  <v-col>{{ safaricomHome.total.paid }}</v-col>
+                  <v-col>{{ safHomeTransData[0]?.total }}</v-col>
+                  <v-col>{{  }}</v-col>
                 </v-row>
               </div>
             </v-container>
@@ -146,7 +135,7 @@ onMounted(() => {
         <v-container fluid>
           <v-card
             variant="flat"
-            class="rounded py-4"
+            class="py-4 rounded"
             color="white"
           >
             <div class="px-8">
@@ -158,7 +147,7 @@ onMounted(() => {
               </h2>
             </div>
             <v-data-table-server
-              class="text-caption px-4"
+              class="px-4 text-caption"
               :headers="headers"
               :items-length="totalItems"
               :items="tableData"
