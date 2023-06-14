@@ -111,7 +111,10 @@ const filters = reactive<{
 
 function changeVisibility(key: string) {
   headers.value.forEach(header => {
-    if (header.key === key) header.visible = !header.visible;
+    if (header.key === key) {
+      header.visible = !header.visible;
+      header.align = header.align === " d-none" ? " start" : " d-none";
+    }
   });
 }
 

@@ -43,31 +43,30 @@ const params = toRef(props, "params");
 
 // Transform the API Data
 const apiData = ref<Statement[]>([]);
-const tableData = computed(()=>
-apiData.value.map(item => {
-  return {
-    "id": item.id,
-    "statement": {
-      "statementtype": item.statementtype,
-      "bankCode": item.bankCode,
-    },
-    "fileName": item.fileName,
-    "customer": {
-      "idnum": item.idnum,
-      "customername": item.customername,
-      "uploaderPhone": item.uploaderPhone,
-    },
-    "status": item.status,
-    "uploaderName": item.uploaderName,
-    "statementPeriod": item.statementPeriod,
-    "fileUrl": item.fileUrl,
-    "filePath": item.filePath,
-    "password": item.password,
-    "uploadDate": item.uploadDate
-  };
-})
+const tableData = computed(() =>
+  apiData.value.map(item => {
+    return {
+      id: item.id,
+      statement: {
+        statementtype: item.statementtype,
+        bankCode: item.bankCode,
+      },
+      fileName: item.fileName,
+      customer: {
+        idnum: item.idnum,
+        customername: item.customername,
+        uploaderPhone: item.uploaderPhone,
+      },
+      status: item.status,
+      uploaderName: item.uploaderName,
+      statementPeriod: item.statementPeriod,
+      fileUrl: item.fileUrl,
+      filePath: item.filePath,
+      password: item.password,
+      uploadDate: item.uploadDate,
+    };
+  })
 );
-
 
 // API Call: Get all uploaded statements
 const loadData = async (filters?: string) => {
@@ -106,12 +105,8 @@ watch(params, () => {
           v-for="column in columns"
           :key="column.key"
         >
-          <td>
-            <span
-              class="mr-2"
-              v-if="column.visible"
-              >{{ column.title }}</span
-            >
+          <td v-if="column.visible">
+            <span class="mr-2">{{ column.title }}</span>
           </td>
         </template>
       </tr>
@@ -134,7 +129,7 @@ watch(params, () => {
             : 'bg-blue-darken-4'
         "
       >
-      {{ item.columns.statement.statementtype }}
+        {{ item.columns.statement.statementtype }}
       </span>
       <span class="border text-blue pa-1 ml-2 rounded">
         {{ item.columns.statement.bankCode }}
@@ -169,7 +164,9 @@ watch(params, () => {
       <div class="d-flex justify-end">
         <div
           class="border rounded px-1"
-          @click="$router.push(`/scoring/mobile/${item.columns.customer.idnum}`)"
+          @click="
+            $router.push(`/scoring/mobile/${item.columns.customer.idnum}`)
+          "
         >
           <v-icon
             size="x-small"

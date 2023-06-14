@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, computed, watch, toRef, inject } from "vue";
-import { storeToRefs } from 'pinia'
+import { storeToRefs } from "pinia";
 import { useUploadStore } from "@/store/uploadStore";
 import axiosInstance from "@/services/api/axiosInstance";
 import {
@@ -36,34 +36,34 @@ const totalItems = computed(() => tableData.value.length);
 const headers = toRef(props, "headers");
 const params = toRef(props, "params");
 
-const {setUploadFalse}  = useUploadStore()
-const {upload} = storeToRefs(useUploadStore())
+const { setUploadFalse } = useUploadStore();
+const { upload } = storeToRefs(useUploadStore());
 
 // Transform the API Data
 const apiData = ref<Statement[]>([]);
-const tableData = computed(()=>
-apiData.value.map(item => {
-  return {
-    "id": item.id,
-    "statement": {
-      "statementtype": item.statementtype,
-      "bankCode": item.bankCode,
-    },
-    "fileName": item.fileName,
-    "customer": {
-      "idnum": item.idnum,
-      "customername": item.customername,
-      "uploaderPhone": item.uploaderPhone,
-    },
-    "status": item.status,
-    "uploaderName": item.uploaderName,
-    "statementPeriod": item.statementPeriod,
-    "fileUrl": item.fileUrl,
-    "filePath": item.filePath,
-    "password": item.password,
-    "uploadDate": item.uploadDate
-  };
-})
+const tableData = computed(() =>
+  apiData.value.map(item => {
+    return {
+      id: item.id,
+      statement: {
+        statementtype: item.statementtype,
+        bankCode: item.bankCode,
+      },
+      fileName: item.fileName,
+      customer: {
+        idnum: item.idnum,
+        customername: item.customername,
+        uploaderPhone: item.uploaderPhone,
+      },
+      status: item.status,
+      uploaderName: item.uploaderName,
+      statementPeriod: item.statementPeriod,
+      fileUrl: item.fileUrl,
+      filePath: item.filePath,
+      password: item.password,
+      uploadDate: item.uploadDate,
+    };
+  })
 );
 
 // API Call: Get recently uploaded statements
@@ -76,7 +76,7 @@ const loadData = async (filters?: string) => {
     .get(url)
     .then(response => {
       apiData.value = response.data.content;
-      setUploadFalse()
+      setUploadFalse();
     })
     .catch(error => console.error(error))
     .finally(() => (loading.value = false));
@@ -85,8 +85,8 @@ watch(params, () => {
   loadData(params.value);
 });
 
-watch(upload, (val) => {
-  val ? loadData(params.value) : '';
+watch(upload, val => {
+  val ? loadData(params.value) : "";
 });
 </script>
 
@@ -108,12 +108,8 @@ watch(upload, (val) => {
           v-for="column in columns"
           :key="column.key"
         >
-          <td>
-            <span
-              class="mr-2"
-              v-if="column.visible"
-              >{{ column.title }}</span
-            >
+          <td v-if="column.visible">
+            <span class="mr-2">{{ column.title }}</span>
           </td>
         </template>
       </tr>
