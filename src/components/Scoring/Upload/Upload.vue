@@ -12,7 +12,7 @@ interface Bank {
 const statements = ["Bank Statement", "Mobile Statement"];
 const banks = ["NCBA Bank", "KCB Bank", "Equity Bank", "Coop Bank"];
 // const banks = ref<Bank[]>([ ]);
-const selectedBank = ref<string>('');
+const selectedBank = ref<string>("");
 const mobile = ["MPesa", "Airtel Money"];
 // const customers = ["Duggan Kimani", "Tom Kimani"];
 
@@ -98,6 +98,7 @@ onMounted(() => {
                   label="Select Statement Type"
                   :items="statements"
                   variant="outlined"
+                  @update:modelValue="formStatements.provider = null"
                 ></v-select>
               </div>
               <div>
