@@ -6,6 +6,7 @@ import {
   dateFromTimestamp,
   timeFromTimestamp,
 } from "@/helpers";
+import axios from "axios";
 
 interface Statement {
   id: number;
@@ -71,12 +72,13 @@ const tableData = computed(() =>
 // API Call: Get all uploaded statements
 const loadData = async (filters?: string) => {
   loading.value = true;
-  let url = `/e_statement/get_uploaded_statements?pageSize=${itemsPerPage.value}&sortBy=id`;
+  let url = `http://localhost:5000/content`;
   if (filters) url += filters;
-  await axiosInstance
+  await axios
     .get(url)
     .then(response => {
-      apiData.value = response.data.content;
+      console.log(response);
+      apiData.value = response.data;
     })
     .catch(error => console.error(error))
     .finally(() => (loading.value = false));
@@ -163,7 +165,7 @@ watch(params, () => {
     <template v-slot:[`item.actions`]="{ item }">
       <div class="d-flex justify-end">
         <div
-          class="border rounded px-1"
+          class="border rounded px-1 hover-cursor-pointer"
           @click="
             $router.push(`/scoring/mobile/${item.columns.customer.idnum}`)
           "
@@ -171,26 +173,28 @@ watch(params, () => {
           <v-icon
             size="x-small"
             icon="mdi:mdi-eye-outline"
-            class=""
           ></v-icon>
         </div>
-        <div class="border rounded px-1 ml-1">
+        <div
+          class="border rounded px-1 ml-1"
+          :class="
+            item.columns.status.toLowerCase() === 'failed'
+              ? 'hover-cursor-pointer'
+              : ''
+          "
+        >
           <v-icon
-            color="green"
+            :color="
+              item.columns.status.toLowerCase() === 'failed'
+                ? 'green'
+                : 'blue-grey-lighten-4'
+            "
             size="x-small"
             icon="mdi:mdi-reload"
             class=""
           ></v-icon>
         </div>
-        <div class="border rounded px-1 ml-1">
-          <v-icon
-            color="blue"
-            size="x-small"
-            icon="mdi:mdi-pencil-outline"
-            class=""
-          ></v-icon>
-        </div>
-        <div class="border rounded px-1 ml-1">
+        <div class="border rounded px-1 ml-1 hover-cursor-pointer">
           <v-icon
             color="red"
             size="x-small"
@@ -202,3 +206,9 @@ watch(params, () => {
     </template>
   </VDataTableServer>
 </template>
+
+<style>
+.hover-cursor-pointer :hover {
+  cursor: pointer;
+}
+</style>

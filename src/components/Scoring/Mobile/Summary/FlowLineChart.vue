@@ -6,7 +6,6 @@ import LineChart from "@/components/Scoring/LineChart.vue";
 
 const options = ["Option 1", "Option 2", "Option 3", "Option 4"];
 
-
 interface Flow {
   id: number;
   idnum: string;
@@ -22,7 +21,7 @@ interface Flow {
 
 const route = useRoute();
 
-const apiData = ref<Flow[]>([])
+const apiData = ref<Flow[]>([]);
 
 // const data = ref<FlowData>({
 //   labels: [],
@@ -31,8 +30,18 @@ const apiData = ref<Flow[]>([])
 
 const getMonthName = (month: number): string => {
   const months = [
-    'January', 'February', 'March', 'April', 'May', 'June',
-    'July', 'August', 'September', 'October', 'November', 'December'
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
   ];
   return months[month - 1];
 };
@@ -42,8 +51,8 @@ const inflow = computed(() => {
   const data: string[] = [];
 
   for (const item of apiData.value) {
-    if (item.expenseflowname === 'Inflow') {
-      const [month] = item.name.split('/').map(Number);
+    if (item.expenseflowname === "Inflow") {
+      const [month] = item.name.split("/").map(Number);
       const label = getMonthName(month);
       const monthIndex = labels.indexOf(label);
 
@@ -65,8 +74,8 @@ const outflow = computed(() => {
   const data: string[] = [];
 
   for (const item of apiData.value) {
-    if (item.expenseflowname === 'Outflow') {
-      const [month] = item.name.split('/').map(Number);
+    if (item.expenseflowname === "Outflow") {
+      const [month] = item.name.split("/").map(Number);
       const label = getMonthName(month);
       const monthIndex = labels.indexOf(label);
 
@@ -83,19 +92,21 @@ const outflow = computed(() => {
   return { labels, data };
 });
 
-const flow = ref<string>('Inflow');
+const flow = ref<string>("Inflow");
 
 // API Call: Get In-Out Flow Data
 const loadFlowData = async () => {
   await axiosInstance
-    .get(`/income/income_expense_flow?idNumber=${route.params.slug}&pageSize=100&sortBy=id`)
+    .get(
+      `/income/income_expense_flow?idNumber=${route.params.slug}&pageSize=100&sortBy=id`
+    )
     .then(response => (apiData.value = response.data.content))
     .catch(error => console.error(error));
 };
 
 onMounted(() => {
-  loadFlowData() 
-})
+  loadFlowData();
+});
 </script>
 
 <template>
@@ -148,165 +159,6 @@ onMounted(() => {
         </div>
 
         <div class="my-10">
-          <div class="d-flex justify-space-between">
-            <div>
-              <v-menu transition="slide-y-transition">
-                <template v-slot:activator="{ props }">
-                  <v-btn
-                    variant="outlined"
-                    append-icon="mdi:mdi-chevron-down"
-                    v-bind="props"
-                    class="text-none text-caption ml-2"
-                    style="border: 1px solid rgba(128, 128, 128, 0.25)"
-                  >
-                    Select Year
-                  </v-btn>
-                </template>
-                <v-sheet
-                  border
-                  rounded
-                >
-                  <v-list
-                    nav
-                    density="compact"
-                    role="listbox"
-                  >
-                    <v-list-item
-                      v-for="(item, idx) in options"
-                      :key="idx"
-                      :value="item"
-                      >{{ item }}</v-list-item
-                    >
-                  </v-list>
-                </v-sheet>
-              </v-menu>
-              <v-menu transition="slide-y-transition">
-                <template v-slot:activator="{ props }">
-                  <v-btn
-                    variant="outlined"
-                    append-icon="mdi:mdi-chevron-down"
-                    v-bind="props"
-                    class="text-none text-caption ml-2"
-                    style="border: 1px solid rgba(128, 128, 128, 0.25)"
-                  >
-                    Select Month
-                  </v-btn>
-                </template>
-                <v-sheet
-                  border
-                  rounded
-                >
-                  <v-list
-                    nav
-                    density="compact"
-                    role="listbox"
-                  >
-                    <v-list-item
-                      v-for="(item, idx) in options"
-                      :key="idx"
-                      :value="item"
-                      >{{ item }}</v-list-item
-                    >
-                  </v-list>
-                </v-sheet>
-              </v-menu>
-            </div>
-            <div>
-              <v-menu transition="slide-y-transition">
-                <template v-slot:activator="{ props }">
-                  <v-btn
-                    variant="outlined"
-                    append-icon="mdi:mdi-chevron-down"
-                    v-bind="props"
-                    class="text-none text-caption ml-2"
-                    style="border: 1px solid rgba(128, 128, 128, 0.25)"
-                  >
-                    Export
-                  </v-btn>
-                </template>
-                <v-sheet
-                  border
-                  rounded
-                >
-                  <v-list
-                    nav
-                    density="compact"
-                    role="listbox"
-                  >
-                    <v-list-item
-                      v-for="(item, idx) in options"
-                      :key="idx"
-                      :value="item"
-                      >{{ item }}</v-list-item
-                    >
-                  </v-list>
-                </v-sheet>
-              </v-menu>
-              <v-menu transition="slide-y-transition">
-                <template v-slot:activator="{ props }">
-                  <v-btn
-                    variant="outlined"
-                    append-icon="mdi:mdi-chevron-down"
-                    v-bind="props"
-                    class="text-none text-caption ml-2"
-                    style="border: 1px solid rgba(128, 128, 128, 0.25)"
-                  >
-                    Show / Hide
-                  </v-btn>
-                </template>
-                <v-sheet
-                  border
-                  rounded
-                >
-                  <v-list
-                    nav
-                    density="compact"
-                    role="listbox"
-                  >
-                    <v-list-item
-                      v-for="(item, idx) in options"
-                      :key="idx"
-                      :value="item"
-                      >{{ item }}</v-list-item
-                    >
-                  </v-list>
-                </v-sheet>
-              </v-menu>
-              <v-menu transition="slide-y-transition">
-                <template v-slot:activator="{ props }">
-                  <v-btn
-                    variant="outlined"
-                    append-icon="mdi:mdi-chevron-down"
-                    v-bind="props"
-                    class="text-none text-caption ml-2"
-                    style="border: 1px solid rgba(128, 128, 128, 0.25)"
-                  >
-                    <v-icon icon="mdi:mdi-dots-vertical" />
-                  </v-btn>
-                </template>
-                <v-sheet
-                  border
-                  rounded
-                >
-                  <v-list
-                    nav
-                    density="compact"
-                    role="listbox"
-                  >
-                    <v-list-item
-                      v-for="(item, idx) in options"
-                      :key="idx"
-                      :value="item"
-                      >{{ item }}</v-list-item
-                    >
-                  </v-list>
-                </v-sheet>
-              </v-menu>
-            </div>
-          </div>
-        </div>
-
-        <div>
           <LineChart
             :propData="inflow"
             v-if="flow.toLowerCase() === 'inflow'"
