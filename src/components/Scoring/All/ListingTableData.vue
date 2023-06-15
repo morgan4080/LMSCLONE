@@ -6,7 +6,6 @@ import {
   dateFromTimestamp,
   timeFromTimestamp,
 } from "@/helpers";
-import axios from "axios";
 
 interface Statement {
   id: number;
@@ -38,6 +37,7 @@ const props = defineProps<{
 
 const loading = ref(false);
 const itemsPerPage = ref(5);
+const search = ref("");
 const totalItems = computed(() => tableData.value.length);
 const headers = toRef(props, "headers");
 const params = toRef(props, "params");
@@ -72,13 +72,13 @@ const tableData = computed(() =>
 // API Call: Get all uploaded statements
 const loadData = async (filters?: string) => {
   loading.value = true;
-  let url = `http://localhost:5000/content`;
+  let url = `/e_statement/get_uploaded_statements?pageSize=${itemsPerPage.value}&sortBy=id`;
   if (filters) url += filters;
-  await axios
+  await axiosInstance
     .get(url)
     .then(response => {
       console.log(response);
-      apiData.value = response.data;
+      apiData.value = response.data.content;
     })
     .catch(error => console.error(error))
     .finally(() => (loading.value = false));
@@ -99,6 +99,7 @@ watch(params, () => {
     :loading="loading"
     loading-text="Loading...Please Wait"
     item-value="name"
+    :search="search"
     @update:options="loadData()"
   >
     <template v-slot:[`headers`]="{ columns }">

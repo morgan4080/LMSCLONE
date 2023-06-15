@@ -5,6 +5,7 @@ import ListingTableData from "@/components/Scoring/All/ListingTableData.vue";
 
 const banks = ["NCBA", "KCB", "Equity", "Coop"];
 const mobile = ["MPESA", "Airtel Money"];
+const searchStatementListing = ref("");
 const params = ref("");
 const statements = ref<{ id: number; name: string }[]>([
   {
@@ -136,13 +137,38 @@ watch(filters, () => {
       <v-row class="bg-white rounded">
         <v-col>
           <v-container>
-            <div>
-              <h1 class="text-h6 font-weight-regular">Statement Listing</h1>
-              <h2 class="text-caption text-grey-darken-2 font-weight-regular">
-                A List Of All Uploaded Statements
-              </h2>
+            <div class="d-flex justify-space-between">
+              <div>
+                <h1 class="text-h6 font-weight-regular">Statement Listing</h1>
+                <h2 class="text-caption text-grey-darken-2 font-weight-regular">
+                  A List Of All Uploaded Statements
+                </h2>
+              </div>
+              <div class="d-flex align-center">
+                <v-input
+                  v-model="searchStatementListing"
+                  hide-details
+                  class="font-weight-light"
+                  density="compact"
+                >
+                  <template v-slot:default>
+                    <input
+                      class="border rounded rounded-e-0 px-2 text-caption w-100 searchField"
+                      type="text"
+                      placeholder="Search Here"
+                    />
+                    <v-btn
+                      variant="tonal"
+                      size="small"
+                      class="rounded-s-0"
+                    >
+                      <span>GO</span>
+                    </v-btn>
+                  </template>
+                </v-input>
+              </div>
             </div>
-            <v-row class="mt-12">
+            <v-row class="mt-6 mb-1">
               <v-col>
                 <!--                <v-menu transition="slide-y-transition">-->
                 <!--                  <template v-slot:activator="{ props }">-->

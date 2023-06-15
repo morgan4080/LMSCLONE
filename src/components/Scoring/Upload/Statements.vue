@@ -6,6 +6,7 @@ import CustomTable from "@/components/Scoring/Upload/CustomTable.vue";
 
 const banks = ["NCBA", "KCB", "Equity", "Coop"];
 const mobile = ["MPESA", "Airtel Money"];
+const searchUploadedStatement = ref("");
 const headers = ref<
   {
     title: string;
@@ -137,13 +138,38 @@ watch(filters, () => {
       <v-row class="bg-white rounded">
         <v-col>
           <v-container>
-            <div>
-              <h1 class="text-h6 font-weight-regular">
-                Recently Uploaded Statement
-              </h1>
-              <h2 class="text-caption text-grey-darken-2 font-weight-regular">
-                Summary Of Recently Uploaded Statements
-              </h2>
+            <div class="d-flex justify-space-between">
+              <div>
+                <h1 class="text-h6 font-weight-regular">
+                  Recently Uploaded Statement
+                </h1>
+                <h2 class="text-caption text-grey-darken-2 font-weight-regular">
+                  Summary Of Recently Uploaded Statements
+                </h2>
+              </div>
+              <div class="align-center d-flex">
+                <v-input
+                  v-model="searchUploadedStatement"
+                  hide-details
+                  class="font-weight-light"
+                  density="compact"
+                >
+                  <template v-slot:default>
+                    <input
+                      class="border rounded rounded-e-0 px-2 text-caption w-100 searchField"
+                      type="text"
+                      placeholder="Search Here"
+                    />
+                    <v-btn
+                      variant="tonal"
+                      size="small"
+                      class="rounded-s-0"
+                    >
+                      <span>GO</span>
+                    </v-btn>
+                  </template>
+                </v-input>
+              </div>
             </div>
             <v-row class="mt-12">
               <v-col>
