@@ -6,6 +6,7 @@ import CustomTable from "@/components/Scoring/Upload/CustomTable.vue";
 
 const banks = ["NCBA", "KCB", "Equity", "Coop"];
 const mobile = ["MPESA", "Airtel Money"];
+const searchUploadedStatement = ref("");
 const headers = ref<
   {
     title: string;
@@ -137,13 +138,38 @@ watch(filters, () => {
       <v-row class="bg-white rounded">
         <v-col>
           <v-container>
-            <div>
-              <h1 class="text-h6 font-weight-regular">
-                Recently Uploaded Statement
-              </h1>
-              <h2 class="text-caption text-grey-darken-2 font-weight-regular">
-                Summary Of Recently Uploaded Statements
-              </h2>
+            <div class="d-flex justify-space-between">
+              <div>
+                <h1 class="text-h6 font-weight-regular">
+                  Recently Uploaded Statement
+                </h1>
+                <h2 class="text-caption text-grey-darken-2 font-weight-regular">
+                  Summary Of Recently Uploaded Statements
+                </h2>
+              </div>
+              <div class="align-center d-flex">
+                <v-input
+                  v-model="searchUploadedStatement"
+                  hide-details
+                  class="font-weight-light"
+                  density="compact"
+                >
+                  <template v-slot:default>
+                    <input
+                      class="border rounded rounded-e-0 px-2 text-caption w-100 searchField"
+                      type="text"
+                      placeholder="Search Here"
+                    />
+                    <v-btn
+                      variant="tonal"
+                      size="small"
+                      class="rounded-s-0"
+                    >
+                      <span>GO</span>
+                    </v-btn>
+                  </template>
+                </v-input>
+              </div>
             </div>
             <v-row class="mt-12">
               <v-col>
@@ -347,35 +373,6 @@ watch(filters, () => {
                           icon="mdi:mdi-check"
                         />
                         {{ item.title }}</v-list-item
-                      >
-                    </v-list>
-                  </v-sheet>
-                </v-menu>
-                <v-menu transition="slide-y-transition">
-                  <template v-slot:activator="{ props }">
-                    <v-btn
-                      variant="outlined"
-                      v-bind="props"
-                      class="text-none text-caption"
-                      style="border: 1px solid rgba(128, 128, 128, 0.25)"
-                    >
-                      <v-icon icon="mdi:mdi-dots-vertical"></v-icon>
-                    </v-btn>
-                  </template>
-                  <v-sheet
-                    border
-                    rounded
-                  >
-                    <v-list
-                      nav
-                      density="compact"
-                      role="listbox"
-                    >
-                      <v-list-item
-                        v-for="(item, idx) in options"
-                        :key="idx"
-                        :value="item"
-                        >{{ item }}</v-list-item
                       >
                     </v-list>
                   </v-sheet>
