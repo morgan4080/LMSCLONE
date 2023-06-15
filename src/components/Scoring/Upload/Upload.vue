@@ -1,45 +1,56 @@
 <script setup lang="ts">
-import { onMounted, reactive, ref } from "vue";
+import { onMounted, watch, ref } from "vue";
 import axiosInstance from "@/services/api/axiosInstance";
 
 import FileUpload from "@/components/Scoring/Upload/FileUpload.vue";
+
+interface Statement {
+  title: string;
+  value: string;
+}
 
 interface Bank {
   bankName: string;
   bankCode: string;
 }
 
-const statements = ["Bank Statement", "Mobile Statement"];
-const banks = ["NCBA Bank", "KCB Bank", "Equity Bank", "Coop Bank"];
-// const banks = ref<Bank[]>([ ]);
-const selectedBank = ref<string>("");
-const mobile = ["MPesa", "Airtel Money"];
-// const customers = ["Duggan Kimani", "Tom Kimani"];
+interface Mobile {
+  mobileName: string;
+  mobileCode: string;
+}
 
-const media = ref<any[]>([]);
+interface Upload {
+  type: string | null;
+  code: string | null;
+  file: File | null;
+}
+
+const statementList = ref<Statement[]>([
+  { title: "Mobile Statement", value: "Mobile" },
+  { title: "Bank Statement", value: "Bank" },
+]);
+const mobileList = ref<Mobile[]>([
+  { mobileName: "M-Pesa", mobileCode: "MPESA" },
+  { mobileName: "Airtel Money", mobileCode: "AIRTEL" },
+]);
+const bankList = ref<Bank[]>([]);
+const form_upload = ref<Upload>({
+  type: null,
+  code: null,
+  file: null,
+});
+const uploads = ref<Upload[]>([]);
 
 const dragging = ref(false);
 
-const formStatements = reactive({
-  type: null,
-  provider: null,
-  customer: null,
-});
-
 function onDropped(event: Event) {
-  if (formStatements.provider) {
+  if (form_upload.value.code !== null) {
     dragging.value = false;
     let files = [...event.dataTransfer.items]
       .filter(item => item.kind === "file")
       .map(item => item.getAsFile());
 
-    files.forEach(file => {
-      media.value.unshift({
-        file,
-        progress: 5,
-        status: "pending",
-      });
-    });
+    files.forEach(file => handleFile(file));
   } else {
     dragging.value = false;
   }
@@ -51,12 +62,20 @@ function inputForm() {
 
 // API Call: Get list of banks
 const loadBanks = async () => {
-  // await axiosInstance
-  //   .get("/banks/list")
-  //   .then(response => {
-  //     banks.value = response.data;
-  //   })
-  //   .catch(error => console.error(error));
+  await axiosInstance
+    .get("/banks/list")
+    .then(response => {
+      bankList.value = response.data;
+    })
+    .catch(error => console.error(error));
+};
+
+const handleFile = (file: File) => {
+  if (file !== null) {
+    form_upload.value.file = file;
+    uploads.value.unshift(form_upload.value);
+    form_upload.value = { type: null, code: null, file: null };
+  }
 };
 
 onMounted(() => {
@@ -65,15 +84,16 @@ onMounted(() => {
     .getElementById("file-input")!
     .addEventListener("change", handleFiles, false);
   function handleFiles() {
-    const fileList = this.files;
-    const file = fileList[0];
-    media.value.unshift({
-      file,
-      progress: 10,
-      status: "pending",
-    });
+    handleFile(this.files[0]);
   }
 });
+
+watch(
+  () => form_upload.value.type,
+  () => {
+    form_upload.value.code = null;
+  }
+);
 </script>
 
 <template>
@@ -87,66 +107,61 @@ onMounted(() => {
               Select Statement Type Then Select File To Upload
             </h2>
             <div class="mt-12">
+              <!-- Upload Inputs  -->
               <div>
                 <label class="text-black"
                   >Statement Type <span class="text-red">*</span></label
                 >
                 <v-select
-                  class="mt-3"
-                  v-model="formStatements.type"
+                  v-model="form_upload.type"
+                  :items="statementList"
+                  item-title="title"
+                  item-value="value"
+                  variant="outlined"
                   density="compact"
                   label="Select Statement Type"
-                  :items="statements"
-                  variant="outlined"
-                  @update:modelValue="formStatements.provider = null"
-                ></v-select>
-              </div>
-              <div>
-                <!-- <v-select
-                  v-model="selectedBank"
-                  :items="banks"
-                  item-title="bankName"
-                  item-value="bankCode"
-                  variant="outlined"
-                  density="compact"
-                  label="Select Bank"
                   class="mt-3"
-                ></v-select> -->
+                >
+                </v-select>
               </div>
               <div>
                 <label class="text-black"
                   >{{
-                    formStatements.type
-                      ? formStatements.type === "Bank Statement"
+                    form_upload.type
+                      ? form_upload.type === "Bank"
                         ? "Bank"
                         : "Mobile"
                       : "Bank/Mobile"
-                  }}
-                  <span class="text-red"> *</span></label
+                  }}<span class="text-red"> *</span></label
                 >
                 <v-select
-                  v-model="formStatements.provider"
-                  class="mt-3"
-                  :disabled="formStatements.type === null"
-                  density="compact"
+                  v-model="form_upload.code"
+                  :items="form_upload.type === 'Bank' ? bankList : mobileList"
+                  :item-title="
+                    form_upload.type === 'Bank' ? 'bankName' : 'mobileName'
+                  "
+                  :item-value="
+                    form_upload.type === 'Bank' ? 'bankCode' : 'mobileCode'
+                  "
                   :label="
-                    formStatements.type
-                      ? formStatements.type === 'Bank Statement'
+                    form_upload.type
+                      ? form_upload.type === 'Bank'
                         ? 'Select Bank'
                         : 'Select Mobile'
                       : 'Select Bank/Mobile'
                   "
-                  :items="
-                    formStatements.type === 'Bank Statement' ? banks : mobile
-                  "
+                  :disabled="form_upload.type === null"
                   variant="outlined"
-                ></v-select>
+                  density="compact"
+                  class="mt-3"
+                >
+                </v-select>
               </div>
               <!-- <div>
                 <label class="text-black">Assign To</label>
                 <v-select
                   class="mt-3"
-                  :disabled="formStatements.provider === null"
+                  :disabled="formStatements.document_code === null"
                   v-model="formStatements.customer"
                   density="compact"
                   label="Select Customer"
@@ -169,8 +184,8 @@ onMounted(() => {
                     @click="inputForm"
                     class="mb-3 text-none text-caption px-8"
                     variant="flat"
-                    :color="formStatements.provider !== null ? 'info' : ''"
-                    :disabled="formStatements.provider === null"
+                    :color="form_upload.code !== null ? 'info' : ''"
+                    :disabled="form_upload.code === null"
                     >Select PDF File To Upload</v-btn
                   >
                   <v-file-input
@@ -196,16 +211,16 @@ onMounted(() => {
               <v-divider></v-divider>
               <v-list>
                 <div
-                  v-for="(upload, i) in media"
+                  v-for="(upload, i) in uploads"
                   :key="i"
                 >
                   <FileUpload
                     :statement="{
-                      document: '',
-                      provider: '',
-                      file: upload.file,
+                      document_type: upload.type,
+                      document_code: upload.code,
+                      document_file: upload.file,
                     }"
-                    @clear="media.splice(i, 1)"
+                    @clear="uploads.splice(i, 1)"
                   ></FileUpload>
                   <v-divider class="mb-2"></v-divider>
                 </div>
