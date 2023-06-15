@@ -1,6 +1,18 @@
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
-// import axiosInstance from "@/services/api/axiosInstance";
+import { useRoute } from "vue-router";
+import axiosInstance from "@/services/api/axiosInstance";
+
+interface BankDataItem {
+  count: number;
+  highest: string;
+  total: string;
+  last: string;
+  last_amount: string;
+  transactiontype: string;
+}
+
+const route = useRoute();
 
 const banks = {
   count: {
@@ -50,14 +62,16 @@ const headers = ref<
   { title: "Uploader", key: "uploader", align: "end", sortable: false },
 ]);
 
-// const bankTransData = ref([])
+const bankTransData = ref([])
 
 // API Call: Get Bank Transactions Data
 const loadBankTransData = async () => {
-  // await axiosInstance
-  //   .get("/e_statement/")
-  //   .then(response => (bankTransData.value = response.data))
-  //   .catch(error => console.error(error));
+  await axiosInstance
+    .get(
+      `/e_statement/pay_bill_classifications_received?idNumber=${route.params.slug}&pageSize=100&sortBy=id`
+    )
+    .then(response => (bankTransData.value = response.data.content))
+    .catch(error => console.error(error));
 };
 
 onMounted(() => {
@@ -66,6 +80,7 @@ onMounted(() => {
 </script>
 
 <template>
+  {{ bankTransData }}
   <v-container fluid>
     <div
       @click="open = !open"
