@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from "vue";
 import { useRoute } from "vue-router";
-import axiosInstance from "@/services/api/axiosInstance"; 
+import axiosInstance from "@/services/api/axiosInstance";
 
 interface PaybillDataItem {
   count: number;
@@ -58,7 +58,9 @@ const topPaybillTransData = ref<TopPaybillDataItem[]>([]);
 // API Call: Get Paybill Transactions Data
 const loadPaybillTransData = async () => {
   await axiosInstance
-    .get(`/e_statement/paybill_summary?idNumber=${route.params.slug}&pageSize=100&sortBy=id`)
+    .get(
+      `/e_statement/paybill_summary?idNumber=${route.params.slug}&pageSize=100&sortBy=id`
+    )
     .then(response => (paybillTransData.value = response.data.content))
     .catch(error => console.error(error));
 };
@@ -66,17 +68,19 @@ const loadPaybillTransData = async () => {
 // API Call: Get Buy Goods Transactions Data
 const loadTopPaybillTransData = async () => {
   await axiosInstance
-    .get(`/e_statement/top_paybill_transactions?idNumber=${route.params.slug}&pageSize=100&sortBy=id`)
+    .get(
+      `/e_statement/top_paybill_transactions?idNumber=${route.params.slug}&pageSize=100&sortBy=id`
+    )
     .then(response => (topPaybillTransData.value = response.data.content))
     .catch(error => console.error(error));
 };
 
 onMounted(() => {
-  loadPaybillTransData() 
-})
+  loadPaybillTransData();
+});
 </script>
 
-<template> 
+<template>
   <v-container fluid>
     <div
       @click="open = !open"
@@ -106,42 +110,42 @@ onMounted(() => {
                 </h2>
               </div>
               <div class="mx-4 my-8">
-              <v-row class="justify-space-between d-flex font-weight-bold">
-                <v-col>Title</v-col>
-                <v-col>{{ paybillTransData[0]?.transactiontype }}</v-col>
-                <v-col>{{ paybillTransData[1]?.transactiontype }}</v-col>
-              </v-row>
-              <v-divider
-                class="my-3"
-                :thickness="3"
-              />
-              <v-row class="justify-space-between d-flex">
-                <v-col class="font-weight-medium">Count</v-col>
-                <v-col>{{ paybillTransData[0]?.count }}</v-col>
-                <v-col>{{ paybillTransData[1]?.count }}</v-col>
-              </v-row>
-              <v-divider class="my-2" />
-              <v-row class="justify-space-between d-flex">
-                <v-col class="font-weight-medium">Highest</v-col>
-                <v-col>{{ paybillTransData[0]?.highest }}</v-col>
-                <v-col>{{ paybillTransData[1]?.highest }}</v-col>
-              </v-row>
-              <v-divider class="my-2" />
-              <v-row class="justify-space-between d-flex">
-                <v-col class="font-weight-medium">Lowest</v-col>
-                <v-col>{{ paybillTransData[0]?.lowest }}</v-col>
-                <v-col>{{ paybillTransData[1]?.lowest }}</v-col>
-              </v-row>
-              <v-divider
-                class="my-3"
-                :thickness="3"
-              />
-              <v-row class="font-weight-bold justify-space-between d-flex">
-                <v-col>Total</v-col>
-                <v-col>{{ paybillTransData[0]?.total }}</v-col>
-                <v-col>{{ paybillTransData[1]?.total }}</v-col>
-              </v-row>
-            </div>
+                <v-row class="justify-space-between d-flex font-weight-bold">
+                  <v-col>Title</v-col>
+                  <v-col>{{ paybillTransData[0]?.transactiontype }}</v-col>
+                  <v-col>{{ paybillTransData[1]?.transactiontype }}</v-col>
+                </v-row>
+                <v-divider
+                  class="my-3"
+                  :thickness="3"
+                />
+                <v-row class="justify-space-between d-flex">
+                  <v-col class="font-weight-medium">Count</v-col>
+                  <v-col>{{ paybillTransData[0]?.count }}</v-col>
+                  <v-col>{{ paybillTransData[1]?.count }}</v-col>
+                </v-row>
+                <v-divider class="my-2" />
+                <v-row class="justify-space-between d-flex">
+                  <v-col class="font-weight-medium">Highest</v-col>
+                  <v-col>{{ paybillTransData[0]?.highest }}</v-col>
+                  <v-col>{{ paybillTransData[1]?.highest }}</v-col>
+                </v-row>
+                <v-divider class="my-2" />
+                <v-row class="justify-space-between d-flex">
+                  <v-col class="font-weight-medium">Lowest</v-col>
+                  <v-col>{{ paybillTransData[0]?.lowest }}</v-col>
+                  <v-col>{{ paybillTransData[1]?.lowest }}</v-col>
+                </v-row>
+                <v-divider
+                  class="my-3"
+                  :thickness="3"
+                />
+                <v-row class="font-weight-bold justify-space-between d-flex">
+                  <v-col>Total</v-col>
+                  <v-col>{{ paybillTransData[0]?.total }}</v-col>
+                  <v-col>{{ paybillTransData[1]?.total }}</v-col>
+                </v-row>
+              </div>
             </v-container>
           </v-card>
         </v-col>
@@ -157,7 +161,7 @@ onMounted(() => {
           >
             <div class="px-8">
               <h1 class="text-h6 font-weight-regular">
-                Paybill & Buy Goods Transactions
+                Top Paybill & Buy Goods Transactions
               </h1>
               <h2 class="text-caption text-grey-darken-2 font-weight-regular">
                 Summary of Paybill & Buy Goods Transactions

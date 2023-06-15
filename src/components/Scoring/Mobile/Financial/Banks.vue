@@ -75,8 +75,8 @@ const loadBankTransData = async () => {
 };
 
 onMounted(() => {
-  loadBankTransData() 
-})
+  loadBankTransData();
+});
 </script>
 
 <template>
@@ -164,7 +164,7 @@ onMounted(() => {
           >
             <v-container fluid>
               <div class="mx-4 my-4">
-                <h1 class="text-h6 font-weight-regular">Bank Transactions</h1>
+                <h1 class="text-h6 font-weight-regular">Bank Accounts</h1>
                 <h2 class="text-caption text-grey-darken-2 font-weight-regular">
                   Summary of Bank Transactions
                 </h2>
@@ -210,7 +210,7 @@ onMounted(() => {
             color="white"
           >
             <div class="px-8">
-              <h1 class="text-h6 font-weight-regular">Bank Transactions</h1>
+              <h1 class="text-h6 font-weight-regular">Top Bank Transactions</h1>
               <h2 class="text-caption text-grey-darken-2 font-weight-regular">
                 Summary of Bank Transactions
               </h2>

@@ -60,8 +60,8 @@ const loadOnlineTransData = async () => {
 };
 
 onMounted(() => {
-  loadOnlineTransData() 
-})
+  loadOnlineTransData();
+});
 </script>
 
 <template>
@@ -151,7 +151,7 @@ onMounted(() => {
           >
             <div class="px-8">
               <h1 class="text-h6 font-weight-regular">
-                Online Purchases Transactions
+                Top Online Purchases Transactions
               </h1>
               <h2 class="text-caption text-grey-darken-2 font-weight-regular">
                 Summary of Online Purchases Transactions

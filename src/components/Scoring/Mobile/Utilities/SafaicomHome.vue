@@ -38,19 +38,21 @@ const headers = ref<
   { title: "Last Amount", key: "upload", align: "end", sortable: false },
 ]);
 
-const safHomeTransData = ref<SafHomeDataItem[]>([])
+const safHomeTransData = ref<SafHomeDataItem[]>([]);
 
 // API Call: Get Safaricom Home Transactions Data
 const loadSafHomeTransData = async () => {
   await axiosInstance
-    .get(`/e_statement/airtime_summary?idNumber=${route.params.slug}&pageSize=100&sortBy=id`)
+    .get(
+      `/e_statement/airtime_summary?idNumber=${route.params.slug}&pageSize=100&sortBy=id`
+    )
     .then(response => (safHomeTransData.value = response.data.content))
     .catch(error => console.error(error));
 };
 
 onMounted(() => {
-  loadSafHomeTransData() 
-})
+  loadSafHomeTransData();
+});
 </script>
 
 <template>
@@ -95,25 +97,25 @@ onMounted(() => {
                 <v-row class="justify-space-between d-flex">
                   <v-col class="font-weight-medium">Count</v-col>
                   <v-col>{{ safHomeTransData[0]?.count }}</v-col>
-                  <v-col>{{  }}</v-col>
+                  <v-col>{{}}</v-col>
                 </v-row>
                 <v-divider class="my-2" />
                 <v-row class="justify-space-between d-flex">
                   <v-col class="font-weight-medium">Highest</v-col>
                   <v-col>{{ safHomeTransData[0]?.highest }}</v-col>
-                  <v-col>{{  }}</v-col>
+                  <v-col>{{}}</v-col>
                 </v-row>
                 <v-divider class="my-2" />
                 <v-row class="justify-space-between d-flex">
                   <v-col class="font-weight-medium">Lowest</v-col>
                   <v-col>{{ safHomeTransData[0]?.lowest }}</v-col>
-                  <v-col>{{  }}</v-col>
+                  <v-col>{{}}</v-col>
                 </v-row>
                 <v-divider class="my-2" />
                 <v-row class="justify-space-between d-flex">
                   <v-col class="font-weight-medium">Last</v-col>
                   <v-col>{{ safHomeTransData[0]?.last }}</v-col>
-                  <v-col>{{  }}</v-col>
+                  <v-col>{{}}</v-col>
                 </v-row>
                 <v-divider
                   class="my-3"
@@ -122,7 +124,7 @@ onMounted(() => {
                 <v-row class="font-weight-bold justify-space-between d-flex">
                   <v-col>Total</v-col>
                   <v-col>{{ safHomeTransData[0]?.total }}</v-col>
-                  <v-col>{{  }}</v-col>
+                  <v-col>{{}}</v-col>
                 </v-row>
               </div>
             </v-container>
@@ -140,7 +142,7 @@ onMounted(() => {
           >
             <div class="px-8">
               <h1 class="text-h6 font-weight-regular">
-                Safaricom Home Transactions
+                Top Safaricom Home Transactions
               </h1>
               <h2 class="text-caption text-grey-darken-2 font-weight-regular">
                 Summary of Safaricom Home Transactions

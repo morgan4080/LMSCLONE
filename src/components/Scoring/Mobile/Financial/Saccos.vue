@@ -60,8 +60,8 @@ const loadSaccoTransData = async () => {
 };
 
 onMounted(() => {
-  loadSaccoTransData() 
-})
+  loadSaccoTransData();
+});
 </script>
 
 <template>
@@ -148,7 +148,9 @@ onMounted(() => {
             color="white"
           >
             <div class="px-8">
-              <h1 class="text-h6 font-weight-regular">Saccos Transactions</h1>
+              <h1 class="text-h6 font-weight-regular">
+                Top Saccos Transactions
+              </h1>
               <h2 class="text-caption text-grey-darken-2 font-weight-regular">
                 Summary of Saccos Transactions
               </h2>

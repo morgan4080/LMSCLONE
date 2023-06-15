@@ -2,7 +2,6 @@
 import { ref, onMounted } from "vue";
 // import axiosInstance from "@/services/api/axiosInstance";
 
-
 const person = {
   count: {
     received: 182,
@@ -61,8 +60,8 @@ const loadPerson2personTransData = async () => {
 };
 
 onMounted(() => {
-  loadPerson2personTransData() 
-})
+  loadPerson2personTransData();
+});
 </script>
 
 <template>
@@ -152,7 +151,7 @@ onMounted(() => {
           >
             <div class="px-8">
               <h1 class="text-h6 font-weight-regular">
-                Person To Person Transactions
+                Top Person To Person Transactions
               </h1>
               <h2 class="text-caption text-grey-darken-2 font-weight-regular">
                 Summary of Person To Person Transactions

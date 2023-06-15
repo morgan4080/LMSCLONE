@@ -3,25 +3,49 @@ import { ref, onMounted } from "vue";
 // import axiosInstance from "@/services/api/axiosInstance";
 
 const beauty = {
-  count: {
-    received: 182,
-    paid: 76,
+  paybill: {
+    count: {
+      received: 182,
+      paid: 76,
+    },
+    highest: {
+      received: 182,
+      paid: 76,
+    },
+    lowest: {
+      received: 182,
+      paid: 76,
+    },
+    last: {
+      received: 182,
+      paid: 76,
+    },
+    total: {
+      received: 182,
+      paid: 76,
+    },
   },
-  highest: {
-    received: 182,
-    paid: 76,
-  },
-  lowest: {
-    received: 182,
-    paid: 76,
-  },
-  last: {
-    received: 182,
-    paid: 76,
-  },
-  total: {
-    received: 182,
-    paid: 76,
+  buyGoods: {
+    count: {
+      received: 182,
+      paid: 76,
+    },
+    highest: {
+      received: 182,
+      paid: 76,
+    },
+    lowest: {
+      received: 182,
+      paid: 76,
+    },
+    last: {
+      received: 182,
+      paid: 76,
+    },
+    total: {
+      received: 182,
+      paid: 76,
+    },
   },
 };
 const open = ref(true);
@@ -60,8 +84,8 @@ const loadBeautyTransData = async () => {
 };
 
 onMounted(() => {
-  loadBeautyTransData() 
-})
+  loadBeautyTransData();
+});
 </script>
 
 <template>
@@ -86,7 +110,9 @@ onMounted(() => {
           >
             <v-container fluid>
               <div class="mx-4">
-                <h1 class="text-h6 font-weight-regular">Beauty Transactions</h1>
+                <h1 class="text-h6 font-weight-regular">
+                  Beauty Transactions (Paybill)
+                </h1>
                 <h2 class="text-caption text-grey-darken-2 font-weight-regular">
                   Summary of Beauty Transactions
                 </h2>
@@ -103,26 +129,26 @@ onMounted(() => {
                 />
                 <v-row class="justify-space-between d-flex">
                   <v-col class="font-weight-medium">Count</v-col>
-                  <v-col>{{ beauty.count.received }}</v-col>
-                  <v-col>{{ beauty.count.paid }}</v-col>
+                  <v-col>{{ beauty.paybill.count.received }}</v-col>
+                  <v-col>{{ beauty.paybill.count.paid }}</v-col>
                 </v-row>
                 <v-divider class="my-2" />
                 <v-row class="justify-space-between d-flex">
                   <v-col class="font-weight-medium">Highest</v-col>
-                  <v-col>{{ beauty.highest.received }}</v-col>
-                  <v-col>{{ beauty.highest.paid }}</v-col>
+                  <v-col>{{ beauty.paybill.highest.received }}</v-col>
+                  <v-col>{{ beauty.paybill.highest.paid }}</v-col>
                 </v-row>
                 <v-divider class="my-2" />
                 <v-row class="justify-space-between d-flex">
                   <v-col class="font-weight-medium">Lowest</v-col>
-                  <v-col>{{ beauty.lowest.received }}</v-col>
-                  <v-col>{{ beauty.lowest.paid }}</v-col>
+                  <v-col>{{ beauty.paybill.lowest.received }}</v-col>
+                  <v-col>{{ beauty.paybill.lowest.paid }}</v-col>
                 </v-row>
                 <v-divider class="my-2" />
                 <v-row class="justify-space-between d-flex">
                   <v-col class="font-weight-medium">Last</v-col>
-                  <v-col>{{ beauty.last.received }}</v-col>
-                  <v-col>{{ beauty.last.paid }}</v-col>
+                  <v-col>{{ beauty.paybill.last.received }}</v-col>
+                  <v-col>{{ beauty.paybill.last.paid }}</v-col>
                 </v-row>
                 <v-divider
                   class="my-3"
@@ -130,14 +156,74 @@ onMounted(() => {
                 />
                 <v-row class="font-weight-bold justify-space-between d-flex">
                   <v-col>Total</v-col>
-                  <v-col>{{ beauty.total.received }}</v-col>
-                  <v-col>{{ beauty.total.paid }}</v-col>
+                  <v-col>{{ beauty.paybill.total.received }}</v-col>
+                  <v-col>{{ beauty.paybill.total.paid }}</v-col>
                 </v-row>
               </div>
             </v-container>
           </v-card>
         </v-col>
-        <v-col></v-col>
+        <v-col>
+          <v-card
+            class="rounded text-caption"
+            variant="flat"
+            color="white"
+          >
+            <v-container fluid>
+              <div class="mx-4">
+                <h1 class="text-h6 font-weight-regular">
+                  Beauty Transactions (Buy Goods)
+                </h1>
+                <h2 class="text-caption text-grey-darken-2 font-weight-regular">
+                  Summary of Beauty Transactions
+                </h2>
+              </div>
+              <div class="my-8 mx-4">
+                <v-row class="justify-space-between d-flex font-weight-bold">
+                  <v-col>Title</v-col>
+                  <v-col>Received</v-col>
+                  <v-col>Sent</v-col>
+                </v-row>
+                <v-divider
+                  class="my-3"
+                  :thickness="3"
+                />
+                <v-row class="justify-space-between d-flex">
+                  <v-col class="font-weight-medium">Count</v-col>
+                  <v-col>{{ beauty.buyGoods.count.received }}</v-col>
+                  <v-col>{{ beauty.buyGoods.count.paid }}</v-col>
+                </v-row>
+                <v-divider class="my-2" />
+                <v-row class="justify-space-between d-flex">
+                  <v-col class="font-weight-medium">Highest</v-col>
+                  <v-col>{{ beauty.buyGoods.highest.received }}</v-col>
+                  <v-col>{{ beauty.buyGoods.highest.paid }}</v-col>
+                </v-row>
+                <v-divider class="my-2" />
+                <v-row class="justify-space-between d-flex">
+                  <v-col class="font-weight-medium">Lowest</v-col>
+                  <v-col>{{ beauty.buyGoods.lowest.received }}</v-col>
+                  <v-col>{{ beauty.buyGoods.lowest.paid }}</v-col>
+                </v-row>
+                <v-divider class="my-2" />
+                <v-row class="justify-space-between d-flex">
+                  <v-col class="font-weight-medium">Last</v-col>
+                  <v-col>{{ beauty.buyGoods.last.received }}</v-col>
+                  <v-col>{{ beauty.buyGoods.last.paid }}</v-col>
+                </v-row>
+                <v-divider
+                  class="my-3"
+                  :thickness="3"
+                />
+                <v-row class="font-weight-bold justify-space-between d-flex">
+                  <v-col>Total</v-col>
+                  <v-col>{{ beauty.buyGoods.total.received }}</v-col>
+                  <v-col>{{ beauty.buyGoods.total.paid }}</v-col>
+                </v-row>
+              </div>
+            </v-container>
+          </v-card>
+        </v-col>
       </v-row>
       <!--      Table-->
       <v-row>
@@ -148,7 +234,9 @@ onMounted(() => {
             color="white"
           >
             <div class="px-8">
-              <h1 class="text-h6 font-weight-regular">Beauty Transactions</h1>
+              <h1 class="text-h6 font-weight-regular">
+                Top Beauty Transactions
+              </h1>
               <h2 class="text-caption text-grey-darken-2 font-weight-regular">
                 Summary of Beauty Transactions
               </h2>
