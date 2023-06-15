@@ -32,7 +32,9 @@ const fulizaData = ref<FulizaDataItem[]>([]);
 // API Call: Get Safaricom Mshwari Data
 const loadMshariData = async () => {
   await axiosInstance
-    .get(`/e_statement/mshwari_summary?/e_statement/mshwari_summary?idNumber=${route.params.slug}&pageSize=100&sortBy=id`)
+    .get(
+      `/e_statement/mshwari_summary?/e_statement/mshwari_summary?idNumber=${route.params.slug}&pageSize=100&sortBy=id`
+    )
     .then(response => (mshwariData.value = response.data.content))
     .catch(error => console.error(error));
 };
@@ -40,7 +42,9 @@ const loadMshariData = async () => {
 // API Call: Get Safaricom Mshwari Data
 const loadKcbMpesaData = async () => {
   await axiosInstance
-    .get(`/e_statement/kcb_mpesa_summary?/e_statement/kcb_mpesa_summary?idNumber=${route.params.slug}&pageSize=100&sortBy=id`)
+    .get(
+      `/e_statement/kcb_mpesa_summary?/e_statement/kcb_mpesa_summary?idNumber=${route.params.slug}&pageSize=100&sortBy=id`
+    )
     .then(response => (kcbMpesaData.value = response.data.content))
     .catch(error => console.error(error));
 };
@@ -48,7 +52,9 @@ const loadKcbMpesaData = async () => {
 // API Call: Get Safaricom Mshwari Data
 const loadFulizaData = async () => {
   await axiosInstance
-    .get(`/e_statement/fuliza_summary?/e_statement/fuliza_summary?idNumber=${route.params.slug}&pageSize=100&sortBy=id`)
+    .get(
+      `/e_statement/fuliza_summary?/e_statement/fuliza_summary?idNumber=${route.params.slug}&pageSize=100&sortBy=id`
+    )
     .then(response => (fulizaData.value = response.data.content))
     .catch(error => console.error(error));
 };
@@ -115,7 +121,7 @@ onMounted(() => {
               </v-row>
               <v-divider class="my-2" />
               <v-row class="justify-space-between d-flex">
-                <v-col class="font-weight-medium">Last On</v-col>
+                <v-col class="font-weight-medium">Lowest</v-col>
                 <v-col>{{ mshwariData[0]?.last }}</v-col>
                 <v-col>{{ mshwariData[1]?.last }}</v-col>
                 <v-col>{{ mshwariData[2]?.last }}</v-col>
@@ -123,7 +129,7 @@ onMounted(() => {
               </v-row>
               <v-divider class="my-2" />
               <v-row class="justify-space-between d-flex">
-                <v-col class="font-weight-medium">Last Amount</v-col>
+                <v-col class="font-weight-medium">Last</v-col>
                 <v-col>{{ mshwariData[0]?.last_amount }}</v-col>
                 <v-col>{{ mshwariData[1]?.last_amount }}</v-col>
                 <v-col>{{ mshwariData[2]?.last_amount }}</v-col>
