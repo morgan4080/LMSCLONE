@@ -60,8 +60,8 @@ const loadInsuranceTransData = async () => {
 };
 
 onMounted(() => {
-  loadInsuranceTransData() 
-})
+  loadInsuranceTransData();
+});
 </script>
 
 <template>
@@ -151,7 +151,7 @@ onMounted(() => {
           >
             <div class="px-8">
               <h1 class="text-h6 font-weight-regular">
-                Insurance Transactions
+                Top Insurance Transactions
               </h1>
               <h2 class="text-caption text-grey-darken-2 font-weight-regular">
                 Summary of Insurance Transactions

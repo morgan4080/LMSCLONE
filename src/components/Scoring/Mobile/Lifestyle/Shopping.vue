@@ -60,8 +60,8 @@ const loadShoppingTransData = async () => {
 };
 
 onMounted(() => {
-  loadShoppingTransData() 
-})
+  loadShoppingTransData();
+});
 </script>
 
 <template>
@@ -151,7 +151,7 @@ onMounted(() => {
           >
             <div class="px-8">
               <h1 class="text-h6 font-weight-regular">
-                Shopping Outlets Transactions
+                Top Shopping Outlets Transactions
               </h1>
               <h2 class="text-caption text-grey-darken-2 font-weight-regular">
                 Summary of Shopping Outlets Transactions

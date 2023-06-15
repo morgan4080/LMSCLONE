@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
 import { useRoute } from "vue-router";
-import axiosInstance from "@/services/api/axiosInstance"; 
+import axiosInstance from "@/services/api/axiosInstance";
 
 interface AgentDataItem {
   count: number;
@@ -39,19 +39,21 @@ const headers = ref<
   { title: "Last Amount", key: "upload", align: "end", sortable: false },
 ]);
 
-const agentTransData = ref<AgentDataItem[]>([])
+const agentTransData = ref<AgentDataItem[]>([]);
 
 // API Call: Get Agent Transactions Data
 const loadAgentTransData = async () => {
   await axiosInstance
-    .get(`/e_statement/agent_transaction_summary?idNumber=${route.params.slug}&pageSize=100&sortBy=id`)
+    .get(
+      `/e_statement/agent_transaction_summary?idNumber=${route.params.slug}&pageSize=100&sortBy=id`
+    )
     .then(response => (agentTransData.value = response.data.content))
     .catch(error => console.error(error));
 };
 
 onMounted(() => {
-  loadAgentTransData() 
-})
+  loadAgentTransData();
+});
 </script>
 
 <template>
@@ -138,7 +140,9 @@ onMounted(() => {
             color="white"
           >
             <div class="px-8">
-              <h1 class="text-h6 font-weight-regular">Agent Transactions</h1>
+              <h1 class="text-h6 font-weight-regular">
+                Top Agent Transactions
+              </h1>
               <h2 class="text-caption text-grey-darken-2 font-weight-regular">
                 Summary of Agent Transactions
               </h2>

@@ -3,25 +3,49 @@ import { ref, onMounted } from "vue";
 // import axiosInstance from "@/services/api/axiosInstance";
 
 const religion = {
-  count: {
-    received: 182,
-    paid: 76,
+  paybill: {
+    count: {
+      received: 182,
+      paid: 76,
+    },
+    highest: {
+      received: 182,
+      paid: 76,
+    },
+    lowest: {
+      received: 182,
+      paid: 76,
+    },
+    last: {
+      received: 182,
+      paid: 76,
+    },
+    total: {
+      received: 182,
+      paid: 76,
+    },
   },
-  highest: {
-    received: 182,
-    paid: 76,
-  },
-  lowest: {
-    received: 182,
-    paid: 76,
-  },
-  last: {
-    received: 182,
-    paid: 76,
-  },
-  total: {
-    received: 182,
-    paid: 76,
+  buyGoods: {
+    count: {
+      received: 182,
+      paid: 76,
+    },
+    highest: {
+      received: 182,
+      paid: 76,
+    },
+    lowest: {
+      received: 182,
+      paid: 76,
+    },
+    last: {
+      received: 182,
+      paid: 76,
+    },
+    total: {
+      received: 182,
+      paid: 76,
+    },
   },
 };
 const open = ref(true);
@@ -60,8 +84,8 @@ const loadReligionTransData = async () => {
 };
 
 onMounted(() => {
-  loadReligionTransData() 
-})
+  loadReligionTransData();
+});
 </script>
 
 <template>
@@ -87,7 +111,7 @@ onMounted(() => {
             <v-container fluid>
               <div class="mx-4">
                 <h1 class="text-h6 font-weight-regular">
-                  Religion Transactions
+                  Religion Transactions (Paybill)
                 </h1>
                 <h2 class="text-caption text-grey-darken-2 font-weight-regular">
                   Summary of Religion Transactions
@@ -105,26 +129,26 @@ onMounted(() => {
                 />
                 <v-row class="justify-space-between d-flex">
                   <v-col class="font-weight-medium">Count</v-col>
-                  <v-col>{{ religion.count.received }}</v-col>
-                  <v-col>{{ religion.count.paid }}</v-col>
+                  <v-col>{{ religion.paybill.count.received }}</v-col>
+                  <v-col>{{ religion.paybill.count.paid }}</v-col>
                 </v-row>
                 <v-divider class="my-2" />
                 <v-row class="justify-space-between d-flex">
                   <v-col class="font-weight-medium">Highest</v-col>
-                  <v-col>{{ religion.highest.received }}</v-col>
-                  <v-col>{{ religion.highest.paid }}</v-col>
+                  <v-col>{{ religion.paybill.highest.received }}</v-col>
+                  <v-col>{{ religion.paybill.highest.paid }}</v-col>
                 </v-row>
                 <v-divider class="my-2" />
                 <v-row class="justify-space-between d-flex">
                   <v-col class="font-weight-medium">Lowest</v-col>
-                  <v-col>{{ religion.lowest.received }}</v-col>
-                  <v-col>{{ religion.lowest.paid }}</v-col>
+                  <v-col>{{ religion.paybill.lowest.received }}</v-col>
+                  <v-col>{{ religion.paybill.lowest.paid }}</v-col>
                 </v-row>
                 <v-divider class="my-2" />
                 <v-row class="justify-space-between d-flex">
                   <v-col class="font-weight-medium">Last</v-col>
-                  <v-col>{{ religion.last.received }}</v-col>
-                  <v-col>{{ religion.last.paid }}</v-col>
+                  <v-col>{{ religion.paybill.last.received }}</v-col>
+                  <v-col>{{ religion.paybill.last.paid }}</v-col>
                 </v-row>
                 <v-divider
                   class="my-3"
@@ -132,14 +156,74 @@ onMounted(() => {
                 />
                 <v-row class="font-weight-bold justify-space-between d-flex">
                   <v-col>Total</v-col>
-                  <v-col>{{ religion.total.received }}</v-col>
-                  <v-col>{{ religion.total.paid }}</v-col>
+                  <v-col>{{ religion.paybill.total.received }}</v-col>
+                  <v-col>{{ religion.paybill.total.paid }}</v-col>
                 </v-row>
               </div>
             </v-container>
           </v-card>
         </v-col>
-        <v-col></v-col>
+        <v-col>
+          <v-card
+            class="rounded text-caption"
+            variant="flat"
+            color="white"
+          >
+            <v-container fluid>
+              <div class="mx-4">
+                <h1 class="text-h6 font-weight-regular">
+                  Religion Transactions (Buy Goods)
+                </h1>
+                <h2 class="text-caption text-grey-darken-2 font-weight-regular">
+                  Summary of Religion Transactions
+                </h2>
+              </div>
+              <div class="my-8 mx-4">
+                <v-row class="justify-space-between d-flex font-weight-bold">
+                  <v-col>Title</v-col>
+                  <v-col>Received</v-col>
+                  <v-col>Sent</v-col>
+                </v-row>
+                <v-divider
+                  class="my-3"
+                  :thickness="3"
+                />
+                <v-row class="justify-space-between d-flex">
+                  <v-col class="font-weight-medium">Count</v-col>
+                  <v-col>{{ religion.buyGoods.count.received }}</v-col>
+                  <v-col>{{ religion.buyGoods.count.paid }}</v-col>
+                </v-row>
+                <v-divider class="my-2" />
+                <v-row class="justify-space-between d-flex">
+                  <v-col class="font-weight-medium">Highest</v-col>
+                  <v-col>{{ religion.buyGoods.highest.received }}</v-col>
+                  <v-col>{{ religion.buyGoods.highest.paid }}</v-col>
+                </v-row>
+                <v-divider class="my-2" />
+                <v-row class="justify-space-between d-flex">
+                  <v-col class="font-weight-medium">Lowest</v-col>
+                  <v-col>{{ religion.buyGoods.lowest.received }}</v-col>
+                  <v-col>{{ religion.buyGoods.lowest.paid }}</v-col>
+                </v-row>
+                <v-divider class="my-2" />
+                <v-row class="justify-space-between d-flex">
+                  <v-col class="font-weight-medium">Last</v-col>
+                  <v-col>{{ religion.buyGoods.last.received }}</v-col>
+                  <v-col>{{ religion.buyGoods.last.paid }}</v-col>
+                </v-row>
+                <v-divider
+                  class="my-3"
+                  :thickness="3"
+                />
+                <v-row class="font-weight-bold justify-space-between d-flex">
+                  <v-col>Total</v-col>
+                  <v-col>{{ religion.buyGoods.total.received }}</v-col>
+                  <v-col>{{ religion.buyGoods.total.paid }}</v-col>
+                </v-row>
+              </div>
+            </v-container>
+          </v-card>
+        </v-col>
       </v-row>
       <!--      Table-->
       <v-row>
@@ -150,7 +234,9 @@ onMounted(() => {
             color="white"
           >
             <div class="px-8">
-              <h1 class="text-h6 font-weight-regular">Religion Transactions</h1>
+              <h1 class="text-h6 font-weight-regular">
+                Top Religion Transactions
+              </h1>
               <h2 class="text-caption text-grey-darken-2 font-weight-regular">
                 Summary of Religion Transactions
               </h2>

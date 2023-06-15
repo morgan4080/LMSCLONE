@@ -60,8 +60,8 @@ const loadZukuTransData = async () => {
 };
 
 onMounted(() => {
-  loadZukuTransData() 
-})
+  loadZukuTransData();
+});
 </script>
 
 <template>
@@ -148,7 +148,7 @@ onMounted(() => {
             color="white"
           >
             <div class="px-8">
-              <h1 class="text-h6 font-weight-regular">Zuku Transactions</h1>
+              <h1 class="text-h6 font-weight-regular">Top Zuku Transactions</h1>
               <h2 class="text-caption text-grey-darken-2 font-weight-regular">
                 Summary of Zuku Transactions
               </h2>

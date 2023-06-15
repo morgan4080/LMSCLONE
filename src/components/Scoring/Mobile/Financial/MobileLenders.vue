@@ -60,8 +60,8 @@ const loadMobileTransData = async () => {
 };
 
 onMounted(() => {
-  loadMobileTransData() 
-})
+  loadMobileTransData();
+});
 </script>
 
 <template>
@@ -151,7 +151,7 @@ onMounted(() => {
           >
             <div class="px-8">
               <h1 class="text-h6 font-weight-regular">
-                Mobile Lenders Transactions
+                Top Mobile Lenders Transactions
               </h1>
               <h2 class="text-caption text-grey-darken-2 font-weight-regular">
                 Summary of Mobile Lenders Transactions
