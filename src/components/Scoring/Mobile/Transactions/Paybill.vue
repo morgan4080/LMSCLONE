@@ -87,7 +87,7 @@ const loadTopTransData = async () => {
     const buyGoodsResponse = await axiosInstance.get(`/e_statement/top_buy_goods_transactions?idNumber=${route.params.slug}&pageSize=100&sortBy=id`);
     const buyGoods = buyGoodsResponse.data.content;
 
-    topTransData.value = [paybill, ...buyGoods];
+    topTransData.value = [paybill, ...buyGoods].flat();
   } catch (error) {
     console.error(error);
   }

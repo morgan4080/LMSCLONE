@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
+import { ref, computed, onMounted } from "vue";
 import { useRoute } from "vue-router";
 
 import axiosInstance from "@/services/api/axiosInstance";
@@ -11,41 +11,53 @@ interface Rerson2personDataItem {
   total: string;
 }
 
+interface Person2personTopTransData {
+  person2person_no: string; 
+  highest: string; 
+  count: string; 
+  total: string; 
+  name: string; 
+  phone: string; 
+  transactiontype: string; 
+}
+
 const route = useRoute();
 
 const open = ref(true);
-const tableData = ref([]);
 const loading = ref(false);
-const totalItems = ref(30);
+const totalItems = computed(()=>person2personTopTransData.value.length);
 const headers = ref<
   { title: string; key: string; align: string; sortable: boolean }[]
 >([
   {
-    title: "count",
+    title: "Count",
     align: "start",
     sortable: false,
-    key: "id",
+    key: "count",
   },
   {
     title: "Transaction Type",
-    key: "statement",
-    align: "end",
+    key: "transactiontype",
+    align: "start",
     sortable: false,
   },
-  { title: "Name", key: "file_name", align: "end", sortable: false },
-  { title: "Highest", key: "status", align: "end", sortable: false },
-  { title: "Last Draw", key: "duration", align: "end", sortable: false },
-  { title: "Last Amount", key: "upload", align: "end", sortable: false },
+  { title: "Phone No", key: "phone", align: "start", sortable: false },
+  { title: "Name", key: "name", align: "start", sortable: false },
+  { title: "Highest", key: "highest", align: "end", sortable: false },
+  { title: "Total", key: "total", align: "end", sortable: false },
 ]);
 
 const person2personTransReceivedData = ref<Rerson2personDataItem[]>([])
 const person2personTransSentData = ref<Rerson2personDataItem[]>([])
+  const person2personTopTransData = ref<Person2personTopTransData[]>([])
 
 // API Call: Get Rerson2person Transactions Data
 const loadRerson2personTransReceivedData = async () => {
   await axiosInstance
     .get(`/e_statement/top_customers_received?idNumber=${route.params.slug}&pageSize=100&sortBy=id`)
-    .then(response => (person2personTransReceivedData.value = response.data.content))
+    .then(response => {
+      person2personTransReceivedData.value = response.data.content
+    })
     .catch(error => console.error(error));
 };
 
@@ -54,6 +66,23 @@ const loadRerson2personTransSentData = async () => {
     .get(`/e_statement/top_customers_sent?idNumber=${route.params.slug}&pageSize=100&sortBy=id`)
     .then(response => (person2personTransSentData.value = response.data.content))
     .catch(error => console.error(error));
+};
+
+// API Call: Get Top Person2person Trans Data
+const loadPerson2personTopTransData = async () => {
+    try {
+    // Top Customers Received
+    const customerReceived = await axiosInstance.get(`/e_statement/top_customers_received?idNumber=${route.params.slug}&pageSize=100&sortBy=id`);
+    const received = customerReceived.data.content.map((obj: Person2personTopTransData) => ({ ...obj, transactiontype: "Received" }));
+
+    // Top Customers Sent
+    const customerSent = await axiosInstance.get(`/e_statement/top_customers_sent?idNumber=${route.params.slug}&pageSize=100&sortBy=id`);
+    const sent = customerSent.data.content.map((obj: Person2personTopTransData) => ({ ...obj, transactiontype: "Sent" }));
+
+    person2personTopTransData.value = [received, ...sent].flat();
+  } catch (error) {
+    console.error(error);
+  }
 };
 
 onMounted(() => { 
@@ -153,9 +182,11 @@ onMounted(() => {
               class="text-caption px-4"
               :headers="headers"
               :items-length="totalItems"
-              :items="tableData"
+              :items="person2personTopTransData"
               :loading="loading"
               loading-text="Loading...Please Wait"
+              item-value="name"
+              @update:options="loadPerson2personTopTransData()"
             ></v-data-table-server>
           </v-card>
         </v-container>
