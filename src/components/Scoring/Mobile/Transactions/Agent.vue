@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
+import { ref, computed, onMounted } from "vue";
 import { useRoute } from "vue-router";
 import axiosInstance from "@/services/api/axiosInstance";
 
@@ -12,34 +12,44 @@ interface AgentDataItem {
   transactiontype: string;
 }
 
+interface AgentTopTransData {
+  last_draw: string; 
+  last: string; 
+  highest: string; 
+  count: string; 
+  name: string; 
+  transactiontype: string; 
+  classification: string; 
+}
+
 const route = useRoute();
 
 const open = ref(true);
-const tableData = ref([]);
 const loading = ref(false);
-const totalItems = ref(30);
+const totalItems = computed(()=>agentTopTransData.value.length);
 const headers = ref<
   { title: string; key: string; align: string; sortable: boolean }[]
 >([
   {
-    title: "count",
+    title: "Count",
     align: "start",
     sortable: false,
-    key: "id",
+    key: "count",
   },
   {
     title: "Transaction Type",
-    key: "statement",
-    align: "end",
+    key: "transactiontype",
+    align: "start",
     sortable: false,
   },
-  { title: "Name", key: "file_name", align: "end", sortable: false },
-  { title: "Highest", key: "status", align: "end", sortable: false },
-  { title: "Last Draw", key: "duration", align: "end", sortable: false },
-  { title: "Last Amount", key: "upload", align: "end", sortable: false },
+  { title: "Agent Name", key: "name", align: "start", sortable: false },
+  { title: "Highest", key: "highest", align: "end", sortable: false },
+  { title: "Last Draw", key: "last_draw", align: "end", sortable: false },
+  { title: "Last Amount", key: "last", align: "end", sortable: false },
 ]);
 
 const agentTransData = ref<AgentDataItem[]>([]);
+const agentTopTransData = ref<AgentTopTransData[]>([])
 
 // API Call: Get Agent Transactions Data
 const loadAgentTransData = async () => {
@@ -48,6 +58,14 @@ const loadAgentTransData = async () => {
       `/e_statement/agent_transaction_summary?idNumber=${route.params.slug}&pageSize=100&sortBy=id`
     )
     .then(response => (agentTransData.value = response.data.content))
+    .catch(error => console.error(error));
+};
+
+// API Call: Get Top Agent Trans Data
+const loadAgentTopTransData = async () => {
+  await axiosInstance
+    .get(`/e_statement/top_paybill_classifications?idNumber=${route.params.slug}&pageSize=100&sortBy=id`)
+    .then(response => (agentTopTransData.value = response.data.content.filter((item: AgentTopTransData) => item.classification === "AgentJTL")))
     .catch(error => console.error(error));
 };
 
@@ -148,12 +166,14 @@ onMounted(() => {
               </h2>
             </div>
             <v-data-table-server
-              class="px-4 text-caption"
+              class="text-caption px-4"
               :headers="headers"
               :items-length="totalItems"
-              :items="tableData"
+              :items="agentTopTransData"
               :loading="loading"
               loading-text="Loading...Please Wait"
+              item-value="name"
+              @update:options="loadAgentTopTransData()"
             ></v-data-table-server>
           </v-card>
         </v-container>

@@ -1,66 +1,84 @@
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
-// import axiosInstance from "@/services/api/axiosInstance";
+import { ref, computed, onMounted } from "vue";
+import { useRoute } from "vue-router";
 
-const insurance = {
-  count: {
-    received: 182,
-    paid: 76,
-  },
-  highest: {
-    received: 182,
-    paid: 76,
-  },
-  lowest: {
-    received: 182,
-    paid: 76,
-  },
-  last: {
-    received: 182,
-    paid: 76,
-  },
-  total: {
-    received: 182,
-    paid: 76,
-  },
-};
+import axiosInstance from "@/services/api/axiosInstance";
+
+interface InsuranceDataItem {
+  total: number;
+  highest: string;
+  highest_who: string;
+  lowest: string;  
+  lowest_who: string;
+  classification: string;
+}
+
+interface InsuranceTopTransData {
+  last_draw: string; 
+  last: string; 
+  highest: string; 
+  count: string; 
+  name: string; 
+  transactiontype: string; 
+  classification: string; 
+}
+
+const route = useRoute();
+
 const open = ref(true);
-const tableData = ref([]);
 const loading = ref(false);
-const totalItems = ref(30);
+const totalItems = computed(()=>insuranceTopTransData.value.length);
 const headers = ref<
   { title: string; key: string; align: string; sortable: boolean }[]
 >([
   {
-    title: "count",
+    title: "Count",
     align: "start",
     sortable: false,
-    key: "id",
+    key: "count",
   },
   {
     title: "Transaction Type",
-    key: "statement",
-    align: "end",
+    key: "transactiontype",
+    align: "start",
     sortable: false,
   },
-  { title: "Name", key: "file_name", align: "end", sortable: false },
-  { title: "Highest", key: "status", align: "end", sortable: false },
-  { title: "Last Draw", key: "duration", align: "end", sortable: false },
-  { title: "Last Amount", key: "upload", align: "end", sortable: false },
+  { title: "Insurance Name", key: "name", align: "start", sortable: false },
+  { title: "Highest", key: "highest", align: "end", sortable: false },
+  { title: "Last Draw", key: "last_draw", align: "end", sortable: false },
+  { title: "Last Amount", key: "last", align: "end", sortable: false },
 ]);
 
-// const insuranceTransData = ref([])
+const insuranceTransReceivedData = ref<InsuranceDataItem[]>([])
+const insuranceTransSentData = ref<InsuranceDataItem[]>([])
+const insuranceTopTransData = ref<InsuranceTopTransData[]>([])
 
 // API Call: Get Insurance Transactions Data
-const loadInsuranceTransData = async () => {
-  // await axiosInstance
-  //   .get("/e_statement/")
-  //   .then(response => (insuranceTransData.value = response.data))
-  //   .catch(error => console.error(error));
+const loadInsuranceTransReceivedData = async () => {
+  await axiosInstance
+    .get(`/e_statement/pay_bill_classifications_received?idNumber=${route.params.slug}&pageSize=100&sortBy=id`)
+    .then(response => (insuranceTransReceivedData.value = response.data.content.filter((item: InsuranceDataItem) => item.classification === "Insurance")))
+    .catch(error => console.error(error));
+};
+
+const loadInsuranceTransSentData = async () => {
+  await axiosInstance
+    .get(`/e_statement/pay_bill_classifications_sent?idNumber=${route.params.slug}&pageSize=100&sortBy=id`)
+    .then(response => (insuranceTransSentData.value = response.data.content.filter((item: InsuranceDataItem) => item.classification === "Insurance")))
+    .catch(error => console.error(error));
+};
+
+// API Call: Get Top Insurance Trans Data
+const loadInsuranceTopTransData = async () => {
+  await axiosInstance
+    .get(`/e_statement/top_paybill_classifications?idNumber=${route.params.slug}&pageSize=100&sortBy=id`)
+    .then(response => (insuranceTopTransData.value = response.data.content.filter((item: InsuranceTopTransData) => item.classification === "Insurance")))
+    .catch(error => console.error(error));
 };
 
 onMounted(() => {
-  loadInsuranceTransData();
+  loadInsuranceTransReceivedData();
+  loadInsuranceTransSentData()
 });
 </script>
 
@@ -104,27 +122,27 @@ onMounted(() => {
                   :thickness="3"
                 />
                 <v-row class="justify-space-between d-flex">
-                  <v-col class="font-weight-medium">Count</v-col>
-                  <v-col>{{ insurance.count.received }}</v-col>
-                  <v-col>{{ insurance.count.paid }}</v-col>
+                  <v-col class="font-weight-medium">Highest</v-col>
+                  <v-col>{{ insuranceTransReceivedData[0]?.highest }}</v-col>
+                  <v-col>{{ insuranceTransSentData[0]?.highest }}</v-col>
                 </v-row>
                 <v-divider class="my-2" />
                 <v-row class="justify-space-between d-flex">
-                  <v-col class="font-weight-medium">Highest</v-col>
-                  <v-col>{{ insurance.highest.received }}</v-col>
-                  <v-col>{{ insurance.highest.paid }}</v-col>
+                  <v-col class="font-weight-medium">Highest To</v-col>
+                  <v-col>{{ insuranceTransReceivedData[0]?.highest_who }}</v-col>
+                  <v-col>{{ insuranceTransSentData[0]?.highest_who }}</v-col>
                 </v-row>
                 <v-divider class="my-2" />
                 <v-row class="justify-space-between d-flex">
                   <v-col class="font-weight-medium">Lowest</v-col>
-                  <v-col>{{ insurance.lowest.received }}</v-col>
-                  <v-col>{{ insurance.lowest.paid }}</v-col>
+                  <v-col>{{ insuranceTransReceivedData[0]?.lowest }}</v-col>
+                  <v-col>{{ insuranceTransSentData[0]?.lowest }}</v-col>
                 </v-row>
                 <v-divider class="my-2" />
                 <v-row class="justify-space-between d-flex">
-                  <v-col class="font-weight-medium">Last</v-col>
-                  <v-col>{{ insurance.last.received }}</v-col>
-                  <v-col>{{ insurance.last.paid }}</v-col>
+                  <v-col class="font-weight-medium">Lowest To</v-col>
+                  <v-col>{{ insuranceTransReceivedData[0]?.lowest_who }}</v-col>
+                  <v-col>{{ insuranceTransSentData[0]?.lowest_who }}</v-col>
                 </v-row>
                 <v-divider
                   class="my-3"
@@ -132,8 +150,8 @@ onMounted(() => {
                 />
                 <v-row class="font-weight-bold justify-space-between d-flex">
                   <v-col>Total</v-col>
-                  <v-col>{{ insurance.total.received }}</v-col>
-                  <v-col>{{ insurance.total.paid }}</v-col>
+                  <v-col>{{ insuranceTransReceivedData[0]?.total }}</v-col>
+                  <v-col>{{ insuranceTransSentData[0]?.total }}</v-col>
                 </v-row>
               </div>
             </v-container>
@@ -161,9 +179,11 @@ onMounted(() => {
               class="text-caption px-4"
               :headers="headers"
               :items-length="totalItems"
-              :items="tableData"
+              :items="insuranceTopTransData"
               :loading="loading"
               loading-text="Loading...Please Wait"
+              item-value="name"
+              @update:options="loadInsuranceTopTransData()"
             ></v-data-table-server>
           </v-card>
         </v-container>

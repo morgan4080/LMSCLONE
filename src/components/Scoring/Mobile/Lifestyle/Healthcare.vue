@@ -1,90 +1,84 @@
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
-// import axiosInstance from "@/services/api/axiosInstance";
+import { ref, computed, onMounted } from "vue";
+import { useRoute } from "vue-router";
 
-const healthcare = {
-  paybill: {
-    count: {
-      received: 182,
-      paid: 76,
-    },
-    highest: {
-      received: 182,
-      paid: 76,
-    },
-    lowest: {
-      received: 182,
-      paid: 76,
-    },
-    last: {
-      received: 182,
-      paid: 76,
-    },
-    total: {
-      received: 182,
-      paid: 76,
-    },
-  },
-  buyGoods: {
-    count: {
-      received: 182,
-      paid: 76,
-    },
-    highest: {
-      received: 182,
-      paid: 76,
-    },
-    lowest: {
-      received: 182,
-      paid: 76,
-    },
-    last: {
-      received: 182,
-      paid: 76,
-    },
-    total: {
-      received: 182,
-      paid: 76,
-    },
-  },
-};
+import axiosInstance from "@/services/api/axiosInstance";
+
+interface HealthcareDataItem {
+  total: number;
+  highest: string;
+  highest_who: string;
+  lowest: string;  
+  lowest_who: string;
+  classification: string;
+}
+
+interface HealthcareTopTransData {
+  last_draw: string; 
+  last: string; 
+  highest: string; 
+  count: string; 
+  name: string; 
+  transactiontype: string; 
+  classification: string; 
+}
+
+const route = useRoute();
+
 const open = ref(true);
-const tableData = ref([]);
 const loading = ref(false);
-const totalItems = ref(30);
+const totalItems = computed(()=>healthcareTopTransData.value.length);
 const headers = ref<
   { title: string; key: string; align: string; sortable: boolean }[]
 >([
   {
-    title: "count",
+    title: "Count",
     align: "start",
     sortable: false,
-    key: "id",
+    key: "count",
   },
   {
     title: "Transaction Type",
-    key: "statement",
-    align: "end",
+    key: "transactiontype",
+    align: "start",
     sortable: false,
   },
-  { title: "Name", key: "file_name", align: "end", sortable: false },
-  { title: "Highest", key: "status", align: "end", sortable: false },
-  { title: "Last Draw", key: "duration", align: "end", sortable: false },
-  { title: "Last Amount", key: "upload", align: "end", sortable: false },
+  { title: "Healthcare Name", key: "name", align: "start", sortable: false },
+  { title: "Highest", key: "highest", align: "end", sortable: false },
+  { title: "Last Draw", key: "last_draw", align: "end", sortable: false },
+  { title: "Last Amount", key: "last", align: "end", sortable: false },
 ]);
 
-// const healthTransData = ref([])
+const healthcareTransSentData = ref<HealthcareDataItem[]>([])
+const healthcareTransBuyGoodsData = ref<HealthcareDataItem[]>([])
+const healthcareTopTransData = ref<HealthcareTopTransData[]>([])
 
-// API Call: Get Health Transactions Data
-const loadHealthTransData = async () => {
-  // await axiosInstance
-  //   .get("/e_statement/")
-  //   .then(response => (healthTransData.value = response.data))
-  //   .catch(error => console.error(error));
+// API Call: Get Healthcare Transactions Data
+const loadHealthcareTransSentData = async () => {
+  await axiosInstance
+    .get(`/e_statement/pay_bill_classifications_sent?idNumber=${route.params.slug}&pageSize=100&sortBy=id`)
+    .then(response => (healthcareTransSentData.value = response.data.content.filter((item: HealthcareDataItem) => item.classification === "Healthcare")))
+    .catch(error => console.error(error));
+};
+
+const loadHealthcareTransBuyGoodsData = async () => {
+  await axiosInstance
+    .get(`/e_statement/buy_goods_classifications_summary?idNumber=${route.params.slug}&pageSize=100&sortBy=id`)
+    .then(response => (healthcareTransBuyGoodsData.value = response.data.content.filter((item: HealthcareDataItem) => item.classification === "Healthcare")))
+    .catch(error => console.error(error));
+};
+
+// API Call: Get Top Healthcare Trans Data
+const loadHealthcareTopTransData = async () => {
+  await axiosInstance
+    .get(`/e_statement/top_paybill_classifications?idNumber=${route.params.slug}&pageSize=100&sortBy=id`)
+    .then(response => (healthcareTopTransData.value = response.data.content.filter((item: HealthcareTopTransData) => item.classification === "Healthcare")))
+    .catch(error => console.error(error));
 };
 
 onMounted(() => {
-  loadHealthTransData();
+  loadHealthcareTransSentData()
+  loadHealthcareTransBuyGoodsData()
 });
 </script>
 
@@ -128,27 +122,27 @@ onMounted(() => {
                   :thickness="3"
                 />
                 <v-row class="justify-space-between d-flex">
-                  <v-col class="font-weight-medium">Count</v-col>
-                  <v-col>{{ healthcare.paybill.count.received }}</v-col>
-                  <v-col>{{ healthcare.paybill.count.paid }}</v-col>
+                  <v-col class="font-weight-medium">Highest</v-col>
+                  <v-col> - </v-col>
+                  <v-col>{{ healthcareTransSentData[0]?.highest }}</v-col>
                 </v-row>
                 <v-divider class="my-2" />
                 <v-row class="justify-space-between d-flex">
-                  <v-col class="font-weight-medium">Highest</v-col>
-                  <v-col>{{ healthcare.paybill.highest.received }}</v-col>
-                  <v-col>{{ healthcare.paybill.highest.paid }}</v-col>
+                  <v-col class="font-weight-medium">Highest To</v-col>
+                  <v-col> - </v-col>
+                  <v-col>{{ healthcareTransSentData[0]?.highest_who }}</v-col>
                 </v-row>
                 <v-divider class="my-2" />
                 <v-row class="justify-space-between d-flex">
                   <v-col class="font-weight-medium">Lowest</v-col>
-                  <v-col>{{ healthcare.paybill.lowest.received }}</v-col>
-                  <v-col>{{ healthcare.paybill.lowest.paid }}</v-col>
+                  <v-col> - </v-col>
+                  <v-col>{{ healthcareTransSentData[0]?.lowest }}</v-col>
                 </v-row>
                 <v-divider class="my-2" />
                 <v-row class="justify-space-between d-flex">
-                  <v-col class="font-weight-medium">Last</v-col>
-                  <v-col>{{ healthcare.paybill.last.received }}</v-col>
-                  <v-col>{{ healthcare.paybill.last.paid }}</v-col>
+                  <v-col class="font-weight-medium">Lowest To</v-col>
+                  <v-col> - </v-col>
+                  <v-col>{{ healthcareTransSentData[0]?.lowest_who }}</v-col>
                 </v-row>
                 <v-divider
                   class="my-3"
@@ -156,8 +150,8 @@ onMounted(() => {
                 />
                 <v-row class="font-weight-bold justify-space-between d-flex">
                   <v-col>Total</v-col>
-                  <v-col>{{ healthcare.paybill.total.received }}</v-col>
-                  <v-col>{{ healthcare.paybill.total.paid }}</v-col>
+                  <v-col> - </v-col>
+                  <v-col>{{ healthcareTransSentData[0]?.total }}</v-col>
                 </v-row>
               </div>
             </v-container>
@@ -189,27 +183,27 @@ onMounted(() => {
                   :thickness="3"
                 />
                 <v-row class="justify-space-between d-flex">
-                  <v-col class="font-weight-medium">Count</v-col>
-                  <v-col>{{ healthcare.buyGoods.count.received }}</v-col>
-                  <v-col>{{ healthcare.buyGoods.count.paid }}</v-col>
+                  <v-col class="font-weight-medium">Highest</v-col>
+                  <v-col> - </v-col>
+                  <v-col>{{ healthcareTransBuyGoodsData[0]?.highest }}</v-col>
                 </v-row>
                 <v-divider class="my-2" />
                 <v-row class="justify-space-between d-flex">
-                  <v-col class="font-weight-medium">Highest</v-col>
-                  <v-col>{{ healthcare.buyGoods.highest.received }}</v-col>
-                  <v-col>{{ healthcare.buyGoods.highest.paid }}</v-col>
+                  <v-col class="font-weight-medium">Highest To</v-col>
+                  <v-col> - </v-col>
+                  <v-col>{{ healthcareTransBuyGoodsData[0]?.highest_who }}</v-col>
                 </v-row>
                 <v-divider class="my-2" />
                 <v-row class="justify-space-between d-flex">
                   <v-col class="font-weight-medium">Lowest</v-col>
-                  <v-col>{{ healthcare.buyGoods.lowest.received }}</v-col>
-                  <v-col>{{ healthcare.buyGoods.lowest.paid }}</v-col>
+                  <v-col> - </v-col>
+                  <v-col>{{ healthcareTransBuyGoodsData[0]?.lowest }}</v-col>
                 </v-row>
                 <v-divider class="my-2" />
                 <v-row class="justify-space-between d-flex">
-                  <v-col class="font-weight-medium">Last</v-col>
-                  <v-col>{{ healthcare.buyGoods.last.received }}</v-col>
-                  <v-col>{{ healthcare.buyGoods.last.paid }}</v-col>
+                  <v-col class="font-weight-medium">Lowest To</v-col>
+                  <v-col> - </v-col>
+                  <v-col>{{ healthcareTransBuyGoodsData[0]?.lowest_who }}</v-col>
                 </v-row>
                 <v-divider
                   class="my-3"
@@ -217,8 +211,8 @@ onMounted(() => {
                 />
                 <v-row class="font-weight-bold justify-space-between d-flex">
                   <v-col>Total</v-col>
-                  <v-col>{{ healthcare.buyGoods.total.received }}</v-col>
-                  <v-col>{{ healthcare.buyGoods.total.paid }}</v-col>
+                  <v-col> - </v-col>
+                  <v-col>{{ healthcareTransBuyGoodsData[0]?.total }}</v-col>
                 </v-row>
               </div>
             </v-container>
@@ -245,9 +239,11 @@ onMounted(() => {
               class="text-caption px-4"
               :headers="headers"
               :items-length="totalItems"
-              :items="tableData"
+              :items="healthcareTopTransData"
               :loading="loading"
               loading-text="Loading...Please Wait"
+              item-value="name"
+              @update:options="loadHealthcareTopTransData()"
             ></v-data-table-server>
           </v-card>
         </v-container>

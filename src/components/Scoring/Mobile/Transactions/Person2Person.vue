@@ -1,29 +1,18 @@
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
-// import axiosInstance from "@/services/api/axiosInstance";
+import { useRoute } from "vue-router";
 
-const person = {
-  count: {
-    received: 182,
-    paid: 76,
-  },
-  highest: {
-    received: 182,
-    paid: 76,
-  },
-  lowest: {
-    received: 182,
-    paid: 76,
-  },
-  last: {
-    received: 182,
-    paid: 76,
-  },
-  total: {
-    received: 182,
-    paid: 76,
-  },
-};
+import axiosInstance from "@/services/api/axiosInstance";
+
+interface Rerson2personDataItem {
+  count: number;
+  highest: string;
+  lowest: string;
+  total: string;
+}
+
+const route = useRoute();
+
 const open = ref(true);
 const tableData = ref([]);
 const loading = ref(false);
@@ -49,18 +38,27 @@ const headers = ref<
   { title: "Last Amount", key: "upload", align: "end", sortable: false },
 ]);
 
-// const person2personTransData = ref([])
+const person2personTransReceivedData = ref<Rerson2personDataItem[]>([])
+const person2personTransSentData = ref<Rerson2personDataItem[]>([])
 
-// API Call: Get Person-to-Person Transactions Data
-const loadPerson2personTransData = async () => {
-  // await axiosInstance
-  //   .get("/e_statement/")
-  //   .then(response => (person2personTransData.value = response.data))
-  //   .catch(error => console.error(error));
+// API Call: Get Rerson2person Transactions Data
+const loadRerson2personTransReceivedData = async () => {
+  await axiosInstance
+    .get(`/e_statement/top_customers_received?idNumber=${route.params.slug}&pageSize=100&sortBy=id`)
+    .then(response => (person2personTransReceivedData.value = response.data.content))
+    .catch(error => console.error(error));
 };
 
-onMounted(() => {
-  loadPerson2personTransData();
+const loadRerson2personTransSentData = async () => {
+  await axiosInstance
+    .get(`/e_statement/top_customers_sent?idNumber=${route.params.slug}&pageSize=100&sortBy=id`)
+    .then(response => (person2personTransSentData.value = response.data.content))
+    .catch(error => console.error(error));
+};
+
+onMounted(() => { 
+  loadRerson2personTransReceivedData();
+  loadRerson2personTransSentData()
 });
 </script>
 
@@ -105,26 +103,20 @@ onMounted(() => {
                 />
                 <v-row class="justify-space-between d-flex">
                   <v-col class="font-weight-medium">Count</v-col>
-                  <v-col>{{ person.count.received }}</v-col>
-                  <v-col>{{ person.count.paid }}</v-col>
+                  <v-col>{{ person2personTransReceivedData[0]?.count }}</v-col>
+                  <v-col>{{ person2personTransSentData[0]?.count }}</v-col>
                 </v-row>
                 <v-divider class="my-2" />
                 <v-row class="justify-space-between d-flex">
                   <v-col class="font-weight-medium">Highest</v-col>
-                  <v-col>{{ person.highest.received }}</v-col>
-                  <v-col>{{ person.highest.paid }}</v-col>
+                  <v-col>{{ person2personTransReceivedData[0]?.highest }}</v-col>
+                  <v-col>{{ person2personTransSentData[0]?.highest }}</v-col>
                 </v-row>
                 <v-divider class="my-2" />
                 <v-row class="justify-space-between d-flex">
                   <v-col class="font-weight-medium">Lowest</v-col>
-                  <v-col>{{ person.lowest.received }}</v-col>
-                  <v-col>{{ person.lowest.paid }}</v-col>
-                </v-row>
-                <v-divider class="my-2" />
-                <v-row class="justify-space-between d-flex">
-                  <v-col class="font-weight-medium">Last</v-col>
-                  <v-col>{{ person.last.received }}</v-col>
-                  <v-col>{{ person.last.paid }}</v-col>
+                  <v-col>{{ person2personTransReceivedData[0]?.lowest }}</v-col>
+                  <v-col>{{ person2personTransSentData[0]?.lowest }}</v-col>
                 </v-row>
                 <v-divider
                   class="my-3"
@@ -132,8 +124,8 @@ onMounted(() => {
                 />
                 <v-row class="font-weight-bold justify-space-between d-flex">
                   <v-col>Total</v-col>
-                  <v-col>{{ person.total.received }}</v-col>
-                  <v-col>{{ person.total.paid }}</v-col>
+                  <v-col>{{ person2personTransReceivedData[0]?.total }}</v-col>
+                  <v-col>{{ person2personTransSentData[0]?.total }}</v-col>
                 </v-row>
               </div>
             </v-container>

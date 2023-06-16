@@ -24,7 +24,7 @@ const route = useRoute();
 
 const open = ref(true);
 const loading = ref(false);
-const totalItems = computed(() => topPaybillTransData.value.length);
+const totalItems = computed(() => topTransData.value.length);
 
 const headers = ref<
   { title: string; key: string; align: string; sortable: boolean }[]
@@ -53,7 +53,8 @@ const headers = ref<
 ]);
 
 const paybillTransData = ref<PaybillDataItem[]>([]);
-const topPaybillTransData = ref<TopPaybillDataItem[]>([]);
+const buyGoodsTransData = ref<PaybillDataItem[]>([]);
+const topTransData = ref<TopPaybillDataItem[]>([]);
 
 // API Call: Get Paybill Transactions Data
 const loadPaybillTransData = async () => {
@@ -66,17 +67,36 @@ const loadPaybillTransData = async () => {
 };
 
 // API Call: Get Buy Goods Transactions Data
-const loadTopPaybillTransData = async () => {
+const loadBuyGoodsTransData = async () => {
   await axiosInstance
     .get(
-      `/e_statement/top_paybill_transactions?idNumber=${route.params.slug}&pageSize=100&sortBy=id`
+      `/e_statement/buy_goods_summary?idNumber=${route.params.slug}&pageSize=100&sortBy=id`
     )
-    .then(response => (topPaybillTransData.value = response.data.content))
+    .then(response => (buyGoodsTransData.value = response.data.content))
     .catch(error => console.error(error));
 };
 
+// API Call: Get Top Transactions Data
+const loadTopTransData = async () => {
+  try {
+    // Top Paybill
+    const paybillResponse = await axiosInstance.get(`/e_statement/top_paybill_transactions?idNumber=${route.params.slug}&pageSize=100&sortBy=id`);
+    const paybill = paybillResponse.data.content;
+
+    // Top Buy Goods
+    const buyGoodsResponse = await axiosInstance.get(`/e_statement/top_buy_goods_transactions?idNumber=${route.params.slug}&pageSize=100&sortBy=id`);
+    const buyGoods = buyGoodsResponse.data.content;
+
+    topTransData.value = [paybill, ...buyGoods];
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+
 onMounted(() => {
   loadPaybillTransData();
+  loadBuyGoodsTransData();
 });
 </script>
 
@@ -103,17 +123,17 @@ onMounted(() => {
             <v-container fluid>
               <div class="mx-4">
                 <h1 class="text-h6 font-weight-regular">
-                  Paybill & Buy Goods Transactions
+                  Paybill Transactions
                 </h1>
                 <h2 class="text-caption text-grey-darken-2 font-weight-regular">
-                  Summary of Paybill & Buy Goods Transactions
+                  Summary of Paybill Transactions
                 </h2>
               </div>
               <div class="mx-4 my-8">
                 <v-row class="justify-space-between d-flex font-weight-bold">
                   <v-col>Title</v-col>
-                  <v-col>{{ paybillTransData[0]?.transactiontype }}</v-col>
-                  <v-col>{{ paybillTransData[1]?.transactiontype }}</v-col>
+                  <v-col>Received</v-col>
+                  <v-col>Sent</v-col>
                 </v-row>
                 <v-divider
                   class="my-3"
@@ -149,7 +169,61 @@ onMounted(() => {
             </v-container>
           </v-card>
         </v-col>
-        <v-col></v-col>
+        <v-col class="my-2">
+          <v-card
+            class="rounded text-caption"
+            variant="flat"
+            color="white"
+          >
+            <v-container fluid>
+              <div class="mx-4">
+                <h1 class="text-h6 font-weight-regular">
+                  Buy Goods Transactions
+                </h1>
+                <h2 class="text-caption text-grey-darken-2 font-weight-regular">
+                  Summary of Buy Goods Transactions
+                </h2>
+              </div>
+              <div class="mx-4 my-8">
+                <v-row class="justify-space-between d-flex font-weight-bold">
+                  <v-col>Title</v-col>
+                  <v-col>Received</v-col>
+                  <v-col>Sent</v-col>
+                </v-row>
+                <v-divider
+                  class="my-3"
+                  :thickness="3"
+                />
+                <v-row class="justify-space-between d-flex">
+                  <v-col class="font-weight-medium">Count</v-col>
+                  <v-col>{{ buyGoodsTransData[0]?.count }}</v-col>
+                  <v-col>{{ buyGoodsTransData[1]?.count }}</v-col>
+                </v-row>
+                <v-divider class="my-2" />
+                <v-row class="justify-space-between d-flex">
+                  <v-col class="font-weight-medium">Highest</v-col>
+                  <v-col>{{ buyGoodsTransData[0]?.highest }}</v-col>
+                  <v-col>{{ buyGoodsTransData[1]?.highest }}</v-col>
+                </v-row>
+                <v-divider class="my-2" />
+                <v-row class="justify-space-between d-flex">
+                  <v-col class="font-weight-medium">Lowest</v-col>
+                  <v-col>{{ buyGoodsTransData[0]?.lowest }}</v-col>
+                  <v-col>{{ buyGoodsTransData[1]?.lowest }}</v-col>
+                </v-row>
+                <v-divider
+                  class="my-3"
+                  :thickness="3"
+                />
+                <v-row class="font-weight-bold justify-space-between d-flex">
+                  <v-col>Total</v-col>
+                  <v-col>{{ buyGoodsTransData[0]?.total }}</v-col>
+                  <v-col>{{ buyGoodsTransData[1]?.total }}</v-col>
+                </v-row>
+              </div>
+            </v-container>
+          </v-card>
+        </v-col>
       </v-row>
       <!--      Table-->
       <v-row>
@@ -171,11 +245,11 @@ onMounted(() => {
               class="px-4 text-caption"
               :headers="headers"
               :items-length="totalItems"
-              :items="topPaybillTransData"
+              :items="topTransData"
               :loading="loading"
               loading-text="Loading...Please Wait"
               item-value="name"
-              @update:options="loadTopPaybillTransData()"
+              @update:options="loadTopTransData()"
             ></v-data-table-server>
           </v-card>
         </v-container>

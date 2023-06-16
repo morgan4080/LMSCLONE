@@ -1,90 +1,84 @@
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
-// import axiosInstance from "@/services/api/axiosInstance";
+import { ref, computed, onMounted } from "vue";
+import { useRoute } from "vue-router";
 
-const beauty = {
-  paybill: {
-    count: {
-      received: 182,
-      paid: 76,
-    },
-    highest: {
-      received: 182,
-      paid: 76,
-    },
-    lowest: {
-      received: 182,
-      paid: 76,
-    },
-    last: {
-      received: 182,
-      paid: 76,
-    },
-    total: {
-      received: 182,
-      paid: 76,
-    },
-  },
-  buyGoods: {
-    count: {
-      received: 182,
-      paid: 76,
-    },
-    highest: {
-      received: 182,
-      paid: 76,
-    },
-    lowest: {
-      received: 182,
-      paid: 76,
-    },
-    last: {
-      received: 182,
-      paid: 76,
-    },
-    total: {
-      received: 182,
-      paid: 76,
-    },
-  },
-};
+import axiosInstance from "@/services/api/axiosInstance";
+
+interface BeautyDataItem {
+  total: number;
+  highest: string;
+  highest_who: string;
+  lowest: string;  
+  lowest_who: string;
+  classification: string;
+}
+
+interface BeautyTopTransData {
+  last_draw: string; 
+  last: string; 
+  highest: string; 
+  count: string; 
+  name: string; 
+  transactiontype: string; 
+  classification: string; 
+}
+
+const route = useRoute();
+
 const open = ref(true);
-const tableData = ref([]);
 const loading = ref(false);
-const totalItems = ref(30);
+const totalItems = computed(()=>beautyTopTransData.value.length);
 const headers = ref<
   { title: string; key: string; align: string; sortable: boolean }[]
 >([
   {
-    title: "count",
+    title: "Count",
     align: "start",
     sortable: false,
-    key: "id",
+    key: "count",
   },
   {
     title: "Transaction Type",
-    key: "statement",
-    align: "end",
+    key: "transactiontype",
+    align: "start",
     sortable: false,
   },
-  { title: "Name", key: "file_name", align: "end", sortable: false },
-  { title: "Highest", key: "status", align: "end", sortable: false },
-  { title: "Last Draw", key: "duration", align: "end", sortable: false },
-  { title: "Last Amount", key: "upload", align: "end", sortable: false },
+  { title: "Beauty Name", key: "name", align: "start", sortable: false },
+  { title: "Highest", key: "highest", align: "end", sortable: false },
+  { title: "Last Draw", key: "last_draw", align: "end", sortable: false },
+  { title: "Last Amount", key: "last", align: "end", sortable: false },
 ]);
 
-// const beautyTransData = ref([])
+const beautyTransSentData = ref<BeautyDataItem[]>([])
+const beautyTransBuyGoodsData = ref<BeautyDataItem[]>([])
+const beautyTopTransData = ref<BeautyTopTransData[]>([])
 
 // API Call: Get Beauty Transactions Data
-const loadBeautyTransData = async () => {
-  // await axiosInstance
-  //   .get("/e_statement/")
-  //   .then(response => (beautyTransData.value = response.data))
-  //   .catch(error => console.error(error));
+const loadBeautyTransSentData = async () => {
+  await axiosInstance
+    .get(`/e_statement/pay_bill_classifications_sent?idNumber=${route.params.slug}&pageSize=100&sortBy=id`)
+    .then(response => (beautyTransSentData.value = response.data.content.filter((item: BeautyDataItem) => item.classification === "Beauty")))
+    .catch(error => console.error(error));
+};
+
+const loadBeautyTransBuyGoodsData = async () => {
+  await axiosInstance
+    .get(`/e_statement/buy_goods_classifications_summary?idNumber=${route.params.slug}&pageSize=100&sortBy=id`)
+    .then(response => (beautyTransBuyGoodsData.value = response.data.content.filter((item: BeautyDataItem) => item.classification === "Beauty")))
+    .catch(error => console.error(error));
+};
+
+// API Call: Get Top Beauty Trans Data
+const loadBeautyTopTransData = async () => {
+  await axiosInstance
+    .get(`/e_statement/top_paybill_classifications?idNumber=${route.params.slug}&pageSize=100&sortBy=id`)
+    .then(response => (beautyTopTransData.value = response.data.content.filter((item: BeautyTopTransData) => item.classification === "Beauty")))
+    .catch(error => console.error(error));
 };
 
 onMounted(() => {
-  loadBeautyTransData();
+  loadBeautyTransSentData()
+  loadBeautyTransBuyGoodsData()
 });
 </script>
 
@@ -128,27 +122,27 @@ onMounted(() => {
                   :thickness="3"
                 />
                 <v-row class="justify-space-between d-flex">
-                  <v-col class="font-weight-medium">Count</v-col>
-                  <v-col>{{ beauty.paybill.count.received }}</v-col>
-                  <v-col>{{ beauty.paybill.count.paid }}</v-col>
+                  <v-col class="font-weight-medium">Highest</v-col>
+                  <v-col> - </v-col>
+                  <v-col>{{ beautyTransSentData[0]?.highest }}</v-col>
                 </v-row>
                 <v-divider class="my-2" />
                 <v-row class="justify-space-between d-flex">
-                  <v-col class="font-weight-medium">Highest</v-col>
-                  <v-col>{{ beauty.paybill.highest.received }}</v-col>
-                  <v-col>{{ beauty.paybill.highest.paid }}</v-col>
+                  <v-col class="font-weight-medium">Highest To</v-col>
+                  <v-col> - </v-col>
+                  <v-col>{{ beautyTransSentData[0]?.highest_who }}</v-col>
                 </v-row>
                 <v-divider class="my-2" />
                 <v-row class="justify-space-between d-flex">
                   <v-col class="font-weight-medium">Lowest</v-col>
-                  <v-col>{{ beauty.paybill.lowest.received }}</v-col>
-                  <v-col>{{ beauty.paybill.lowest.paid }}</v-col>
+                  <v-col> - </v-col>
+                  <v-col>{{ beautyTransSentData[0]?.lowest }}</v-col>
                 </v-row>
                 <v-divider class="my-2" />
                 <v-row class="justify-space-between d-flex">
-                  <v-col class="font-weight-medium">Last</v-col>
-                  <v-col>{{ beauty.paybill.last.received }}</v-col>
-                  <v-col>{{ beauty.paybill.last.paid }}</v-col>
+                  <v-col class="font-weight-medium">Lowest To</v-col>
+                  <v-col> - </v-col>
+                  <v-col>{{ beautyTransSentData[0]?.lowest_who }}</v-col>
                 </v-row>
                 <v-divider
                   class="my-3"
@@ -156,8 +150,8 @@ onMounted(() => {
                 />
                 <v-row class="font-weight-bold justify-space-between d-flex">
                   <v-col>Total</v-col>
-                  <v-col>{{ beauty.paybill.total.received }}</v-col>
-                  <v-col>{{ beauty.paybill.total.paid }}</v-col>
+                  <v-col> - </v-col>
+                  <v-col>{{ beautyTransSentData[0]?.total }}</v-col>
                 </v-row>
               </div>
             </v-container>
@@ -189,27 +183,27 @@ onMounted(() => {
                   :thickness="3"
                 />
                 <v-row class="justify-space-between d-flex">
-                  <v-col class="font-weight-medium">Count</v-col>
-                  <v-col>{{ beauty.buyGoods.count.received }}</v-col>
-                  <v-col>{{ beauty.buyGoods.count.paid }}</v-col>
+                  <v-col class="font-weight-medium">Highest</v-col>
+                  <v-col> - </v-col>
+                  <v-col>{{ beautyTransBuyGoodsData[0]?.highest }}</v-col>
                 </v-row>
                 <v-divider class="my-2" />
                 <v-row class="justify-space-between d-flex">
-                  <v-col class="font-weight-medium">Highest</v-col>
-                  <v-col>{{ beauty.buyGoods.highest.received }}</v-col>
-                  <v-col>{{ beauty.buyGoods.highest.paid }}</v-col>
+                  <v-col class="font-weight-medium">Highest To</v-col>
+                  <v-col> - </v-col>
+                  <v-col>{{ beautyTransBuyGoodsData[0]?.highest_who }}</v-col>
                 </v-row>
                 <v-divider class="my-2" />
                 <v-row class="justify-space-between d-flex">
                   <v-col class="font-weight-medium">Lowest</v-col>
-                  <v-col>{{ beauty.buyGoods.lowest.received }}</v-col>
-                  <v-col>{{ beauty.buyGoods.lowest.paid }}</v-col>
+                  <v-col> - </v-col>
+                  <v-col>{{ beautyTransBuyGoodsData[0]?.lowest }}</v-col>
                 </v-row>
                 <v-divider class="my-2" />
                 <v-row class="justify-space-between d-flex">
-                  <v-col class="font-weight-medium">Last</v-col>
-                  <v-col>{{ beauty.buyGoods.last.received }}</v-col>
-                  <v-col>{{ beauty.buyGoods.last.paid }}</v-col>
+                  <v-col class="font-weight-medium">Lowest To</v-col>
+                  <v-col> - </v-col>
+                  <v-col>{{ beautyTransBuyGoodsData[0]?.lowest_who }}</v-col>
                 </v-row>
                 <v-divider
                   class="my-3"
@@ -217,8 +211,8 @@ onMounted(() => {
                 />
                 <v-row class="font-weight-bold justify-space-between d-flex">
                   <v-col>Total</v-col>
-                  <v-col>{{ beauty.buyGoods.total.received }}</v-col>
-                  <v-col>{{ beauty.buyGoods.total.paid }}</v-col>
+                  <v-col> - </v-col>
+                  <v-col>{{ beautyTransBuyGoodsData[0]?.total }}</v-col>
                 </v-row>
               </div>
             </v-container>
@@ -245,9 +239,11 @@ onMounted(() => {
               class="text-caption px-4"
               :headers="headers"
               :items-length="totalItems"
-              :items="tableData"
+              :items="beautyTopTransData"
               :loading="loading"
               loading-text="Loading...Please Wait"
+              item-value="name"
+              @update:options="loadBeautyTopTransData()"
             ></v-data-table-server>
           </v-card>
         </v-container>

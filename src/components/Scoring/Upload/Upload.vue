@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, watch, reactive, ref } from "vue";
+import { onMounted, watch, ref } from "vue";
 import axiosInstance from "@/services/api/axiosInstance";
 
 import FileUpload from "@/components/Scoring/Upload/FileUpload.vue";

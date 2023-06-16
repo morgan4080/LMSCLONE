@@ -1,66 +1,75 @@
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
-// import axiosInstance from "@/services/api/axiosInstance";
+import { ref, computed, onMounted } from "vue";
+import { useRoute } from "vue-router";
 
-const entertainment = {
-  count: {
-    received: 182,
-    paid: 76,
-  },
-  highest: {
-    received: 182,
-    paid: 76,
-  },
-  lowest: {
-    received: 182,
-    paid: 76,
-  },
-  last: {
-    received: 182,
-    paid: 76,
-  },
-  total: {
-    received: 182,
-    paid: 76,
-  },
-};
+import axiosInstance from "@/services/api/axiosInstance";
+
+interface EntertainmentDataItem {
+  total: number;
+  highest: string;
+  highest_who: string;
+  lowest: string;  
+  lowest_who: string;
+  classification: string;
+}
+
+interface EntertainmentTopTransData {
+  last_draw: string; 
+  last: string; 
+  highest: string; 
+  count: string; 
+  name: string; 
+  transactiontype: string; 
+  classification: string; 
+}
+
+const route = useRoute();
+
 const open = ref(true);
-const tableData = ref([]);
 const loading = ref(false);
-const totalItems = ref(30);
+const totalItems = computed(()=>entertainmentTopTransData.value.length);
 const headers = ref<
   { title: string; key: string; align: string; sortable: boolean }[]
 >([
   {
-    title: "count",
+    title: "Count",
     align: "start",
     sortable: false,
-    key: "id",
+    key: "count",
   },
   {
     title: "Transaction Type",
-    key: "statement",
-    align: "end",
+    key: "transactiontype",
+    align: "start",
     sortable: false,
   },
-  { title: "Name", key: "file_name", align: "end", sortable: false },
-  { title: "Highest", key: "status", align: "end", sortable: false },
-  { title: "Last Draw", key: "duration", align: "end", sortable: false },
-  { title: "Last Amount", key: "upload", align: "end", sortable: false },
+  { title: "Entertainment Name", key: "name", align: "start", sortable: false },
+  { title: "Highest", key: "highest", align: "end", sortable: false },
+  { title: "Last Draw", key: "last_draw", align: "end", sortable: false },
+  { title: "Last Amount", key: "last", align: "end", sortable: false },
 ]);
 
-// const entertainmentTransData = ref([])
+const entertainmentTransBuyGoodsData = ref<EntertainmentDataItem[]>([])
+const entertainmentTopTransData = ref<EntertainmentTopTransData[]>([])
 
 // API Call: Get Entertainment Transactions Data
-const loadEntertainmentTransData = async () => {
-  // await axiosInstance
-  //   .get("/e_statement/")
-  //   .then(response => (entertainmentTransData.value = response.data))
-  //   .catch(error => console.error(error));
+const loadEntertainmentTransBuyGoodsData = async () => {
+  await axiosInstance
+    .get(`/e_statement/buy_goods_classifications_summary?idNumber=${route.params.slug}&pageSize=100&sortBy=id`)
+    .then(response => (entertainmentTransBuyGoodsData.value = response.data.content.filter((item: EntertainmentDataItem) => item.classification === "Entertainment")))
+    .catch(error => console.error(error));
+};
+
+// API Call: Get Top Entertainment Trans Data
+const loadEntertainmentTopTransData = async () => {
+  await axiosInstance
+    .get(`/e_statement/top_paybill_classifications?idNumber=${route.params.slug}&pageSize=100&sortBy=id`)
+    .then(response => (entertainmentTopTransData.value = response.data.content.filter((item: EntertainmentTopTransData) => item.classification === "Entertainment")))
+    .catch(error => console.error(error));
 };
 
 onMounted(() => {
-  loadEntertainmentTransData();
+  loadEntertainmentTransBuyGoodsData()
 });
 </script>
 
@@ -104,27 +113,27 @@ onMounted(() => {
                   :thickness="3"
                 />
                 <v-row class="justify-space-between d-flex">
-                  <v-col class="font-weight-medium">Count</v-col>
-                  <v-col>{{ entertainment.count.received }}</v-col>
-                  <v-col>{{ entertainment.count.paid }}</v-col>
+                  <v-col class="font-weight-medium">Highest</v-col>
+                  <v-col> - </v-col>
+                  <v-col>{{ entertainmentTransBuyGoodsData[0]?.highest }}</v-col>
                 </v-row>
                 <v-divider class="my-2" />
                 <v-row class="justify-space-between d-flex">
-                  <v-col class="font-weight-medium">Highest</v-col>
-                  <v-col>{{ entertainment.highest.received }}</v-col>
-                  <v-col>{{ entertainment.highest.paid }}</v-col>
+                  <v-col class="font-weight-medium">Highest To</v-col>
+                  <v-col> - </v-col>
+                  <v-col>{{ entertainmentTransBuyGoodsData[0]?.highest_who }}</v-col>
                 </v-row>
                 <v-divider class="my-2" />
                 <v-row class="justify-space-between d-flex">
                   <v-col class="font-weight-medium">Lowest</v-col>
-                  <v-col>{{ entertainment.lowest.received }}</v-col>
-                  <v-col>{{ entertainment.lowest.paid }}</v-col>
+                  <v-col> - </v-col>
+                  <v-col>{{ entertainmentTransBuyGoodsData[0]?.lowest }}</v-col>
                 </v-row>
                 <v-divider class="my-2" />
                 <v-row class="justify-space-between d-flex">
-                  <v-col class="font-weight-medium">Last</v-col>
-                  <v-col>{{ entertainment.last.received }}</v-col>
-                  <v-col>{{ entertainment.last.paid }}</v-col>
+                  <v-col class="font-weight-medium">Lowest To</v-col>
+                  <v-col> - </v-col>
+                  <v-col>{{ entertainmentTransBuyGoodsData[0]?.lowest_who }}</v-col>
                 </v-row>
                 <v-divider
                   class="my-3"
@@ -132,8 +141,8 @@ onMounted(() => {
                 />
                 <v-row class="font-weight-bold justify-space-between d-flex">
                   <v-col>Total</v-col>
-                  <v-col>{{ entertainment.total.received }}</v-col>
-                  <v-col>{{ entertainment.total.paid }}</v-col>
+                  <v-col> - </v-col>
+                  <v-col>{{ entertainmentTransBuyGoodsData[0]?.total }}</v-col>
                 </v-row>
               </div>
             </v-container>
@@ -161,9 +170,11 @@ onMounted(() => {
               class="text-caption px-4"
               :headers="headers"
               :items-length="totalItems"
-              :items="tableData"
+              :items="entertainmentTopTransData"
               :loading="loading"
               loading-text="Loading...Please Wait"
+              item-value="name"
+              @update:options="loadEntertainmentTopTransData()"
             ></v-data-table-server>
           </v-card>
         </v-container>

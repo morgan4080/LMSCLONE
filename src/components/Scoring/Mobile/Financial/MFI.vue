@@ -1,67 +1,83 @@
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
-// import axiosInstance from "@/services/api/axiosInstance";
+import { ref, computed, onMounted } from "vue";
+import { useRoute } from "vue-router";
+import axiosInstance from "@/services/api/axiosInstance"; 
 
-const mfi = {
-  count: {
-    received: 182,
-    paid: 76,
-  },
-  highest: {
-    received: 182,
-    paid: 76,
-  },
-  lowest: {
-    received: 182,
-    paid: 76,
-  },
-  last: {
-    received: 182,
-    paid: 76,
-  },
-  total: {
-    received: 182,
-    paid: 76,
-  },
-};
+interface MfiDataItem {
+  total: number;
+  highest: string;
+  highest_who: string;
+  lowest: string;  
+  lowest_who: string;
+  classification: string;
+}
+
+interface MfiTopTransData {
+  last_draw: string; 
+  last: string; 
+  highest: string; 
+  count: string; 
+  name: string; 
+  transactiontype: string; 
+  classification: string; 
+}
+
+const route = useRoute();
+
 const open = ref(true);
-const tableData = ref([]);
 const loading = ref(false);
-const totalItems = ref(30);
+const totalItems = computed(()=>mfiTopTransData.value.length);
 const headers = ref<
   { title: string; key: string; align: string; sortable: boolean }[]
 >([
   {
-    title: "#",
+    title: "Count",
     align: "start",
     sortable: false,
-    key: "id",
+    key: "count",
   },
   {
-    title: "Statement Type",
-    key: "statement",
-    align: "end",
+    title: "Transaction Type",
+    key: "transactiontype",
+    align: "start",
     sortable: false,
   },
-  { title: "File Name", key: "file_name", align: "end", sortable: false },
-  { title: "Status", key: "status", align: "end", sortable: false },
-  { title: "Duration", key: "duration", align: "end", sortable: false },
-  { title: "Upload Date", key: "upload", align: "end", sortable: false },
-  { title: "Uploader", key: "uploader", align: "end", sortable: false },
+  { title: "Mfi Name", key: "name", align: "start", sortable: false },
+  { title: "Highest", key: "highest", align: "end", sortable: false },
+  { title: "Last Draw", key: "last_draw", align: "end", sortable: false },
+  { title: "Last Amount", key: "last", align: "end", sortable: false },
 ]);
 
-// const mfiTransData = ref([])
+const mfiTransReceivedData = ref<MfiDataItem[]>([])
+const mfiTransSentData = ref<MfiDataItem[]>([])
+const mfiTopTransData = ref<MfiTopTransData[]>([])
 
-// API Call: Get MFI Transactions Data
-const loadMfiTransData = async () => {
-  // await axiosInstance
-  //   .get("/e_statement/")
-  //   .then(response => (mfiTransData.value = response.data))
-  //   .catch(error => console.error(error));
+// API Call: Get Mfi Transactions Data
+const loadMfiTransReceivedData = async () => {
+  await axiosInstance
+    .get(`/e_statement/pay_bill_classifications_received?idNumber=${route.params.slug}&pageSize=100&sortBy=id`)
+    .then(response => (mfiTransReceivedData.value = response.data.content.filter((item: MfiDataItem) => item.classification === "MFIs")))
+    .catch(error => console.error(error));
+};
+
+const loadMfiTransSentData = async () => {
+  await axiosInstance
+    .get(`/e_statement/pay_bill_classifications_sent?idNumber=${route.params.slug}&pageSize=100&sortBy=id`)
+    .then(response => (mfiTransSentData.value = response.data.content.filter((item: MfiDataItem) => item.classification === "MFIs")))
+    .catch(error => console.error(error));
+};
+
+// API Call: Get Top Mfi Trans Data
+const loadMfiTopTransData = async () => {
+  await axiosInstance
+    .get(`/e_statement/top_paybill_classifications?idNumber=${route.params.slug}&pageSize=100&sortBy=id`)
+    .then(response => (mfiTopTransData.value = response.data.content.filter((item: MfiTopTransData) => item.classification === "MFIs")))
+    .catch(error => console.error(error));
 };
 
 onMounted(() => {
-  loadMfiTransData();
+  loadMfiTransReceivedData();
+  loadMfiTransSentData()
 });
 </script>
 
@@ -103,27 +119,27 @@ onMounted(() => {
                   :thickness="3"
                 />
                 <v-row class="justify-space-between d-flex">
-                  <v-col class="font-weight-medium">Count</v-col>
-                  <v-col>{{ mfi.count.received }}</v-col>
-                  <v-col>{{ mfi.count.paid }}</v-col>
+                  <v-col class="font-weight-medium">Highest</v-col>
+                  <v-col>{{ mfiTransReceivedData[0]?.highest }}</v-col>
+                  <v-col>{{ mfiTransSentData[0]?.highest }}</v-col>
                 </v-row>
                 <v-divider class="my-2" />
                 <v-row class="justify-space-between d-flex">
-                  <v-col class="font-weight-medium">Highest</v-col>
-                  <v-col>{{ mfi.highest.received }}</v-col>
-                  <v-col>{{ mfi.highest.paid }}</v-col>
+                  <v-col class="font-weight-medium">Highest To</v-col>
+                  <v-col>{{ mfiTransReceivedData[0]?.highest_who }}</v-col>
+                  <v-col>{{ mfiTransSentData[0]?.highest_who }}</v-col>
                 </v-row>
                 <v-divider class="my-2" />
                 <v-row class="justify-space-between d-flex">
                   <v-col class="font-weight-medium">Lowest</v-col>
-                  <v-col>{{ mfi.lowest.received }}</v-col>
-                  <v-col>{{ mfi.lowest.paid }}</v-col>
+                  <v-col>{{ mfiTransReceivedData[0]?.lowest }}</v-col>
+                  <v-col>{{ mfiTransSentData[0]?.lowest }}</v-col>
                 </v-row>
                 <v-divider class="my-2" />
                 <v-row class="justify-space-between d-flex">
                   <v-col class="font-weight-medium">Last</v-col>
-                  <v-col>{{ mfi.last.received }}</v-col>
-                  <v-col>{{ mfi.last.paid }}</v-col>
+                  <v-col>{{ mfiTransReceivedData[0]?.lowest_who }}</v-col>
+                  <v-col>{{ mfiTransSentData[0]?.lowest_who }}</v-col>
                 </v-row>
                 <v-divider
                   class="my-3"
@@ -131,8 +147,8 @@ onMounted(() => {
                 />
                 <v-row class="font-weight-bold justify-space-between d-flex">
                   <v-col>Total</v-col>
-                  <v-col>{{ mfi.total.received }}</v-col>
-                  <v-col>{{ mfi.total.paid }}</v-col>
+                  <v-col>{{ mfiTransReceivedData[0]?.total }}</v-col>
+                  <v-col>{{ mfiTransSentData[0]?.total }}</v-col>
                 </v-row>
               </div>
             </v-container>
@@ -158,9 +174,11 @@ onMounted(() => {
               class="text-caption px-4"
               :headers="headers"
               :items-length="totalItems"
-              :items="tableData"
+              :items="mfiTopTransData"
               :loading="loading"
               loading-text="Loading...Please Wait"
+              item-value="name"
+              @update:options="loadMfiTopTransData()"
             ></v-data-table-server>
           </v-card>
         </v-container>
