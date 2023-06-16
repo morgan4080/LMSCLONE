@@ -4,24 +4,24 @@ import { ref, onMounted } from "vue";
 
 const hustler = {
   count: {
-    received: 182,
-    paid: 76,
+    received: 0,
+    paid: 0,
   },
   highest: {
-    received: 182,
-    paid: 76,
+    received: 0,
+    paid: 0,
   },
   lowest: {
-    received: 182,
-    paid: 76,
+    received: 0,
+    paid: 0,
   },
   last: {
-    received: 182,
-    paid: 76,
+    received: 0,
+    paid: 0,
   },
   total: {
-    received: 182,
-    paid: 76,
+    received: 0,
+    paid: 0,
   },
 };
 const open = ref(true);

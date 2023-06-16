@@ -1,90 +1,84 @@
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
-// import axiosInstance from "@/services/api/axiosInstance";
+import { ref, computed, onMounted } from "vue";
+import { useRoute } from "vue-router";
 
-const religion = {
-  paybill: {
-    count: {
-      received: 182,
-      paid: 76,
-    },
-    highest: {
-      received: 182,
-      paid: 76,
-    },
-    lowest: {
-      received: 182,
-      paid: 76,
-    },
-    last: {
-      received: 182,
-      paid: 76,
-    },
-    total: {
-      received: 182,
-      paid: 76,
-    },
-  },
-  buyGoods: {
-    count: {
-      received: 182,
-      paid: 76,
-    },
-    highest: {
-      received: 182,
-      paid: 76,
-    },
-    lowest: {
-      received: 182,
-      paid: 76,
-    },
-    last: {
-      received: 182,
-      paid: 76,
-    },
-    total: {
-      received: 182,
-      paid: 76,
-    },
-  },
-};
+import axiosInstance from "@/services/api/axiosInstance";
+
+interface ReligionDataItem {
+  total: number;
+  highest: string;
+  highest_who: string;
+  lowest: string;  
+  lowest_who: string;
+  classification: string;
+}
+
+interface ReligionTopTransData {
+  last_draw: string; 
+  last: string; 
+  highest: string; 
+  count: string; 
+  name: string; 
+  transactiontype: string; 
+  classification: string; 
+}
+
+const route = useRoute();
+
 const open = ref(true);
-const tableData = ref([]);
 const loading = ref(false);
-const totalItems = ref(30);
+const totalItems = computed(()=>religionTopTransData.value.length);
 const headers = ref<
   { title: string; key: string; align: string; sortable: boolean }[]
 >([
   {
-    title: "count",
+    title: "Count",
     align: "start",
     sortable: false,
-    key: "id",
+    key: "count",
   },
   {
     title: "Transaction Type",
-    key: "statement",
-    align: "end",
+    key: "transactiontype",
+    align: "start",
     sortable: false,
   },
-  { title: "Name", key: "file_name", align: "end", sortable: false },
-  { title: "Highest", key: "status", align: "end", sortable: false },
-  { title: "Last Draw", key: "duration", align: "end", sortable: false },
-  { title: "Last Amount", key: "upload", align: "end", sortable: false },
+  { title: "Religion Name", key: "name", align: "start", sortable: false },
+  { title: "Highest", key: "highest", align: "end", sortable: false },
+  { title: "Last Draw", key: "last_draw", align: "end", sortable: false },
+  { title: "Last Amount", key: "last", align: "end", sortable: false },
 ]);
 
-// const religionTransData = ref([])
+const religionTransSentData = ref<ReligionDataItem[]>([])
+const religionTransBuyGoodsData = ref<ReligionDataItem[]>([])
+const religionTopTransData = ref<ReligionTopTransData[]>([])
 
 // API Call: Get Religion Transactions Data
-const loadReligionTransData = async () => {
-  // await axiosInstance
-  //   .get("/e_statement/")
-  //   .then(response => (religionTransData.value = response.data))
-  //   .catch(error => console.error(error));
+const loadReligionTransSentData = async () => {
+  await axiosInstance
+    .get(`/e_statement/pay_bill_classifications_sent?idNumber=${route.params.slug}&pageSize=100&sortBy=id`)
+    .then(response => (religionTransSentData.value = response.data.content.filter((item: ReligionDataItem) => item.classification === "Religion")))
+    .catch(error => console.error(error));
+};
+
+const loadReligionTransBuyGoodsData = async () => {
+  await axiosInstance
+    .get(`/e_statement/buy_goods_classifications_summary?idNumber=${route.params.slug}&pageSize=100&sortBy=id`)
+    .then(response => (religionTransBuyGoodsData.value = response.data.content.filter((item: ReligionDataItem) => item.classification === "Religion")))
+    .catch(error => console.error(error));
+};
+
+// API Call: Get Top Religion Trans Data
+const loadReligionTopTransData = async () => {
+  await axiosInstance
+    .get(`/e_statement/top_paybill_classifications?idNumber=${route.params.slug}&pageSize=100&sortBy=id`)
+    .then(response => (religionTopTransData.value = response.data.content.filter((item: ReligionTopTransData) => item.classification === "Religion")))
+    .catch(error => console.error(error));
 };
 
 onMounted(() => {
-  loadReligionTransData();
+  loadReligionTransSentData()
+  loadReligionTransBuyGoodsData()
 });
 </script>
 
@@ -128,27 +122,27 @@ onMounted(() => {
                   :thickness="3"
                 />
                 <v-row class="justify-space-between d-flex">
-                  <v-col class="font-weight-medium">Count</v-col>
-                  <v-col>{{ religion.paybill.count.received }}</v-col>
-                  <v-col>{{ religion.paybill.count.paid }}</v-col>
+                  <v-col class="font-weight-medium">Highest</v-col>
+                  <v-col> - </v-col>
+                  <v-col>{{ religionTransSentData[0]?.highest }}</v-col>
                 </v-row>
                 <v-divider class="my-2" />
                 <v-row class="justify-space-between d-flex">
-                  <v-col class="font-weight-medium">Highest</v-col>
-                  <v-col>{{ religion.paybill.highest.received }}</v-col>
-                  <v-col>{{ religion.paybill.highest.paid }}</v-col>
+                  <v-col class="font-weight-medium">Highest To</v-col>
+                  <v-col> - </v-col>
+                  <v-col>{{ religionTransSentData[0]?.highest_who }}</v-col>
                 </v-row>
                 <v-divider class="my-2" />
                 <v-row class="justify-space-between d-flex">
                   <v-col class="font-weight-medium">Lowest</v-col>
-                  <v-col>{{ religion.paybill.lowest.received }}</v-col>
-                  <v-col>{{ religion.paybill.lowest.paid }}</v-col>
+                  <v-col> - </v-col>
+                  <v-col>{{ religionTransSentData[0]?.lowest }}</v-col>
                 </v-row>
                 <v-divider class="my-2" />
                 <v-row class="justify-space-between d-flex">
-                  <v-col class="font-weight-medium">Last</v-col>
-                  <v-col>{{ religion.paybill.last.received }}</v-col>
-                  <v-col>{{ religion.paybill.last.paid }}</v-col>
+                  <v-col class="font-weight-medium">Lowest To</v-col>
+                  <v-col> - </v-col>
+                  <v-col>{{ religionTransSentData[0]?.lowest_who }}</v-col>
                 </v-row>
                 <v-divider
                   class="my-3"
@@ -156,8 +150,8 @@ onMounted(() => {
                 />
                 <v-row class="font-weight-bold justify-space-between d-flex">
                   <v-col>Total</v-col>
-                  <v-col>{{ religion.paybill.total.received }}</v-col>
-                  <v-col>{{ religion.paybill.total.paid }}</v-col>
+                  <v-col> - </v-col>
+                  <v-col>{{ religionTransSentData[0]?.total }}</v-col>
                 </v-row>
               </div>
             </v-container>
@@ -189,27 +183,27 @@ onMounted(() => {
                   :thickness="3"
                 />
                 <v-row class="justify-space-between d-flex">
-                  <v-col class="font-weight-medium">Count</v-col>
-                  <v-col>{{ religion.buyGoods.count.received }}</v-col>
-                  <v-col>{{ religion.buyGoods.count.paid }}</v-col>
+                  <v-col class="font-weight-medium">Highest</v-col>
+                  <v-col> - </v-col>
+                  <v-col>{{ religionTransBuyGoodsData[0]?.highest }}</v-col>
                 </v-row>
                 <v-divider class="my-2" />
                 <v-row class="justify-space-between d-flex">
-                  <v-col class="font-weight-medium">Highest</v-col>
-                  <v-col>{{ religion.buyGoods.highest.received }}</v-col>
-                  <v-col>{{ religion.buyGoods.highest.paid }}</v-col>
+                  <v-col class="font-weight-medium">Highest To</v-col>
+                  <v-col> - </v-col>
+                  <v-col>{{ religionTransBuyGoodsData[0]?.highest_who }}</v-col>
                 </v-row>
                 <v-divider class="my-2" />
                 <v-row class="justify-space-between d-flex">
                   <v-col class="font-weight-medium">Lowest</v-col>
-                  <v-col>{{ religion.buyGoods.lowest.received }}</v-col>
-                  <v-col>{{ religion.buyGoods.lowest.paid }}</v-col>
+                  <v-col> - </v-col>
+                  <v-col>{{ religionTransBuyGoodsData[0]?.lowest }}</v-col>
                 </v-row>
                 <v-divider class="my-2" />
                 <v-row class="justify-space-between d-flex">
-                  <v-col class="font-weight-medium">Last</v-col>
-                  <v-col>{{ religion.buyGoods.last.received }}</v-col>
-                  <v-col>{{ religion.buyGoods.last.paid }}</v-col>
+                  <v-col class="font-weight-medium">Lowest To</v-col>
+                  <v-col> - </v-col>
+                  <v-col>{{ religionTransBuyGoodsData[0]?.lowest_who }}</v-col>
                 </v-row>
                 <v-divider
                   class="my-3"
@@ -217,8 +211,8 @@ onMounted(() => {
                 />
                 <v-row class="font-weight-bold justify-space-between d-flex">
                   <v-col>Total</v-col>
-                  <v-col>{{ religion.buyGoods.total.received }}</v-col>
-                  <v-col>{{ religion.buyGoods.total.paid }}</v-col>
+                  <v-col> - </v-col>
+                  <v-col>{{ religionTransBuyGoodsData[0]?.total }}</v-col>
                 </v-row>
               </div>
             </v-container>
@@ -245,9 +239,11 @@ onMounted(() => {
               class="text-caption px-4"
               :headers="headers"
               :items-length="totalItems"
-              :items="tableData"
+              :items="religionTopTransData"
               :loading="loading"
               loading-text="Loading...Please Wait"
+              item-value="name"
+              @update:options="loadReligionTopTransData()"
             ></v-data-table-server>
           </v-card>
         </v-container>

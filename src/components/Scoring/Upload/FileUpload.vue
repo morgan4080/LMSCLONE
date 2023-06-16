@@ -47,7 +47,6 @@ const uploadFile = async () => {
     const formData = new FormData();
     formData.append("file", props.statement.document_file);
     formData.append("document_type", props.statement.document_type);
-    formData.append("organization_code", "PRESTA");
     formData.append("bank_code", props.statement.document_code);
     formData.append("sender", "jane@gmail.com");
     formData.append("decrypter", "2320092");

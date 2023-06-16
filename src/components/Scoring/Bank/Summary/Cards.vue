@@ -1,6 +1,22 @@
 <script setup lang="ts">
 import { onMounted } from "vue";
+// import { useRoute } from "vue-router";
 // import axiosInstance from "@/services/api/axiosInstance";
+
+// interface CustomerInformation {
+//   name: string;
+//   fileName: string;
+//   phone: string;
+//   email: string;
+//   bank: string;
+//   accType: string;
+//   accNo: string;
+//   currency: string;
+//   receivedOn: string;
+//   age: string;
+//   period: string;
+//   duration: string;
+// }
 
 const customer = {
   name: "Tom Kimani",

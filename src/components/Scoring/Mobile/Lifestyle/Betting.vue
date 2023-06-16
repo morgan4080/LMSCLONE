@@ -1,90 +1,93 @@
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
-// import axiosInstance from "@/services/api/axiosInstance";
+import { ref, computed, onMounted } from "vue";
+import { useRoute } from "vue-router";
 
-const betting = {
-  paybill: {
-    count: {
-      received: 182,
-      paid: 76,
-    },
-    highest: {
-      received: 182,
-      paid: 76,
-    },
-    lowest: {
-      received: 182,
-      paid: 76,
-    },
-    last: {
-      received: 182,
-      paid: 76,
-    },
-    total: {
-      received: 182,
-      paid: 76,
-    },
-  },
-  buyGoods: {
-    count: {
-      received: 182,
-      paid: 76,
-    },
-    highest: {
-      received: 182,
-      paid: 76,
-    },
-    lowest: {
-      received: 182,
-      paid: 76,
-    },
-    last: {
-      received: 182,
-      paid: 76,
-    },
-    total: {
-      received: 182,
-      paid: 76,
-    },
-  },
-};
+import axiosInstance from "@/services/api/axiosInstance";
+
+interface BettingDataItem {
+  total: number;
+  highest: string;
+  highest_who: string;
+  lowest: string;  
+  lowest_who: string; 
+  classification: string;
+}
+
+interface BettingTopTransData {
+  last_draw: string; 
+  last: string; 
+  highest: string; 
+  count: string; 
+  name: string; 
+  transactiontype: string; 
+  classification: string; 
+}
+
+const route = useRoute();
+
 const open = ref(true);
-const tableData = ref([]);
 const loading = ref(false);
-const totalItems = ref(30);
+const totalItems = computed(()=>bettingTopTransData.value.length);
 const headers = ref<
   { title: string; key: string; align: string; sortable: boolean }[]
 >([
   {
-    title: "count",
+    title: "Count",
     align: "start",
     sortable: false,
-    key: "id",
+    key: "count",
   },
   {
     title: "Transaction Type",
-    key: "statement",
-    align: "end",
+    key: "transactiontype",
+    align: "start",
     sortable: false,
   },
-  { title: "Name", key: "file_name", align: "end", sortable: false },
-  { title: "Highest", key: "status", align: "end", sortable: false },
-  { title: "Last Draw", key: "duration", align: "end", sortable: false },
-  { title: "Last Amount", key: "upload", align: "end", sortable: false },
+  { title: "Betting Name", key: "name", align: "start", sortable: false },
+  { title: "Highest", key: "highest", align: "end", sortable: false },
+  { title: "Last Draw", key: "last_draw", align: "end", sortable: false },
+  { title: "Last Amount", key: "last", align: "end", sortable: false },
 ]);
 
-// const bettingTransData = ref([])
+const bettingTransReceivedData = ref<BettingDataItem[]>([])
+const bettingTransSentData = ref<BettingDataItem[]>([])
+const bettingTransBuyGoodsData = ref<BettingDataItem[]>([])
+const bettingTopTransData = ref<BettingTopTransData[]>([])
 
 // API Call: Get Betting Transactions Data
-const loadBettingTransData = async () => {
-  // await axiosInstance
-  //   .get("/e_statement/")
-  //   .then(response => (bettingTransData.value = response.data))
-  //   .catch(error => console.error(error));
+const loadBettingTransReceivedData = async () => {
+  await axiosInstance
+    .get(`/e_statement/pay_bill_classifications_received?idNumber=${route.params.slug}&pageSize=100&sortBy=id`)
+    .then(response => (bettingTransReceivedData.value = response.data.content.filter((item: BettingDataItem) => item.classification === "Betting")))
+    .catch(error => console.error(error));
+};
+
+const loadBettingTransSentData = async () => {
+  await axiosInstance
+    .get(`/e_statement/pay_bill_classifications_sent?idNumber=${route.params.slug}&pageSize=100&sortBy=id`)
+    .then(response => (bettingTransSentData.value = response.data.content.filter((item: BettingDataItem) => item.classification === "Betting")))
+    .catch(error => console.error(error));
+};
+
+const loadBettingTransBuyGoodsData = async () => {
+  await axiosInstance
+    .get(`/e_statement/buy_goods_classifications_summary?idNumber=${route.params.slug}&pageSize=100&sortBy=id`)
+    .then(response => (bettingTransBuyGoodsData.value = response.data.content.filter((item: BettingDataItem) => item.classification === "Betting")))
+    .catch(error => console.error(error));
+};
+
+// API Call: Get Top Betting Trans Data
+const loadBettingTopTransData = async () => {
+  await axiosInstance
+    .get(`/e_statement/top_paybill_classifications?idNumber=${route.params.slug}&pageSize=100&sortBy=id`)
+    .then(response => (bettingTopTransData.value = response.data.content.filter((item: BettingTopTransData) => item.classification === "Betting")))
+    .catch(error => console.error(error));
 };
 
 onMounted(() => {
-  loadBettingTransData();
+  loadBettingTransReceivedData();
+  loadBettingTransSentData()
+  loadBettingTransBuyGoodsData()
 });
 </script>
 
@@ -128,27 +131,27 @@ onMounted(() => {
                   :thickness="3"
                 />
                 <v-row class="justify-space-between d-flex">
-                  <v-col class="font-weight-medium">Count</v-col>
-                  <v-col>{{ betting.paybill.count.received }}</v-col>
-                  <v-col>{{ betting.paybill.count.paid }}</v-col>
+                  <v-col class="font-weight-medium">Highest</v-col>
+                  <v-col>{{ bettingTransReceivedData[0]?.highest }}</v-col>
+                  <v-col>{{ bettingTransSentData[0]?.highest }}</v-col>
                 </v-row>
                 <v-divider class="my-2" />
                 <v-row class="justify-space-between d-flex">
-                  <v-col class="font-weight-medium">Highest</v-col>
-                  <v-col>{{ betting.paybill.highest.received }}</v-col>
-                  <v-col>{{ betting.paybill.highest.paid }}</v-col>
+                  <v-col class="font-weight-medium">Highest To</v-col>
+                  <v-col>{{ bettingTransReceivedData[0]?.highest_who }}</v-col>
+                  <v-col>{{ bettingTransSentData[0]?.highest_who }}</v-col>
                 </v-row>
                 <v-divider class="my-2" />
                 <v-row class="justify-space-between d-flex">
                   <v-col class="font-weight-medium">Lowest</v-col>
-                  <v-col>{{ betting.paybill.lowest.received }}</v-col>
-                  <v-col>{{ betting.paybill.lowest.paid }}</v-col>
+                  <v-col>{{ bettingTransReceivedData[0]?.lowest }}</v-col>
+                  <v-col>{{ bettingTransSentData[0]?.lowest }}</v-col>
                 </v-row>
                 <v-divider class="my-2" />
                 <v-row class="justify-space-between d-flex">
-                  <v-col class="font-weight-medium">Last</v-col>
-                  <v-col>{{ betting.paybill.last.received }}</v-col>
-                  <v-col>{{ betting.paybill.last.paid }}</v-col>
+                  <v-col class="font-weight-medium">Lowest To</v-col>
+                  <v-col>{{ bettingTransReceivedData[0]?.lowest_who }}</v-col>
+                  <v-col>{{ bettingTransSentData[0]?.lowest_who }}</v-col>
                 </v-row>
                 <v-divider
                   class="my-3"
@@ -156,8 +159,8 @@ onMounted(() => {
                 />
                 <v-row class="font-weight-bold justify-space-between d-flex">
                   <v-col>Total</v-col>
-                  <v-col>{{ betting.paybill.total.received }}</v-col>
-                  <v-col>{{ betting.paybill.total.paid }}</v-col>
+                  <v-col>{{ bettingTransReceivedData[0]?.total }}</v-col>
+                  <v-col>{{ bettingTransSentData[0]?.total }}</v-col>
                 </v-row>
               </div>
             </v-container>
@@ -189,27 +192,27 @@ onMounted(() => {
                   :thickness="3"
                 />
                 <v-row class="justify-space-between d-flex">
-                  <v-col class="font-weight-medium">Count</v-col>
-                  <v-col>{{ betting.buyGoods.count.received }}</v-col>
-                  <v-col>{{ betting.buyGoods.count.paid }}</v-col>
+                  <v-col class="font-weight-medium">Highest</v-col>
+                  <v-col> - </v-col>
+                  <v-col>{{ bettingTransBuyGoodsData[0]?.highest }}</v-col>
                 </v-row>
                 <v-divider class="my-2" />
                 <v-row class="justify-space-between d-flex">
-                  <v-col class="font-weight-medium">Highest</v-col>
-                  <v-col>{{ betting.buyGoods.highest.received }}</v-col>
-                  <v-col>{{ betting.buyGoods.highest.paid }}</v-col>
+                  <v-col class="font-weight-medium">Highest To</v-col>
+                  <v-col> - </v-col>
+                  <v-col>{{ bettingTransBuyGoodsData[0]?.highest_who }}</v-col>
                 </v-row>
                 <v-divider class="my-2" />
                 <v-row class="justify-space-between d-flex">
                   <v-col class="font-weight-medium">Lowest</v-col>
-                  <v-col>{{ betting.buyGoods.lowest.received }}</v-col>
-                  <v-col>{{ betting.buyGoods.lowest.paid }}</v-col>
+                  <v-col> - </v-col>
+                  <v-col>{{ bettingTransBuyGoodsData[0]?.lowest }}</v-col>
                 </v-row>
                 <v-divider class="my-2" />
                 <v-row class="justify-space-between d-flex">
-                  <v-col class="font-weight-medium">Last</v-col>
-                  <v-col>{{ betting.buyGoods.last.received }}</v-col>
-                  <v-col>{{ betting.buyGoods.last.paid }}</v-col>
+                  <v-col class="font-weight-medium">Lowest To</v-col>
+                  <v-col> - </v-col>
+                  <v-col>{{ bettingTransBuyGoodsData[0]?.lowest_who }}</v-col>
                 </v-row>
                 <v-divider
                   class="my-3"
@@ -217,8 +220,8 @@ onMounted(() => {
                 />
                 <v-row class="font-weight-bold justify-space-between d-flex">
                   <v-col>Total</v-col>
-                  <v-col>{{ betting.buyGoods.total.received }}</v-col>
-                  <v-col>{{ betting.buyGoods.total.paid }}</v-col>
+                  <v-col> - </v-col>
+                  <v-col>{{ bettingTransBuyGoodsData[0]?.total }}</v-col>
                 </v-row>
               </div>
             </v-container>
@@ -245,9 +248,11 @@ onMounted(() => {
               class="text-caption px-4"
               :headers="headers"
               :items-length="totalItems"
-              :items="tableData"
+              :items="bettingTopTransData"
               :loading="loading"
               loading-text="Loading...Please Wait"
+              item-value="name"
+              @update:options="loadBettingTopTransData()"
             ></v-data-table-server>
           </v-card>
         </v-container>

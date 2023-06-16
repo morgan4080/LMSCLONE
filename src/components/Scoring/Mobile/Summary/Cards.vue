@@ -8,7 +8,7 @@ interface CustomerInformation {
   identity_number: string;
   email: string;
   phone_number: string;
-  statement_period: string;
+  statement_period: string; 
 }
 
 interface CustomerStatement {
