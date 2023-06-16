@@ -1,22 +1,22 @@
 <script setup lang="ts">
-import { onMounted } from "vue";
-// import { useRoute } from "vue-router";
-// import axiosInstance from "@/services/api/axiosInstance";
+import { ref, onMounted } from "vue";
+import { useRoute } from "vue-router";
+import axios from 'axios';
 
-// interface CustomerInformation {
-//   name: string;
-//   fileName: string;
-//   phone: string;
-//   email: string;
-//   bank: string;
-//   accType: string;
-//   accNo: string;
-//   currency: string;
-//   receivedOn: string;
-//   age: string;
-//   period: string;
-//   duration: string;
-// }
+interface CustomerInformation {
+  name: string;
+  fileName: string;
+  phone: string;
+  email: string;
+  bank: string;
+  accType: string;
+  accNo: string;
+  currency: string;
+  receivedOn: string;
+  age: string;
+  period: string;
+  duration: string;
+}
 
 const customer = {
   name: "Tom Kimani",
@@ -38,28 +38,33 @@ const analysis = {
   netIncome: 1500,
   maxLoanable: 2000,
 };
+
 const balances = {
   opening: 2000,
   closing: 1500,
   uncleared: 2000,
 };
 
-// const customerInfoData = ref([])
+const route = useRoute();
 
-// API Call: Get Customer Information Data
-const loadCustomerInfoData = async () => {
-  // await axiosInstance
-  //   .get("/e_statement/")
-  //   .then(response => (customerInfoData.value = response.data))
-  //   .catch(error => console.error(error));
+const customerInformation = ref([])
+
+// API Call: Get customer information
+const loadCustomerInformation = async () => {
+  await axios
+    .get(`https://staging-lending.presta.co.ke/bank_scoring/api/v1/bank_analysis/get_customer_info?idNumber=1345455667`)
+    // .get(`/bank_analysis/get_customer_info?idnum=${route.params.slug}`)
+    .then(response => (customerInformation.value = response.data))
+    .catch(error => console.error(error));
 };
 
 onMounted(() => {
-  loadCustomerInfoData() 
+  loadCustomerInformation() 
 })
 </script>
 
 <template>
+  {{ customerInformation }}
   <v-container fluid>
     <v-row>
       <v-col>

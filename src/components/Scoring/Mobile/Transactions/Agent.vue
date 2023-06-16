@@ -13,13 +13,12 @@ interface AgentDataItem {
 }
 
 interface AgentTopTransData {
-  last_draw: string; 
-  last: string; 
+  agent_no: string; 
   highest: string; 
   count: string; 
+  total: string; 
   name: string; 
   transactiontype: string; 
-  classification: string; 
 }
 
 const route = useRoute();
@@ -42,10 +41,10 @@ const headers = ref<
     align: "start",
     sortable: false,
   },
-  { title: "Agent Name", key: "name", align: "start", sortable: false },
+  { title: "Agent No", key: "agent_no", align: "start", sortable: false },
+  { title: "Description", key: "name", align: "start", sortable: false },
   { title: "Highest", key: "highest", align: "end", sortable: false },
-  { title: "Last Draw", key: "last_draw", align: "end", sortable: false },
-  { title: "Last Amount", key: "last", align: "end", sortable: false },
+  { title: "Total", key: "total", align: "end", sortable: false },
 ]);
 
 const agentTransData = ref<AgentDataItem[]>([]);
@@ -64,8 +63,8 @@ const loadAgentTransData = async () => {
 // API Call: Get Top Agent Trans Data
 const loadAgentTopTransData = async () => {
   await axiosInstance
-    .get(`/e_statement/top_paybill_classifications?idNumber=${route.params.slug}&pageSize=100&sortBy=id`)
-    .then(response => (agentTopTransData.value = response.data.content.filter((item: AgentTopTransData) => item.classification === "AgentJTL")))
+    .get(`/e_statement/top_agent_transactions?idNumber=${route.params.slug}&pageSize=100&sortBy=id`)
+    .then(response => (agentTopTransData.value = response.data.content))
     .catch(error => console.error(error));
 };
 
