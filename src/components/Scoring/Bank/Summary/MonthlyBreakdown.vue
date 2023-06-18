@@ -1,8 +1,21 @@
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
-// import axiosInstance from "@/services/api/axiosInstance";
+import { ref, computed, } from "vue";
+import { useRoute } from "vue-router";
+import axios from 'axios';
 
-const options = ["Option 1", "Option 2", "Option 3", "Option 4"];
+interface MonthlyBreakdown {
+  month: string;
+  debits: number;
+  credits: number;
+  closing: number;
+}
+
+const route = useRoute();
+
+const monthlyBreakdown = ref<MonthlyBreakdown[]>([]);
+const totalItems = computed(()=>monthlyBreakdown.value.length);
+
+const baseUrl: string = "https://staging-lending.presta.co.ke/bank_scoring/api/v1"
 
 const headers = ref<
   { title: string; key: string; align: string; sortable: boolean }[]
@@ -22,36 +35,15 @@ const headers = ref<
   { title: "Credits (CR)", key: "credits", align: "end", sortable: false },
   { title: "Closing", key: "closing", align: "end", sortable: false },
 ]);
-const totalItems = ref(10);
-const tableData = ref([
-  {
-    month: "April 2023",
-    debits: "86,235",
-    credits: "23,521",
-    closing: "34,642",
-  },
-  {
-    month: "April 2023",
-    debits: "86,235",
-    credits: "23,521",
-    closing: "34,642",
-  },
-]);
 const loading = ref(false);
 
-// const monthlyBreakdownData = ref([])
-
-// API Call: Get Monthly Breakdown Data
-const loadMonthlyBreakdownData = async () => {
-  // await axiosInstance
-  //   .get("/e_statement/")
-  //   .then(response => (monthlyBreakdownData.value = response.data))
-  //   .catch(error => console.error(error));
+// API Call: Get monthlyBreakdown
+const loadMonthlyBreakdown = async () => {
+  await axios
+    .get(`${baseUrl}/bank_analysis/bank_income_expense_tabulated?idNumber=${route.params.slug}`)
+    .then(response => (monthlyBreakdown.value = response.data))
+    .catch(error => console.error(error));
 };
-
-onMounted(() => {
-  loadMonthlyBreakdownData();
-});
 </script>
 
 <template>
@@ -81,12 +73,12 @@ onMounted(() => {
               class="text-caption px-4"
               :headers="headers"
               :items-length="totalItems"
-              :items="tableData"
+              :items="monthlyBreakdown"
               :loading="loading"
               loading-text="Loading...Please Wait"
-            >
-              <template v-slot:bottom> </template>
-            </v-data-table-server>
+              item-value="name"
+              @update:options="loadMonthlyBreakdown()"
+            ><template v-slot:bottom> </template></v-data-table-server>
           </div>
         </v-container>
       </div>
