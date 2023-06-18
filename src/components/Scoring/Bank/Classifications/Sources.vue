@@ -1,25 +1,31 @@
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
-// import axiosInstance from "@/services/api/axiosInstance";
+import { ref, computed, onMounted } from "vue";
+import { useRoute } from "vue-router";
+import axiosInstance from "@/services/api/axiosInstance";
+
+interface FlowDataItem {
+  count: number;
+  highest: string;
+  total: string;
+  last_draw: string;
+}
+
+interface FlowTopData {
+  last_draw: string; 
+  sourcename: string; 
+  description: string; 
+  last_amount: string; 
+  total: string; 
+  count: number; 
+}
+
+const route = useRoute();
 
 const open = ref(true);
-const tableData = ref([]);
 const loading = ref(false);
-const totalItems = ref(30);
-const sources = {
-  mobile: {
-    count: 83,
-    total: 1500,
-    highest: 2000,
-    lastOn: "DD/MM/YYYY HH:MM",
-  },
-  cash: {
-    count: 7,
-    total: 1500,
-    highest: 2000,
-    lastOn: "DD/MM/YYYY HH:MM",
-  },
-};
+const totalItems = computed(()=>flowTopData.value.length);
+const options = ["Option 1", "Option 2", "Option 3"];
+
 const headers = ref<
   { title: string; key: string; align: string; sortable: boolean }[]
 >([
@@ -31,30 +37,50 @@ const headers = ref<
   },
   {
     title: "Inflow Type",
-    key: "inflowType",
+    key: "sourcename",
     align: "start",
     sortable: false,
   },
   { title: "Description", key: "description", align: "start", sortable: false },
   { title: "Total", key: "total", align: "end", sortable: false },
-  { title: "Last Amount", key: "lastAmount", align: "end", sortable: false },
-  { title: "Last On", key: "lastOn", align: "end", sortable: false },
+  { title: "Last Amount", key: "last_amount", align: "end", sortable: false },
+  { title: "Last On", key: "last_draw", align: "end", sortable: false },
 ]);
-const options = ["Option 1", "Option 2", "Option 3"];
 
-// const mobileMoneyData = ref([])
+const flowMobileMoney = ref<FlowDataItem[]>([]);
+const flowCashDeposit = ref<FlowDataItem[]>([]);
+const flowTopData = ref<FlowTopData[]>([])
 
-// API Call: Get Mobile Money Data
-const loadMobileMoneyData = async () => {
-  // await axiosInstance
-  //   .get("/e_statement/")
-  //   .then(response => (mobileMoneyData.value = response.data))
-  //   .catch(error => console.error(error));
+const baseUrl: string = "https://staging-lending.presta.co.ke/bank_scoring/api/v1"
+
+// API Call: Get Flow Mobile Money
+const loadFlowMobileMoney = async () => {
+  await axiosInstance
+    .get(`${baseUrl}/bank_analysis/bank_sources_summary?idNumber=${route.params.slug}&sourceName=MobileMoney&pageSize=100&sortBy=id`)
+    .then(response => (flowMobileMoney.value = response.data.content))
+    .catch(error => console.error(error));
+};
+
+// API Call: Get Flow Cash Deposit
+const loadFlowCashDeposit = async () => {
+  await axiosInstance
+    .get(`${baseUrl}/bank_analysis/bank_sources_summary?idNumber=${route.params.slug}&sourceName=CashDeposit&pageSize=100&sortBy=id`)
+    .then(response => (flowCashDeposit.value = response.data.content))
+    .catch(error => console.error(error));
+};
+
+// API Call: Get Top Flow Data
+const loadFlowTopData = async () => {
+  await axiosInstance
+    .get(`${baseUrl}/bank_analysis/top_bank_sources_transactions?idNumber=${route.params.slug}&pageSize=100&sortBy=id`)
+    .then(response => (flowTopData.value = response.data.content))
+    .catch(error => console.error(error));
 };
 
 onMounted(() => {
-  loadMobileMoneyData() 
-})
+  loadFlowMobileMoney();
+  loadFlowCashDeposit()
+});
 </script>
 
 <template>
@@ -95,17 +121,17 @@ onMounted(() => {
                 />
                 <v-row class="justify-space-between d-flex">
                   <v-col class="font-weight-medium">Count</v-col>
-                  <v-col class="text-right">{{ sources.mobile.count }}</v-col>
+                  <v-col class="text-right">{{ flowMobileMoney[0]?.count }}</v-col>
                 </v-row>
                 <v-divider class="my-2" />
                 <v-row class="justify-space-between d-flex">
                   <v-col class="font-weight-medium">Total</v-col>
-                  <v-col class="text-right">{{ sources.mobile.total }}</v-col>
+                  <v-col class="text-right">{{ flowMobileMoney[0]?.total }}</v-col>
                 </v-row>
                 <v-divider class="my-2" />
                 <v-row class="justify-space-between d-flex">
                   <v-col class="font-weight-medium">Highest</v-col>
-                  <v-col class="text-right">{{ sources.mobile.highest }}</v-col>
+                  <v-col class="text-right">{{ flowMobileMoney[0]?.highest }}</v-col>
                 </v-row>
                 <v-divider
                   :thickness="3"
@@ -113,7 +139,7 @@ onMounted(() => {
                 />
                 <v-row class="justify-space-between d-flex">
                   <v-col class="font-weight-medium">Last On</v-col>
-                  <v-col class="text-right">{{ sources.mobile.lastOn }}</v-col>
+                  <v-col class="text-right">{{ flowMobileMoney[0]?.last_draw }}</v-col>
                 </v-row>
                 <v-divider class="my-3" />
               </div>
@@ -144,17 +170,17 @@ onMounted(() => {
                 />
                 <v-row class="justify-space-between d-flex">
                   <v-col class="font-weight-medium">Count</v-col>
-                  <v-col class="text-right">{{ sources.cash.count }}</v-col>
+                  <v-col class="text-right">{{ flowCashDeposit[0]?.count }}</v-col>
                 </v-row>
                 <v-divider class="my-2" />
                 <v-row class="justify-space-between d-flex">
                   <v-col class="font-weight-medium">Total</v-col>
-                  <v-col class="text-right">{{ sources.cash.total }}</v-col>
+                  <v-col class="text-right">{{ flowCashDeposit[0]?.total }}</v-col>
                 </v-row>
                 <v-divider class="my-2" />
                 <v-row class="justify-space-between d-flex">
                   <v-col class="font-weight-medium">Highest</v-col>
-                  <v-col class="text-right">{{ sources.cash.highest }}</v-col>
+                  <v-col class="text-right">{{ flowCashDeposit[0]?.highest }}</v-col>
                 </v-row>
                 <v-divider
                   :thickness="3"
@@ -162,7 +188,7 @@ onMounted(() => {
                 />
                 <v-row class="justify-space-between d-flex">
                   <v-col class="font-weight-medium">Last On</v-col>
-                  <v-col class="text-right">{{ sources.cash.lastOn }}</v-col>
+                  <v-col class="text-right">{{ flowCashDeposit[0]?.last_draw }}</v-col>
                 </v-row>
                 <v-divider class="my-3" />
               </div>
@@ -353,9 +379,11 @@ onMounted(() => {
               class="text-caption px-4"
               :headers="headers"
               :items-length="totalItems"
-              :items="tableData"
+              :items="flowTopData"
               :loading="loading"
               loading-text="Loading...Please Wait"
+              item-value="name"
+              @update:options="loadFlowTopData()"
             ></v-data-table-server>
           </v-card>
         </v-container>

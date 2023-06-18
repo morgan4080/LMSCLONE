@@ -1,25 +1,30 @@
 <script setup lang="ts">
-import { onMounted } from "vue";
-// import axiosInstance from "@/services/api/axiosInstance";
+import { ref, onMounted } from "vue";
+import { useRoute } from "vue-router";
+import axios from 'axios';
 
-const data = {
-  totalInflow: "738,530.00",
-  totalOutflow: "720,686.00",
-  monthlyDisposable: "736,892.00",
-};
+interface OverviewInformation {
+  lodgements: string;
+  withdrawals: string;
+  monthlyDisposable: string;
+}
 
-// const overviewData = ref([])
+const route = useRoute();
 
-// API Call: Get Overview Data
-const loadOverviewData = async () => {
-  // await axiosInstance
-  //   .get("/e_statement/")
-  //   .then(response => (overviewData.value = response.data))
-  //   .catch(error => console.error(error));
+const overviewInformation = ref<OverviewInformation[]>([]);
+
+const baseUrl: string = "https://staging-lending.presta.co.ke/bank_scoring/api/v1"
+
+// API Call: Get overview information
+const loadOverviewInformation = async () => {
+  await axios
+    .get(`${baseUrl}/bank_analysis/bank_totals?idNumber=${route.params.slug}&pageSize=100&sortBy=id`)
+    .then(response => (overviewInformation.value = response.data.content))
+    .catch(error => console.error(error));
 };
 
 onMounted(() => {
-  loadOverviewData() 
+  loadOverviewInformation()
 })
 </script>
 
@@ -37,7 +42,7 @@ onMounted(() => {
           <v-container fluid>
             <h1 class="text-caption font-weight-regular">Total Inflow (CR)</h1>
             <h3 class="text-subtitle-1 font-weight-regular text-blue">
-              {{ data.totalInflow }}
+              {{ overviewInformation[0]?.lodgements }}
             </h3>
           </v-container>
         </v-card>
@@ -51,7 +56,7 @@ onMounted(() => {
           <v-container fluid>
             <h1 class="text-caption font-weight-regular">Total Outflow (CR)</h1>
             <h3 class="text-subtitle-1 font-weight-regular text-blue">
-              {{ data.totalOutflow }}
+              {{ overviewInformation[0]?.withdrawals }}
             </h3>
           </v-container>
         </v-card>
@@ -65,7 +70,7 @@ onMounted(() => {
           <v-container fluid>
             <h1 class="text-caption font-weight-regular">Monthly Disposable</h1>
             <h3 class="text-subtitle-1 font-weight-regular text-blue">
-              {{ data.monthlyDisposable }}
+              {{ overviewInformation[0]?.monthlyDisposable }}
             </h3>
           </v-container>
         </v-card>

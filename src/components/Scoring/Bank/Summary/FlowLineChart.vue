@@ -1,34 +1,94 @@
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
-// import axiosInstance from "@/services/api/axiosInstance";
+import { ref, computed, onMounted } from "vue";
+import { useRoute } from "vue-router";
+import axiosInstance from "@/services/api/axiosInstance";
 
 import LineChart from "@/components/Scoring/LineChart.vue";
 
-const options = ["Option 1", "Option 2", "Option 3", "Option 4"];
+interface Flow {
+  name: string;
+  value: number;
+}
 
-const inflow = ref({
-  labels: ["January", "February", "March"],
-  data: ["40", "20", "12"],
+const route = useRoute();
+
+const inflowData = ref<Flow[]>([])
+const outflowData = ref<Flow[]>([])
+
+const getMonthName = (month: number): string => {
+  const months = [
+    'January', 'February', 'March', 'April', 'May', 'June',
+    'July', 'August', 'September', 'October', 'November', 'December'
+  ];
+  return months[month - 1];
+};
+
+const inflow = computed(() => {
+  const labels: string[] = [];
+  const data: string[] = [];
+
+  for (const item of inflowData.value) {
+    const [month] = item.name.split('/').map(Number);
+    const label = getMonthName(month);
+    const monthIndex = labels.indexOf(label);
+
+    if (monthIndex === -1) {
+      labels.push(label);
+      data.push(String(item.value));
+    } else {
+      const currentValue = parseFloat(data[monthIndex]);
+      data[monthIndex] = String(currentValue + item.value);
+    }
+  }
+
+  return { labels, data };
 });
-const outflow = ref({
-  labels: ["October", "November", "December"],
-  data: ["80", "68", "10"],
+
+const outflow = computed(() => {
+  const labels: string[] = [];
+  const data: string[] = [];
+
+  for (const item of outflowData.value) {
+    const [month] = item.name.split('/').map(Number);
+    const label = getMonthName(month);
+    const monthIndex = labels.indexOf(label);
+
+    if (monthIndex === -1) {
+      labels.push(label);
+      data.push(String(item.value));
+    } else {
+      const currentValue = parseFloat(data[monthIndex]);
+      data[monthIndex] = String(currentValue + item.value);
+    }
+  }
+
+  return { labels, data };
 });
-const flow = ref("Inflow");
 
-// const flowData = ref([])
+const flow = ref<string>('Inflow');
 
-// API Call: Get In-Out Flow Data
-const loadFlowData = async () => {
-  // await axiosInstance
-  //   .get("/e_statement/")
-  //   .then(response => (flowData.value = response.data))
-  //   .catch(error => console.error(error));
+const baseUrl: string = "https://staging-lending.presta.co.ke/bank_scoring/api/v1"
+
+// API Call: Get In-Flow Data
+const loadInFlowData = async () => {
+  await axiosInstance
+    .get(`${baseUrl}/bank_analysis/bank_inflow?idNumber=${route.params.slug}`)
+    .then(response => (inflowData.value = response.data))
+    .catch(error => console.error(error));
+};
+
+// API Call: Get Out-Flow Data
+const loadOutFlowData = async () => {
+  await axiosInstance
+    .get(`${baseUrl}/bank_analysis/bank_expense_flow?idNumber=${route.params.slug}`)
+    .then(response => (outflowData.value = response.data))
+    .catch(error => console.error(error));
 };
 
 onMounted(() => {
-  loadFlowData();
-});
+  loadInFlowData() 
+  loadOutFlowData()
+})
 </script>
 
 <template>
