@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import { onMounted, watch, ref } from "vue";
+import { onMounted, watch, ref, reactive } from "vue";
 import axiosInstance from "@/services/api/axiosInstance";
 
 import FileUpload from "@/components/Scoring/Upload/FileUpload.vue";
+import Popup from "@/components/Scoring/Popup.vue";
 
 interface Statement {
   title: string;
@@ -23,29 +24,33 @@ interface Upload {
   type: string | null;
   code: string | null;
   file: File | null;
+  password: null | number;
 }
 
-const statementList = ref<Statement[]>([ 
-  {title: 'Mobile Statement', value: 'Mobile'},
-  {title: 'Bank Statement', value: 'Bank'},
+const statementList = ref<Statement[]>([
+  { title: "Mobile Statement", value: "Mobile" },
+  { title: "Bank Statement", value: "Bank" },
 ]);
-const mobileList = ref<Mobile[]>([ 
-  {mobileName: 'M-Pesa', mobileCode: 'MPESA'},
-  {mobileName: 'Airtel Money', mobileCode: 'AIRTEL'},
+const mobileList = ref<Mobile[]>([
+  { mobileName: "M-Pesa", mobileCode: "MPESA" },
+  { mobileName: "Airtel Money", mobileCode: "AIRTEL" },
 ]);
-const bankList = ref<Bank[]>([ ]);
+const bankList = ref<Bank[]>([]);
 const form_upload = ref<Upload>({
   type: null,
   code: null,
   file: null,
-})
-const uploads= ref<Upload[]>([])
+  password: null,
+});
+const uploads = ref<Upload[]>([]);
 
 const dragging = ref(false);
+const popupOpen = ref(false);
 
 function onDropped(event: Event) {
   if (form_upload.value.code !== null) {
     dragging.value = false;
+    popupOpen.value = true;
     let files = [...event.dataTransfer.items]
       .filter(item => item.kind === "file")
       .map(item => item.getAsFile());
@@ -71,26 +76,30 @@ const loadBanks = async () => {
 };
 
 const handleFile = (file: File) => {
-  if (file !== null){
-    form_upload.value.file = file
-    uploads.value.unshift(form_upload.value)
-    form_upload.value = {type: null,code: null, file: null,}
+  if (file !== null) {
+    popupOpen.value = true;
+    form_upload.value.file = file;
+    uploads.value.unshift(form_upload.value);
+    form_upload.value = { type: null, code: null, file: null };
   }
-}
+};
 
 onMounted(() => {
   loadBanks();
   document
     .getElementById("file-input")!
     .addEventListener("change", handleFiles, false);
-    function handleFiles() {
-      handleFile(this.files[0])
-    }
+  function handleFiles() {
+    handleFile(this.files[0]);
+  }
 });
 
-watch(() => form_upload.value.type, () => {
-  form_upload.value.code = null
-});
+watch(
+  () => form_upload.value.type,
+  () => {
+    form_upload.value.code = null;
+  }
+);
 </script>
 
 <template>
@@ -106,22 +115,52 @@ watch(() => form_upload.value.type, () => {
             <div class="mt-12">
               <!-- Upload Inputs  -->
               <div>
-                <label class="text-black">Statement Type <span class="text-red">*</span></label>
-                <v-select 
-                  v-model="form_upload.type" :items="statementList" 
-                  item-title="title" item-value="value" variant="outlined" density="compact" label="Select Statement Type" class="mt-3">
+                <label class="text-black"
+                  >Statement Type <span class="text-red">*</span></label
+                >
+                <v-select
+                  v-model="form_upload.type"
+                  :items="statementList"
+                  item-title="title"
+                  item-value="value"
+                  variant="outlined"
+                  density="compact"
+                  label="Select Statement Type"
+                  class="mt-3"
+                >
                 </v-select>
               </div>
               <div>
-                <label class="text-black">{{ form_upload.type ? form_upload.type === "Bank" ? "Bank" : "Mobile" : "Bank/Mobile" }}<span class="text-red"> *</span></label>
-                <v-select 
+                <label class="text-black"
+                  >{{
+                    form_upload.type
+                      ? form_upload.type === "Bank"
+                        ? "Bank"
+                        : "Mobile"
+                      : "Bank/Mobile"
+                  }}<span class="text-red"> *</span></label
+                >
+                <v-select
                   v-model="form_upload.code"
                   :items="form_upload.type === 'Bank' ? bankList : mobileList"
-                  :item-title="form_upload.type === 'Bank' ? 'bankName' : 'mobileName'" 
-                  :item-value="form_upload.type === 'Bank' ? 'bankCode' : 'mobileCode'"
-                  :label="form_upload.type ? form_upload.type === 'Bank' ? 'Select Bank' : 'Select Mobile' : 'Select Bank/Mobile'"
+                  :item-title="
+                    form_upload.type === 'Bank' ? 'bankName' : 'mobileName'
+                  "
+                  :item-value="
+                    form_upload.type === 'Bank' ? 'bankCode' : 'mobileCode'
+                  "
+                  :label="
+                    form_upload.type
+                      ? form_upload.type === 'Bank'
+                        ? 'Select Bank'
+                        : 'Select Mobile'
+                      : 'Select Bank/Mobile'
+                  "
                   :disabled="form_upload.type === null"
-                  variant="outlined" density="compact" class="mt-3">
+                  variant="outlined"
+                  density="compact"
+                  class="mt-3"
+                >
                 </v-select>
               </div>
               <!-- <div>
@@ -180,7 +219,7 @@ watch(() => form_upload.value.type, () => {
                 <div
                   v-for="(upload, i) in uploads"
                   :key="i"
-                > 
+                >
                   <FileUpload
                     :statement="{
                       document_type: upload.type,
@@ -196,6 +235,40 @@ watch(() => form_upload.value.type, () => {
           </v-container>
         </v-col>
       </v-row>
+
+      <v-dialog
+        persistent
+        v-model="popupOpen"
+        class="w-50"
+      >
+        <v-card>
+          <v-container fluid>
+            <h1 class="text-h6 font-weight-regular">Document Password</h1>
+            <h2 class="text-caption text-grey-darken-2 font-weight-regular">
+              Enter Document Password (Leave Empty and Click Submit If None)
+            </h2>
+            <div>
+              <v-text-field
+                v-model="form_upload.password"
+                type="number"
+                label="Document Password"
+                variant="outlined"
+                density="compact"
+                class="mt-3"
+              ></v-text-field>
+              <div class="d-flex justify-end">
+                <v-btn
+                  @click="popupOpen = false"
+                  variant="flat"
+                  color="success"
+                  class="text-none px-3"
+                  >Submit</v-btn
+                >
+              </div>
+            </div>
+          </v-container>
+        </v-card>
+      </v-dialog>
     </v-responsive>
   </v-container>
 </template>

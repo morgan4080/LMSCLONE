@@ -102,7 +102,7 @@ const cancelUpload = () => controller.abort();
     <div class="d-flex justify-space-between">
       {{ props.statement.document_file?.name }}
       <div
-        class="my-1 d-flex"
+        class="my-1 d-flex align-baseline"
         v-if="!confirmed"
       >
         <p class="mx-4 text-caption">Confirm File?</p>
