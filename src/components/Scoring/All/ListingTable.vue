@@ -1,20 +1,28 @@
 <script setup lang="ts">
-import { reactive, ref, watch } from "vue";
+import { onMounted, reactive, ref, watch } from "vue";
+import axiosInstance from "@/services/api/axiosInstance";
+
 // import CustomTable from "@/components/Scoring/Upload/CustomTable.vue";
 import ListingTableData from "@/components/Scoring/All/ListingTableData.vue";
 
-const banks = ["NCBA", "KCB", "Equity", "Coop"];
+interface Bank {
+  bankName: string;
+  bankCode: string;
+}
+
+// const banks = ["NCBA", "KCB", "Equity", "Coop"];
+const banks = ref<string[]>([])
 const mobile = ["MPESA", "Airtel Money"];
 const searchStatementListing = ref("");
 const params = ref("");
 const statements = ref<{ id: number; name: string }[]>([
   {
     id: 1,
-    name: "Bank",
+    name: "BANK",
   },
   {
     id: 2,
-    name: "Mobile",
+    name: "MOBILE",
   },
 ]);
 const options = ["Option 1", "Option 2", "Option 3", "Option 4"];
@@ -120,15 +128,29 @@ function changeVisibility(key: string) {
   });
 }
 
+// API Call: Get list of banks
+const loadBanks = async () => {
+  await axiosInstance
+    .get("/banks/list")
+    .then(response => {
+      banks.value = response.data.map((bank: Bank) => bank.bankCode);
+    })
+    .catch(error => console.error(error));
+};
+
 watch(filters, () => {
   params.value = "";
   filters.type &&
     filters.type.toLowerCase() != "all" &&
-    (params.value += `&type=${filters.type}`);
+    (params.value += `&docType=${filters.type}`);
 
-  filters.provider && (params.value += `&statementType=${filters.provider}`);
+  filters.provider && (params.value += `&bankCode=${filters.provider}`);
   filters.status && (params.value += `&status=${filters.status}`);
 });
+
+onMounted(()=>{
+  loadBanks()
+})
 </script>
 
 <template>
@@ -153,7 +175,7 @@ watch(filters, () => {
                 >
                   <template v-slot:default>
                     <input
-                      class="border rounded rounded-e-0 px-2 text-caption w-100 searchField"
+                      class="px-2 border rounded rounded-e-0 text-caption w-100 searchField"
                       type="text"
                       placeholder="Search Here"
                     />
@@ -249,7 +271,7 @@ watch(filters, () => {
                       variant="outlined"
                       append-icon="mdi:mdi-chevron-down"
                       v-bind="props"
-                      class="text-none text-caption ml-4"
+                      class="ml-4 text-none text-caption"
                       style="border: 1px solid rgba(128, 128, 128, 0.25)"
                     >
                       {{
@@ -292,7 +314,7 @@ watch(filters, () => {
                       variant="outlined"
                       append-icon="mdi:mdi-chevron-down"
                       v-bind="props"
-                      class="text-none text-caption ml-4"
+                      class="ml-4 text-none text-caption"
                       style="border: 1px solid rgba(128, 128, 128, 0.25)"
                     >
                       {{
@@ -333,7 +355,7 @@ watch(filters, () => {
                       variant="outlined"
                       append-icon="mdi:mdi-chevron-down"
                       v-bind="props"
-                      class="text-none text-caption ml-4"
+                      class="ml-4 text-none text-caption"
                       style="border: 1px solid rgba(128, 128, 128, 0.25)"
                     >
                       {{
@@ -368,14 +390,14 @@ watch(filters, () => {
                   </v-sheet>
                 </v-menu>
               </v-col>
-              <v-col class="d-flex justify-end">
+              <v-col class="justify-end d-flex">
                 <v-menu transition="slide-y-transition">
                   <template v-slot:activator="{ props }">
                     <v-btn
                       variant="outlined"
                       append-icon="mdi:mdi-chevron-down"
                       v-bind="props"
-                      class="text-none text-caption mr-4"
+                      class="mr-4 text-none text-caption"
                       style="border: 1px solid rgba(128, 128, 128, 0.25)"
                     >
                       Export
@@ -405,7 +427,7 @@ watch(filters, () => {
                       variant="outlined"
                       append-icon="mdi:mdi-chevron-down"
                       v-bind="props"
-                      class="text-none text-caption mr-4"
+                      class="mr-4 text-none text-caption"
                       style="border: 1px solid rgba(128, 128, 128, 0.25)"
                     >
                       Show / Hide

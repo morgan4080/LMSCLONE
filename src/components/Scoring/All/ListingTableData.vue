@@ -3,18 +3,19 @@ import { ref, computed, toRef, watch } from "vue";
 import axiosInstance from "@/services/api/axiosInstance";
 import {
   // dateDiffInMonths,
-  dateFromTimestamp,
-  timeFromTimestamp,
+  // dateFromTimestamp,
+  // timeFromTimestamp,
 } from "@/helpers";
 
 interface Statement {
   id: number;
+  doctype: string;
   statementtype: string;
   idnum: string;
   fileName: string;
   customername: string;
   status: string;
-  bankCode: string;
+  bankcode: string;
   uploaderName: string;
   uploaderPhone: string | null;
   statementPeriod: string;
@@ -49,8 +50,8 @@ const tableData = computed(() =>
     return {
       id: item.id,
       statement: {
-        statementtype: item.statementtype,
-        bankCode: item.bankCode,
+        doctype: item.doctype,
+        bankcode: item.bankcode,
       },
       fileName: item.fileName,
       customer: {
@@ -141,8 +142,9 @@ watch(params, () => {
     </template>
 
     <template v-slot:[`item.uploadDate`]="{ item }">
-      <p>{{ dateFromTimestamp(item.columns.uploadDate) }}</p>
-      <p>{{ timeFromTimestamp(item.columns.uploadDate) }}</p>
+      <p>{{ item.columns.uploadDate }}</p>
+      <!-- <p>{{ dateFromTimestamp(item.columns.uploadDate) }}</p> -->
+      <!-- <p>{{ timeFromTimestamp(item.columns.uploadDate) }}</p> -->
     </template>
     <template v-slot:[`item.customer`]="{ item }">
       <p>{{ item.columns.customer.customername }}</p>
@@ -150,22 +152,22 @@ watch(params, () => {
     </template>
     <template v-slot:[`item.statement`]="{ item }">
       <span
-        class="text-caption text-white pa-1 rounded"
+        class="text-white rounded text-caption pa-1"
         :class="
-          item.columns.statement.statementtype === 'MPESA'
+          item.columns.statement.doctype === 'MOBILE'
             ? 'bg-green-darken-2'
             : 'bg-blue-darken-4'
         "
       >
-        {{ item.columns.statement.statementtype }}
+        {{ item.columns.statement.doctype }}
       </span>
-      <span class="border text-blue pa-1 ml-2 rounded">
-        {{ item.columns.statement.bankCode }}
+      <span class="ml-2 border rounded text-blue pa-1">
+        {{ item.columns.statement.bankcode }}
       </span>
     </template>
     <template v-slot:[`item.status`]="{ item }">
       <span
-        class="py-1 px-3 rounded"
+        class="px-3 py-1 rounded"
         :class="{
           'bg-red-lighten-5 text-red': item.columns.status === 'Failed',
           'bg-green-lighten-5 text-green': item.columns.status === 'Completed',
@@ -189,9 +191,9 @@ watch(params, () => {
       {{ item.columns.password || "N/A" }}
     </template>
     <template v-slot:[`item.actions`]="{ item }">
-      <div class="d-flex justify-end">
+      <div class="justify-end d-flex">
         <div
-          class="border rounded px-1 hover-cursor-pointer"
+          class="px-1 border rounded hover-cursor-pointer"
           @click="
             $router.push(`/scoring/mobile/${item.columns.customer.idnum}`)
           "
@@ -202,7 +204,7 @@ watch(params, () => {
           ></v-icon>
         </div>
         <div @click.stop="item.columns.status?.toLowerCase() === 'failed' ? reuploadStatement(item.columns.customer.idnum) : ''"
-          class="border rounded px-1 ml-1"
+          class="px-1 ml-1 border rounded"
           :class="
             item.columns.status?.toLowerCase() === 'failed'
               ? 'hover-cursor-pointer'
@@ -220,7 +222,7 @@ watch(params, () => {
             class=""
           ></v-icon>
         </div>
-        <div @click.stop="deleteStatement(item.columns.customer.idnum)" class="border rounded px-1 ml-1 hover-cursor-pointer">
+        <div @click.stop="deleteStatement(item.columns.customer.idnum)" class="px-1 ml-1 border rounded hover-cursor-pointer">
           <v-icon
             color="red"
             size="x-small"
