@@ -9,7 +9,7 @@ import {
   timeFromTimestamp,
 } from "@/helpers";
 
-interface Statement {
+interface Statement { 
   id: number;
   statementtype: string;
   idnum: string;
@@ -52,7 +52,7 @@ const tableData = computed(() =>
       fileName: item.fileName,
       customer: {
         idnum: item.idnum,
-        customername: item.customername,
+        uploaderName: item.uploaderName,
         uploaderPhone: item.uploaderPhone,
       },
       status: item.status,
@@ -148,13 +148,28 @@ watch(upload, val => {
       <!-- {{ dateDiffInMonths("2023-01-12", item.columns.uploadDate) }} -->
       Months
     </template>
-    <template v-slot:[`item.customer`]="{ item }">
+    <template v-slot:[`item.uploadDate`]="{ item }">
       <p>{{ dateFromTimestamp(item.columns.uploadDate) }}</p>
       <p>{{ timeFromTimestamp(item.columns.uploadDate) }}</p>
     </template>
-    <template v-slot:[`item.identifier`]="{ item }">
+    <template v-slot:[`item.customer`]="{ item }">
       <p>{{ item.columns.customer.uploaderName }}</p>
       <p>{{ item.columns.customer.uploaderPhone }}</p>
+    </template>
+    <template v-slot:[`item.actions`]="{ item }">
+      <div class="d-flex justify-end">
+        <div
+          class="border rounded px-1 hover-cursor-pointer"
+          @click="
+            $router.push(`/scoring/mobile/${item.columns.customer.idnum}`)
+          "
+        >
+          <v-icon
+            size="x-small"
+            icon="mdi:mdi-eye-outline"
+          ></v-icon>
+        </div>        
+      </div>
     </template>
   </VDataTableServer>
 </template>

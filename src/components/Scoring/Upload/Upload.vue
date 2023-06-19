@@ -1,9 +1,8 @@
 <script setup lang="ts">
-import { onMounted, watch, ref, reactive } from "vue";
+import { onMounted, watch, ref } from "vue";
 import axiosInstance from "@/services/api/axiosInstance";
 
 import FileUpload from "@/components/Scoring/Upload/FileUpload.vue";
-import Popup from "@/components/Scoring/Popup.vue";
 
 interface Statement {
   title: string;
@@ -24,7 +23,7 @@ interface Upload {
   type: string | null;
   code: string | null;
   file: File | null;
-  password: null | number;
+  password: string | number | null;
 }
 
 const statementList = ref<Statement[]>([
@@ -50,7 +49,6 @@ const popupOpen = ref(false);
 function onDropped(event: Event) {
   if (form_upload.value.code !== null) {
     dragging.value = false;
-    popupOpen.value = true;
     let files = [...event.dataTransfer.items]
       .filter(item => item.kind === "file")
       .map(item => item.getAsFile());
@@ -75,14 +73,18 @@ const loadBanks = async () => {
     .catch(error => console.error(error));
 };
 
-const handleFile = (file: File) => {
+const handleFile = async (file: File) => {
   if (file !== null) {
     popupOpen.value = true;
     form_upload.value.file = file;
-    uploads.value.unshift(form_upload.value);
-    form_upload.value = { type: null, code: null, file: null };
   }
 };
+
+const addToProgress = () => {
+  popupOpen.value = false
+  uploads.value.unshift(form_upload.value);
+  form_upload.value = { type: null, code: null, file: null, password: null };
+}
 
 onMounted(() => {
   loadBanks();
@@ -98,6 +100,7 @@ watch(
   () => form_upload.value.type,
   () => {
     form_upload.value.code = null;
+    form_upload.value.password = null;
   }
 );
 </script>
@@ -225,6 +228,7 @@ watch(
                       document_type: upload.type,
                       document_code: upload.code,
                       document_file: upload.file,
+                      document_password: upload.password,
                     }"
                     @clear="uploads.splice(i, 1)"
                   ></FileUpload>
@@ -250,7 +254,6 @@ watch(
             <div>
               <v-text-field
                 v-model="form_upload.password"
-                type="number"
                 label="Document Password"
                 variant="outlined"
                 density="compact"
@@ -258,7 +261,7 @@ watch(
               ></v-text-field>
               <div class="d-flex justify-end">
                 <v-btn
-                  @click="popupOpen = false"
+                  @click="addToProgress"
                   variant="flat"
                   color="success"
                   class="text-none px-3"
