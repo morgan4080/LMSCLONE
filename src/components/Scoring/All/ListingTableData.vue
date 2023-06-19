@@ -84,6 +84,31 @@ const loadData = async (filters?: string) => {
     .finally(() => (loading.value = false));
 };
 
+// API Call: Reupload failed statement
+const reuploadStatement = async (payload: number) => {
+  loading.value = true; 
+  await axiosInstance
+    .post(`/e_statement/retry_upload_statement?statementUploadId=${payload}`)
+    .then(response => {
+      response.data.status === "200" ? loadData() : ''
+    })
+    .catch(error => console.error(error))
+    .finally(() => (loading.value = false));
+};
+
+// API Call: Delete uploaded statement
+const deleteStatement = async (payload: number) => {
+  loading.value = true; 
+  await axiosInstance
+    .delete(`/e_statement/uploaded_statement/delete?statementId=${payload}`)
+    .then(response => {
+      response.data.status === "200" ? loadData() : ''
+    })
+    .catch(error => console.error(error))
+    .finally(() => (loading.value = false));
+};
+
+
 watch(params, () => {
   loadData(params.value);
 });
@@ -176,17 +201,17 @@ watch(params, () => {
             icon="mdi:mdi-eye-outline"
           ></v-icon>
         </div>
-        <div
+        <div @click.stop="item.columns.status?.toLowerCase() === 'failed' ? reuploadStatement(item.columns.customer.idnum) : ''"
           class="border rounded px-1 ml-1"
           :class="
-            item.columns.status.toLowerCase() === 'failed'
+            item.columns.status?.toLowerCase() === 'failed'
               ? 'hover-cursor-pointer'
               : ''
           "
         >
           <v-icon
             :color="
-              item.columns.status.toLowerCase() === 'failed'
+              item.columns.status?.toLowerCase() === 'failed'
                 ? 'green'
                 : 'blue-grey-lighten-4'
             "
@@ -195,7 +220,7 @@ watch(params, () => {
             class=""
           ></v-icon>
         </div>
-        <div class="border rounded px-1 ml-1 hover-cursor-pointer">
+        <div @click.stop="deleteStatement(item.columns.customer.idnum)" class="border rounded px-1 ml-1 hover-cursor-pointer">
           <v-icon
             color="red"
             size="x-small"

@@ -65,6 +65,13 @@ const headers = ref<
     sortable: false,
     visible: true,
   },
+  {
+    title: "Actions",
+    key: "actions",
+    align: "end",
+    sortable: false,
+    visible: true,
+  },
 ]);
 const statements = ref<{ id: number; name: string }[]>([
   {
@@ -76,7 +83,6 @@ const statements = ref<{ id: number; name: string }[]>([
     name: "Mobile",
   },
 ]);
-const options = ["Option 1", "Option 2", "Option 3", "Option 4"];
 const status = [
   {
     text: "Failed",

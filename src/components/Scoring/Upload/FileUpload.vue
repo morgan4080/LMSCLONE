@@ -8,6 +8,7 @@ interface Statement {
   document_type: string;
   document_code: string;
   document_file: File | null;
+  document_password: string ;
 }
 
 const emit = defineEmits(["clear"]);
@@ -19,6 +20,7 @@ const props = defineProps({
       document_type: "",
       document_code: "",
       document_file: null,
+      document_password: "",
     }),
     required: true,
   },
@@ -49,7 +51,7 @@ const uploadFile = async () => {
     formData.append("document_type", props.statement.document_type);
     formData.append("bank_code", props.statement.document_code);
     formData.append("sender", "jane@gmail.com");
-    formData.append("decrypter", "2320092");
+    formData.append("decrypter", props.statement.document_password);
     formData.append("remote_identifier", "2320092");
     formData.append("identifier", "Jane");
     formData.append("createdBy", "Jane");
