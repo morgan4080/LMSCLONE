@@ -28,7 +28,7 @@ interface Upload {
 
 const statementList = ref<Statement[]>([
   { title: "Mobile Statement", value: "Mobile" },
-  { title: "Bank Statement", value: "Bank" },
+  { title: "Bank Statement", value: "BANK" },
 ]);
 const mobileList = ref<Mobile[]>([
   { mobileName: "M-Pesa", mobileCode: "MPESA" },
@@ -107,9 +107,11 @@ watch(
 
 <template>
   <v-container fluid>
+  <!-- <p>{{ form_upload }}</p> -->
+  <!-- <p>{{ uploads }}</p> -->
     <v-responsive>
       <v-row>
-        <v-col class="bg-white mr-2 rounded">
+        <v-col class="mr-2 bg-white rounded">
           <v-container>
             <h1 class="text-h6 font-weight-regular">Upload Statement</h1>
             <h2 class="text-caption text-grey-darken-2 font-weight-regular">
@@ -137,7 +139,7 @@ watch(
                 <label class="text-black"
                   >{{
                     form_upload.type
-                      ? form_upload.type === "Bank"
+                      ? form_upload.type === "BANK"
                         ? "Bank"
                         : "Mobile"
                       : "Bank/Mobile"
@@ -145,16 +147,16 @@ watch(
                 >
                 <v-select
                   v-model="form_upload.code"
-                  :items="form_upload.type === 'Bank' ? bankList : mobileList"
+                  :items="form_upload.type === 'BANK' ? bankList : mobileList"
                   :item-title="
-                    form_upload.type === 'Bank' ? 'bankName' : 'mobileName'
+                    form_upload.type === 'BANK' ? 'bankName' : 'mobileName'
                   "
                   :item-value="
-                    form_upload.type === 'Bank' ? 'bankCode' : 'mobileCode'
+                    form_upload.type === 'BANK' ? 'bankCode' : 'mobileCode'
                   "
                   :label="
                     form_upload.type
-                      ? form_upload.type === 'Bank'
+                      ? form_upload.type === 'BANK'
                         ? 'Select Bank'
                         : 'Select Mobile'
                       : 'Select Bank/Mobile'
@@ -191,7 +193,7 @@ watch(
                 >
                   <v-btn
                     @click="inputForm"
-                    class="mb-3 text-none text-caption px-8"
+                    class="px-8 mb-3 text-none text-caption"
                     variant="flat"
                     :color="form_upload.code !== null ? 'info' : ''"
                     :disabled="form_upload.code === null"
@@ -210,7 +212,7 @@ watch(
             </div>
           </v-container>
         </v-col>
-        <v-col class="bg-white ml-2 rounded">
+        <v-col class="ml-2 bg-white rounded">
           <v-container>
             <h1 class="text-h6 font-weight-regular">Files In Progress</h1>
             <h2 class="text-caption text-grey-darken-2 font-weight-regular">
@@ -259,12 +261,12 @@ watch(
                 density="compact"
                 class="mt-3"
               ></v-text-field>
-              <div class="d-flex justify-end">
+              <div class="justify-end d-flex">
                 <v-btn
                   @click="addToProgress"
                   variant="flat"
                   color="success"
-                  class="text-none px-3"
+                  class="px-3 text-none"
                   >Submit</v-btn
                 >
               </div>
