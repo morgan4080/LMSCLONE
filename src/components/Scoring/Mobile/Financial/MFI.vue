@@ -26,6 +26,7 @@ const route = useRoute();
 
 const open = ref(true);
 const loading = ref(false);
+const itemsPerPage = ref(5);
 const totalItems = computed(()=>mfiTopTransData.value.length);
 const headers = ref<
   { title: string; key: string; align: string; sortable: boolean }[]
@@ -70,7 +71,7 @@ const loadMfiTransSentData = async () => {
 // API Call: Get Top Mfi Trans Data
 const loadMfiTopTransData = async () => {
   await axiosInstance
-    .get(`/e_statement/top_paybill_classifications?idNumber=${route.params.slug}&pageSize=100&sortBy=id`)
+    .get(`/e_statement/top_paybill_classifications?idNumber=${route.params.slug}&pageSize=${itemsPerPage.value}&sortBy=id`)
     .then(response => (mfiTopTransData.value = response.data.content.filter((item: MfiTopTransData) => item.classification === "MFIs")))
     .catch(error => console.error(error));
 };
@@ -172,6 +173,7 @@ onMounted(() => {
             </div>
             <v-data-table-server
               class="text-caption px-4"
+              v-model:items-per-page="itemsPerPage"
               :headers="headers"
               :items-length="totalItems"
               :items="mfiTopTransData"

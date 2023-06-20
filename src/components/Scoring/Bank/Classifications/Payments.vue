@@ -23,6 +23,7 @@ const route = useRoute();
 
 const open = ref(true);
 const loading = ref(false);
+const itemsPerPage = ref(5);
 const totalItems = computed(()=>flowTopData.value.length);
 const options = ["Option 1", "Option 2", "Option 3"];
 
@@ -90,7 +91,7 @@ const loadFlowOthers = async () => {
 // API Call: Get Top Flow Data
 const loadFlowTopData = async () => {
   await axiosInstance
-    .get(`${baseUrl}/bank_analysis/top_bank_payment_transactions?idNumber=${route.params.slug}&pageSize=100&sortBy=id`)
+    .get(`${baseUrl}/bank_analysis/top_bank_payment_transactions?idNumber=${route.params.slug}&pageSize=${itemsPerPage.value}&sortBy=id`)
     .then(response => (flowTopData.value = response.data.content))
     .catch(error => console.error(error));
 };
@@ -499,6 +500,7 @@ onMounted(() => {
             </v-container>
             <v-data-table-server
               class="text-caption px-4"
+              v-model:items-per-page="itemsPerPage"
               :headers="headers"
               :items-length="totalItems"
               :items="flowTopData"

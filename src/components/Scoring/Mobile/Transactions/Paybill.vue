@@ -24,6 +24,7 @@ const route = useRoute();
 
 const open = ref(true);
 const loading = ref(false);
+const itemsPerPage = ref(5);
 const totalItems = computed(() => topTransData.value.length);
 
 const headers = ref<
@@ -80,11 +81,11 @@ const loadBuyGoodsTransData = async () => {
 const loadTopTransData = async () => {
   try {
     // Top Paybill
-    const paybillResponse = await axiosInstance.get(`/e_statement/top_paybill_transactions?idNumber=${route.params.slug}&pageSize=100&sortBy=id`);
+    const paybillResponse = await axiosInstance.get(`/e_statement/top_paybill_transactions?idNumber=${route.params.slug}&pageSize=${itemsPerPage.value}&sortBy=id`);
     const paybill = paybillResponse.data.content;
 
     // Top Buy Goods
-    const buyGoodsResponse = await axiosInstance.get(`/e_statement/top_buy_goods_transactions?idNumber=${route.params.slug}&pageSize=100&sortBy=id`);
+    const buyGoodsResponse = await axiosInstance.get(`/e_statement/top_buy_goods_transactions?idNumber=${route.params.slug}&pageSize=${itemsPerPage.value}&sortBy=id`);
     const buyGoods = buyGoodsResponse.data.content;
 
     topTransData.value = [paybill, ...buyGoods].flat();
@@ -243,6 +244,7 @@ onMounted(() => {
             </div>
             <v-data-table-server
               class="px-4 text-caption"
+              v-model:items-per-page="itemsPerPage"
               :headers="headers"
               :items-length="totalItems"
               :items="topTransData"

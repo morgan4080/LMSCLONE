@@ -25,6 +25,7 @@ const route = useRoute();
 
 const open = ref(true);
 const loading = ref(false);
+const itemsPerPage = ref(5);
 const totalItems = computed(()=>person2personTopTransData.value.length);
 const headers = ref<
   { title: string; key: string; align: string; sortable: boolean }[]
@@ -54,7 +55,7 @@ const person2personTransSentData = ref<Rerson2personDataItem[]>([])
 // API Call: Get Rerson2person Transactions Data
 const loadRerson2personTransReceivedData = async () => {
   await axiosInstance
-    .get(`/e_statement/top_customers_received?idNumber=${route.params.slug}&pageSize=100&sortBy=id`)
+    .get(`/e_statement/top_customers_received?idNumber=${route.params.slug}&pageSize=${itemsPerPage.value}&sortBy=id`)
     .then(response => {
       person2personTransReceivedData.value = response.data.content
     })
@@ -180,6 +181,7 @@ onMounted(() => {
             </div>
             <v-data-table-server
               class="text-caption px-4"
+              v-model:items-per-page="itemsPerPage"
               :headers="headers"
               :items-length="totalItems"
               :items="person2personTopTransData"
