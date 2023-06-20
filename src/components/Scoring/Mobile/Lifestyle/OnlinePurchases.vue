@@ -27,6 +27,7 @@ const route = useRoute();
 
 const open = ref(true);
 const loading = ref(false);
+const itemsPerPage = ref(5);
 const totalItems = computed(()=>onlineTopTransData.value.length);
 const headers = ref<
   { title: string; key: string; align: string; sortable: boolean }[]
@@ -62,7 +63,7 @@ const loadOnlineTransSentData = async () => {
 // API Call: Get Top Online Trans Data
 const loadOnlineTopTransData = async () => {
   await axiosInstance
-    .get(`/e_statement/top_paybill_classifications?idNumber=${route.params.slug}&pageSize=100&sortBy=id`)
+    .get(`/e_statement/top_paybill_classifications?idNumber=${route.params.slug}&pageSize=${itemsPerPage.value}&sortBy=id`)
     .then(response => (onlineTopTransData.value = response.data.content.filter((item: OnlineTopTransData) => item.classification === "OnlinePurchases")))
     .catch(error => console.error(error));
 };
@@ -167,6 +168,7 @@ onMounted(() => {
             </div>
             <v-data-table-server
               class="text-caption px-4"
+              v-model:items-per-page="itemsPerPage"
               :headers="headers"
               :items-length="totalItems"
               :items="onlineTopTransData"

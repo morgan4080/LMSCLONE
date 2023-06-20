@@ -27,6 +27,7 @@ const route = useRoute();
 
 const open = ref(true);
 const loading = ref(false);
+const itemsPerPage = ref(5);
 const totalItems = computed(()=>bettingTopTransData.value.length);
 const headers = ref<
   { title: string; key: string; align: string; sortable: boolean }[]
@@ -79,7 +80,7 @@ const loadBettingTransBuyGoodsData = async () => {
 // API Call: Get Top Betting Trans Data
 const loadBettingTopTransData = async () => {
   await axiosInstance
-    .get(`/e_statement/top_paybill_classifications?idNumber=${route.params.slug}&pageSize=100&sortBy=id`)
+    .get(`/e_statement/top_paybill_classifications?idNumber=${route.params.slug}&pageSize=${itemsPerPage.value}&sortBy=id`)
     .then(response => (bettingTopTransData.value = response.data.content.filter((item: BettingTopTransData) => item.classification === "Betting")))
     .catch(error => console.error(error));
 };
@@ -246,6 +247,7 @@ onMounted(() => {
             </div>
             <v-data-table-server
               class="text-caption px-4"
+              v-model:items-per-page="itemsPerPage"
               :headers="headers"
               :items-length="totalItems"
               :items="bettingTopTransData"

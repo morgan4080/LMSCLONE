@@ -3,15 +3,12 @@ import { onMounted, reactive, ref, watch } from "vue";
 import axiosInstance from "@/services/api/axiosInstance";
 
 import CustomTable from "@/components/Scoring/Upload/CustomTable.vue";
-// import stores from "@/store";
-// import { fi } from "vuetify/locale";
 
 interface Bank {
   bankName: string;
   bankCode: string;
 }
 
-// const banks = ["NCBA", "KCB", "Equity", "Coop"];
 const banks = ref<string[]>([])
 const mobile = ["MPESA", "Airtel Money"];
 const searchUploadedStatement = ref("");
