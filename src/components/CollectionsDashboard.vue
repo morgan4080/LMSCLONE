@@ -26,52 +26,12 @@
                   <v-btn
                     class="v-btn--size-default text-caption text-capitalize"
                     density="default"
-                    append-icon="mdi:mdi-chevron-down"
+                    :append-icon="salesOverviewFilters.branches.appendIcon"
                     v-bind="props"
                     flat
                     style="border: 1px solid rgba(128, 128, 128, 0.25)"
                   >
-                    All Branches
-                  </v-btn>
-                </template>
-                <v-sheet
-                  border
-                  rounded
-                >
-                  <v-list
-                    nav
-                    density="compact"
-                    role="listbox"
-                  >
-                    <v-list-item-group v-model="salesDashboardStore.branchIds">
-                      <v-list-item
-                        v-for="branch in salesDashboardStore.branches"
-                        :key="branch"
-                        :title="branch"
-                        :value="branch"
-                        density="compact"
-                      ></v-list-item>
-                    </v-list-item-group>
-                  </v-list>
-                </v-sheet>
-              </v-menu>
-            </div>
-            <div
-              v-for="(dropDown, i) in dropDownData"
-              :key="i"
-              class="px-3"
-            >
-              <v-menu transition="slide-y-transition">
-                <template v-slot:activator="{ props }">
-                  <v-btn
-                    class="v-btn--size-default text-caption text-capitalize"
-                    density="default"
-                    :append-icon="dropDown.appendIcon"
-                    v-bind="props"
-                    flat
-                    style="border: 1px solid rgba(128, 128, 128, 0.25)"
-                  >
-                    {{ dropDown.text }}
+                    {{ salesOverviewFilters.branches.text || "All Branches" }}
                   </v-btn>
                 </template>
                 <v-sheet
@@ -84,12 +44,109 @@
                     role="listbox"
                   >
                     <v-list-item
-                      v-for="(dropDownMenu, it) in dropDown.menus"
+                      density="compact"
+                      @click="salesOverviewFilters.branches.text = ''"
+                      >All</v-list-item
+                    >
+                    <v-list-item
+                      v-for="(dropDownMenu, it) in salesDashboardStore.branches"
                       :key="it"
-                      :title="dropDownMenu.text"
                       :value="it"
                       density="compact"
-                    ></v-list-item>
+                      @click="
+                        salesOverviewFilters.branches.text =
+                          dropDownMenu.toString()
+                      "
+                      >{{ dropDownMenu }}</v-list-item
+                    >
+                  </v-list>
+                </v-sheet>
+              </v-menu>
+            </div>
+            <div class="px-3">
+              <v-menu transition="slide-y-transition">
+                <template v-slot:activator="{ props }">
+                  <v-btn
+                    class="v-btn--size-default text-caption text-capitalize"
+                    density="default"
+                    :append-icon="salesOverviewFilters.salesRep.appendIcon"
+                    v-bind="props"
+                    flat
+                    style="border: 1px solid rgba(128, 128, 128, 0.25)"
+                  >
+                    {{ salesOverviewFilters.salesRep.text || "All Sales Rep" }}
+                  </v-btn>
+                </template>
+                <v-sheet
+                  border
+                  rounded
+                >
+                  <v-list
+                    nav
+                    density="compact"
+                    role="listbox"
+                  >
+                    <v-list-item
+                      density="compact"
+                      @click="
+                        (salesOverviewFilters.salesRep.text = null),
+                          (salesOverviewFilters.salesRep.id = null)
+                      "
+                      >All</v-list-item
+                    >
+                    <v-list-item
+                      v-for="(
+                        dropDownMenu, it
+                      ) in salesDashboardStore.salesReps"
+                      :key="it"
+                      :value="it"
+                      density="compact"
+                      @click="
+                        (salesOverviewFilters.salesRep.text =
+                          dropDownMenu.name.toString()),
+                          (salesOverviewFilters.salesRep.id =
+                            dropDownMenu.refId)
+                      "
+                      >{{ dropDownMenu.name }}</v-list-item
+                    >
+                  </v-list>
+                </v-sheet>
+              </v-menu>
+            </div>
+            <div class="px-3">
+              <v-menu transition="slide-y-transition">
+                <template v-slot:activator="{ props }">
+                  <v-btn
+                    class="v-btn--size-default text-caption text-capitalize"
+                    density="default"
+                    :append-icon="salesOverviewFilters.dateFilters.appendIcon"
+                    v-bind="props"
+                    flat
+                    style="border: 1px solid rgba(128, 128, 128, 0.25)"
+                  >
+                    {{ salesOverviewFilters.dateFilters.text || "All Time" }}
+                  </v-btn>
+                </template>
+                <v-sheet
+                  border
+                  rounded
+                >
+                  <v-list
+                    nav
+                    density="compact"
+                    role="listbox"
+                  >
+                    <v-list-item
+                      v-for="(dropDownMenu, it) in salesOverviewFilters
+                        .dateFilters.menus"
+                      :key="it"
+                      :value="it"
+                      density="compact"
+                      @click="
+                        salesOverviewFilters.dateFilters.text = dropDownMenu
+                      "
+                      >{{ dropDownMenu }}</v-list-item
+                    >
                   </v-list>
                 </v-sheet>
               </v-menu>
@@ -102,7 +159,11 @@
           cols="12"
           sm="4"
         >
-          <v-card :loading="false">
+          <v-card
+            border
+            variant="flat"
+            :loading="false"
+          >
             <v-card-text>
               <div class="text-body-2 font-weight-light">
                 Total Upcoming Collections
@@ -125,7 +186,11 @@
           cols="12"
           sm="4"
         >
-          <v-card :loading="false">
+          <v-card
+            border
+            variant="flat"
+            :loading="false"
+          >
             <v-card-text>
               <div class="text-body-2 font-weight-light">
                 Total Overdue Collections
@@ -148,7 +213,11 @@
           cols="12"
           sm="4"
         >
-          <v-card :loading="false">
+          <v-card
+            border
+            variant="flat"
+            :loading="false"
+          >
             <v-card-text>
               <div class="text-body-2 font-weight-light">
                 Total New Customers
@@ -429,6 +498,54 @@
                         </v-sheet>
                       </v-menu>
                     </div>
+                    <div class="px-1">
+                      <v-menu transition="slide-y-transition">
+                        <template v-slot:activator="{ props }">
+                          <v-btn
+                            class="v-btn--size-default text-caption text-capitalize"
+                            density="default"
+                            :append-icon="ussd.appendIcon"
+                            v-bind="props"
+                            flat
+                            style="border: 1px solid rgba(128, 128, 128, 0.25)"
+                          >
+                            {{ ussd.text || "Select USSD Status" }}
+                          </v-btn>
+                        </template>
+                        <v-sheet
+                          border
+                          rounded
+                        >
+                          <v-list
+                            nav
+                            density="compact"
+                            role="listbox"
+                          >
+                            <v-list-item
+                              title="All USSD"
+                              @click="
+                                salesDashboardStore.getNewCustomers(),
+                                  (ussd.text = '')
+                              "
+                              density="compact"
+                            ></v-list-item>
+                            <v-list-item
+                              v-for="(dropDownMenu, it) in ussd.menus"
+                              :key="it"
+                              :title="dropDownMenu.text"
+                              :value="it"
+                              @click="
+                                salesDashboardStore.getNewCustomers(
+                                  dropDownMenu.param
+                                ),
+                                  (ussd.text = dropDownMenu.text)
+                              "
+                              density="compact"
+                            ></v-list-item>
+                          </v-list>
+                        </v-sheet>
+                      </v-menu>
+                    </div>
                   </v-row>
                 </v-col>
                 <v-col
@@ -497,23 +614,29 @@
 </template>
 
 <script lang="ts" setup>
-import { onBeforeMount, ref } from "vue";
+import { onBeforeMount, onMounted, reactive, ref, watch } from "vue";
 import { useSalesDashboardStore } from "@/store/sales-dashboard";
 import UpcomingCollectionsTable from "@/components/UpcomingCollectionsTable.vue";
 import NewCustomersTable from "@/components/NewCustomersTable.vue";
+import { Branch, SalesRep } from "@/types/sales-dashboard";
 
 const salesDashboardStore = useSalesDashboardStore();
 
-function initialize() {
-  Promise.all([
-    salesDashboardStore.getBranches(),
-    salesDashboardStore.getStats(),
-    salesDashboardStore.getUpcomingCollections(),
-    salesDashboardStore.getOverdueCollections(),
-  ]);
+async function initialize() {
+  await salesDashboardStore.getBranches();
+  await salesDashboardStore.getStats();
+  await salesDashboardStore.getUpcomingCollections();
+  await salesDashboardStore.getOverdueCollections();
+  await salesDashboardStore.getSalesRepByBranch("HQ");
 }
 
-onBeforeMount(() => initialize());
+onBeforeMount(async () => {
+  await initialize();
+});
+
+onMounted(() => {
+  console.log("log: ", salesDashboardStore.salesReps);
+});
 
 type CardDataType = {
   text: string;
@@ -523,6 +646,29 @@ type CardDataType = {
 }[];
 const searchUpcomingCollections = ref("");
 
+const salesOverviewFilters = reactive({
+  branches: {
+    text: "All Branches",
+    appendIcon: "mdi:mdi-chevron-down",
+  } as {
+    text: string | null;
+    appendIcon: string;
+  },
+  salesRep: {
+    text: "All Sales Rep",
+    id: null,
+    appendIcon: "mdi:mdi-chevron-down",
+  } as {
+    text: string | null;
+    id: string | null;
+    appendIcon: string;
+  },
+  dateFilters: {
+    text: "All Time",
+    appendIcon: "mdi:mdi-chevron-down",
+    menus: ["All Time", "This Year", "This Month", "This Week"],
+  },
+});
 const dropDownData = ref([
   {
     text: "All Sales Rep",
@@ -685,17 +831,31 @@ const newCustomerFilters = ref([
     appendIcon: "mdi:mdi-chevron-down",
     menus: [
       {
-        text: "Op 1",
+        text: "Has USSD",
+        param: "hasUssd=YES",
       },
       {
-        text: "Op 2",
-      },
-      {
-        text: "Op 3",
+        text: "Lacks USSD",
+        param: "hasUssd=NO",
       },
     ],
   },
 ]);
+
+const ussd = ref({
+  text: "Select USSD Status",
+  appendIcon: "mdi:mdi-chevron-down",
+  menus: [
+    {
+      text: "Has USSD",
+      param: "&hasUssd=YES",
+    },
+    {
+      text: "Lacks USSD",
+      param: "&hasUssd=NO",
+    },
+  ],
+});
 const newCustomerActions = ref([
   {
     text: "Export",
@@ -758,6 +918,21 @@ const newCustomerActions = ref([
     ],
   },
 ]);
+
+watch(salesOverviewFilters, () => {
+  salesOverviewFilters.branches.text
+    ? ((salesDashboardStore.branchIds = [salesOverviewFilters.branches.text]),
+      salesDashboardStore.getSalesRepByBranch(
+        salesOverviewFilters.branches.text
+      ))
+    : (salesDashboardStore.branchIds = ["ALL"]);
+
+  salesOverviewFilters.salesRep.text
+    ? (salesDashboardStore.salesRepIds = [salesOverviewFilters.salesRep.id!])
+    : "";
+
+  salesDashboardStore.getStats();
+});
 </script>
 
 <style scoped>

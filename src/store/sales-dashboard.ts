@@ -6,7 +6,7 @@ import { formatMoney } from "@/helpers";
 
 export const useSalesDashboardStore = defineStore("sales-dashboard-store", {
   state: (): SalesDashboardState => ({
-    branchIds: ["Upper Hill"],
+    branchIds: ["ALL"],
     salesRepIds: ["y5gQa6UklgxcYd8C"],
     branches: [],
     salesReps: [],
@@ -141,14 +141,14 @@ export const useSalesDashboardStore = defineStore("sales-dashboard-store", {
         })
         .finally(() => (this.overdueCollections.loading = false));
     },
-    getNewCustomers: function () {
+    getNewCustomers: function (filters?: string) {
       this.newCustomers.loading = true;
+      let url = `${
+        import.meta.env.VITE_KOPESHA_API_URL
+      }/api/v1/salesrep/customers${this.params}`;
+      filters && (url += filters);
       axios
-        .get(
-          `${import.meta.env.VITE_KOPESHA_API_URL}/api/v1/salesrep/customers${
-            this.params
-          }`
-        )
+        .get(url)
         .then(response => {
           this.newCustomers = response.data;
         })

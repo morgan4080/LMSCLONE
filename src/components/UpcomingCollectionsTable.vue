@@ -6,7 +6,7 @@ import { formatMoney } from "../helpers";
 const salesDashboardStore = useSalesDashboardStore();
 
 const selected = ref([]);
-const loading = ref(true);
+const loading = ref(false);
 const search = ref("");
 
 const headers = ref<
