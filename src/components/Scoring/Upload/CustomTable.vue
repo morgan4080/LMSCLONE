@@ -1,15 +1,14 @@
 <script setup lang="ts">
-import { ref, computed, watch, toRef, } from "vue";
+import { ref, computed, watch, toRef } from "vue";
 import { storeToRefs } from "pinia";
 import { useUploadStore } from "@/store/uploadStore";
 import axiosInstance from "@/services/api/axiosInstance";
-import {
-  // dateDiffInMonths,
-  // dateFromTimestamp,
-  // timeFromTimestamp,
-} from "@/helpers";
+import // dateDiffInMonths,
+// dateFromTimestamp,
+// timeFromTimestamp,
+"@/helpers";
 
-interface Statement { 
+interface Statement {
   id: number;
   doctype: string;
   statementtype: string;
@@ -33,7 +32,7 @@ const props = defineProps<{
 }>();
 const loading = ref(true);
 const itemsPerPage = ref(5);
-const totalItems = computed(() => tableData.value.length);
+const totalItems = ref(0);
 const headers = toRef(props, "headers");
 const params = toRef(props, "params");
 
@@ -77,6 +76,7 @@ const loadData = async (filters?: string) => {
     .get(url)
     .then(response => {
       apiData.value = response.data.content;
+      totalItems.value = response.data.totalElements;
       setUploadFalse();
     })
     .catch(error => console.error(error))
@@ -160,17 +160,15 @@ watch(upload, val => {
     </template>
     <template v-slot:[`item.actions`]="{ item }">
       <div class="justify-end d-flex">
-        <div
-          class="px-1 border rounded hover-cursor-pointer"
-          @click="
-            $router.push(`/scoring/mobile/${item.columns.customer.idnum}`)
-          "
+        <a
+          class="px-1 border rounded"
+          :href="`scoring/mobile/${item.columns.customer.idnum}`"
         >
           <v-icon
             size="x-small"
             icon="mdi:mdi-eye-outline"
           ></v-icon>
-        </div>        
+        </a>
       </div>
     </template>
   </VDataTableServer>
