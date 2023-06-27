@@ -1,3 +1,6 @@
+import moment from "moment";
+import { ca } from "vuetify/locale";
+
 export function dateDiffInMonths(start: string, end: string) {
   const date1 = new Date(start);
   const date2 = new Date(end);
@@ -37,4 +40,27 @@ export function formatMoney(money: string | number | null | undefined): string {
     .replace(/\B(?=(\d{3})+(?!\d))/g, ", ")}.${
     parseFloat(`${money}`).toFixed(2).split(".")[1]
   }`;
+}
+
+export function dateFilters(filter: string) {
+  let startDate, endDate;
+  switch (filter.toLowerCase()) {
+    case "week":
+      startDate = moment().startOf("week").format("DD/MM/YYYY");
+      endDate = moment().format("DD/MM/YYYY");
+      break;
+    case "month":
+      startDate = moment().startOf("month").format("DD/MM/YYYY");
+      endDate = moment().format("DD/MM/YYYY");
+      break;
+    case "year":
+      startDate = moment().startOf("year").format("DD/MM/YYYY");
+      endDate = moment().format("DD/MM/YYYY");
+      break;
+    case "all":
+      startDate = moment().add(-6, "year").startOf("year").format("DD/MM/YYYY");
+      endDate = moment().format("DD/MM/YYYY");
+      break;
+  }
+  return [startDate, endDate];
 }

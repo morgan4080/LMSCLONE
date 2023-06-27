@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { onBeforeMount, ref, watch } from "vue";
 import { useSalesDashboardStore } from "@/store/sales-dashboard";
 import { formatMoney } from "@/helpers";
 
@@ -34,6 +34,17 @@ const headers = ref<
   },
   { title: "Actions", key: "refId", align: "end", sortable: false },
 ]);
+
+const currentPage = ref(1);
+const itemsPerPage = ref(10);
+
+onBeforeMount(() => salesDashboardStore.getNewCustomers());
+watch([currentPage, itemsPerPage], (newValues: [number, number]) => {
+  let newParam = `&start=${(newValues[0] - 1) * newValues[1] + 1}&length=${
+    newValues[1]
+  }`;
+  salesDashboardStore.getNewCustomers(newParam);
+});
 </script>
 
 <template>
@@ -46,7 +57,8 @@ const headers = ref<
     :search="search"
     item-value="name"
     show-select
-    @update:options="salesDashboardStore.getNewCustomers()"
+    @update:page="currentPage = $event"
+    @update:items-per-page="itemsPerPage = $event"
   >
     <template v-slot:[`item.dayJoined`]="{ item }">
       <p>{{ item.raw.created }}</p>

@@ -7,7 +7,7 @@ import { formatMoney } from "@/helpers";
 export const useSalesDashboardStore = defineStore("sales-dashboard-store", {
   state: (): SalesDashboardState => ({
     branchIds: ["ALL"],
-    salesRepIds: ["y5gQa6UklgxcYd8C"],
+    salesRepIds: ["ALL"],
     branches: [],
     salesReps: [],
     stats: {
@@ -58,10 +58,10 @@ export const useSalesDashboardStore = defineStore("sales-dashboard-store", {
 
       const branchIds = state.branchIds?.length
         ? state.branchIds.join(",")
-        : "All";
+        : "ALL";
       const salesRepIds = state.salesRepIds?.length
         ? state.salesRepIds.join(",")
-        : "All";
+        : "ALL";
 
       params.append("branchNames", branchIds);
       params.append("salesRepRefIds", salesRepIds);
@@ -115,14 +115,14 @@ export const useSalesDashboardStore = defineStore("sales-dashboard-store", {
             response.data.customersCountIncrement;
         });
     },
-    getUpcomingCollections: function () {
+    getUpcomingCollections: function (filters?: string) {
       this.upcomingCollections.loading = true;
+      let url = `${
+        import.meta.env.VITE_KOPESHA_API_URL
+      }/api/v1/salesrep/collections/upcoming${this.params}`;
+      filters && (url += filters);
       axios
-        .get(
-          `${
-            import.meta.env.VITE_KOPESHA_API_URL
-          }/api/v1/salesrep/collections/upcoming${this.params}`
-        )
+        .get(url)
         .then(response => {
           this.upcomingCollections = response.data;
         })
@@ -141,6 +141,7 @@ export const useSalesDashboardStore = defineStore("sales-dashboard-store", {
         })
         .finally(() => (this.overdueCollections.loading = false));
     },
+    //TODO: add param for this
     getNewCustomers: function (filters?: string) {
       this.newCustomers.loading = true;
       let url = `${

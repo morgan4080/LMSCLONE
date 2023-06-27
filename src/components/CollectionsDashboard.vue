@@ -143,9 +143,12 @@
                       :value="it"
                       density="compact"
                       @click="
-                        salesOverviewFilters.dateFilters.text = dropDownMenu
+                        salesOverviewFilters.dateFilters.text =
+                          dropDownMenu.title;
+                        salesOverviewFilters.dateFilters.value =
+                          dropDownMenu.value;
                       "
-                      >{{ dropDownMenu }}</v-list-item
+                      >{{ dropDownMenu.title }}</v-list-item
                     >
                   </v-list>
                 </v-sheet>
@@ -299,22 +302,23 @@
                   sm="7"
                 >
                   <v-row class="d-flex justify-start">
-                    <div
-                      v-for="(dropDown, i) in upComingCollectionFilters"
-                      :key="i"
-                      class="px-1"
-                    >
+                    <div class="px-1">
                       <v-menu transition="slide-y-transition">
                         <template v-slot:activator="{ props }">
                           <v-btn
                             class="v-btn--size-default text-caption text-capitalize"
                             density="default"
-                            :append-icon="dropDown.appendIcon"
+                            :append-icon="
+                              upComingCollectionFilters.branches.appendIcon
+                            "
                             v-bind="props"
                             flat
                             style="border: 1px solid rgba(128, 128, 128, 0.25)"
                           >
-                            {{ dropDown.text }}
+                            {{
+                              upComingCollectionFilters.branches.text ||
+                              "All Branches"
+                            }}
                           </v-btn>
                         </template>
                         <v-sheet
@@ -327,12 +331,127 @@
                             role="listbox"
                           >
                             <v-list-item
-                              v-for="(dropDownMenu, it) in dropDown.menus"
+                              density="compact"
+                              @click="
+                                upComingCollectionFilters.branches.text = ''
+                              "
+                              >All</v-list-item
+                            >
+                            <v-list-item
+                              v-for="(
+                                dropDownMenu, it
+                              ) in salesDashboardStore.branches"
                               :key="it"
-                              :title="dropDownMenu.text"
                               :value="it"
                               density="compact"
-                            ></v-list-item>
+                              @click="
+                                upComingCollectionFilters.branches.text =
+                                  dropDownMenu.toString()
+                              "
+                              >{{ dropDownMenu }}</v-list-item
+                            >
+                          </v-list>
+                        </v-sheet>
+                      </v-menu>
+                    </div>
+
+                    <div class="px-3">
+                      <v-menu transition="slide-y-transition">
+                        <template v-slot:activator="{ props }">
+                          <v-btn
+                            class="v-btn--size-default text-caption text-capitalize"
+                            density="default"
+                            :append-icon="
+                              upComingCollectionFilters.salesRep.appendIcon
+                            "
+                            v-bind="props"
+                            flat
+                            style="border: 1px solid rgba(128, 128, 128, 0.25)"
+                          >
+                            {{
+                              upComingCollectionFilters.salesRep.text ||
+                              "All Sales Rep"
+                            }}
+                          </v-btn>
+                        </template>
+                        <v-sheet
+                          border
+                          rounded
+                        >
+                          <v-list
+                            nav
+                            density="compact"
+                            role="listbox"
+                          >
+                            <v-list-item
+                              density="compact"
+                              @click="
+                                upComingCollectionFilters.salesRep.text = null;
+                                upComingCollectionFilters.salesRep.id = null;
+                              "
+                              >All</v-list-item
+                            >
+                            <v-list-item
+                              v-for="(
+                                dropDownMenu, it
+                              ) in salesDashboardStore.salesReps"
+                              :key="it"
+                              :value="it"
+                              density="compact"
+                              @click="
+                                upComingCollectionFilters.salesRep.text =
+                                  dropDownMenu.name.toString();
+                                upComingCollectionFilters.salesRep.id =
+                                  dropDownMenu.refId;
+                              "
+                              >{{ dropDownMenu.name }}</v-list-item
+                            >
+                          </v-list>
+                        </v-sheet>
+                      </v-menu>
+                    </div>
+
+                    <div class="px-3">
+                      <v-menu transition="slide-y-transition">
+                        <template v-slot:activator="{ props }">
+                          <v-btn
+                            class="v-btn--size-default text-caption text-capitalize"
+                            density="default"
+                            :append-icon="
+                              upComingCollectionFilters.dateFilters.appendIcon
+                            "
+                            v-bind="props"
+                            flat
+                            style="border: 1px solid rgba(128, 128, 128, 0.25)"
+                          >
+                            {{
+                              upComingCollectionFilters.dateFilters.text ||
+                              "All Time"
+                            }}
+                          </v-btn>
+                        </template>
+                        <v-sheet
+                          border
+                          rounded
+                        >
+                          <v-list
+                            nav
+                            density="compact"
+                            role="listbox"
+                          >
+                            <v-list-item
+                              v-for="(
+                                dropDownMenu, it
+                              ) in upComingCollectionFilters.dateFilters.menus"
+                              :key="it"
+                              :value="it"
+                              density="compact"
+                              @click="
+                                upComingCollectionFilters.dateFilters.text =
+                                  dropDownMenu
+                              "
+                              >{{ dropDownMenu }}</v-list-item
+                            >
                           </v-list>
                         </v-sheet>
                       </v-menu>
@@ -460,22 +579,21 @@
                   sm="7"
                 >
                   <v-row class="d-flex justify-start">
-                    <div
-                      v-for="(dropDown, i) in newCustomerFilters"
-                      :key="i"
-                      class="px-1"
-                    >
+                    <div class="px-1">
                       <v-menu transition="slide-y-transition">
                         <template v-slot:activator="{ props }">
                           <v-btn
                             class="v-btn--size-default text-caption text-capitalize"
                             density="default"
-                            :append-icon="dropDown.appendIcon"
+                            :append-icon="newCustomerFilters.status.appendIcon"
                             v-bind="props"
                             flat
                             style="border: 1px solid rgba(128, 128, 128, 0.25)"
                           >
-                            {{ dropDown.text }}
+                            {{
+                              newCustomerFilters.status.text ||
+                              "Select Onboarding Status"
+                            }}
                           </v-btn>
                         </template>
                         <v-sheet
@@ -488,9 +606,26 @@
                             role="listbox"
                           >
                             <v-list-item
-                              v-for="(dropDownMenu, it) in dropDown.menus"
+                              @click="
+                                newCustomerFilters.status.text = '';
+                                StatusParam = '';
+                                newCustomerFilter();
+                              "
+                              title="All"
+                              density="compact"
+                            ></v-list-item>
+
+                            <v-list-item
+                              v-for="(dropDownMenu, it) in newCustomerFilters
+                                .status.menus"
+                              @click="
+                                StatusParam = dropDownMenu.param;
+                                newCustomerFilter();
+                                newCustomerFilters.status.text =
+                                  dropDownMenu.title;
+                              "
                               :key="it"
-                              :title="dropDownMenu.text"
+                              :title="dropDownMenu.title"
                               :value="it"
                               density="compact"
                             ></v-list-item>
@@ -498,18 +633,22 @@
                         </v-sheet>
                       </v-menu>
                     </div>
+
                     <div class="px-1">
                       <v-menu transition="slide-y-transition">
                         <template v-slot:activator="{ props }">
                           <v-btn
                             class="v-btn--size-default text-caption text-capitalize"
                             density="default"
-                            :append-icon="ussd.appendIcon"
+                            :append-icon="newCustomerFilters.ussd.appendIcon"
                             v-bind="props"
                             flat
                             style="border: 1px solid rgba(128, 128, 128, 0.25)"
                           >
-                            {{ ussd.text || "Select USSD Status" }}
+                            {{
+                              newCustomerFilters.ussd.text ||
+                              "Select USSD Status"
+                            }}
                           </v-btn>
                         </template>
                         <v-sheet
@@ -524,21 +663,23 @@
                             <v-list-item
                               title="All USSD"
                               @click="
-                                salesDashboardStore.getNewCustomers(),
-                                  (ussd.text = '')
+                                UssdParam = '';
+                                newCustomerFilter();
+                                newCustomerFilters.ussd.text = '';
                               "
                               density="compact"
                             ></v-list-item>
                             <v-list-item
-                              v-for="(dropDownMenu, it) in ussd.menus"
+                              v-for="(dropDownMenu, it) in newCustomerFilters
+                                .ussd.menus"
                               :key="it"
                               :title="dropDownMenu.text"
                               :value="it"
                               @click="
-                                salesDashboardStore.getNewCustomers(
-                                  dropDownMenu.param
-                                ),
-                                  (ussd.text = dropDownMenu.text)
+                                UssdParam = dropDownMenu.param;
+                                newCustomerFilter();
+                                newCustomerFilters.ussd.text =
+                                  dropDownMenu.text;
                               "
                               density="compact"
                             ></v-list-item>
@@ -614,11 +755,11 @@
 </template>
 
 <script lang="ts" setup>
-import { onBeforeMount, onMounted, reactive, ref, watch } from "vue";
+import { onBeforeMount, reactive, ref, watch } from "vue";
 import { useSalesDashboardStore } from "@/store/sales-dashboard";
 import UpcomingCollectionsTable from "@/components/UpcomingCollectionsTable.vue";
 import NewCustomersTable from "@/components/NewCustomersTable.vue";
-import { Branch, SalesRep } from "@/types/sales-dashboard";
+import { dateFilters } from "@/helpers";
 
 const salesDashboardStore = useSalesDashboardStore();
 
@@ -634,19 +775,44 @@ onBeforeMount(async () => {
   await initialize();
 });
 
-onMounted(() => {
-  console.log("log: ", salesDashboardStore.salesReps);
-});
-
-type CardDataType = {
-  text: string;
-  metric: string;
-  color: string;
-  captions: { metric: string; color: string }[];
-}[];
 const searchUpcomingCollections = ref("");
 
 const salesOverviewFilters = reactive({
+  branches: {
+    text: null,
+    appendIcon: "mdi:mdi-chevron-down",
+  } as {
+    text: string | null;
+    appendIcon: string;
+  },
+  salesRep: {
+    text: null,
+    id: null,
+    appendIcon: "mdi:mdi-chevron-down",
+  } as {
+    text: string | null;
+    id: string | null;
+    appendIcon: string;
+  },
+  dateFilters: {
+    text: "All Time",
+    value: null,
+    appendIcon: "mdi:mdi-chevron-down",
+    menus: [
+      { title: "All Time", value: "all" },
+      { title: "This Year", value: "year" },
+      { title: "This Month", value: "month" },
+      { title: "This Week", value: "week" },
+    ],
+  } as {
+    text: string;
+    value: string | null;
+    appendIcon: string;
+    menus: { title: string; value: string }[];
+  },
+});
+
+const upComingCollectionFilters = reactive({
   branches: {
     text: "All Branches",
     appendIcon: "mdi:mdi-chevron-down",
@@ -669,85 +835,7 @@ const salesOverviewFilters = reactive({
     menus: ["All Time", "This Year", "This Month", "This Week"],
   },
 });
-const dropDownData = ref([
-  {
-    text: "All Sales Rep",
-    appendIcon: "mdi:mdi-chevron-down",
-    menus: [
-      {
-        text: "Op 1",
-      },
-      {
-        text: "Op 2",
-      },
-      {
-        text: "Op 3",
-      },
-    ],
-  },
-  {
-    text: "This Month",
-    appendIcon: "mdi:mdi-chevron-down",
-    menus: [
-      {
-        text: "Op 1",
-      },
-      {
-        text: "Op 2",
-      },
-      {
-        text: "Op 3",
-      },
-    ],
-  },
-]);
-const upComingCollectionFilters = ref([
-  {
-    text: "All Branches",
-    appendIcon: "mdi:mdi-chevron-down",
-    menus: [
-      {
-        text: "Op 1",
-      },
-      {
-        text: "Op 2",
-      },
-      {
-        text: "Op 3",
-      },
-    ],
-  },
-  {
-    text: "All Sales Rep",
-    appendIcon: "mdi:mdi-chevron-down",
-    menus: [
-      {
-        text: "Op 1",
-      },
-      {
-        text: "Op 2",
-      },
-      {
-        text: "Op 3",
-      },
-    ],
-  },
-  {
-    text: "This Month",
-    appendIcon: "mdi:mdi-chevron-down",
-    menus: [
-      {
-        text: "Op 1",
-      },
-      {
-        text: "Op 2",
-      },
-      {
-        text: "Op 3",
-      },
-    ],
-  },
-]);
+
 const upComingCollectionActions = ref([
   {
     text: "Export",
@@ -810,52 +898,35 @@ const upComingCollectionActions = ref([
     ],
   },
 ]);
-const newCustomerFilters = ref([
-  {
+
+const newCustomerFilters = ref({
+  status: {
     text: "Select Onboarding Status",
     appendIcon: "mdi:mdi-chevron-down",
     menus: [
       {
-        text: "Op 1",
+        title: "Approved",
+        param: "&onboardingStatus=Approved",
       },
-      {
-        text: "Op 2",
-      },
-      {
-        text: "Op 3",
-      },
+      { title: "Denied", param: "&onboardingStatus=Denied" },
     ],
   },
-  {
+  ussd: {
     text: "Select USSD Status",
     appendIcon: "mdi:mdi-chevron-down",
     menus: [
       {
         text: "Has USSD",
-        param: "hasUssd=YES",
+        param: "&hasUssd=YES",
       },
       {
         text: "Lacks USSD",
-        param: "hasUssd=NO",
+        param: "&hasUssd=NO",
       },
     ],
   },
-]);
-
-const ussd = ref({
-  text: "Select USSD Status",
-  appendIcon: "mdi:mdi-chevron-down",
-  menus: [
-    {
-      text: "Has USSD",
-      param: "&hasUssd=YES",
-    },
-    {
-      text: "Lacks USSD",
-      param: "&hasUssd=NO",
-    },
-  ],
 });
+
 const newCustomerActions = ref([
   {
     text: "Export",
@@ -919,6 +990,9 @@ const newCustomerActions = ref([
   },
 ]);
 
+const UssdParam = ref("");
+const StatusParam = ref("");
+
 watch(salesOverviewFilters, () => {
   salesOverviewFilters.branches.text
     ? ((salesDashboardStore.branchIds = [salesOverviewFilters.branches.text]),
@@ -927,12 +1001,25 @@ watch(salesOverviewFilters, () => {
       ))
     : (salesDashboardStore.branchIds = ["ALL"]);
 
-  salesOverviewFilters.salesRep.text
+  salesOverviewFilters.salesRep.id
     ? (salesDashboardStore.salesRepIds = [salesOverviewFilters.salesRep.id!])
-    : "";
+    : (salesDashboardStore.salesRepIds = ["ALL"]);
+
+  salesOverviewFilters.dateFilters.value &&
+    dateReturn(salesOverviewFilters.dateFilters.value);
 
   salesDashboardStore.getStats();
 });
+
+function dateReturn(text: string) {
+  let [start, end] = dateFilters(text) as string[];
+  salesDashboardStore.stats.startDate = start;
+  salesDashboardStore.stats.endDate = end;
+}
+function newCustomerFilter() {
+  let newParam = UssdParam.value.concat(StatusParam.value);
+  salesDashboardStore.getNewCustomers(newParam);
+}
 </script>
 
 <style scoped>

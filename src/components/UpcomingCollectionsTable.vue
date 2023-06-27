@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { onBeforeMount, ref, watch } from "vue";
 import { useSalesDashboardStore } from "@/store/sales-dashboard";
 import { formatMoney } from "../helpers";
 
@@ -31,6 +31,17 @@ const headers = ref<
   { title: "Status", key: "status", align: "end", sortable: false },
   { title: "Actions", key: "refId", align: "end", sortable: false },
 ]);
+
+const currentPage = ref(1);
+const itemsPerPage = ref(10);
+
+onBeforeMount(() => salesDashboardStore.getUpcomingCollections());
+watch([currentPage, itemsPerPage], (newValues: [number, number]) => {
+  let newParam = `&start=${(newValues[0] - 1) * newValues[1] + 1}&length=${
+    newValues[1]
+  }`;
+  salesDashboardStore.getUpcomingCollections(newParam);
+});
 </script>
 
 <template>
