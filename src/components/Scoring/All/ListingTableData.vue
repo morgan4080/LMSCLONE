@@ -1,11 +1,6 @@
 <script setup lang="ts">
 import { ref, computed, toRef, watch } from "vue";
 import axiosInstance from "@/services/api/axiosInstance";
-import {
-  // dateDiffInMonths,
-  // dateFromTimestamp,
-  // timeFromTimestamp,
-} from "@/helpers";
 
 interface Statement {
   id: number;
@@ -25,6 +20,28 @@ interface Statement {
   uploadDate: string;
 }
 
+interface DataItem {
+  id: number;
+  statement: {
+    doctype: string;
+    bankcode: string;
+    uniqueId: string;
+  };
+  fileName: string;
+  customer: {
+    idnum: string;
+    uploaderName?: string;
+    uploaderPhone?: string;
+  };
+  status: string;
+  uploaderName?: string;
+  statementPeriod?: string;
+  fileUrl: string;
+  filePath?: string;
+  password?: string;
+  uploadDate: string;
+}
+
 const props = defineProps<{
   headers: {
     title: string;
@@ -39,24 +56,26 @@ const props = defineProps<{
 const loading = ref(false);
 const itemsPerPage = ref(5);
 const search = ref("");
-const totalItems = computed(() => tableData.value.length);
+const totalItems = computed(() => apiData.value.length);
 const headers = toRef(props, "headers");
 const params = toRef(props, "params");
 
+const apiData = ref<DataItem[]>([]);
+
 // Transform the API Data
-const apiData = ref<Statement[]>([]);
-const tableData = computed(() =>
-  apiData.value.map(item => {
+const transformData = (payload: Statement[]) =>
+  payload.map(item => {
     return {
       id: item.id,
       statement: {
         doctype: item.doctype,
         bankcode: item.bankcode,
+        uniqueId: item.statementid,
       },
       fileName: item.fileName,
       customer: {
         idnum: item.idnum,
-        customername: item.customername,
+        uploaderName: item.uploaderName,
         uploaderPhone: item.uploaderPhone,
       },
       status: item.status,
@@ -67,31 +86,50 @@ const tableData = computed(() =>
       password: item.password,
       uploadDate: item.uploadDate,
     };
-  })
-);
+  });
+
+// API Call: Query statement status
+const queryStatementStatus = async (
+  id: number,
+  score: string,
+  uniqueId: string
+) => {
+  try {
+    const response = await axiosInstance.post(
+      `/e_statement/query_status?scoreType=${score}&uniqueId=${uniqueId}`
+    );
+    const element = apiData.value.find(item => item.id === id);
+    if (element) {
+      element.status = response.data.data.state_name;
+    }
+  } catch (error) {
+    console.error(error);
+  }
+};
 
 // API Call: Get all uploaded statements
 const loadData = async (filters?: string) => {
   loading.value = true;
   let url = `/e_statement/get_uploaded_statements?pageSize=${itemsPerPage.value}&sortBy=id`;
   if (filters) url += filters;
-  await axiosInstance
-    .get(url)
-    .then(response => {
-      console.log(response);
-      apiData.value = response.data.content;
-    })
-    .catch(error => console.error(error))
-    .finally(() => (loading.value = false));
+
+  try {
+    const response = await axiosInstance.get(url);
+   apiData.value = transformData(response.data.content);
+  } catch (error) {
+    console.error(error);
+  } finally {
+    loading.value = false;
+  }
 };
 
 // API Call: Reupload failed statement
 const reuploadStatement = async (payload: number) => {
-  loading.value = true; 
+  loading.value = true;
   await axiosInstance
     .post(`/e_statement/retry_upload_statement?statementUploadId=${payload}`)
     .then(response => {
-      response.data.status === "200" ? loadData() : ''
+      response.data.status === "200" ? loadData() : "";
     })
     .catch(error => console.error(error))
     .finally(() => (loading.value = false));
@@ -99,16 +137,15 @@ const reuploadStatement = async (payload: number) => {
 
 // API Call: Delete uploaded statement
 const deleteStatement = async (payload: number) => {
-  loading.value = true; 
+  loading.value = true;
   await axiosInstance
     .delete(`/e_statement/uploaded_statement/delete?statementId=${payload}`)
     .then(response => {
-      response.data.status === "200" ? loadData() : ''
+      response.data.status === "200" ? loadData() : "";
     })
     .catch(error => console.error(error))
     .finally(() => (loading.value = false));
 };
-
 
 watch(params, () => {
   loadData(params.value);
@@ -121,7 +158,7 @@ watch(params, () => {
     v-model:items-per-page="itemsPerPage"
     :headers="headers"
     :items-length="totalItems"
-    :items="tableData"
+    :items="apiData"
     :loading="loading"
     loading-text="Loading...Please Wait"
     item-value="name"
@@ -143,8 +180,6 @@ watch(params, () => {
 
     <template v-slot:[`item.uploadDate`]="{ item }">
       <p>{{ item.columns.uploadDate }}</p>
-      <!-- <p>{{ dateFromTimestamp(item.columns.uploadDate) }}</p> -->
-      <!-- <p>{{ timeFromTimestamp(item.columns.uploadDate) }}</p> -->
     </template>
     <template v-slot:[`item.customer`]="{ item }">
       <p>{{ item.columns.customer.customername }}</p>
@@ -183,7 +218,6 @@ watch(params, () => {
         {{ item.columns.statementPeriod }}
       </p>
       <p>
-        <!-- {{ dateDiffInMonths("2023-01-12", item.columns.uploadDate) }} -->
         Months
       </p>
     </template>
@@ -194,16 +228,41 @@ watch(params, () => {
       <div class="justify-end d-flex">
         <div
           class="px-1 border rounded hover-cursor-pointer"
-          @click="
-            $router.push(`/scoring/mobile/${item.columns.customer.idnum}`)
+          @click="  item.columns.status?.toLowerCase() === 'completed' ?
+            $router.push(`/scoring/${item.columns.statement.doctype === 'BANK' ? 'bank' : 'mobile'}/${item.columns.customer.idnum}`) : ''
           "
         >
           <v-icon
+          :color="
+              item.columns.status?.toLowerCase() === 'completed'
+                ? 'blue'
+                : 'blue-grey-lighten-4'
+            "
             size="x-small"
             icon="mdi:mdi-eye-outline"
           ></v-icon>
         </div>
-        <div @click.stop="item.columns.status?.toLowerCase() === 'failed' ? reuploadStatement(item.columns.customer.idnum) : ''"
+        <div
+          @click.stop="queryStatementStatus(item.columns.id, item.columns.statement.bankcode, item.columns.statement.uniqueId)"
+          class="px-1 ml-1 border rounded hover-cursor-pointer"
+        >
+          <v-icon
+            :color="
+              item.columns.status?.toLowerCase() === 'processing'
+                ? 'orange'
+                : 'grey-lighten-4'
+            "
+            size="x-small"
+            icon="mdi:mdi-sync"
+            class=""
+          ></v-icon>
+        </div>
+        <div
+          @click.stop="
+            item.columns.status?.toLowerCase() === 'failed'
+              ? reuploadStatement(item.columns.customer.idnum)
+              : ''
+          "
           class="px-1 ml-1 border rounded"
           :class="
             item.columns.status?.toLowerCase() === 'failed'
@@ -222,7 +281,10 @@ watch(params, () => {
             class=""
           ></v-icon>
         </div>
-        <div @click.stop="deleteStatement(item.columns.customer.idnum)" class="px-1 ml-1 border rounded hover-cursor-pointer">
+        <div
+          @click.stop="deleteStatement(item.columns.customer.idnum)"
+          class="px-1 ml-1 border rounded hover-cursor-pointer"
+        >
           <v-icon
             color="red"
             size="x-small"
