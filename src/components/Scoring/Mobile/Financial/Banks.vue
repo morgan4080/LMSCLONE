@@ -80,8 +80,9 @@ const loadBankTopAccountsData = async () => {
 // API Call: Get Top Bank Trans Data
 const loadBankTopTransData = async () => {
   await axiosInstance
-    .get(`/e_statement/top_paybill_classifications?idNumber=${route.params.slug}&pageSize=${itemsPerPage.value}&sortBy=id`)
-    .then(response => (bankTopTransData.value = response.data.content.filter((item: BankTopTransData) => item.classification === "Banks")))
+  // https://staging-lending.presta.co.ke/scoring/api/v1/e_statement/top_paybill_classifications?classification=Banks&pageSize=15&sortBy=id
+    .get(`/e_statement/top_paybill_classifications?idNumber=${route.params.slug}&classification=Banks&pageSize=${itemsPerPage.value}&sortBy=id`)
+    .then(response => (bankTopTransData.value = response.data.content))
     .catch(error => console.error(error));
 };
 

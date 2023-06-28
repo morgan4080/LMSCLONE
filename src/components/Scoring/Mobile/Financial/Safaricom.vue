@@ -15,6 +15,7 @@ interface SafaricomDataItem {
 interface FulizaDataItem {
   count: number;
   highest: string;
+  lowest: string;
   total: string;
   last: string;
   last_amount: string;
@@ -259,15 +260,15 @@ onMounted(() => {
               </v-row>
               <v-divider class="my-2" />
               <v-row class="justify-space-between d-flex">
-                <v-col class="font-weight-medium">Last On</v-col>
-                <v-col>{{ fulizaData[0]?.last }}</v-col>
-                <v-col>{{ fulizaData[1]?.last }}</v-col>
+                <v-col class="font-weight-medium">Lowest</v-col>
+                <v-col>{{ fulizaData[0]?.lowest }}</v-col>
+                <v-col>{{ fulizaData[1]?.lowest }}</v-col>
               </v-row>
               <v-divider class="my-2" />
               <v-row class="justify-space-between d-flex">
                 <v-col class="font-weight-medium">Last Amount</v-col>
-                <v-col>{{ fulizaData[0]?.last_amount }}</v-col>
-                <v-col>{{ fulizaData[1]?.last_amount }}</v-col>
+                <v-col>{{ fulizaData[0]?.last }}</v-col>
+                <v-col>{{ fulizaData[1]?.last }}</v-col>
               </v-row>
               <v-divider
                 class="my-3"

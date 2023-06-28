@@ -56,16 +56,16 @@ const waterTopTransData = ref<WaterTopTransData[]>([])
 // API Call: Get Water Transactions Data
 const loadWaterTransSentData = async () => {
   await axiosInstance
-    .get(`/e_statement/pay_bill_classifications_sent?idNumber=${route.params.slug}&pageSize=100&sortBy=id`)
-    .then(response => (waterTransSentData.value = response.data.content.filter((item: WaterDataItem) => item.classification === "WaterAndSewarageServices")))
+    .get(`/e_statement/pay_bill_classifications_sent?idNumber=${route.params.slug}&classification=WaterAndSewarageServices&pageSize=100&sortBy=id`)
+    .then(response => (waterTransSentData.value = response.data.content))
     .catch(error => console.error(error));
 };
 
 // API Call: Get Top Water Trans Data
 const loadWaterTopTransData = async () => {
   await axiosInstance
-    .get(`/e_statement/top_paybill_classifications?idNumber=${route.params.slug}&pageSize=${itemsPerPage.value}&sortBy=id`)
-    .then(response => (waterTopTransData.value = response.data.content.filter((item: WaterTopTransData) => item.classification === "WaterAndSewarageServices")))
+    .get(`/e_statement/top_paybill_classifications?idNumber=${route.params.slug}&classification=WaterAndSewarageServices&pageSize=${itemsPerPage.value}&sortBy=id`)
+    .then(response => (waterTopTransData.value = response.data.content))
     .catch(error => console.error(error));
 };
 

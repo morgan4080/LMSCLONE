@@ -56,16 +56,16 @@ const entertainmentTopTransData = ref<EntertainmentTopTransData[]>([])
 // API Call: Get Entertainment Transactions Data
 const loadEntertainmentTransBuyGoodsData = async () => {
   await axiosInstance
-    .get(`/e_statement/buy_goods_classifications_summary?idNumber=${route.params.slug}&pageSize=100&sortBy=id`)
-    .then(response => (entertainmentTransBuyGoodsData.value = response.data.content.filter((item: EntertainmentDataItem) => item.classification === "Entertainment")))
+    .get(`/e_statement/buy_goods_classifications_summary?idNumber=${route.params.slug}&classification=Entertainment&pageSize=100&sortBy=id`)
+    .then(response => (entertainmentTransBuyGoodsData.value = response.data.content))
     .catch(error => console.error(error));
 };
 
 // API Call: Get Top Entertainment Trans Data
 const loadEntertainmentTopTransData = async () => {
   await axiosInstance
-    .get(`/e_statement/top_paybill_classifications?idNumber=${route.params.slug}&pageSize=${itemsPerPage.value}&sortBy=id`)
-    .then(response => (entertainmentTopTransData.value = response.data.content.filter((item: EntertainmentTopTransData) => item.classification === "Entertainment")))
+    .get(`/e_statement/top_paybill_classifications?idNumber=${route.params.slug}&classification=Entertainment&pageSize=${itemsPerPage.value}&sortBy=id`)
+    .then(response => (entertainmentTopTransData.value = response.data.content))
     .catch(error => console.error(error));
 };
 

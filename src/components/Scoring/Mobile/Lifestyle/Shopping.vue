@@ -56,16 +56,16 @@ const shoppingTopTransData = ref<ShoppingTopTransData[]>([])
 // API Call: Get Shopping Transactions Data
 const loadShoppingTransBuyGoodsData = async () => {
   await axiosInstance
-    .get(`/e_statement/buy_goods_classifications_summary?idNumber=${route.params.slug}&pageSize=100&sortBy=id`)
-    .then(response => (shoppingTransBuyGoodsData.value = response.data.content.filter((item: ShoppingDataItem) => item.classification === "ShoppingOutlets")))
+    .get(`/e_statement/buy_goods_classifications_summary?idNumber=${route.params.slug}&classification=ShoppingOutlets&pageSize=100&sortBy=id`)
+    .then(response => (shoppingTransBuyGoodsData.value = response.data.content))
     .catch(error => console.error(error));
 };
 
 // API Call: Get Top Shopping Trans Data
 const loadShoppingTopTransData = async () => {
   await axiosInstance
-    .get(`/e_statement/top_paybill_classifications?idNumber=${route.params.slug}&pageSize=${itemsPerPage.value}&sortBy=id`)
-    .then(response => (shoppingTopTransData.value = response.data.content.filter((item: ShoppingTopTransData) => item.classification === "ShoppingOutlets")))
+    .get(`/e_statement/top_paybill_classifications?idNumber=${route.params.slug}&classification=ShoppingOutlets&pageSize=${itemsPerPage.value}&sortBy=id`)
+    .then(response => (shoppingTopTransData.value = response.data.content))
     .catch(error => console.error(error));
 };
 

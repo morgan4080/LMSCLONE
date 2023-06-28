@@ -55,16 +55,16 @@ const onlineTopTransData = ref<OnlineTopTransData[]>([])
 // API Call: Get Online Transactions Data
 const loadOnlineTransSentData = async () => { 
   await axiosInstance
-    .get(`/e_statement/pay_bill_classifications_sent?idNumber=${route.params.slug}&pageSize=100&sortBy=id`)
-    .then(response => (onlineTransSentData.value = response.data.content.filter((item: OnlineDataItem) => item.classification === "OnlinePurchases")))
+    .get(`/e_statement/pay_bill_classifications_sent?idNumber=${route.params.slug}&classification=OnlinePurchases&pageSize=100&sortBy=id`)
+    .then(response => (onlineTransSentData.value = response.data.content))
     .catch(error => console.error(error));
 };
 
 // API Call: Get Top Online Trans Data
 const loadOnlineTopTransData = async () => {
   await axiosInstance
-    .get(`/e_statement/top_paybill_classifications?idNumber=${route.params.slug}&pageSize=${itemsPerPage.value}&sortBy=id`)
-    .then(response => (onlineTopTransData.value = response.data.content.filter((item: OnlineTopTransData) => item.classification === "OnlinePurchases")))
+    .get(`/e_statement/top_paybill_classifications?idNumber=${route.params.slug}&classification=OnlinePurchases&pageSize=${itemsPerPage.value}&sortBy=id`)
+    .then(response => (onlineTopTransData.value = response.data.conten))
     .catch(error => console.error(error));
 };
 

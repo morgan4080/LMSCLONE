@@ -56,16 +56,16 @@ const educationTopTransData = ref<EducationTopTransData[]>([])
 // API Call: Get Education Transactions Data
 const loadEducationTransSentData = async () => {
   await axiosInstance
-    .get(`/e_statement/pay_bill_classifications_sent?idNumber=${route.params.slug}&pageSize=100&sortBy=id`)
-    .then(response => (educationTransSentData.value = response.data.content.filter((item: EducationDataItem) => item.classification === "Education")))
+    .get(`/e_statement/pay_bill_classifications_sent?idNumber=${route.params.slug}&classification=Education&pageSize=100&sortBy=id`)
+    .then(response => (educationTransSentData.value = response.data.content))
     .catch(error => console.error(error));
 };
 
 // API Call: Get Top Education Trans Data
 const loadEducationTopTransData = async () => {
   await axiosInstance
-    .get(`/e_statement/top_paybill_classifications?idNumber=${route.params.slug}&pageSize=${itemsPerPage.value}&sortBy=id`)
-    .then(response => (educationTopTransData.value = response.data.content.filter((item: EducationTopTransData) => item.classification === "Education")))
+    .get(`/e_statement/top_paybill_classifications?idNumber=${route.params.slug}&classification=Education&pageSize=${itemsPerPage.value}&sortBy=id`)
+    .then(response => (educationTopTransData.value = response.data.content))
     .catch(error => console.error(error));
 };
 

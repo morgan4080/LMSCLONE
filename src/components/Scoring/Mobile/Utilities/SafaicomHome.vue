@@ -55,16 +55,16 @@ const safaricomTopTransData = ref<SafaricomTopTransData[]>([])
 
 const loadSafaricomTransSentData = async () => {
   await axiosInstance
-    .get(`/e_statement/pay_bill_classifications_sent?idNumber=${route.params.slug}&pageSize=100&sortBy=id`)
-    .then(response => (safaricomTransSentData.value = response.data.content.filter((item: SafaricomDataItem) => item.classification === "SafaricomHome")))
+    .get(`/e_statement/pay_bill_classifications_sent?idNumber=${route.params.slug}&classification=SafaricomHome&pageSize=100&sortBy=id`)
+    .then(response => (safaricomTransSentData.value = response.data.content))
     .catch(error => console.error(error));
 };
 
 // API Call: Get Top Safaricom Trans Data
 const loadSafaricomTopTransData = async () => {
   await axiosInstance
-    .get(`/e_statement/top_paybill_classifications?idNumber=${route.params.slug}&pageSize=${itemsPerPage.value}&sortBy=id`)
-    .then(response => (safaricomTopTransData.value = response.data.content.filter((item: SafaricomTopTransData) => item.classification === "SafaricomHome")))
+    .get(`/e_statement/top_paybill_classifications?idNumber=${route.params.slug}&classification=SafaricomHome&pageSize=${itemsPerPage.value}&sortBy=id`)
+    .then(response => (safaricomTopTransData.value = response.data.content))
     .catch(error => console.error(error));
 };
 
