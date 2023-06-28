@@ -57,23 +57,23 @@ const religionTopTransData = ref<ReligionTopTransData[]>([])
 // API Call: Get Religion Transactions Data
 const loadReligionTransSentData = async () => {
   await axiosInstance
-    .get(`/e_statement/pay_bill_classifications_sent?idNumber=${route.params.slug}&pageSize=100&sortBy=id`)
-    .then(response => (religionTransSentData.value = response.data.content.filter((item: ReligionDataItem) => item.classification === "Religion")))
+    .get(`/e_statement/pay_bill_classifications_sent?idNumber=${route.params.slug}&classification=Religion&pageSize=100&sortBy=id`)
+    .then(response => (religionTransSentData.value = response.data.content))
     .catch(error => console.error(error));
 };
 
 const loadReligionTransBuyGoodsData = async () => {
   await axiosInstance
-    .get(`/e_statement/buy_goods_classifications_summary?idNumber=${route.params.slug}&pageSize=100&sortBy=id`)
-    .then(response => (religionTransBuyGoodsData.value = response.data.content.filter((item: ReligionDataItem) => item.classification === "Religion")))
+    .get(`/e_statement/buy_goods_classifications_summary?idNumber=${route.params.slug}&classification=Religion&pageSize=100&sortBy=id`)
+    .then(response => (religionTransBuyGoodsData.value = response.data.content))
     .catch(error => console.error(error));
 };
 
 // API Call: Get Top Religion Trans Data
 const loadReligionTopTransData = async () => {
   await axiosInstance
-    .get(`/e_statement/top_paybill_classifications?idNumber=${route.params.slug}&pageSize=${itemsPerPage.value}&sortBy=id`)
-    .then(response => (religionTopTransData.value = response.data.content.filter((item: ReligionTopTransData) => item.classification === "Religion")))
+    .get(`/e_statement/top_paybill_classifications?idNumber=${route.params.slug}&classification=Religion&pageSize=${itemsPerPage.value}&sortBy=id`)
+    .then(response => (religionTopTransData.value = response.data.content))
     .catch(error => console.error(error));
 };
 

@@ -57,23 +57,23 @@ const healthcareTopTransData = ref<HealthcareTopTransData[]>([])
 // API Call: Get Healthcare Transactions Data
 const loadHealthcareTransSentData = async () => {
   await axiosInstance
-    .get(`/e_statement/pay_bill_classifications_sent?idNumber=${route.params.slug}&pageSize=100&sortBy=id`)
-    .then(response => (healthcareTransSentData.value = response.data.content.filter((item: HealthcareDataItem) => item.classification === "Healthcare")))
+    .get(`/e_statement/pay_bill_classifications_sent?idNumber=${route.params.slug}&classification=Healthcare&pageSize=100&sortBy=id`)
+    .then(response => (healthcareTransSentData.value = response.data.content))
     .catch(error => console.error(error));
 };
 
 const loadHealthcareTransBuyGoodsData = async () => {
   await axiosInstance
-    .get(`/e_statement/buy_goods_classifications_summary?idNumber=${route.params.slug}&pageSize=100&sortBy=id`)
-    .then(response => (healthcareTransBuyGoodsData.value = response.data.content.filter((item: HealthcareDataItem) => item.classification === "Healthcare")))
+    .get(`/e_statement/buy_goods_classifications_summary?idNumber=${route.params.slug}&classification=Healthcare&pageSize=100&sortBy=id`)
+    .then(response => (healthcareTransBuyGoodsData.value = response.data.content))
     .catch(error => console.error(error));
 };
 
 // API Call: Get Top Healthcare Trans Data
 const loadHealthcareTopTransData = async () => {
   await axiosInstance
-    .get(`/e_statement/top_paybill_classifications?idNumber=${route.params.slug}&pageSize=${itemsPerPage.value}&sortBy=id`)
-    .then(response => (healthcareTopTransData.value = response.data.content.filter((item: HealthcareTopTransData) => item.classification === "Healthcare")))
+    .get(`/e_statement/top_paybill_classifications?idNumber=${route.params.slug}&classification=Healthcare&pageSize=${itemsPerPage.value}&sortBy=id`)
+    .then(response => (healthcareTopTransData.value = response.data.content))
     .catch(error => console.error(error));
 };
 

@@ -57,23 +57,23 @@ const bettingTopTransData = ref<BettingTopTransData[]>([])
 
 // API Call: Get Betting Transactions Data
 const loadBettingTransReceivedData = async () => {
-  await axiosInstance
-    .get(`/e_statement/pay_bill_classifications_received?idNumber=${route.params.slug}&pageSize=100&sortBy=id`)
-    .then(response => (bettingTransReceivedData.value = response.data.content.filter((item: BettingDataItem) => item.classification === "Betting")))
+  await axiosInstance 
+    .get(`/e_statement/pay_bill_classifications_received?idNumber=${route.params.slug}&classification=Betting&pageSize=100&sortBy=id`)
+    .then(response => (bettingTransReceivedData.value = response.data.content))
     .catch(error => console.error(error));
 };
 
 const loadBettingTransSentData = async () => {
   await axiosInstance
-    .get(`/e_statement/pay_bill_classifications_sent?idNumber=${route.params.slug}&pageSize=100&sortBy=id`)
-    .then(response => (bettingTransSentData.value = response.data.content.filter((item: BettingDataItem) => item.classification === "Betting")))
+    .get(`/e_statement/pay_bill_classifications_sent?idNumber=${route.params.slug}&classification=Betting&pageSize=100&sortBy=id`)
+    .then(response => (bettingTransSentData.value = response.data.content))
     .catch(error => console.error(error));
 };
 
 const loadBettingTransBuyGoodsData = async () => {
   await axiosInstance
-    .get(`/e_statement/buy_goods_classifications_summary?idNumber=${route.params.slug}&pageSize=100&sortBy=id`)
-    .then(response => (bettingTransBuyGoodsData.value = response.data.content.filter((item: BettingDataItem) => item.classification === "Betting")))
+    .get(`/e_statement/buy_goods_classifications_summary?idNumber=${route.params.slug}&classification=Betting&pageSize=100&sortBy=id`)
+    .then(response => (bettingTransBuyGoodsData.value = response.data.content))
     .catch(error => console.error(error));
 };
 

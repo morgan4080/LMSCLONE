@@ -57,16 +57,16 @@ const zukuTopTransData = ref<ZukuTopTransData[]>([])
 // API Call: Get Zuku Transactions Data
 const loadZukuTransSentData = async () => {
   await axiosInstance
-    .get(`/e_statement/pay_bill_classifications_sent?idNumber=${route.params.slug}&pageSize=100&sortBy=id`)
-    .then(response => (zukuTransSentData.value = response.data.content.filter((item: ZukuDataItem) => item.classification === "Zuku")))
+    .get(`/e_statement/pay_bill_classifications_sent?idNumber=${route.params.slug}&classification=Zuku&pageSize=100&sortBy=id`)
+    .then(response => (zukuTransSentData.value = response.data.content))
     .catch(error => console.error(error));
 };
 
 // API Call: Get Top Zuku Trans Data
 const loadZukuTopTransData = async () => {
   await axiosInstance
-    .get(`/e_statement/top_paybill_classifications?idNumber=${route.params.slug}&pageSize=${itemsPerPage.value}&sortBy=id`)
-    .then(response => (zukuTopTransData.value = response.data.content.filter((item: ZukuTopTransData) => item.classification === "Zuku")))
+    .get(`/e_statement/top_paybill_classifications?idNumber=${route.params.slug}&classification=Zuku&pageSize=${itemsPerPage.value}&sortBy=id`)
+    .then(response => (zukuTopTransData.value = response.data.content))
     .catch(error => console.error(error));
 };
 

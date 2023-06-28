@@ -55,16 +55,16 @@ const faibaTopTransData = ref<FaibaTopTransData[]>([])
 
 const loadFaibaTransSentData = async () => {
   await axiosInstance
-    .get(`/e_statement/pay_bill_classifications_sent?idNumber=${route.params.slug}&pageSize=100&sortBy=id`)
-    .then(response => (faibaTransSentData.value = response.data.content.filter((item: FaibaDataItem) => item.classification === "FaibaJTL")))
+    .get(`/e_statement/pay_bill_classifications_sent?idNumber=${route.params.slug}&classification=FaibaJTL&pageSize=100&sortBy=id`)
+    .then(response => (faibaTransSentData.value = response.data.content))
     .catch(error => console.error(error));
 };
 
 // API Call: Get Top Faiba Trans Data
 const loadFaibaTopTransData = async () => {
   await axiosInstance
-    .get(`/e_statement/top_paybill_classifications?idNumber=${route.params.slug}&pageSize=${itemsPerPage.value}&sortBy=id`)
-    .then(response => (faibaTopTransData.value = response.data.content.filter((item: FaibaTopTransData) => item.classification === "FaibaJTL")))
+    .get(`/e_statement/top_paybill_classifications?idNumber=${route.params.slug}&classification=FaibaJTL&pageSize=${itemsPerPage.value}&sortBy=id`)
+    .then(response => (faibaTopTransData.value = response.data.content))
     .catch(error => console.error(error));
 };
 

@@ -39,7 +39,7 @@ const inflow = computed(() => {
         data.push(String(item.value));
       } else {
         const currentValue = parseFloat(data[monthIndex]);
-        data[monthIndex] = String(currentValue + item.value);
+        data[monthIndex] = String(currentValue);
       }
     }
   }
@@ -62,7 +62,7 @@ const outflow = computed(() => {
         data.push(String(item.value));
       } else {
         const currentValue = parseFloat(data[monthIndex]);
-        data[monthIndex] = String(currentValue + item.value);
+        data[monthIndex] = String(currentValue);
       }
     }
   }
