@@ -57,23 +57,23 @@ const generalTopTransData = ref<GeneralTopTransData[]>([])
 // API Call: Get General Transactions Data
 const loadGeneralTransReceivedData = async () => {
   await axiosInstance
-    .get(`/e_statement/pay_bill_classifications_received?idNumber=${route.params.slug}&pageSize=100&sortBy=id`)
-    .then(response => (generalTransReceivedData.value = response.data.content.filter((item: GeneralDataItem) => item.classification === "General")))
+    .get(`/e_statement/pay_bill_classifications_received?idNumber=${route.params.slug}&classification=General&pageSize=100&sortBy=id`)
+    .then(response => (generalTransReceivedData.value = response.data.content))
     .catch(error => console.error(error));
 };
 
 const loadGeneralTransSentData = async () => {
   await axiosInstance
-    .get(`/e_statement/pay_bill_classifications_sent?idNumber=${route.params.slug}&pageSize=100&sortBy=id`)
-    .then(response => (generalTransSentData.value = response.data.content.filter((item: GeneralDataItem) => item.classification === "General")))
+    .get(`/e_statement/pay_bill_classifications_sent?idNumber=${route.params.slug}&classification=General&pageSize=100&sortBy=id`)
+    .then(response => (generalTransSentData.value = response.data.content))
     .catch(error => console.error(error));
 };
 
 // API Call: Get Top General Trans Data
 const loadGeneralTopTransData = async () => {
   await axiosInstance
-    .get(`/e_statement/top_paybill_classifications?idNumber=${route.params.slug}&pageSize=${itemsPerPage.value}&sortBy=id`)
-    .then(response => (generalTopTransData.value = response.data.content.filter((item: GeneralTopTransData) => item.classification === "General")))
+    .get(`/e_statement/top_paybill_classifications?idNumber=${route.params.slug}&classification=General&pageSize=${itemsPerPage.value}&sortBy=id`)
+    .then(response => (generalTopTransData.value = response.data.content))
     .catch(error => console.error(error));
 };
 

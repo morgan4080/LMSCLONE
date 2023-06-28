@@ -57,23 +57,23 @@ const insuranceTopTransData = ref<InsuranceTopTransData[]>([])
 // API Call: Get Insurance Transactions Data
 const loadInsuranceTransReceivedData = async () => {
   await axiosInstance
-    .get(`/e_statement/pay_bill_classifications_received?idNumber=${route.params.slug}&pageSize=100&sortBy=id`)
-    .then(response => (insuranceTransReceivedData.value = response.data.content.filter((item: InsuranceDataItem) => item.classification === "Insurance")))
+    .get(`/e_statement/pay_bill_classifications_received?idNumber=${route.params.slug}&classification=Insurance&pageSize=100&sortBy=id`)
+    .then(response => (insuranceTransReceivedData.value = response.data.content))
     .catch(error => console.error(error));
 };
 
 const loadInsuranceTransSentData = async () => {
   await axiosInstance
-    .get(`/e_statement/pay_bill_classifications_sent?idNumber=${route.params.slug}&pageSize=100&sortBy=id`)
-    .then(response => (insuranceTransSentData.value = response.data.content.filter((item: InsuranceDataItem) => item.classification === "Insurance")))
+    .get(`/e_statement/pay_bill_classifications_sent?idNumber=${route.params.slug}&classification=Insurance&pageSize=100&sortBy=id`)
+    .then(response => (insuranceTransSentData.value = response.data.content))
     .catch(error => console.error(error));
 };
 
 // API Call: Get Top Insurance Trans Data
 const loadInsuranceTopTransData = async () => {
   await axiosInstance
-    .get(`/e_statement/top_paybill_classifications?idNumber=${route.params.slug}&pageSize=${itemsPerPage.value}&sortBy=id`)
-    .then(response => (insuranceTopTransData.value = response.data.content.filter((item: InsuranceTopTransData) => item.classification === "Insurance")))
+    .get(`/e_statement/top_paybill_classifications?idNumber=${route.params.slug}&classification=Insurance&pageSize=${itemsPerPage.value}&sortBy=id`)
+    .then(response => (insuranceTopTransData.value = response.data.content))
     .catch(error => console.error(error));
 };
 

@@ -64,7 +64,7 @@ const loadRerson2personTransReceivedData = async () => {
 
 const loadRerson2personTransSentData = async () => {
   await axiosInstance
-    .get(`/e_statement/top_customers_sent?idNumber=${route.params.slug}&pageSize=100&sortBy=id`)
+    .get(`/e_statement/top_customers_sent?idNumber=${route.params.slug}&pageSize=${itemsPerPage.value}&sortBy=id`)
     .then(response => (person2personTransSentData.value = response.data.content))
     .catch(error => console.error(error));
 };
@@ -73,11 +73,11 @@ const loadRerson2personTransSentData = async () => {
 const loadPerson2personTopTransData = async () => {
     try {
     // Top Customers Received
-    const customerReceived = await axiosInstance.get(`/e_statement/top_customers_received?idNumber=${route.params.slug}&pageSize=100&sortBy=id`);
+    const customerReceived = await axiosInstance.get(`/e_statement/top_customers_received?idNumber=${route.params.slug}&pageSize=${itemsPerPage.value}&sortBy=id`);
     const received = customerReceived.data.content.map((obj: Person2personTopTransData) => ({ ...obj, transactiontype: "Received" }));
 
     // Top Customers Sent
-    const customerSent = await axiosInstance.get(`/e_statement/top_customers_sent?idNumber=${route.params.slug}&pageSize=100&sortBy=id`);
+    const customerSent = await axiosInstance.get(`/e_statement/top_customers_sent?idNumber=${route.params.slug}&pageSize=${itemsPerPage.value}&sortBy=id`);
     const sent = customerSent.data.content.map((obj: Person2personTopTransData) => ({ ...obj, transactiontype: "Sent" }));
 
     person2personTopTransData.value = [received, ...sent].flat();

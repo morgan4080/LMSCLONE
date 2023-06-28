@@ -2,7 +2,6 @@
 import { onMounted, reactive, ref, watch } from "vue";
 import axiosInstance from "@/services/api/axiosInstance";
 
-// import CustomTable from "@/components/Scoring/Upload/CustomTable.vue";
 import ListingTableData from "@/components/Scoring/All/ListingTableData.vue";
 
 interface Bank {

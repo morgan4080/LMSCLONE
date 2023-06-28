@@ -56,16 +56,16 @@ const kplcTopTransData = ref<KplcTopTransData[]>([])
 // API Call: Get Kplc Transactions Data
 const loadKplcTransSentData = async () => {
   await axiosInstance
-    .get(`/e_statement/pay_bill_classifications_sent?idNumber=${route.params.slug}&pageSize=100&sortBy=id`)
-    .then(response => (kplcTransSentData.value = response.data.content.filter((item: KplcDataItem) => item.classification === "KPLC")))
+    .get(`/e_statement/pay_bill_classifications_sent?idNumber=${route.params.slug}&classification=KPLC&pageSize=100&sortBy=id`)
+    .then(response => (kplcTransSentData.value = response.data.conten))
     .catch(error => console.error(error));
 };
 
 // API Call: Get Top Kplc Trans Data
 const loadKplcTopTransData = async () => {
   await axiosInstance
-    .get(`/e_statement/top_paybill_classifications?idNumber=${route.params.slug}&pageSize=${itemsPerPage.value}&sortBy=id`)
-    .then(response => (kplcTopTransData.value = response.data.content.filter((item: KplcTopTransData) => item.classification === "KPLC")))
+    .get(`/e_statement/top_paybill_classifications?idNumber=${route.params.slug}&classification=KPLC&pageSize=${itemsPerPage.value}&sortBy=id`)
+    .then(response => (kplcTopTransData.value = response.data.content))
     .catch(error => console.error(error));
 };
 

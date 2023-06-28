@@ -57,23 +57,23 @@ const beautyTopTransData = ref<BeautyTopTransData[]>([])
 // API Call: Get Beauty Transactions Data
 const loadBeautyTransSentData = async () => {
   await axiosInstance
-    .get(`/e_statement/pay_bill_classifications_sent?idNumber=${route.params.slug}&pageSize=100&sortBy=id`)
-    .then(response => (beautyTransSentData.value = response.data.content.filter((item: BeautyDataItem) => item.classification === "Beauty")))
+    .get(`/e_statement/pay_bill_classifications_sent?idNumber=${route.params.slug}&classification=Beauty&pageSize=100&sortBy=id`)
+    .then(response => (beautyTransSentData.value = response.data.content))
     .catch(error => console.error(error));
 };
 
 const loadBeautyTransBuyGoodsData = async () => {
   await axiosInstance
-    .get(`/e_statement/buy_goods_classifications_summary?idNumber=${route.params.slug}&pageSize=100&sortBy=id`)
-    .then(response => (beautyTransBuyGoodsData.value = response.data.content.filter((item: BeautyDataItem) => item.classification === "Beauty")))
+    .get(`/e_statement/buy_goods_classifications_summary?idNumber=${route.params.slug}&classification=Beauty&pageSize=100&sortBy=id`)
+    .then(response => (beautyTransBuyGoodsData.value = response.data.content))
     .catch(error => console.error(error));
 };
 
 // API Call: Get Top Beauty Trans Data
 const loadBeautyTopTransData = async () => {
   await axiosInstance
-    .get(`/e_statement/top_paybill_classifications?idNumber=${route.params.slug}&pageSize=${itemsPerPage.value}&sortBy=id`)
-    .then(response => (beautyTopTransData.value = response.data.content.filter((item: BeautyTopTransData) => item.classification === "Beauty")))
+    .get(`/e_statement/top_paybill_classifications?idNumber=${route.params.slug}&classification=Beauty&pageSize=${itemsPerPage.value}&sortBy=id`)
+    .then(response => (beautyTopTransData.value = response.data.content))
     .catch(error => console.error(error));
 };
 

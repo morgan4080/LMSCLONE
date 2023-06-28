@@ -56,23 +56,23 @@ const mfiTopTransData = ref<MfiTopTransData[]>([])
 // API Call: Get Mfi Transactions Data
 const loadMfiTransReceivedData = async () => {
   await axiosInstance
-    .get(`/e_statement/pay_bill_classifications_received?idNumber=${route.params.slug}&pageSize=100&sortBy=id`)
-    .then(response => (mfiTransReceivedData.value = response.data.content.filter((item: MfiDataItem) => item.classification === "MFIs")))
+    .get(`/e_statement/pay_bill_classifications_received?idNumber=${route.params.slug}&classification=MFIs&pageSize=100&sortBy=id`)
+    .then(response => (mfiTransReceivedData.value = response.data.content))
     .catch(error => console.error(error));
 };
 
 const loadMfiTransSentData = async () => {
   await axiosInstance
-    .get(`/e_statement/pay_bill_classifications_sent?idNumber=${route.params.slug}&pageSize=100&sortBy=id`)
-    .then(response => (mfiTransSentData.value = response.data.content.filter((item: MfiDataItem) => item.classification === "MFIs")))
+    .get(`/e_statement/pay_bill_classifications_sent?idNumber=${route.params.slug}&classification=MFIs&pageSize=100&sortBy=id`)
+    .then(response => (mfiTransSentData.value = response.data.content))
     .catch(error => console.error(error));
 };
 
 // API Call: Get Top Mfi Trans Data
 const loadMfiTopTransData = async () => {
   await axiosInstance
-    .get(`/e_statement/top_paybill_classifications?idNumber=${route.params.slug}&pageSize=${itemsPerPage.value}&sortBy=id`)
-    .then(response => (mfiTopTransData.value = response.data.content.filter((item: MfiTopTransData) => item.classification === "MFIs")))
+    .get(`/e_statement/top_paybill_classifications?idNumber=${route.params.slug}&classification=MFIs&pageSize=${itemsPerPage.value}&sortBy=id`)
+    .then(response => (mfiTopTransData.value = response.data.content))
     .catch(error => console.error(error));
 };
 

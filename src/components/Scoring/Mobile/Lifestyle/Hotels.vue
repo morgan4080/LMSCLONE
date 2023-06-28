@@ -56,16 +56,16 @@ const hotelsTopTransData = ref<HotelsTopTransData[]>([])
 // API Call: Get Hotels Transactions Data
 const loadHotelsTransBuyGoodsData = async () => {
   await axiosInstance
-    .get(`/e_statement/buy_goods_classifications_summary?idNumber=${route.params.slug}&pageSize=100&sortBy=id`)
-    .then(response => (hotelsTransBuyGoodsData.value = response.data.content.filter((item: HotelsDataItem) => item.classification === "Hotel")))
+    .get(`/e_statement/buy_goods_classifications_summary?idNumber=${route.params.slug}&classification=Hotel&pageSize=100&sortBy=id`)
+    .then(response => (hotelsTransBuyGoodsData.value = response.data.content))
     .catch(error => console.error(error));
 };
 
 // API Call: Get Top Hotels Trans Data
 const loadHotelsTopTransData = async () => {
   await axiosInstance
-    .get(`/e_statement/top_paybill_classifications?idNumber=${route.params.slug}&pageSize=${itemsPerPage.value}&sortBy=id`)
-    .then(response => (hotelsTopTransData.value = response.data.content.filter((item: HotelsTopTransData) => item.classification === "Hotel")))
+    .get(`/e_statement/top_paybill_classifications?idNumber=${route.params.slug}&classification=Hotel&pageSize=${itemsPerPage.value}&sortBy=id`)
+    .then(response => (hotelsTopTransData.value = response.data.content))
     .catch(error => console.error(error));
 };
 

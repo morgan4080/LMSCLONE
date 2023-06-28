@@ -81,7 +81,7 @@ onMounted(() => {
               Total Received (CR)
             </h1>
             <h3 class="text-subtitle-1 font-weight-regular text-blue">
-              {{ summaryData.total_received_amt }}
+              {{ summaryData.total_send_amt }}
             </h3>
           </v-container>
         </v-card>

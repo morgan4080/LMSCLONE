@@ -507,7 +507,7 @@ const items = ref<
       },
       {
         text: "Scoring",
-        href: "scoring",
+        href: "/lms/scoring",
       },
     ],
   },

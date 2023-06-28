@@ -57,23 +57,23 @@ const saccoTopTransData = ref<SaccoTopTransData[]>([])
 // API Call: Get Sacco Transactions Data
 const loadSaccoTransReceivedData = async () => {
   await axiosInstance
-    .get(`/e_statement/pay_bill_classifications_received?idNumber=${route.params.slug}&pageSize=100&sortBy=id`)
-    .then(response => (saccoTransReceivedData.value = response.data.content.filter((item: SaccoDataItem) => item.classification === "Saccos")))
+    .get(`/e_statement/pay_bill_classifications_received?idNumber=${route.params.slug}&classification=Saccos&pageSize=100&sortBy=id`)
+    .then(response => (saccoTransReceivedData.value = response.data.content))
     .catch(error => console.error(error));
 };
 
 const loadSaccoTransSentData = async () => {
   await axiosInstance
-    .get(`/e_statement/pay_bill_classifications_sent?idNumber=${route.params.slug}&pageSize=100&sortBy=id`)
-    .then(response => (saccoTransSentData.value = response.data.content.filter((item: SaccoDataItem) => item.classification === "Saccos")))
+    .get(`/e_statement/pay_bill_classifications_sent?idNumber=${route.params.slug}&classification=Saccos&pageSize=100&sortBy=id`)
+    .then(response => (saccoTransSentData.value = response.data.content))
     .catch(error => console.error(error));
 };
 
 // API Call: Get Top Sacco Trans Data
 const loadSaccoTopTransData = async () => {
   await axiosInstance
-    .get(`/e_statement/top_paybill_classifications?idNumber=${route.params.slug}&pageSize=${itemsPerPage.value}&sortBy=id`)
-    .then(response => (saccoTopTransData.value = response.data.content.filter((item: SaccoTopTransData) => item.classification === "Sacco")))
+    .get(`/e_statement/top_paybill_classifications?idNumber=${route.params.slug}&classification=Saccos&pageSize=${itemsPerPage.value}&sortBy=id`)
+    .then(response => (saccoTopTransData.value = response.data.content))
     .catch(error => console.error(error));
 };
 

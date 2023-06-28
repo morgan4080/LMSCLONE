@@ -57,23 +57,23 @@ const remittanceTopTransData = ref<RemittanceTopTransData[]>([])
 // API Call: Get Remittance Transactions Data
 const loadRemittanceTransReceivedData = async () => {
   await axiosInstance
-    .get(`/e_statement/pay_bill_classifications_received?idNumber=${route.params.slug}&pageSize=100&sortBy=id`)
-    .then(response => (remittanceTransReceivedData.value = response.data.content.filter((item: RemittanceDataItem) => item.classification === "InternationalRemitance")))
+    .get(`/e_statement/pay_bill_classifications_received?idNumber=${route.params.slug}&classification=InternationalRemitance&pageSize=100&sortBy=id`)
+    .then(response => (remittanceTransReceivedData.value = response.data.content))
     .catch(error => console.error(error));
 };
 
 const loadRemittanceTransSentData = async () => {
   await axiosInstance
-    .get(`/e_statement/pay_bill_classifications_sent?idNumber=${route.params.slug}&pageSize=100&sortBy=id`)
-    .then(response => (remittanceTransSentData.value = response.data.content.filter((item: RemittanceDataItem) => item.classification === "InternationalRemitance")))
+    .get(`/e_statement/pay_bill_classifications_sent?idNumber=${route.params.slug}&classification=InternationalRemitance&pageSize=100&sortBy=id`)
+    .then(response => (remittanceTransSentData.value = response.data.content))
     .catch(error => console.error(error));
 };
 
 // API Call: Get Top Remittance Trans Data
 const loadRemittanceTopTransData = async () => {
   await axiosInstance
-    .get(`/e_statement/top_paybill_classifications?idNumber=${route.params.slug}&pageSize=${itemsPerPage.value}&sortBy=id`)
-    .then(response => (remittanceTopTransData.value = response.data.content.filter((item: RemittanceTopTransData) => item.classification === "InternationalRemitance")))
+    .get(`/e_statement/top_paybill_classifications?idNumber=${route.params.slug}&classification=InternationalRemitance&pageSize=${itemsPerPage.value}&sortBy=id`)
+    .then(response => (remittanceTopTransData.value = response.data.content))
     .catch(error => console.error(error));
 };
 

@@ -1,18 +1,14 @@
 <script setup lang="ts">
-import { ref, computed, watch, toRef, } from "vue";
+import { ref, watch, toRef } from "vue";
 import { storeToRefs } from "pinia";
 import { useUploadStore } from "@/store/uploadStore";
 import axiosInstance from "@/services/api/axiosInstance";
-import {
-  // dateDiffInMonths,
-  // dateFromTimestamp,
-  // timeFromTimestamp,
-} from "@/helpers";
 
-interface Statement { 
+interface Statement {
   id: number;
   doctype: string;
   statementtype: string;
+  statementid: string;
   idnum: string;
   fileName: string;
   customername: string;
@@ -27,28 +23,52 @@ interface Statement {
   uploadDate: string;
 }
 
+interface DataItem {
+  id: number;
+  statement: {
+    doctype: string;
+    bankcode: string;
+    uniqueId: string;
+  };
+  fileName: string;
+  customer: {
+    idnum: string;
+    uploaderName?: string;
+    uploaderPhone?: string;
+  };
+  status: string;
+  uploaderName?: string;
+  statementPeriod?: string;
+  fileUrl: string;
+  filePath?: string;
+  password?: string;
+  uploadDate: string;
+}
+
 const props = defineProps<{
   headers: { title: string; key: string; align: string; sortable: boolean }[];
   params: string;
 }>();
 const loading = ref(true);
 const itemsPerPage = ref(5);
-const totalItems = computed(() => tableData.value.length);
+const totalItems = ref(0);
 const headers = toRef(props, "headers");
 const params = toRef(props, "params");
 
 const { setUploadFalse } = useUploadStore();
 const { upload } = storeToRefs(useUploadStore());
 
+const apiData = ref<DataItem[]>([]);
+
 // Transform the API Data
-const apiData = ref<Statement[]>([]);
-const tableData = computed(() =>
-  apiData.value.map(item => {
+const transformData = (payload: Statement[]) =>
+  payload.map(item => {
     return {
       id: item.id,
       statement: {
         doctype: item.doctype,
         bankcode: item.bankcode,
+        uniqueId: item.statementid,
       },
       fileName: item.fileName,
       customer: {
@@ -64,8 +84,26 @@ const tableData = computed(() =>
       password: item.password,
       uploadDate: item.uploadDate,
     };
-  })
-);
+  });
+
+// API Call: Query statement status
+const queryStatementStatus = async (
+  id: number,
+  score: string,
+  uniqueId: string
+) => {
+  try {
+    const response = await axiosInstance.post(
+      `/e_statement/query_status?scoreType=${score}&uniqueId=${uniqueId}`
+    );
+    const element = apiData.value.find(item => item.id === id);
+    if (element) {
+      element.status = response.data.data.state_name;
+    }
+  } catch (error) {
+    console.error(error);
+  }
+};
 
 // API Call: Get recently uploaded statements
 const loadData = async (filters?: string) => {
@@ -73,14 +111,16 @@ const loadData = async (filters?: string) => {
   let url = `/e_statement/get_uploaded_statements?pageSize=${itemsPerPage.value}&sortBy=id`;
   if (filters) url += filters;
 
-  await axiosInstance
-    .get(url)
-    .then(response => {
-      apiData.value = response.data.content;
-      setUploadFalse();
-    })
-    .catch(error => console.error(error))
-    .finally(() => (loading.value = false));
+  try {
+    const response = await axiosInstance.get(url);
+    apiData.value = transformData(response.data.content);
+    totalItems.value = response.data.totalElements;
+    setUploadFalse();
+  } catch (error) {
+    console.error(error);
+  } finally {
+    loading.value = false;
+  }
 };
 watch(params, () => {
   loadData(params.value);
@@ -97,7 +137,7 @@ watch(upload, val => {
     v-model:items-per-page="itemsPerPage"
     :headers="headers"
     :items-length="totalItems"
-    :items="tableData"
+    :items="apiData"
     :loading="loading"
     loading-text="Loading...Please Wait"
     item-value="name"
@@ -135,7 +175,7 @@ watch(upload, val => {
       <span
         class="px-3 py-1 rounded"
         :class="{
-          'bg-red-lighten-5 text-red': item.columns.status === 'failed',
+          'bg-red-lighten-5 text-red': item.columns.status === 'Failed',
           'bg-green-lighten-5 text-green': item.columns.status === 'Completed',
           'bg-blue-lighten-5 text-blue': item.columns.status === 'Processing',
           'bg-yellow-lighten-5 text-yellow-darken-3':
@@ -146,13 +186,10 @@ watch(upload, val => {
     </template>
     <template v-slot:[`item.duration`]="{ item }">
       <span v-if="item"></span>
-      <!-- {{ dateDiffInMonths("2023-01-12", item.columns.uploadDate) }} -->
       Months
     </template>
     <template v-slot:[`item.uploadDate`]="{ item }">
       <p>{{ item.columns.uploadDate }}</p>
-      <!-- <p>{{ dateFromTimestamp(item.columns.uploadDate) }}</p> -->
-      <!-- <p>{{ timeFromTimestamp(item.columns.uploadDate) }}</p> -->
     </template>
     <template v-slot:[`item.customer`]="{ item }">
       <p>{{ item.columns.customer.uploaderName }}</p>
@@ -162,15 +199,35 @@ watch(upload, val => {
       <div class="justify-end d-flex">
         <div
           class="px-1 border rounded hover-cursor-pointer"
-          @click="
-            $router.push(`/scoring/mobile/${item.columns.customer.idnum}`)
+          @click="  item.columns.status?.toLowerCase() === 'completed' ?
+            $router.push(`/scoring/${item.columns.statement.doctype !== 'MOBILE' ? 'bank' : 'mobile'}/${item.columns.customer.idnum}`) : ''
           "
         >
           <v-icon
+          :color="
+              item.columns.status?.toLowerCase() === 'completed'
+                ? 'blue'
+                : 'blue-grey-lighten-4'
+            "
             size="x-small"
             icon="mdi:mdi-eye-outline"
           ></v-icon>
-        </div>        
+        </div>
+        <div
+          @click.stop="queryStatementStatus(item.columns.id, item.columns.statement.bankcode, item.columns.statement.uniqueId)"
+          class="px-1 ml-1 border rounded hover-cursor-pointer"
+        >
+          <v-icon
+            :color="
+              item.columns.status?.toLowerCase() === 'processing'
+                ? 'orange'
+                : 'grey-lighten-4'
+            "
+            size="x-small"
+            icon="mdi:mdi-sync"
+            class=""
+          ></v-icon>
+        </div>
       </div>
     </template>
   </VDataTableServer>

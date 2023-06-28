@@ -55,16 +55,16 @@ const dstvTopTransData = ref<DstvTopTransData[]>([])
 
 const loadDstvTransSentData = async () => {
   await axiosInstance
-    .get(`/e_statement/pay_bill_classifications_sent?idNumber=${route.params.slug}&pageSize=100&sortBy=id`)
-    .then(response => (dstvTransSentData.value = response.data.content.filter((item: DstvDataItem) => item.classification === "DstvOrGotv")))
+    .get(`/e_statement/pay_bill_classifications_sent?idNumber=${route.params.slug}&classification=DstvOrGotv&pageSize=100&sortBy=id`)
+    .then(response => (dstvTransSentData.value = response.data.content))
     .catch(error => console.error(error));
 };
 
 // API Call: Get Top Dstv Trans Data
 const loadDstvTopTransData = async () => {
   await axiosInstance
-    .get(`/e_statement/top_paybill_classifications?idNumber=${route.params.slug}&pageSize=${itemsPerPage.value}&sortBy=id`)
-    .then(response => (dstvTopTransData.value = response.data.content.filter((item: DstvTopTransData) => item.classification === "DstvOrGotv")))
+    .get(`/e_statement/top_paybill_classifications?idNumber=${route.params.slug}&classification=DstvOrGotv&pageSize=${itemsPerPage.value}&sortBy=id`)
+    .then(response => (dstvTopTransData.value = response.data.content))
     .catch(error => console.error(error));
 };
 

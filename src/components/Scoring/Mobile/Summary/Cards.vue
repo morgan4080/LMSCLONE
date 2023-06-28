@@ -316,14 +316,14 @@ onMounted(() => {
                     <h1 class="text-caption font-weight-medium">
                       Gross Loanable (R)
                     </h1>
-                    <h1 class="text-caption">KES -</h1>
+                    <h1 class="text-caption">KES {{ longTermScore[0]?.loanable_highest }}</h1>
                   </div>
                   <v-divider class="my-2"></v-divider>
                   <div class="mt-4 d-flex justify-space-between">
                     <h1 class="text-caption font-weight-medium">
                       Net Loanable (R)
                     </h1>
-                    <h1 class="text-caption">KES -</h1>
+                    <h1 class="text-caption">KES {{ longTermScore[0]?.net_loanable_highest }}</h1>
                   </div>
                   <v-divider class="my-2"></v-divider>
                 </div>
