@@ -75,16 +75,17 @@ const loadBanks = async () => {
 
 const handleFile = async (file: File) => {
   if (file !== null) {
+    // check if file requires a password an only open pop up if that is the case
     popupOpen.value = true;
     form_upload.value.file = file;
   }
 };
 
 const addToProgress = () => {
-  popupOpen.value = false
+  popupOpen.value = false;
   uploads.value.unshift(form_upload.value);
   form_upload.value = { type: null, code: null, file: null, password: null };
-}
+};
 
 onMounted(() => {
   loadBanks();
@@ -107,8 +108,8 @@ watch(
 
 <template>
   <v-container fluid>
-  <!-- <p>{{ form_upload }}</p> -->
-  <!-- <p>{{ uploads }}</p> -->
+    <!-- <p>{{ form_upload }}</p> -->
+    <!-- <p>{{ uploads }}</p> -->
     <v-responsive>
       <v-row>
         <v-col class="mr-2 bg-white rounded">
@@ -251,7 +252,7 @@ watch(
           <v-container fluid>
             <h1 class="text-h6 font-weight-regular">Document Password</h1>
             <h2 class="text-caption text-grey-darken-2 font-weight-regular">
-              Enter Document Password (Leave Empty and Click Submit If None)
+              Enter Document Password
             </h2>
             <div>
               <v-text-field
