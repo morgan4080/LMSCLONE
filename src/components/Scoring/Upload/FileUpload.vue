@@ -140,7 +140,8 @@ const cancelUpload = () => controller.abort();
         class="my-1 d-flex"
         v-if="uploading"
       >
-        <div
+        <button
+          type="button"
           class="border rounded px-1 ml-1"
           @click="cancelUpload"
         >
@@ -149,13 +150,14 @@ const cancelUpload = () => controller.abort();
             icon="mdi:mdi-close"
             class=""
           ></v-icon>
-        </div>
+        </button>
       </div>
       <div
         class="my-1 d-flex"
         v-if="uploaded"
       >
-        <div
+        <button
+          type="button"
           class="border rounded px-1"
           @click="$router.push(`/scoring/mobile/1`)"
         >
@@ -164,9 +166,10 @@ const cancelUpload = () => controller.abort();
             icon="mdi:mdi-eye-outline"
             class=""
           ></v-icon>
-        </div>
+        </button>
       </div>
-      <div
+      <button
+        type="button"
         class="my-1 d-flex"
         @click="retryUpload"
         v-if="confirmed && !uploading && !uploaded"
@@ -177,7 +180,7 @@ const cancelUpload = () => controller.abort();
           icon="mdi:mdi-reload"
           class=""
         ></v-icon>
-      </div>
+      </button>
     </div>
     <v-progress-linear
       v-if="uploading"
