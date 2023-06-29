@@ -1,30 +1,19 @@
 <script setup lang="ts">
-import { ref, computed } from "vue";
+import { ref, computed, ComputedRef } from "vue";
 import axios from "axios";
 import axiosInstance from "@/services/api/axiosInstance";
 import { useUploadStore } from "@/store/uploadStore";
 
-interface Statement {
-  document_type: string;
-  document_code: string;
-  document_file: File | null;
-  document_password: string;
-}
-
 const emit = defineEmits(["clear"]);
 
-const props = defineProps({
+const props = defineProps<{
   statement: {
-    type: Object as () => Statement,
-    default: () => ({
-      document_type: "",
-      document_code: "",
-      document_file: null,
-      document_password: "",
-    }),
-    required: true,
-  },
-});
+    document_type: string;
+    document_code: string;
+    document_file: File | null;
+    document_password: string;
+  };
+}>();
 
 const uploadStore = useUploadStore();
 
@@ -34,8 +23,8 @@ const uploaded = ref(false);
 const message = ref("");
 const timing = ref<number | undefined>();
 const progress = ref<number | undefined>();
-const progressbar = computed(() =>
-  progress.value !== undefined ? Math.round(100 * progress.value) : undefined
+const progressbar: ComputedRef<number> = computed(() =>
+  progress.value !== undefined ? Math.round(100 * progress.value) : 0
 );
 
 const controller = new AbortController();
@@ -194,7 +183,7 @@ const cancelUpload = () => controller.abort();
       v-if="uploading"
       class="text-caption mt-1"
     >
-      {{ timing !== undefined ? Math.round(1 * timing) : 0 }} sec left
+      {{ timing !== undefined ? Math.round(timing) : 0 }} sec left
     </p>
     <p
       v-if="!uploaded"
