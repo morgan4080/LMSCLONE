@@ -8,7 +8,7 @@ interface Statement {
   document_type: string;
   document_code: string;
   document_file: File | null;
-  document_password: string ;
+  document_password: string;
 }
 
 const emit = defineEmits(["clear"]);
@@ -102,13 +102,16 @@ const cancelUpload = () => controller.abort();
 <template>
   <v-list-item>
     <div class="d-flex justify-space-between">
-      {{ props.statement.document_file?.name }}
+      <p style="max-width: 300px; word-wrap: break-word">
+        {{ props.statement.document_file?.name }}
+      </p>
       <div
         class="my-1 d-flex align-baseline"
         v-if="!confirmed"
       >
         <p class="mx-4 text-caption">Confirm File?</p>
-        <div
+        <button
+          type="button"
           class="border rounded px-1"
           v-if="!uploading"
           @click="confirmUpload"
@@ -119,8 +122,9 @@ const cancelUpload = () => controller.abort();
             icon="mdi:mdi-check"
             class=""
           ></v-icon>
-        </div>
-        <div
+        </button>
+        <button
+          type="button"
           class="border rounded px-1 ml-1"
           @click="clearUpload"
         >
@@ -130,7 +134,7 @@ const cancelUpload = () => controller.abort();
             icon="mdi:mdi-close"
             class=""
           ></v-icon>
-        </div>
+        </button>
       </div>
       <div
         class="my-1 d-flex"
