@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { onMounted, watch, ref } from "vue";
 import axiosInstance from "@/services/api/axiosInstance";
-
 import FileUpload from "@/components/Scoring/Upload/FileUpload.vue";
-
+import { useUploadStore } from "@/store/uploadStore";
+const { checkForPassword } = useUploadStore();
 interface Statement {
   title: string;
   value: string;
@@ -75,9 +75,24 @@ const loadBanks = async () => {
 
 const handleFile = async (file: File) => {
   if (file !== null) {
-    // check if file requires a password an only open pop up if that is the case
-    popupOpen.value = true;
-    form_upload.value.file = file;
+    try {
+      // check if file requires a password an only open pop up if that is the case
+      const response = await checkForPassword(file);
+      popupOpen.value = response.passwordRequired;
+      form_upload.value.file = file;
+    } catch (error: any) {
+      if (error.response) {
+        // The request was made and the server responded with a status code
+        console.error("Response status:", error.response.status);
+        console.error("Response data:", error.response.data);
+      } else if (error.request) {
+        // The request was made but no response was received
+        console.error("No response received:", error.request);
+      } else {
+        // Something happened in setting up the request
+        console.error("Error:", error.message);
+      }
+    }
   }
 };
 
