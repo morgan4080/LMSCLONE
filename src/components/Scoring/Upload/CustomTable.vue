@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, watch, toRef } from "vue";
 import { storeToRefs } from "pinia";
+import axios from "axios";
 import { useUploadStore } from "@/store/uploadStore";
 import axiosInstance from "@/services/api/axiosInstance";
 
@@ -86,16 +87,25 @@ const transformData = (payload: Statement[]) =>
     };
   });
 
+const baseUrl: string =
+  "https://staging-lending.presta.co.ke/bank_scoring/api/v1";
+
 // API Call: Query statement status
 const queryStatementStatus = async (
   id: number,
   score: string,
-  uniqueId: string
+  uniqueId: string,
+  type: string
 ) => {
   try {
-    const response = await axiosInstance.post(
-      `/e_statement/query_status?scoreType=${score}&uniqueId=${uniqueId}`
-    );
+    const response =
+      type === "MOBILE"
+        ? await axiosInstance.post(
+            `/e_statement/query_status?scoreType=${score}&uniqueId=${uniqueId}`
+          )
+        : await axios.post(
+            `${baseUrl}/bank_analysis/query_status?scoreType=${score}&uniqueId=${uniqueId}`
+          );
     const element = apiData.value.find(item => item.id === id);
     if (element) {
       element.status = response.data.data.state_name;
@@ -199,12 +209,20 @@ watch(upload, val => {
       <div class="justify-end d-flex">
         <div
           class="px-1 border rounded hover-cursor-pointer"
-          @click="  item.columns.status?.toLowerCase() === 'completed' ?
-            $router.push(`/scoring/${item.columns.statement.doctype !== 'MOBILE' ? 'bank' : 'mobile'}/${item.columns.customer.idnum}`) : ''
+          @click="
+            item.columns.status?.toLowerCase() === 'completed'
+              ? $router.push(
+                  `/scoring/${
+                    item.columns.statement.doctype !== 'MOBILE'
+                      ? 'bank'
+                      : 'mobile'
+                  }/${item.columns.customer.idnum}`
+                )
+              : ''
           "
         >
           <v-icon
-          :color="
+            :color="
               item.columns.status?.toLowerCase() === 'completed'
                 ? 'blue'
                 : 'blue-grey-lighten-4'
@@ -214,7 +232,14 @@ watch(upload, val => {
           ></v-icon>
         </div>
         <div
-          @click.stop="queryStatementStatus(item.columns.id, item.columns.statement.bankcode, item.columns.statement.uniqueId)"
+          @click.stop="
+            queryStatementStatus(
+              item.columns.id,
+              item.columns.statement.bankcode,
+              item.columns.statement.uniqueId,
+              item.columns.statement.doctype
+            )
+          "
           class="px-1 ml-1 border rounded hover-cursor-pointer"
         >
           <v-icon

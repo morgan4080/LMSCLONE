@@ -2,6 +2,7 @@
 import { ref, computed, onMounted } from "vue";
 import { useRoute } from "vue-router";
 import axiosInstance from "@/services/api/axiosInstance";
+import formatter from "@/helpers/currency";
 
 interface PaybillDataItem {
   count: number;
@@ -148,14 +149,14 @@ onMounted(() => {
                 <v-divider class="my-2" />
                 <v-row class="justify-space-between d-flex">
                   <v-col class="font-weight-medium">Highest</v-col>
-                  <v-col>{{ paybillTransData[0]?.highest }}</v-col>
-                  <v-col>{{ paybillTransData[1]?.highest }}</v-col>
+                  <v-col>{{ formatter(paybillTransData[0]?.highest) }}</v-col>
+                  <v-col>{{ formatter(paybillTransData[1]?.highest) }}</v-col>
                 </v-row>
                 <v-divider class="my-2" />
                 <v-row class="justify-space-between d-flex">
                   <v-col class="font-weight-medium">Lowest</v-col>
-                  <v-col>{{ paybillTransData[0]?.lowest }}</v-col>
-                  <v-col>{{ paybillTransData[1]?.lowest }}</v-col>
+                  <v-col>{{ formatter(paybillTransData[0]?.lowest) }}</v-col>
+                  <v-col>{{ formatter(paybillTransData[1]?.lowest) }}</v-col>
                 </v-row>
                 <v-divider
                   class="my-3"
@@ -163,8 +164,8 @@ onMounted(() => {
                 />
                 <v-row class="font-weight-bold justify-space-between d-flex">
                   <v-col>Total</v-col>
-                  <v-col>{{ paybillTransData[0]?.total }}</v-col>
-                  <v-col>{{ paybillTransData[1]?.total }}</v-col>
+                  <v-col>{{ formatter(paybillTransData[0]?.total) }}</v-col>
+                  <v-col>{{ formatter(paybillTransData[1]?.total) }}</v-col>
                 </v-row>
               </div>
             </v-container>
@@ -203,14 +204,14 @@ onMounted(() => {
                 <v-divider class="my-2" />
                 <v-row class="justify-space-between d-flex">
                   <v-col class="font-weight-medium">Highest</v-col>
-                  <v-col>{{ buyGoodsTransData[0]?.highest }}</v-col>
-                  <v-col>{{ buyGoodsTransData[1]?.highest }}</v-col>
+                  <v-col>{{ formatter(buyGoodsTransData[0]?.highest) }}</v-col>
+                  <v-col>{{ formatter(buyGoodsTransData[1]?.highest) }}</v-col>
                 </v-row>
                 <v-divider class="my-2" />
                 <v-row class="justify-space-between d-flex">
                   <v-col class="font-weight-medium">Lowest</v-col>
-                  <v-col>{{ buyGoodsTransData[0]?.lowest }}</v-col>
-                  <v-col>{{ buyGoodsTransData[1]?.lowest }}</v-col>
+                  <v-col>{{ formatter(buyGoodsTransData[0]?.lowest) }}</v-col>
+                  <v-col>{{ formatter(buyGoodsTransData[1]?.lowest) }}</v-col>
                 </v-row>
                 <v-divider
                   class="my-3"
@@ -218,8 +219,8 @@ onMounted(() => {
                 />
                 <v-row class="font-weight-bold justify-space-between d-flex">
                   <v-col>Total</v-col>
-                  <v-col>{{ buyGoodsTransData[0]?.total }}</v-col>
-                  <v-col>{{ buyGoodsTransData[1]?.total }}</v-col>
+                  <v-col>{{ formatter(buyGoodsTransData[0]?.total) }}</v-col>
+                  <v-col>{{ formatter(buyGoodsTransData[1]?.total) }}</v-col>
                 </v-row>
               </div>
             </v-container>
@@ -252,7 +253,10 @@ onMounted(() => {
               loading-text="Loading...Please Wait"
               item-value="name"
               @update:options="loadTopTransData()"
-            ></v-data-table-server>
+            >
+            <template v-slot:[`item.highest`]="{ item }"><span>{{ formatter(item.columns.highest) }}</span></template>
+            <template v-slot:[`item.total`]="{ item }"><span>{{ formatter(item.columns.total) }}</span></template>
+            </v-data-table-server>
           </v-card>
         </v-container>
       </v-row>

@@ -2,6 +2,7 @@
 import { ref, onMounted } from "vue";
 import { useRoute } from "vue-router"; 
 import axiosInstance from "@/services/api/axiosInstance";
+import formatter from "@/helpers/currency"
 
 interface CustomerInformation {
   customer_names: string;
@@ -250,7 +251,7 @@ onMounted(() => {
                       Loanable (R)
                     </h1>
                     <h1 class="text-caption">
-                      KES {{ mobileScore[0]?.loanable }}
+                      KES {{ formatter(mobileScore[0]?.loanable) }}
                     </h1>
                   </div>
                   <v-divider class="my-2"></v-divider>
@@ -308,7 +309,7 @@ onMounted(() => {
                   <div class="mt-4 d-flex justify-space-between">
                     <h1 class="text-caption font-weight-medium">Highest</h1>
                     <h1 class="text-caption">
-                      KES {{ longTermScore[0]?.highest }}
+                      KES {{ formatter(longTermScore[0]?.highest) }}
                     </h1>
                   </div>
                   <v-divider class="my-2"></v-divider>
@@ -316,14 +317,14 @@ onMounted(() => {
                     <h1 class="text-caption font-weight-medium">
                       Gross Loanable (R)
                     </h1>
-                    <h1 class="text-caption">KES {{ longTermScore[0]?.loanable_highest }}</h1>
+                    <h1 class="text-caption">KES {{ formatter(longTermScore[0]?.loanable_highest) }}</h1>
                   </div>
                   <v-divider class="my-2"></v-divider>
                   <div class="mt-4 d-flex justify-space-between">
                     <h1 class="text-caption font-weight-medium">
                       Net Loanable (R)
                     </h1>
-                    <h1 class="text-caption">KES {{ longTermScore[0]?.net_loanable_highest }}</h1>
+                    <h1 class="text-caption">KES {{ formatter(longTermScore[0]?.net_loanable_highest) }}</h1>
                   </div>
                   <v-divider class="my-2"></v-divider>
                 </div>

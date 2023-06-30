@@ -2,6 +2,7 @@
 import { ref, computed, } from "vue";
 import { useRoute } from "vue-router";
 import axios from 'axios';
+import formatter from "@/helpers/currency";
 
 interface MonthlyBreakdown {
   month: string;
@@ -70,7 +71,7 @@ const loadMonthlyBreakdown = async () => {
 
           <div class="my-10">
             <v-data-table-server
-              class="text-caption px-4"
+              class="px-4 text-caption"
               :headers="headers"
               :items-length="totalItems"
               :items="monthlyBreakdown"
@@ -78,7 +79,12 @@ const loadMonthlyBreakdown = async () => {
               loading-text="Loading...Please Wait"
               item-value="name"
               @update:options="loadMonthlyBreakdown()"
-            ><template v-slot:bottom> </template></v-data-table-server>
+            >
+            <template v-slot:[`item.debits`]="{ item }"><span>{{ formatter(item.columns.debits) }}</span></template>
+            <template v-slot:[`item.credits`]="{ item }"><span>{{ formatter(item.columns.credits) }}</span></template>
+            <template v-slot:[`item.closing`]="{ item }"><span>{{ formatter(item.columns.closing) }}</span></template>
+            <template v-slot:bottom> </template>
+            </v-data-table-server>
           </div>
         </v-container>
       </div>

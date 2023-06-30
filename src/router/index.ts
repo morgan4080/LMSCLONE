@@ -23,7 +23,7 @@ const routes = [
       {
         path: "/scoring/all",
         name: "allScoring",
-        component: () => import("@/views/Scoring/All.vue"),
+        component: () => import("@/views/Scoring/All.vue"),  
       },
       {
         path: "/scoring/mobile/:slug",

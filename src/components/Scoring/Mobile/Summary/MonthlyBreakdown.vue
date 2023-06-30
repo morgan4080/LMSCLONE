@@ -2,8 +2,7 @@
 import { ref, computed } from "vue";
 import { useRoute } from "vue-router";
 import axiosInstance from "@/services/api/axiosInstance";
-
-const options = ["Option 1", "Option 2", "Option 3", "Option 4"];
+import formatter from "@/helpers/currency";
 
 interface MonthlyData {
   month: string;
@@ -65,14 +64,14 @@ const loadMonthlyBreakdown = async () => {
           <div>
             <h1 class="text-h6 font-weight-regular">Monthly Breakdown</h1>
             <h2 class="text-caption text-grey-darken-2 font-weight-regular">
-              Summary Of Upcoming Collections
+              Summary Of Upcoming Collections 
             </h2>
           </div>
 
           <div class="my-10">
             <VDataTableServer
               v-model:items-per-page="itemsPerPage"
-              class="text-caption px-4"
+              class="px-4 text-caption"
               :headers="headers"
               :items-length="totalItems"
               :items="tableData"
@@ -81,6 +80,9 @@ const loadMonthlyBreakdown = async () => {
               loading-text="Loading...Please Wait"
               @update:options="loadMonthlyBreakdown"
             >
+            <template v-slot:[`item.debits`]="{ item }"><span>{{ formatter(item.columns.debits) }}</span></template>
+            <template v-slot:[`item.credits`]="{ item }"><span>{{ formatter(item.columns.credits) }}</span></template>
+            <template v-slot:[`item.closing`]="{ item }"><span>{{ formatter(item.columns.closing) }}</span></template>
               <template v-slot:bottom> </template>
             </VDataTableServer>
           </div>
