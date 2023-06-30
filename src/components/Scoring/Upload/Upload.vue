@@ -47,13 +47,20 @@ const dragging = ref(false);
 const popupOpen = ref(false);
 
 function onDropped(event: Event) {
+  event.preventDefault();
   if (form_upload.value.code !== null) {
     dragging.value = false;
-    let files = [...event.dataTransfer.items]
-      .filter(item => item.kind === "file")
-      .map(item => item.getAsFile());
+    let dragItems: DataTransferItemList | undefined = (event as DragEvent)
+      .dataTransfer?.items;
+    if (dragItems) {
+      let files = [...dragItems]
+        .filter(item => item.kind === "file")
+        .map(item => item.getAsFile());
 
-    files.forEach(file => handleFile(file));
+      files.forEach(file => {
+        if (file) handleFile(file);
+      });
+    }
   } else {
     dragging.value = false;
   }
@@ -74,24 +81,22 @@ const loadBanks = async () => {
 };
 
 const handleFile = async (file: File) => {
-  if (file !== null) {
-    try {
-      // check if file requires a password an only open pop up if that is the case
-      const response = await checkForPassword(file);
-      popupOpen.value = response.passwordRequired;
-      form_upload.value.file = file;
-    } catch (error: any) {
-      if (error.response) {
-        // The request was made and the server responded with a status code
-        console.error("Response status:", error.response.status);
-        console.error("Response data:", error.response.data);
-      } else if (error.request) {
-        // The request was made but no response was received
-        console.error("No response received:", error.request);
-      } else {
-        // Something happened in setting up the request
-        console.error("Error:", error.message);
-      }
+  try {
+    // check if file requires a password an only open pop up if that is the case
+    const response = await checkForPassword(file);
+    popupOpen.value = response.passwordRequired;
+    form_upload.value.file = file;
+  } catch (error: any) {
+    if (error.response) {
+      // The request was made and the server responded with a status code
+      console.error("Response status:", error.response.status);
+      console.error("Response data:", error.response.data);
+    } else if (error.request) {
+      // The request was made but no response was received
+      console.error("No response received:", error.request);
+    } else {
+      // Something happened in setting up the request
+      console.error("Error:", error.message);
     }
   }
 };
@@ -107,8 +112,11 @@ onMounted(() => {
   document
     .getElementById("file-input")!
     .addEventListener("change", handleFiles, false);
-  function handleFiles() {
-    handleFile(this.files[0]);
+  function handleFiles(e: Event) {
+    let targetElement = e.target as HTMLInputElement;
+    if (targetElement && targetElement.files) {
+      handleFile(targetElement.files[0]);
+    }
   }
 });
 
@@ -243,10 +251,10 @@ watch(
                 >
                   <FileUpload
                     :statement="{
-                      document_type: upload.type,
-                      document_code: upload.code,
-                      document_file: upload.file,
-                      document_password: upload.password,
+                      document_type: `${upload.type}`,
+                      document_code: `${upload.code}`,
+                      document_file: upload.file as File,
+                      document_password: `${upload.password}`,
                     }"
                     @clear="uploads.splice(i, 1)"
                   ></FileUpload>
@@ -298,6 +306,7 @@ watch(
 .dashed {
   border-style: dashed !important;
 }
+/*
 .border-gray {
   border-color: #e4e4e4 !important;
 }
@@ -305,6 +314,7 @@ watch(
 .border-blue {
   border-color: #286efa !important;
 }
+*/
 
 .text-gray {
   color: #828282;
