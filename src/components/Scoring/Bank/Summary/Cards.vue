@@ -2,6 +2,7 @@
 import { ref, onMounted } from "vue";
 import { useRoute } from "vue-router";
 import axios from 'axios';
+import formatter from "@/helpers/currency";
 
 interface AccountInfo {
   accountType: string;
@@ -103,16 +104,16 @@ onMounted(() => {
           <v-container>
             <v-row class="mx-2">
               <v-col cols="auto">
-                <h3 class="text-grey text-body-2 py-1">Customer</h3>
-                <h3 class="text-grey text-body-2 py-1">File Name</h3>
-                <h3 class="text-grey text-body-2 py-1">Phone</h3>
-                <h3 class="text-grey text-body-2 py-1">Email</h3>
+                <h3 class="py-1 text-grey text-body-2">Customer</h3>
+                <h3 class="py-1 text-grey text-body-2">File Name</h3>
+                <h3 class="py-1 text-grey text-body-2">Phone</h3>
+                <h3 class="py-1 text-grey text-body-2">Email</h3>
               </v-col>
               <v-col
-                ><h3 class="text-body-2 py-1 text-blue">{{ customerInformation.accountInfo[0]?.accountOwner }}</h3>
-                <h3 class="text-body-2 py-1"> - </h3>
-                <h3 class="text-body-2 py-1">{{ customerInformation.accountInfo[0]?.customerPhoneNumber }}</h3>
-                <h3 class="text-body-2 py-1">{{ customerInformation.accountInfo[0]?.accountEmail }}</h3></v-col
+                ><h3 class="py-1 text-body-2 text-blue">{{ customerInformation.accountInfo[0]?.accountOwner }}</h3>
+                <h3 class="py-1 text-body-2"> - </h3>
+                <h3 class="py-1 text-body-2">{{ customerInformation.accountInfo[0]?.customerPhoneNumber }}</h3>
+                <h3 class="py-1 text-body-2">{{ customerInformation.accountInfo[0]?.accountEmail }}</h3></v-col
               >
             </v-row>
           </v-container>
@@ -127,16 +128,16 @@ onMounted(() => {
           <v-container>
             <v-row class="mx-2">
               <v-col cols="auto">
-                <h3 class="text-grey text-body-2 py-1">Bank</h3>
-                <h3 class="text-grey text-body-2 py-1">Acc Type</h3>
-                <h3 class="text-grey text-body-2 py-1">Acc No</h3>
-                <h3 class="text-grey text-body-2 py-1">Currency</h3>
+                <h3 class="py-1 text-grey text-body-2">Bank</h3>
+                <h3 class="py-1 text-grey text-body-2">Acc Type</h3>
+                <h3 class="py-1 text-grey text-body-2">Acc No</h3>
+                <h3 class="py-1 text-grey text-body-2">Currency</h3>
               </v-col>
               <v-col
-                ><h3 class="text-body-2 py-1 text-blue">{{ customerInformation.personalInfo[0]?.bank_name }}</h3>
-                <h3 class="text-body-2 py-1">{{ customerInformation.accountInfo[0]?.accountType }}</h3>
-                <h3 class="text-body-2 py-1">{{ customerInformation.accountInfo[0]?.accountNo }}</h3>
-                <h3 class="text-body-2 py-1">{{ customerInformation.accountInfo[0]?.currency }}</h3></v-col
+                ><h3 class="py-1 text-body-2 text-blue">{{ customerInformation.personalInfo[0]?.bank_name }}</h3>
+                <h3 class="py-1 text-body-2">{{ customerInformation.accountInfo[0]?.accountType }}</h3>
+                <h3 class="py-1 text-body-2">{{ customerInformation.accountInfo[0]?.accountNo }}</h3>
+                <h3 class="py-1 text-body-2">{{ customerInformation.accountInfo[0]?.currency }}</h3></v-col
               >
             </v-row>
           </v-container>
@@ -151,18 +152,18 @@ onMounted(() => {
           <v-container>
             <v-row class="mx-2">
               <v-col cols="auto">
-                <h3 class="text-grey text-body-2 py-1">Period</h3>
-                <h3 class="text-grey text-body-2 py-1">Duration</h3>
-                <h3 class="text-grey text-body-2 py-1">Received On</h3>
-                <h3 class="text-grey text-body-2 py-1">Submission Age</h3>
+                <h3 class="py-1 text-grey text-body-2">Period</h3>
+                <h3 class="py-1 text-grey text-body-2">Duration</h3>
+                <h3 class="py-1 text-grey text-body-2">Received On</h3>
+                <h3 class="py-1 text-grey text-body-2">Submission Age</h3>
               </v-col>
               <v-col
-                ><h3 class="text-body-2 py-1">{{ customerInformation.accountInfo[0]?.statementDate }}</h3>
-                <h3 class="text-body-2 py-1">{{ customerInformation.personalInfo[0]?.duration }} Months</h3>
-                <h3 class="text-body-2 py-1 text-blue">
+                ><h3 class="py-1 text-body-2">{{ customerInformation.accountInfo[0]?.statementDate }}</h3>
+                <h3 class="py-1 text-body-2">{{ customerInformation.personalInfo[0]?.duration }} Months</h3>
+                <h3 class="py-1 text-body-2 text-blue">
                   {{ customerInformation.personalInfo[0]?.timestamp }}
                 </h3>
-                <h3 class="text-body-2 py-1"> - </h3>
+                <h3 class="py-1 text-body-2"> - </h3>
               </v-col>
             </v-row>
           </v-container>
@@ -190,7 +191,7 @@ onMounted(() => {
               </div>
 
               <div class="my-10">
-                <div class="d-flex justify-space-between mt-4">
+                <div class="mt-4 d-flex justify-space-between">
                   <h1 class="text-caption font-weight-bold">Title</h1>
                   <h1 class="text-caption font-weight-bold">Amount</h1>
                 </div>
@@ -198,25 +199,25 @@ onMounted(() => {
                   class="my-2"
                   :thickness="3"
                 ></v-divider>
-                <div class="d-flex justify-space-between mt-4">
+                <div class="mt-4 d-flex justify-space-between">
                   <h1 class="text-caption font-weight-bold">
                     Gross Monthly Income
                   </h1>
-                  <h1 class="text-caption">{{ analysisInformation[0]?.gross_monthly_income }}</h1>
+                  <h1 class="text-caption">{{ formatter(analysisInformation[0]?.gross_monthly_income) }}</h1>
                 </div>
                 <v-divider class="my-2"></v-divider>
-                <div class="d-flex justify-space-between mt-4">
+                <div class="mt-4 d-flex justify-space-between">
                   <h1 class="text-caption font-weight-bold">
                     Net Monthly Income
                   </h1>
-                  <h1 class="text-caption">{{ analysisInformation[0]?.monthly_net_income }}</h1>
+                  <h1 class="text-caption">{{ formatter(analysisInformation[0]?.monthly_net_income) }}</h1>
                 </div>
                 <v-divider class="my-2"></v-divider>
-                <div class="d-flex justify-space-between mt-4">
+                <div class="mt-4 d-flex justify-space-between">
                   <h1 class="text-caption font-weight-bold">
                     Max Loanable (R) P.M.
                   </h1>
-                  <h1 class="text-caption">{{ analysisInformation[0]?.monthly_loanable }}</h1>
+                  <h1 class="text-caption">{{ formatter(analysisInformation[0]?.monthly_loanable) }}</h1>
                 </div>
                 <v-divider class="my-2"></v-divider>
               </div>
@@ -243,7 +244,7 @@ onMounted(() => {
               </div>
 
               <div class="my-10">
-                <div class="d-flex justify-space-between mt-4">
+                <div class="mt-4 d-flex justify-space-between">
                   <h1 class="text-caption font-weight-bold">Title</h1>
                   <h1 class="text-caption font-weight-bold">Amount</h1>
                 </div>
@@ -251,19 +252,19 @@ onMounted(() => {
                   class="my-2"
                   :thickness="3"
                 ></v-divider>
-                <div class="d-flex justify-space-between mt-4">
+                <div class="mt-4 d-flex justify-space-between">
                   <h1 class="text-caption font-weight-bold">Opening</h1>
-                  <h1 class="text-caption">{{ balanceInformation[0]?.opening }}</h1>
+                  <h1 class="text-caption">{{ formatter(balanceInformation[0]?.opening) }}</h1>
                 </div>
                 <v-divider class="my-2"></v-divider>
-                <div class="d-flex justify-space-between mt-4">
+                <div class="mt-4 d-flex justify-space-between">
                   <h1 class="text-caption font-weight-bold">Closing</h1>
-                  <h1 class="text-caption">{{ balanceInformation[0]?.closing }}</h1>
+                  <h1 class="text-caption">{{ formatter(balanceInformation[0]?.closing) }}</h1>
                 </div>
                 <v-divider class="my-2"></v-divider>
-                <div class="d-flex justify-space-between mt-4">
+                <div class="mt-4 d-flex justify-space-between">
                   <h1 class="text-caption font-weight-bold">Uncleared</h1>
-                  <h1 class="text-caption">{{ balanceInformation[0]?.uncleared }}</h1>
+                  <h1 class="text-caption">{{ formatter(balanceInformation[0]?.uncleared) }}</h1>
                 </div>
                 <v-divider class="my-2"></v-divider>
               </div>

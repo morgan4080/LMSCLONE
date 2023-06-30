@@ -3,6 +3,7 @@ import { ref, computed, onMounted } from "vue";
 import { useRoute } from "vue-router";
 
 import axiosInstance from "@/services/api/axiosInstance";
+import formatter from "@/helpers/currency";
 
 interface KplcDataItem {
   total: number;
@@ -78,7 +79,7 @@ onMounted(() => {
   <v-container fluid>
     <div
       @click="open = !open"
-      class="bg-blue-darken-2 hover-cursor-pointer px-6 py-2 rounded d-flex justify-space-between hover-cursor-pointer"
+      class="px-6 py-2 rounded bg-blue-darken-2 hover-cursor-pointer d-flex justify-space-between"
     >
       <p>KPLC</p>
       <v-icon
@@ -101,7 +102,7 @@ onMounted(() => {
                   Summary of KPLC Transactions
                 </h2>
               </div>
-              <div class="my-8 mx-4">
+              <div class="mx-4 my-8">
                 <v-row class="justify-space-between d-flex font-weight-bold">
                   <v-col>Title</v-col>
                   <v-col>Received</v-col>
@@ -114,7 +115,7 @@ onMounted(() => {
                 <v-row class="justify-space-between d-flex">
                   <v-col class="font-weight-medium">Highest</v-col>
                   <v-col> - </v-col>
-                  <v-col>{{ kplcTransSentData[0]?.highest }}</v-col>
+                  <v-col>{{ formatter(kplcTransSentData[0]?.highest) }}</v-col>
                 </v-row>
                 <v-divider class="my-2" />
                 <v-row class="justify-space-between d-flex">
@@ -126,7 +127,7 @@ onMounted(() => {
                 <v-row class="justify-space-between d-flex">
                   <v-col class="font-weight-medium">Lowest</v-col>
                   <v-col> - </v-col>
-                  <v-col>{{ kplcTransSentData[0]?.lowest }}</v-col>
+                  <v-col>{{ formatter(kplcTransSentData[0]?.lowest) }}</v-col>
                 </v-row>
                 <v-divider class="my-2" />
                 <v-row class="justify-space-between d-flex">
@@ -141,7 +142,7 @@ onMounted(() => {
                 <v-row class="font-weight-bold justify-space-between d-flex">
                   <v-col>Total</v-col>
                   <v-col> - </v-col>
-                  <v-col>{{ kplcTransSentData[0]?.total }}</v-col>
+                  <v-col>{{ formatter(kplcTransSentData[0]?.total) }}</v-col>
                 </v-row>
               </div>
             </v-container>
@@ -154,7 +155,7 @@ onMounted(() => {
         <v-container fluid>
           <v-card
             variant="flat"
-            class="rounded py-4"
+            class="py-4 rounded"
             color="white"
           >
             <div class="px-8">
@@ -164,7 +165,7 @@ onMounted(() => {
               </h2>
             </div>
             <v-data-table-server
-              class="text-caption px-4"
+              class="px-4 text-caption"
               v-model:items-per-page="itemsPerPage"
               :headers="headers"
               :items-length="totalItems"
@@ -173,7 +174,10 @@ onMounted(() => {
               loading-text="Loading...Please Wait"
               item-value="name"
               @update:options="loadKplcTopTransData()"
-            ></v-data-table-server>
+            >
+            <template v-slot:[`item.highest`]="{ item }"><span>{{ formatter(item.columns.highest) }}</span></template>
+            <template v-slot:[`item.last`]="{ item }"><span>{{ formatter(item.columns.last) }}</span></template>
+            </v-data-table-server>
           </v-card>
         </v-container>
       </v-row>
