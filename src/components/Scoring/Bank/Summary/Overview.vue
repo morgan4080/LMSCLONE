@@ -2,6 +2,7 @@
 import { ref, onMounted } from "vue";
 import { useRoute } from "vue-router";
 import axios from 'axios';
+import formatter from "@/helpers/currency";
 
 interface OverviewInformation {
   lodgements: string;
@@ -42,7 +43,7 @@ onMounted(() => {
           <v-container fluid>
             <h1 class="text-caption font-weight-regular">Total Inflow (CR)</h1>
             <h3 class="text-subtitle-1 font-weight-regular text-blue">
-              {{ overviewInformation[0]?.lodgements }}
+              {{ formatter(overviewInformation[0]?.lodgements) }}
             </h3>
           </v-container>
         </v-card>
@@ -56,7 +57,7 @@ onMounted(() => {
           <v-container fluid>
             <h1 class="text-caption font-weight-regular">Total Outflow (CR)</h1>
             <h3 class="text-subtitle-1 font-weight-regular text-blue">
-              {{ overviewInformation[0]?.withdrawals }}
+              {{ formatter(overviewInformation[0]?.withdrawals) }}
             </h3>
           </v-container>
         </v-card>
@@ -70,7 +71,7 @@ onMounted(() => {
           <v-container fluid>
             <h1 class="text-caption font-weight-regular">Monthly Disposable</h1>
             <h3 class="text-subtitle-1 font-weight-regular text-blue">
-              {{ overviewInformation[0]?.monthlyDisposable }}
+              {{ formatter(overviewInformation[0]?.monthlyDisposable) }}
             </h3>
           </v-container>
         </v-card>

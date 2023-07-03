@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { onMounted, watch, ref } from "vue";
 import axiosInstance from "@/services/api/axiosInstance";
-
 import FileUpload from "@/components/Scoring/Upload/FileUpload.vue";
-
+import { useUploadStore } from "@/store/uploadStore";
+const { checkForPassword } = useUploadStore();
 interface Statement {
   title: string;
   value: string;
@@ -20,6 +20,7 @@ interface Mobile {
 }
 
 interface Upload {
+  id: number | null;
   type: string | null;
   code: string | null;
   file: File | null;
@@ -36,6 +37,7 @@ const mobileList = ref<Mobile[]>([
 ]);
 const bankList = ref<Bank[]>([]);
 const form_upload = ref<Upload>({
+  id: null,
   type: null,
   code: null,
   file: null,
@@ -43,17 +45,27 @@ const form_upload = ref<Upload>({
 });
 const uploads = ref<Upload[]>([]);
 
+const checkingPassword = ref(false);
+const docId = ref(1);
+const uploaded_doc_ids = ref<number[]>([]);
 const dragging = ref(false);
 const popupOpen = ref(false);
 
 function onDropped(event: Event) {
+  event.preventDefault();
   if (form_upload.value.code !== null) {
     dragging.value = false;
-    let files = [...event.dataTransfer.items]
-      .filter(item => item.kind === "file")
-      .map(item => item.getAsFile());
+    let dragItems: DataTransferItemList | undefined = (event as DragEvent)
+      .dataTransfer?.items;
+    if (dragItems) {
+      let files = [...dragItems]
+        .filter(item => item.kind === "file")
+        .map(item => item.getAsFile());
 
-    files.forEach(file => handleFile(file));
+      files.forEach(file => {
+        if (file) handleFile(file);
+      });
+    }
   } else {
     dragging.value = false;
   }
@@ -74,25 +86,52 @@ const loadBanks = async () => {
 };
 
 const handleFile = async (file: File) => {
-  if (file !== null) {
-    popupOpen.value = true;
+  try {
+    // check if file requires a password an only open pop up if that is the case
+    checkingPassword.value = true;
+    const response = await checkForPassword(file);
+    popupOpen.value = response.passwordRequired;
     form_upload.value.file = file;
+    form_upload.value.id = docId.value;
+    docId.value = docId.value + 1;
+    checkingPassword.value = false;
+  } catch (error: any) {
+    if (error.response) {
+      // The request was made and the server responded with a status code
+      console.error("Response status:", error.response.status);
+      console.error("Response data:", error.response.data);
+    } else if (error.request) {
+      // The request was made but no response was received
+      console.error("No response received:", error.request);
+    } else {
+      // Something happened in setting up the request
+      console.error("Error:", error.message);
+    }
   }
 };
 
 const addToProgress = () => {
-  popupOpen.value = false
+  popupOpen.value = false;
   uploads.value.unshift(form_upload.value);
-  form_upload.value = { type: null, code: null, file: null, password: null };
-}
+  form_upload.value = {
+    id: null,
+    type: null,
+    code: null,
+    file: null,
+    password: null,
+  };
+};
 
 onMounted(() => {
   loadBanks();
   document
     .getElementById("file-input")!
     .addEventListener("change", handleFiles, false);
-  function handleFiles() {
-    handleFile(this.files[0]);
+  function handleFiles(e: Event) {
+    let targetElement = e.target as HTMLInputElement;
+    if (targetElement && targetElement.files) {
+      handleFile(targetElement.files[0]);
+    }
   }
 });
 
@@ -103,12 +142,16 @@ watch(
     form_upload.value.password = null;
   }
 );
+
+const setCheckingPassword = (val: boolean) => {
+  checkingPassword.value = val;
+};
 </script>
 
 <template>
   <v-container fluid>
-  <!-- <p>{{ form_upload }}</p> -->
-  <!-- <p>{{ uploads }}</p> -->
+    <!-- <p>{{ form_upload }}</p> -->
+    <!-- <p>{{ uploads }}</p> -->
     <v-responsive>
       <v-row>
         <v-col class="mr-2 bg-white rounded">
@@ -120,9 +163,9 @@ watch(
             <div class="mt-12">
               <!-- Upload Inputs  -->
               <div>
-                <label class="text-black"
-                  >Statement Type <span class="text-red">*</span></label
-                >
+                <label class="text-black">
+                  Statement Type <span class="text-red">*</span>
+                </label>
                 <v-select
                   v-model="form_upload.type"
                   :items="statementList"
@@ -165,6 +208,7 @@ watch(
                   variant="outlined"
                   density="compact"
                   class="mt-3"
+                  :loading="checkingPassword"
                 >
                 </v-select>
               </div>
@@ -221,21 +265,24 @@ watch(
             <div class="mt-12">
               <v-divider></v-divider>
               <v-list>
-                <div
+                <FileUpload
                   v-for="(upload, i) in uploads"
-                  :key="i"
-                >
-                  <FileUpload
-                    :statement="{
-                      document_type: upload.type,
-                      document_code: upload.code,
-                      document_file: upload.file,
-                      document_password: upload.password,
+                  :key="upload.id"
+                  :statement="{
+                      document_id: upload.id,
+                      document_type: `${upload.type}`,
+                      document_code: `${upload.code}`,
+                      document_file: upload.file as File,
+                      document_password: `${upload.password}`
                     }"
-                    @clear="uploads.splice(i, 1)"
-                  ></FileUpload>
-                  <v-divider class="mb-2"></v-divider>
-                </div>
+                  :uploaded_doc_ids="uploaded_doc_ids"
+                  @clear="uploads.splice(i, 1)"
+                  @checkingPassword="setCheckingPassword"
+                >
+                  <template v-slot:divider>
+                    <v-divider class="mb-2"></v-divider>
+                  </template>
+                </FileUpload>
               </v-list>
             </div>
           </v-container>
@@ -251,7 +298,7 @@ watch(
           <v-container fluid>
             <h1 class="text-h6 font-weight-regular">Document Password</h1>
             <h2 class="text-caption text-grey-darken-2 font-weight-regular">
-              Enter Document Password (Leave Empty and Click Submit If None)
+              Enter Document Password
             </h2>
             <div>
               <v-text-field
@@ -289,7 +336,6 @@ watch(
 .border-blue {
   border-color: #286efa !important;
 }
-
 .text-gray {
   color: #828282;
 }

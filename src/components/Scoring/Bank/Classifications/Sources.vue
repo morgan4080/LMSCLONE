@@ -2,6 +2,7 @@
 import { ref, computed, onMounted } from "vue";
 import { useRoute } from "vue-router";
 import axiosInstance from "@/services/api/axiosInstance";
+import formatter from "@/helpers/currency";
 
 interface FlowDataItem {
   count: number;
@@ -88,7 +89,7 @@ onMounted(() => {
   <v-container fluid>
     <div
       @click="open = !open"
-      class="bg-blue-darken-2 hover-cursor-pointer px-6 py-2 rounded d-flex justify-space-between hover-cursor-pointer"
+      class="px-6 py-2 rounded bg-blue-darken-2 hover-cursor-pointer d-flex justify-space-between"
     >
       <p>Sources / Inflows</p>
       <v-icon
@@ -111,7 +112,7 @@ onMounted(() => {
                   Summary of Mobile Money
                 </h2>
               </div>
-              <div class="my-8 mx-4">
+              <div class="mx-4 my-8">
                 <v-row class="justify-space-between d-flex font-weight-bold">
                   <v-col>Title</v-col>
                   <v-col class="text-right">Description</v-col>
@@ -127,12 +128,12 @@ onMounted(() => {
                 <v-divider class="my-2" />
                 <v-row class="justify-space-between d-flex">
                   <v-col class="font-weight-medium">Total</v-col>
-                  <v-col class="text-right">{{ flowMobileMoney[0]?.total }}</v-col>
+                  <v-col class="text-right">{{ formatter(flowMobileMoney[0]?.total) }}</v-col>
                 </v-row>
                 <v-divider class="my-2" />
                 <v-row class="justify-space-between d-flex">
                   <v-col class="font-weight-medium">Highest</v-col>
-                  <v-col class="text-right">{{ flowMobileMoney[0]?.highest }}</v-col>
+                  <v-col class="text-right">{{ formatter(flowMobileMoney[0]?.highest) }}</v-col>
                 </v-row>
                 <v-divider
                   :thickness="3"
@@ -160,7 +161,7 @@ onMounted(() => {
                   Summary of Cash Deposit
                 </h2>
               </div>
-              <div class="my-8 mx-4">
+              <div class="mx-4 my-8">
                 <v-row class="justify-space-between d-flex font-weight-bold">
                   <v-col>Title</v-col>
                   <v-col class="text-right">Description</v-col>
@@ -176,12 +177,12 @@ onMounted(() => {
                 <v-divider class="my-2" />
                 <v-row class="justify-space-between d-flex">
                   <v-col class="font-weight-medium">Total</v-col>
-                  <v-col class="text-right">{{ flowCashDeposit[0]?.total }}</v-col>
+                  <v-col class="text-right">{{ formatter(flowCashDeposit[0]?.total) }}</v-col>
                 </v-row>
                 <v-divider class="my-2" />
                 <v-row class="justify-space-between d-flex">
                   <v-col class="font-weight-medium">Highest</v-col>
-                  <v-col class="text-right">{{ flowCashDeposit[0]?.highest }}</v-col>
+                  <v-col class="text-right">{{ formatter(flowCashDeposit[0]?.highest) }}</v-col>
                 </v-row>
                 <v-divider
                   :thickness="3"
@@ -202,7 +203,7 @@ onMounted(() => {
         <v-container fluid>
           <v-card
             variant="flat"
-            class="rounded py-4"
+            class="py-4 rounded"
             color="white"
           >
             <div class="px-8">
@@ -215,7 +216,7 @@ onMounted(() => {
             </div>
 
             <v-container fluid>
-              <div class="d-flex justify-space-between my-2">
+              <div class="my-2 d-flex justify-space-between">
                 <div>
                   <v-menu transition="slide-y-transition">
                     <template v-slot:activator="{ props }">
@@ -224,7 +225,7 @@ onMounted(() => {
                         variant="outlined"
                         append-icon="mdi:mdi-chevron-down"
                         v-bind="props"
-                        class="text-none text-caption ml-2 font-weight-regular"
+                        class="ml-2 text-none text-caption font-weight-regular"
                         style="border: 1px solid rgba(128, 128, 128, 0.25)"
                       >
                         Select Inflow Type
@@ -255,7 +256,7 @@ onMounted(() => {
                         variant="outlined"
                         append-icon="mdi:mdi-chevron-down"
                         v-bind="props"
-                        class="text-none text-caption ml-2 font-weight-regular"
+                        class="ml-2 text-none text-caption font-weight-regular"
                         style="border: 1px solid rgba(128, 128, 128, 0.25)"
                       >
                         Amount Descending
@@ -288,7 +289,7 @@ onMounted(() => {
                         variant="outlined"
                         append-icon="mdi:mdi-chevron-down"
                         v-bind="props"
-                        class="text-none text-caption ml-2 font-weight-regular"
+                        class="ml-2 text-none text-caption font-weight-regular"
                         style="border: 1px solid rgba(128, 128, 128, 0.25)"
                       >
                         Export
@@ -319,7 +320,7 @@ onMounted(() => {
                         variant="outlined"
                         append-icon="mdi:mdi-chevron-down"
                         v-bind="props"
-                        class="text-none text-caption ml-2 font-weight-regular"
+                        class="ml-2 text-none text-caption font-weight-regular"
                         style="border: 1px solid rgba(128, 128, 128, 0.25)"
                       >
                         Show/Hide
@@ -349,7 +350,7 @@ onMounted(() => {
                         size="small"
                         variant="outlined"
                         v-bind="props"
-                        class="text-none text-caption ml-2 font-weight-regular"
+                        class="ml-2 text-none text-caption font-weight-regular"
                         style="border: 1px solid rgba(128, 128, 128, 0.25)"
                       >
                         <v-icon icon="mdi:mdi-dots-vertical" />
@@ -377,7 +378,7 @@ onMounted(() => {
               </div>
             </v-container>
             <v-data-table-server
-              class="text-caption px-4"
+              class="px-4 text-caption"
               v-model:items-per-page="itemsPerPage"
               :headers="headers"
               :items-length="totalItems"
@@ -386,7 +387,10 @@ onMounted(() => {
               loading-text="Loading...Please Wait"
               item-value="name"
               @update:options="loadFlowTopData()"
-            ></v-data-table-server>
+            >
+            <template v-slot:[`item.highest`]="{ item }"><span>{{ formatter(item.columns.highest) }}</span></template>
+            <template v-slot:[`item.last`]="{ item }"><span>{{ formatter(item.columns.last) }}</span></template>
+            </v-data-table-server>
           </v-card>
         </v-container>
       </v-row>

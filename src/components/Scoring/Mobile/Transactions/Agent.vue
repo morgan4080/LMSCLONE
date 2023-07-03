@@ -2,6 +2,7 @@
 import { ref, computed, onMounted } from "vue";
 import { useRoute } from "vue-router";
 import axiosInstance from "@/services/api/axiosInstance";
+import formatter from "@/helpers/currency";
 
 interface AgentDataItem {
   count: number;
@@ -119,14 +120,14 @@ onMounted(() => {
                 <v-divider class="my-2" />
                 <v-row class="justify-space-between d-flex">
                   <v-col class="font-weight-medium">Highest</v-col>
-                  <v-col>{{ agentTransData[0]?.highest }}</v-col>
-                  <v-col>{{ agentTransData[1]?.highest }}</v-col>
+                  <v-col>{{ formatter(agentTransData[0]?.highest) }}</v-col>
+                  <v-col>{{ formatter(agentTransData[1]?.highest) }}</v-col>
                 </v-row>
                 <v-divider class="my-2" />
                 <v-row class="justify-space-between d-flex">
                   <v-col class="font-weight-medium">Lowest</v-col>
-                  <v-col>{{ agentTransData[0]?.lowest }}</v-col>
-                  <v-col>{{ agentTransData[1]?.lowest }}</v-col>
+                  <v-col>{{ formatter(agentTransData[0]?.lowest) }}</v-col>
+                  <v-col>{{ formatter(agentTransData[1]?.lowest) }}</v-col>
                 </v-row>
                 <v-divider class="my-2" />
                 <v-row class="justify-space-between d-flex">
@@ -140,8 +141,8 @@ onMounted(() => {
                 />
                 <v-row class="font-weight-bold justify-space-between d-flex">
                   <v-col>Total</v-col>
-                  <v-col>{{ agentTransData[0]?.total }}</v-col>
-                  <v-col>{{ agentTransData[1]?.total }}</v-col>
+                  <v-col>{{ formatter(agentTransData[0]?.total) }}</v-col>
+                  <v-col>{{ formatter(agentTransData[1]?.total) }}</v-col>
                 </v-row>
               </div>
             </v-container>
@@ -166,7 +167,7 @@ onMounted(() => {
               </h2>
             </div>
             <v-data-table-server
-              class="text-caption px-4"
+              class="px-4 text-caption"
               v-model:items-per-page="itemsPerPage"
               :headers="headers"
               :items-length="totalItems"
@@ -175,7 +176,10 @@ onMounted(() => {
               loading-text="Loading...Please Wait"
               item-value="name"
               @update:options="loadAgentTopTransData()"
-            ></v-data-table-server>
+            >
+            <template v-slot:[`item.highest`]="{ item }"><span>{{ formatter(item.columns.highest) }}</span></template>
+            <template v-slot:[`item.total`]="{ item }"><span>{{ formatter(item.columns.total) }}</span></template>
+            </v-data-table-server>
           </v-card>
         </v-container>
       </v-row>

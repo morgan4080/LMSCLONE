@@ -2,6 +2,7 @@
 import { ref, onMounted } from "vue";
 import { useRoute } from "vue-router";
 import axiosInstance from "@/services/api/axiosInstance";
+import formatter from "@/helpers/currency";
 
 interface SafaricomDataItem {
   count: number;
@@ -115,26 +116,26 @@ onMounted(() => {
               <v-divider class="my-2" />
               <v-row class="justify-space-between d-flex">
                 <v-col class="font-weight-medium">Highest</v-col>
-                <v-col>{{ mshwariData[0]?.highest }}</v-col>
-                <v-col>{{ mshwariData[1]?.highest }}</v-col>
-                <v-col>{{ mshwariData[2]?.highest }}</v-col>
-                <v-col>{{ mshwariData[3]?.highest }}</v-col>
+                <v-col>{{ formatter(mshwariData[0]?.highest) }}</v-col>
+                <v-col>{{ formatter(mshwariData[1]?.highest) }}</v-col>
+                <v-col>{{ formatter(mshwariData[2]?.highest) }}</v-col>
+                <v-col>{{ formatter(mshwariData[3]?.highest) }}</v-col>
               </v-row>
               <v-divider class="my-2" />
               <v-row class="justify-space-between d-flex">
                 <v-col class="font-weight-medium">Lowest</v-col>
-                <v-col>{{ mshwariData[0]?.last }}</v-col>
-                <v-col>{{ mshwariData[1]?.last }}</v-col>
-                <v-col>{{ mshwariData[2]?.last }}</v-col>
-                <v-col>{{ mshwariData[3]?.last }}</v-col>
+                <v-col>{{ formatter(mshwariData[0]?.last) }}</v-col>
+                <v-col>{{ formatter(mshwariData[1]?.last) }}</v-col>
+                <v-col>{{ formatter(mshwariData[2]?.last) }}</v-col>
+                <v-col>{{ formatter(mshwariData[3]?.last) }}</v-col>
               </v-row>
               <v-divider class="my-2" />
               <v-row class="justify-space-between d-flex">
                 <v-col class="font-weight-medium">Last</v-col>
-                <v-col>{{ mshwariData[0]?.last_amount }}</v-col>
-                <v-col>{{ mshwariData[1]?.last_amount }}</v-col>
-                <v-col>{{ mshwariData[2]?.last_amount }}</v-col>
-                <v-col>{{ mshwariData[3]?.last_amount }}</v-col>
+                <v-col>{{ formatter(mshwariData[0]?.last_amount) }}</v-col>
+                <v-col>{{ formatter(mshwariData[1]?.last_amount) }}</v-col>
+                <v-col>{{ formatter(mshwariData[2]?.last_amount) }}</v-col>
+                <v-col>{{ formatter(mshwariData[3]?.last_amount) }}</v-col>
               </v-row>
               <v-divider
                 class="my-3"
@@ -142,10 +143,10 @@ onMounted(() => {
               />
               <v-row class="font-weight-bold justify-space-between d-flex">
                 <v-col>Total</v-col>
-                <v-col>{{ mshwariData[0]?.total }}</v-col>
-                <v-col>{{ mshwariData[1]?.total }}</v-col>
-                <v-col>{{ mshwariData[2]?.total }}</v-col>
-                <v-col>{{ mshwariData[3]?.total }}</v-col>
+                <v-col>{{ formatter(mshwariData[0]?.total) }}</v-col>
+                <v-col>{{ formatter(mshwariData[1]?.total) }}</v-col>
+                <v-col>{{ formatter(mshwariData[2]?.total) }}</v-col>
+                <v-col>{{ formatter(mshwariData[3]?.total) }}</v-col>
               </v-row>
             </div>
           </v-container>
@@ -186,10 +187,10 @@ onMounted(() => {
               <v-divider class="my-2" />
               <v-row class="justify-space-between d-flex">
                 <v-col class="font-weight-medium">Highest</v-col>
-                <v-col>{{ kcbMpesaData[0]?.highest }}</v-col>
-                <v-col>{{ kcbMpesaData[1]?.highest }}</v-col>
-                <v-col>{{ kcbMpesaData[2]?.highest }}</v-col>
-                <v-col>{{ kcbMpesaData[3]?.highest }}</v-col>
+                <v-col>{{ formatter(kcbMpesaData[0]?.highest) }}</v-col>
+                <v-col>{{ formatter(kcbMpesaData[1]?.highest) }}</v-col>
+                <v-col>{{ formatter(kcbMpesaData[2]?.highest) }}</v-col>
+                <v-col>{{ formatter(kcbMpesaData[3]?.highest) }}</v-col>
               </v-row>
               <v-divider class="my-2" />
               <v-row class="justify-space-between d-flex">
@@ -202,10 +203,10 @@ onMounted(() => {
               <v-divider class="my-2" />
               <v-row class="justify-space-between d-flex">
                 <v-col class="font-weight-medium">Last Amount</v-col>
-                <v-col>{{ kcbMpesaData[0]?.last_amount }}</v-col>
-                <v-col>{{ kcbMpesaData[1]?.last_amount }}</v-col>
-                <v-col>{{ kcbMpesaData[2]?.last_amount }}</v-col>
-                <v-col>{{ kcbMpesaData[3]?.last_amount }}</v-col>
+                <v-col>{{ formatter(kcbMpesaData[0]?.last_amount) }}</v-col>
+                <v-col>{{ formatter(kcbMpesaData[1]?.last_amount) }}</v-col>
+                <v-col>{{ formatter(kcbMpesaData[2]?.last_amount) }}</v-col>
+                <v-col>{{ formatter(kcbMpesaData[3]?.last_amount) }}</v-col>
               </v-row>
               <v-divider
                 class="my-3"
@@ -213,10 +214,10 @@ onMounted(() => {
               />
               <v-row class="font-weight-bold justify-space-between d-flex">
                 <v-col>Total</v-col>
-                <v-col>{{ kcbMpesaData[0]?.total }}</v-col>
-                <v-col>{{ kcbMpesaData[1]?.total }}</v-col>
-                <v-col>{{ kcbMpesaData[2]?.total }}</v-col>
-                <v-col>{{ kcbMpesaData[3]?.total }}</v-col>
+                <v-col>{{ formatter(kcbMpesaData[0]?.total) }}</v-col>
+                <v-col>{{ formatter(kcbMpesaData[1]?.total) }}</v-col>
+                <v-col>{{ formatter(kcbMpesaData[2]?.total) }}</v-col>
+                <v-col>{{ formatter(kcbMpesaData[3]?.total) }}</v-col>
               </v-row>
             </div>
           </v-container>
@@ -255,20 +256,20 @@ onMounted(() => {
               <v-divider class="my-2" />
               <v-row class="justify-space-between d-flex">
                 <v-col class="font-weight-medium">Highest</v-col>
-                <v-col>{{ fulizaData[0]?.highest }}</v-col>
-                <v-col>{{ fulizaData[1]?.highest }}</v-col>
+                <v-col>{{ formatter(fulizaData[0]?.highest) }}</v-col>
+                <v-col>{{ formatter(fulizaData[1]?.highest) }}</v-col>
               </v-row>
               <v-divider class="my-2" />
               <v-row class="justify-space-between d-flex">
                 <v-col class="font-weight-medium">Lowest</v-col>
-                <v-col>{{ fulizaData[0]?.lowest }}</v-col>
-                <v-col>{{ fulizaData[1]?.lowest }}</v-col>
+                <v-col>{{ formatter(fulizaData[0]?.lowest) }}</v-col>
+                <v-col>{{ formatter(fulizaData[1]?.lowest) }}</v-col>
               </v-row>
               <v-divider class="my-2" />
               <v-row class="justify-space-between d-flex">
                 <v-col class="font-weight-medium">Last Amount</v-col>
-                <v-col>{{ fulizaData[0]?.last }}</v-col>
-                <v-col>{{ fulizaData[1]?.last }}</v-col>
+                <v-col>{{ formatter(fulizaData[0]?.last) }}</v-col>
+                <v-col>{{ formatter(fulizaData[1]?.last) }}</v-col>
               </v-row>
               <v-divider
                 class="my-3"
@@ -276,8 +277,8 @@ onMounted(() => {
               />
               <v-row class="font-weight-bold justify-space-between d-flex">
                 <v-col>Total</v-col>
-                <v-col>{{ fulizaData[0]?.total }}</v-col>
-                <v-col>{{ fulizaData[1]?.total }}</v-col>
+                <v-col>{{ formatter(fulizaData[0]?.total) }}</v-col>
+                <v-col>{{ formatter(fulizaData[1]?.total) }}</v-col>
               </v-row>
             </div>
           </v-container>

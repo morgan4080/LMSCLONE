@@ -1,6 +1,6 @@
 <template>
   <v-container class="fill-height bg-background">
-    <v-responsive class="d-flex fill-height">
+    <div class="flex-column w-100 fill-height">
       <v-row class="d-flex align-center justify-center">
         <v-col
           cols="auto"
@@ -750,7 +750,7 @@
           </v-card>
         </v-col>
       </v-row>
-    </v-responsive>
+    </div>
   </v-container>
 </template>
 

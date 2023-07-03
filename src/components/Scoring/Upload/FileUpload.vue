@@ -1,41 +1,35 @@
 <script setup lang="ts">
-import { ref, computed } from "vue";
+import { ref, computed, ComputedRef, onMounted } from "vue";
 import axios from "axios";
 import axiosInstance from "@/services/api/axiosInstance";
 import { useUploadStore } from "@/store/uploadStore";
+const { checkForPassword } = useUploadStore();
 
-interface Statement {
-  document_type: string;
-  document_code: string;
-  document_file: File | null;
-  document_password: string ;
-}
+const emit = defineEmits(["clear", "checkingPassword"]);
 
-const emit = defineEmits(["clear"]);
-
-const props = defineProps({
+const props = defineProps<{
   statement: {
-    type: Object as () => Statement,
-    default: () => ({
-      document_type: "",
-      document_code: "",
-      document_file: null,
-      document_password: "",
-    }),
-    required: true,
-  },
-});
+    document_id: number | null;
+    document_type: string;
+    document_code: string;
+    document_file: File | null;
+    document_password: string;
+  };
+  uploaded_doc_ids: number[];
+}>();
 
 const uploadStore = useUploadStore();
 
+const document_password = ref(props.statement.document_password);
+const popupOpen = ref(false);
 const confirmed = ref(false);
 const uploading = ref(false);
 const uploaded = ref(false);
 const message = ref("");
 const timing = ref<number | undefined>();
 const progress = ref<number | undefined>();
-const progressbar = computed(() =>
-  progress.value !== undefined ? Math.round(100 * progress.value) : undefined
+const progressbar: ComputedRef<number> = computed(() =>
+  progress.value !== undefined ? Math.round(100 * progress.value) : 0
 );
 
 const controller = new AbortController();
@@ -51,7 +45,7 @@ const uploadFile = async () => {
     formData.append("document_type", props.statement.document_type);
     formData.append("bank_code", props.statement.document_code);
     formData.append("sender", "jane@gmail.com");
-    formData.append("decrypter", props.statement.document_password);
+    formData.append("decrypter", document_password.value);
     formData.append("remote_identifier", "2320092");
     formData.append("identifier", "Jane");
     formData.append("createdBy", "Jane");
@@ -91,24 +85,65 @@ const uploadFile = async () => {
 };
 
 const confirmUpload = () => {
+  message.value = "";
   confirmed.value = true;
   uploadFile();
 };
-const clearUpload = () => emit("clear");
-const retryUpload = () => uploadFile();
+const clearUpload = () => {
+  message.value = "";
+  emit("clear");
+};
+const retryUpload = async () => {
+  try {
+    if (props.statement.document_file) {
+      message.value = "";
+      emit("checkingPassword", true);
+      const response = await checkForPassword(props.statement.document_file);
+      popupOpen.value = response.passwordRequired;
+      emit("checkingPassword", false);
+      if (!response.passwordRequired) await uploadFile();
+    } else {
+      throw new Error("File doesn't exist");
+    }
+  } catch (error: any) {
+    if (error.response) {
+      // The request was made and the server responded with a status code
+      console.error("Response status:", error.response.status);
+      console.error("Response data:", error.response.data);
+    } else if (error.request) {
+      // The request was made but no response was received
+      console.error("No response received:", error.request);
+    } else {
+      // Something happened in setting up the request
+      console.error("Error:", error.message);
+    }
+  }
+};
 const cancelUpload = () => controller.abort();
+
+const reUploadWithNewPassword = () => {
+  uploadFile();
+  popupOpen.value = !popupOpen.value;
+};
+
+onMounted(() => {
+  console.log("document", props.statement);
+});
 </script>
 
 <template>
   <v-list-item>
     <div class="d-flex justify-space-between">
-      {{ props.statement.document_file?.name }}
+      <p style="max-width: 300px; word-wrap: break-word">
+        {{ props.statement.document_file?.name }}
+      </p>
       <div
         class="my-1 d-flex align-baseline"
         v-if="!confirmed"
       >
         <p class="mx-4 text-caption">Confirm File?</p>
-        <div
+        <button
+          type="button"
           class="border rounded px-1"
           v-if="!uploading"
           @click="confirmUpload"
@@ -119,8 +154,9 @@ const cancelUpload = () => controller.abort();
             icon="mdi:mdi-check"
             class=""
           ></v-icon>
-        </div>
-        <div
+        </button>
+        <button
+          type="button"
           class="border rounded px-1 ml-1"
           @click="clearUpload"
         >
@@ -130,13 +166,14 @@ const cancelUpload = () => controller.abort();
             icon="mdi:mdi-close"
             class=""
           ></v-icon>
-        </div>
+        </button>
       </div>
       <div
         class="my-1 d-flex"
         v-if="uploading"
       >
-        <div
+        <button
+          type="button"
           class="border rounded px-1 ml-1"
           @click="cancelUpload"
         >
@@ -145,13 +182,14 @@ const cancelUpload = () => controller.abort();
             icon="mdi:mdi-close"
             class=""
           ></v-icon>
-        </div>
+        </button>
       </div>
       <div
         class="my-1 d-flex"
         v-if="uploaded"
       >
-        <div
+        <button
+          type="button"
           class="border rounded px-1"
           @click="$router.push(`/scoring/mobile/1`)"
         >
@@ -160,9 +198,10 @@ const cancelUpload = () => controller.abort();
             icon="mdi:mdi-eye-outline"
             class=""
           ></v-icon>
-        </div>
+        </button>
       </div>
-      <div
+      <button
+        type="button"
         class="my-1 d-flex"
         @click="retryUpload"
         v-if="confirmed && !uploading && !uploaded"
@@ -173,7 +212,7 @@ const cancelUpload = () => controller.abort();
           icon="mdi:mdi-reload"
           class=""
         ></v-icon>
-      </div>
+      </button>
     </div>
     <v-progress-linear
       v-if="uploading"
@@ -187,7 +226,7 @@ const cancelUpload = () => controller.abort();
       v-if="uploading"
       class="text-caption mt-1"
     >
-      {{ timing !== undefined ? Math.round(1 * timing) : 0 }} sec left
+      {{ timing !== undefined ? Math.round(timing) : 0 }} sec left
     </p>
     <p
       v-if="!uploaded"
@@ -196,4 +235,37 @@ const cancelUpload = () => controller.abort();
       {{ message }}
     </p>
   </v-list-item>
+  <slot name="divider"></slot>
+  <v-dialog
+    persistent
+    v-model="popupOpen"
+    class="w-50"
+  >
+    <v-card>
+      <v-container fluid>
+        <h1 class="text-h6 font-weight-regular">Document Password</h1>
+        <h2 class="text-caption text-grey-darken-2 font-weight-regular">
+          Enter Document Password
+        </h2>
+        <div>
+          <v-text-field
+            v-model="document_password"
+            label="Document Password"
+            variant="outlined"
+            density="compact"
+            class="mt-3"
+          ></v-text-field>
+          <div class="justify-end d-flex">
+            <v-btn
+              @click="reUploadWithNewPassword"
+              variant="flat"
+              color="success"
+              class="px-3 text-none"
+              >Submit</v-btn
+            >
+          </div>
+        </div>
+      </v-container>
+    </v-card>
+  </v-dialog>
 </template>
