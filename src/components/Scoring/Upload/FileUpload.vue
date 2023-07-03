@@ -1,19 +1,21 @@
 <script setup lang="ts">
-import { ref, computed, ComputedRef } from "vue";
+import { ref, computed, ComputedRef, onMounted } from "vue";
 import axios from "axios";
 import axiosInstance from "@/services/api/axiosInstance";
 import { useUploadStore } from "@/store/uploadStore";
 const { checkForPassword } = useUploadStore();
 
-const emit = defineEmits(["clear"]);
+const emit = defineEmits(["clear", "checkingPassword"]);
 
 const props = defineProps<{
   statement: {
+    document_id: number | null;
     document_type: string;
     document_code: string;
     document_file: File | null;
     document_password: string;
   };
+  uploaded_doc_ids: number[];
 }>();
 
 const uploadStore = useUploadStore();
@@ -83,15 +85,22 @@ const uploadFile = async () => {
 };
 
 const confirmUpload = () => {
+  message.value = "";
   confirmed.value = true;
   uploadFile();
 };
-const clearUpload = () => emit("clear");
+const clearUpload = () => {
+  message.value = "";
+  emit("clear");
+};
 const retryUpload = async () => {
   try {
     if (props.statement.document_file) {
+      message.value = "";
+      emit("checkingPassword", true);
       const response = await checkForPassword(props.statement.document_file);
       popupOpen.value = response.passwordRequired;
+      emit("checkingPassword", false);
       if (!response.passwordRequired) await uploadFile();
     } else {
       throw new Error("File doesn't exist");
@@ -116,6 +125,10 @@ const reUploadWithNewPassword = () => {
   uploadFile();
   popupOpen.value = !popupOpen.value;
 };
+
+onMounted(() => {
+  console.log("document", props.statement);
+});
 </script>
 
 <template>

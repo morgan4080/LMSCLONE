@@ -20,6 +20,7 @@ interface Mobile {
 }
 
 interface Upload {
+  id: number | null;
   type: string | null;
   code: string | null;
   file: File | null;
@@ -36,6 +37,7 @@ const mobileList = ref<Mobile[]>([
 ]);
 const bankList = ref<Bank[]>([]);
 const form_upload = ref<Upload>({
+  id: null,
   type: null,
   code: null,
   file: null,
@@ -43,6 +45,9 @@ const form_upload = ref<Upload>({
 });
 const uploads = ref<Upload[]>([]);
 
+const checkingPassword = ref(false);
+const docId = ref(1);
+const uploaded_doc_ids = ref<number[]>([]);
 const dragging = ref(false);
 const popupOpen = ref(false);
 
@@ -83,9 +88,13 @@ const loadBanks = async () => {
 const handleFile = async (file: File) => {
   try {
     // check if file requires a password an only open pop up if that is the case
+    checkingPassword.value = true;
     const response = await checkForPassword(file);
     popupOpen.value = response.passwordRequired;
     form_upload.value.file = file;
+    form_upload.value.id = docId.value;
+    docId.value = docId.value + 1;
+    checkingPassword.value = false;
   } catch (error: any) {
     if (error.response) {
       // The request was made and the server responded with a status code
@@ -104,7 +113,13 @@ const handleFile = async (file: File) => {
 const addToProgress = () => {
   popupOpen.value = false;
   uploads.value.unshift(form_upload.value);
-  form_upload.value = { type: null, code: null, file: null, password: null };
+  form_upload.value = {
+    id: null,
+    type: null,
+    code: null,
+    file: null,
+    password: null,
+  };
 };
 
 onMounted(() => {
@@ -127,6 +142,10 @@ watch(
     form_upload.value.password = null;
   }
 );
+
+const setCheckingPassword = (val: boolean) => {
+  checkingPassword.value = val;
+};
 </script>
 
 <template>
@@ -144,9 +163,9 @@ watch(
             <div class="mt-12">
               <!-- Upload Inputs  -->
               <div>
-                <label class="text-black"
-                  >Statement Type <span class="text-red">*</span></label
-                >
+                <label class="text-black">
+                  Statement Type <span class="text-red">*</span>
+                </label>
                 <v-select
                   v-model="form_upload.type"
                   :items="statementList"
@@ -189,6 +208,7 @@ watch(
                   variant="outlined"
                   density="compact"
                   class="mt-3"
+                  :loading="checkingPassword"
                 >
                 </v-select>
               </div>
@@ -247,14 +267,17 @@ watch(
               <v-list>
                 <FileUpload
                   v-for="(upload, i) in uploads"
-                  :key="i + upload.password"
+                  :key="upload.id"
                   :statement="{
+                      document_id: upload.id,
                       document_type: `${upload.type}`,
                       document_code: `${upload.code}`,
                       document_file: upload.file as File,
-                      document_password: `${upload.password}`,
+                      document_password: `${upload.password}`
                     }"
+                  :uploaded_doc_ids="uploaded_doc_ids"
                   @clear="uploads.splice(i, 1)"
+                  @checkingPassword="setCheckingPassword"
                 >
                   <template v-slot:divider>
                     <v-divider class="mb-2"></v-divider>
