@@ -626,6 +626,33 @@ const items = ref<
       },
     ],
   },
+  {
+    text: "Agents/Sales",
+    icon: "fa fa-user",
+    href: "#",
+    subItems: [
+      {
+        text: "Correlation Analysis Dashboard",
+        href: "/lms/agentsales/correlations",
+      },
+      {
+        text: "Issued Loans Dashboard",
+        href: "/lms/agentsales/issuedLoans",
+      },
+      {
+        text: "Collections Dashboard",
+        href: "/lms/agentsales/collections",
+      },
+      {
+        text: "Loan Repayments dashboard",
+        href: "/lms/agentsales/loanRepayments",
+      },
+      {
+        text: "Application & Membership Dashboard",
+        href: "/lms/agentsales/applicationsMembership",
+      },
+    ],
+  },
 ]);
 
 const redirectAuth = () => {

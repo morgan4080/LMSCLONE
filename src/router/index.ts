@@ -1,6 +1,6 @@
 // Composables
 import { createRouter, createWebHistory } from "vue-router";
-
+import agentSalesRouter from "@/router/agentSales";
 const routes = [
   {
     path: "/",
@@ -23,18 +23,19 @@ const routes = [
       {
         path: "/scoring/all",
         name: "allScoring",
-        component: () => import("@/views/Scoring/All.vue"),  
+        component: () => import("@/views/Scoring/All.vue"),
       },
       {
         path: "/scoring/mobile/:slug",
         name: "singleMobileListing",
-        component: () => import("@/views/Scoring/MobileListing.vue"), 
+        component: () => import("@/views/Scoring/MobileListing.vue"),
       },
       {
         path: "/scoring/bank/:slug",
         name: "Bank Listing",
         component: () => import("@/views/Scoring/Bank.vue"),
       },
+      ...agentSalesRouter,
     ],
     meta: { requiresAuth: true },
   },

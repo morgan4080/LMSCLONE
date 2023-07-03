@@ -141,7 +141,7 @@ export const useSalesDashboardStore = defineStore("sales-dashboard-store", {
         })
         .finally(() => (this.overdueCollections.loading = false));
     },
-    //TODO: add param for this
+    //TODO: add param for thing
     getNewCustomers: function (filters?: string) {
       this.newCustomers.loading = true;
       let url = `${

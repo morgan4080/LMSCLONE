@@ -250,10 +250,11 @@
                   <v-row>
                     <v-col sm="4">
                       <h1 class="text-h6 font-weight-regular">
-                        Upcoming Collections
+                        {{ collectionFilter.collections.name }} Collections
                       </h1>
                       <div class="text-caption font-weight-light mb-n1">
-                        Summary Of Upcoming Collections
+                        Summary Of
+                        {{ collectionFilter.collections.name }} Collections
                       </div>
                     </v-col>
                     <v-col
@@ -309,16 +310,13 @@
                             class="v-btn--size-default text-caption text-capitalize"
                             density="default"
                             :append-icon="
-                              upComingCollectionFilters.branches.appendIcon
+                              collectionFilter.collections.appendIcon
                             "
                             v-bind="props"
                             flat
                             style="border: 1px solid rgba(128, 128, 128, 0.25)"
                           >
-                            {{
-                              upComingCollectionFilters.branches.text ||
-                              "All Branches"
-                            }}
+                            {{ collectionFilter.collections.name }} Loans
                           </v-btn>
                         </template>
                         <v-sheet
@@ -331,46 +329,42 @@
                             role="listbox"
                           >
                             <v-list-item
+                              v-for="(dropdown, idx) in collectionFilter
+                                .collections.menu"
+                              :key="idx"
                               density="compact"
                               @click="
-                                upComingCollectionFilters.branches.text = ''
+                                collectionFilter.collections.name = dropdown
                               "
-                              >All</v-list-item
-                            >
-                            <v-list-item
-                              v-for="(
-                                dropDownMenu, it
-                              ) in salesDashboardStore.branches"
-                              :key="it"
-                              :value="it"
-                              density="compact"
-                              @click="
-                                upComingCollectionFilters.branches.text =
-                                  dropDownMenu.toString()
-                              "
-                              >{{ dropDownMenu }}</v-list-item
+                              >{{ dropdown }} Loans</v-list-item
                             >
                           </v-list>
                         </v-sheet>
                       </v-menu>
                     </div>
 
-                    <div class="px-3">
+                    <div
+                      v-if="
+                        collectionFilter.collections.name.toLowerCase() ===
+                        'upcoming'
+                      "
+                      class="px-3"
+                    >
                       <v-menu transition="slide-y-transition">
                         <template v-slot:activator="{ props }">
                           <v-btn
                             class="v-btn--size-default text-caption text-capitalize"
                             density="default"
                             :append-icon="
-                              upComingCollectionFilters.salesRep.appendIcon
+                              upcomingCollectionFilters.product.appendIcon
                             "
                             v-bind="props"
                             flat
                             style="border: 1px solid rgba(128, 128, 128, 0.25)"
                           >
                             {{
-                              upComingCollectionFilters.salesRep.text ||
-                              "All Sales Rep"
+                              upcomingCollectionFilters.product.text ||
+                              "Select Product"
                             }}
                           </v-btn>
                         </template>
@@ -386,71 +380,82 @@
                             <v-list-item
                               density="compact"
                               @click="
-                                upComingCollectionFilters.salesRep.text = null;
-                                upComingCollectionFilters.salesRep.id = null;
+                                upcomingCollectionFilters.product.text = null
                               "
-                              >All</v-list-item
+                              >All Products</v-list-item
                             >
                             <v-list-item
                               v-for="(
                                 dropDownMenu, it
-                              ) in salesDashboardStore.salesReps"
+                              ) in upcomingCollectionFilters.product.menus"
                               :key="it"
                               :value="it"
                               density="compact"
                               @click="
-                                upComingCollectionFilters.salesRep.text =
-                                  dropDownMenu.name.toString();
-                                upComingCollectionFilters.salesRep.id =
-                                  dropDownMenu.refId;
-                              "
-                              >{{ dropDownMenu.name }}</v-list-item
-                            >
-                          </v-list>
-                        </v-sheet>
-                      </v-menu>
-                    </div>
-
-                    <div class="px-3">
-                      <v-menu transition="slide-y-transition">
-                        <template v-slot:activator="{ props }">
-                          <v-btn
-                            class="v-btn--size-default text-caption text-capitalize"
-                            density="default"
-                            :append-icon="
-                              upComingCollectionFilters.dateFilters.appendIcon
-                            "
-                            v-bind="props"
-                            flat
-                            style="border: 1px solid rgba(128, 128, 128, 0.25)"
-                          >
-                            {{
-                              upComingCollectionFilters.dateFilters.text ||
-                              "All Time"
-                            }}
-                          </v-btn>
-                        </template>
-                        <v-sheet
-                          border
-                          rounded
-                        >
-                          <v-list
-                            nav
-                            density="compact"
-                            role="listbox"
-                          >
-                            <v-list-item
-                              v-for="(
-                                dropDownMenu, it
-                              ) in upComingCollectionFilters.dateFilters.menus"
-                              :key="it"
-                              :value="it"
-                              density="compact"
-                              @click="
-                                upComingCollectionFilters.dateFilters.text =
+                                upcomingCollectionFilters.product.text =
                                   dropDownMenu
                               "
                               >{{ dropDownMenu }}</v-list-item
+                            >
+                          </v-list>
+                        </v-sheet>
+                      </v-menu>
+                    </div>
+
+                    <div
+                      v-if="
+                        collectionFilter.collections.name.toLowerCase() ===
+                        'upcoming'
+                      "
+                      class="px-3"
+                    >
+                      <v-menu transition="slide-y-transition">
+                        <template v-slot:activator="{ props }">
+                          <v-btn
+                            class="v-btn--size-default text-caption text-capitalize"
+                            density="default"
+                            :append-icon="
+                              upcomingCollectionFilters.status.appendIcon
+                            "
+                            v-bind="props"
+                            flat
+                            style="border: 1px solid rgba(128, 128, 128, 0.25)"
+                          >
+                            {{
+                              upcomingCollectionFilters.status.text ||
+                              "Select Status"
+                            }}
+                          </v-btn>
+                        </template>
+                        <v-sheet
+                          border
+                          rounded
+                        >
+                          <v-list
+                            nav
+                            density="compact"
+                            role="listbox"
+                          >
+                            <v-list-item
+                              value="All"
+                              density="compact"
+                              @click="
+                                upcomingCollectionFilters.status.text = null
+                              "
+                              >All</v-list-item
+                            >
+                            <v-list-item
+                              v-for="(
+                                dropDownMenu, it
+                              ) in upcomingCollectionFilters.status.menus"
+                              :key="it"
+                              :value="it"
+                              density="compact"
+                              @click="
+                                upcomingCollectionFilters.status.text =
+                                  dropDownMenu.title
+                              "
+                              >{{ dropDownMenu.title }}</v-list-item
                             >
                           </v-list>
                         </v-sheet>
@@ -513,7 +518,18 @@
                 </v-col>
               </v-row>
               <v-row class="d-flex mt-9">
-                <UpcomingCollectionsTable />
+                <UpcomingCollectionsTable
+                  v-if="
+                    collectionFilter.collections.name.toLowerCase() ===
+                    'upcoming'
+                  "
+                />
+                <OverdueCollectionsTable
+                  v-if="
+                    collectionFilter.collections.name.toLowerCase() ===
+                    'overdue'
+                  "
+                />
               </v-row>
             </v-card-text>
           </v-card>
@@ -592,8 +608,9 @@
                           >
                             {{
                               newCustomerFilters.status.text ||
-                              "Select Onboarding Status"
+                              "Select Onboarding "
                             }}
+                            Status
                           </v-btn>
                         </template>
                         <v-sheet
@@ -760,6 +777,7 @@ import { useSalesDashboardStore } from "@/store/sales-dashboard";
 import UpcomingCollectionsTable from "@/components/UpcomingCollectionsTable.vue";
 import NewCustomersTable from "@/components/NewCustomersTable.vue";
 import { dateFilters } from "@/helpers";
+import OverdueCollectionsTable from "@/components/OverdueCollectionsTable.vue";
 
 const salesDashboardStore = useSalesDashboardStore();
 
@@ -812,30 +830,71 @@ const salesOverviewFilters = reactive({
   },
 });
 
-const upComingCollectionFilters = reactive({
-  branches: {
-    text: "All Branches",
+// const upComingCollectionFilters = reactive({
+//   branches: {
+//     text: "All Branches",
+//     appendIcon: "mdi:mdi-chevron-down",
+//   } as {
+//     text: string | null;
+//     appendIcon: string;
+//   },
+//   salesRep: {
+//     text: "All Sales Rep",
+//     id: null,
+//     appendIcon: "mdi:mdi-chevron-down",
+//   } as {
+//     text: string | null;
+//     id: string | null;
+//     appendIcon: string;
+//   },
+//   dateFilters: {
+//     text: "All Time",
+//     appendIcon: "mdi:mdi-chevron-down",
+//     menus: ["All Time", "This Year", "This Month", "This Week"],
+//   },
+// });
+const collectionFilter = ref({
+  collections: {
+    name: "Upcoming",
     appendIcon: "mdi:mdi-chevron-down",
-  } as {
-    text: string | null;
-    appendIcon: string;
-  },
-  salesRep: {
-    text: "All Sales Rep",
-    id: null,
-    appendIcon: "mdi:mdi-chevron-down",
-  } as {
-    text: string | null;
-    id: string | null;
-    appendIcon: string;
-  },
-  dateFilters: {
-    text: "All Time",
-    appendIcon: "mdi:mdi-chevron-down",
-    menus: ["All Time", "This Year", "This Month", "This Week"],
+    menu: ["Upcoming", "Overdue"],
   },
 });
-
+const upcomingCollectionFilters = ref({
+  product: {
+    text: null,
+    appendIcon: "mdi:mdi-chevron-down",
+    menus: [
+      "Biashara",
+      "PRESTA LMS",
+      "Corporate Loan",
+      "Okoa",
+      "Salary Advance",
+    ],
+  } as { text: string | null; appendIcon: string; menus: string[] },
+  status: {
+    text: null,
+    appendIcon: "mdi:mdi-chevron-down",
+    menus: [
+      {
+        title: "Paid",
+        value: "Paid",
+      },
+      {
+        title: "Not Paid",
+        value: "NOTPAID",
+      },
+      {
+        title: "Partially Paid",
+        value: "Partially Paid",
+      },
+    ],
+  } as {
+    text: string | null;
+    appendIcon: string;
+    menus: { title: string; value: string }[];
+  },
+});
 const upComingCollectionActions = ref([
   {
     text: "Export",
@@ -901,7 +960,7 @@ const upComingCollectionActions = ref([
 
 const newCustomerFilters = ref({
   status: {
-    text: "Select Onboarding Status",
+    text: "Select Onboarding ",
     appendIcon: "mdi:mdi-chevron-down",
     menus: [
       {
