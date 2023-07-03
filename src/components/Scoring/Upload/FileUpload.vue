@@ -222,7 +222,7 @@ const reUploadWithNewPassword = () => {
       {{ message }}
     </p>
   </v-list-item>
-
+  <slot name="divider"></slot>
   <v-dialog
     persistent
     v-model="popupOpen"

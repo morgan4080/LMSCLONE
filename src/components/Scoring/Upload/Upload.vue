@@ -245,21 +245,21 @@ watch(
             <div class="mt-12">
               <v-divider></v-divider>
               <v-list>
-                <div
+                <FileUpload
                   v-for="(upload, i) in uploads"
-                  :key="i"
-                >
-                  <FileUpload
-                    :statement="{
+                  :key="i + upload.password"
+                  :statement="{
                       document_type: `${upload.type}`,
                       document_code: `${upload.code}`,
                       document_file: upload.file as File,
                       document_password: `${upload.password}`,
                     }"
-                    @clear="uploads.splice(i, 1)"
-                  ></FileUpload>
-                  <v-divider class="mb-2"></v-divider>
-                </div>
+                  @clear="uploads.splice(i, 1)"
+                >
+                  <template v-slot:divider>
+                    <v-divider class="mb-2"></v-divider>
+                  </template>
+                </FileUpload>
               </v-list>
             </div>
           </v-container>
@@ -306,7 +306,6 @@ watch(
 .dashed {
   border-style: dashed !important;
 }
-/*
 .border-gray {
   border-color: #e4e4e4 !important;
 }
@@ -314,8 +313,6 @@ watch(
 .border-blue {
   border-color: #286efa !important;
 }
-*/
-
 .text-gray {
   color: #828282;
 }
