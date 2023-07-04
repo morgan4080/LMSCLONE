@@ -64,6 +64,7 @@ onBeforeMount(() => {
 
 <template>
   <Doughnut
+    style="display: inline !important"
     :data="chartData"
     :options="chartOptions"
   />

@@ -5,6 +5,7 @@ import axiosInstance from "@/services/api/axiosInstance";
 import LineChart from "@/components/Scoring/LineChart.vue";
 
 const options = ["Option 1", "Option 2", "Option 3", "Option 4"];
+const loaded = ref(false);
 
 interface Flow {
   id: number;
@@ -96,11 +97,15 @@ const flow = ref<string>("Inflow");
 
 // API Call: Get In-Out Flow Data
 const loadFlowData = async () => {
+  loaded.value = false;
   await axiosInstance
     .get(
       `/income/income_expense_flow?idNumber=${route.params.slug}&pageSize=100&sortBy=id`
     )
-    .then(response => (apiData.value = response.data.content))
+    .then(response => {
+      apiData.value = response.data.content;
+      loaded.value = true;
+    })
     .catch(error => console.error(error));
 };
 
@@ -161,12 +166,12 @@ onMounted(() => {
         <div class="my-10">
           <LineChart
             :propData="inflow"
-            v-if="flow.toLowerCase() === 'inflow'"
+            v-if="flow.toLowerCase() === 'inflow' && loaded"
             class="h-75 w-75"
           />
           <LineChart
             :propData="outflow"
-            v-if="flow.toLowerCase() === 'outflow'"
+            v-if="flow.toLowerCase() === 'outflow' && loaded"
             class="h-75 w-75"
           />
         </div>

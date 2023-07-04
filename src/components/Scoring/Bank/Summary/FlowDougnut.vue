@@ -11,13 +11,26 @@ interface Flow {
 
 const route = useRoute();
 
-const inflowData = ref<Flow[]>([])
-const outflowData = ref<Flow[]>([])
+const inflowData = ref<Flow[]>([]);
+const outflowData = ref<Flow[]>([]);
+
+const InflowLoaded = ref(false);
+const OutflowLoaded = ref(false);
 
 const getMonthName = (month: number): string => {
   const months = [
-    'January', 'February', 'March', 'April', 'May', 'June',
-    'July', 'August', 'September', 'October', 'November', 'December'
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
   ];
   return months[month - 1];
 };
@@ -27,7 +40,7 @@ const inflow = computed(() => {
   const data: string[] = [];
 
   for (const item of inflowData.value) {
-    const [month] = item.name.split('/').map(Number);
+    const [month] = item.name.split("/").map(Number);
     const label = getMonthName(month);
     const monthIndex = labels.indexOf(label);
 
@@ -48,7 +61,7 @@ const outflow = computed(() => {
   const data: string[] = [];
 
   for (const item of outflowData.value) {
-    const [month] = item.name.split('/').map(Number);
+    const [month] = item.name.split("/").map(Number);
     const label = getMonthName(month);
     const monthIndex = labels.indexOf(label);
 
@@ -64,93 +77,88 @@ const outflow = computed(() => {
   return { labels, data };
 });
 
-const flow = ref<string>('Inflow');
-
-const baseUrl: string = "https://staging-lending.presta.co.ke/bank_scoring/api/v1"
+const baseUrl: string =
+  "https://staging-lending.presta.co.ke/bank_scoring/api/v1";
 
 // API Call: Get In-Flow Data
 const loadInFlowData = async () => {
+  InflowLoaded.value = false;
   await axiosInstance
     .get(`${baseUrl}/bank_analysis/bank_inflow?idNumber=${route.params.slug}`)
-    .then(response => (inflowData.value = response.data))
+    .then(response => {
+      inflowData.value = response.data;
+      InflowLoaded.value = true;
+    })
     .catch(error => console.error(error));
 };
 
 // API Call: Get Out-Flow Data
 const loadOutFlowData = async () => {
+  OutflowLoaded.value = false;
   await axiosInstance
-    .get(`${baseUrl}/bank_analysis/bank_expense_flow?idNumber=${route.params.slug}`)
-    .then(response => (outflowData.value = response.data))
+    .get(
+      `${baseUrl}/bank_analysis/bank_expense_flow?idNumber=${route.params.slug}`
+    )
+    .then(response => {
+      outflowData.value = response.data;
+      OutflowLoaded.value = true;
+    })
     .catch(error => console.error(error));
 };
 
 onMounted(() => {
-  loadInFlowData() 
-  loadOutFlowData()
-})
+  loadInFlowData();
+  loadOutFlowData();
+});
 </script>
 
 <template>
   <v-container fluid>
-    <v-card
-      variant="flat"
-      color="white"
-      class="rounded h-100"
-    >
-      <v-container fluid>
-        <div class="d-flex justify-space-between">
-          <div>
-            <h1 class="text-h6 font-weight-regular">{{ flow }}</h1>
-            <h2 class="text-caption text-grey-darken-2 font-weight-regular">
-              Summary Of {{ flow }} Transactions
-            </h2>
-          </div>
-          <div class="d-flex">
-            <v-btn
-              variant="outlined"
-              @click="
-                () => {
-                  flow = 'Inflow';
-                }
-              "
-              :class="
-                flow.toLowerCase() === 'inflow'
-                  ? 'bg-black text-white'
-                  : 'bg-white text-black'
-              "
-              class="text-none font-weight-regular rounded-e-0 border"
-              >Inflow</v-btn
-            >
-            <v-btn
-              variant="outlined"
-              @click="
-                () => {
-                  flow = 'Outflow';
-                }
-              "
-              :class="
-                flow.toLowerCase() === 'outflow'
-                  ? 'bg-black text-white'
-                  : 'bg-white text-black'
-              "
-              class="text-none font-weight-regular rounded-s-0 border"
-              >Outflow</v-btn
-            >
-          </div>
-        </div>
-        <div>
-          <DoughnutChart
-            :propData="inflow"
-            v-if="flow.toLowerCase() === 'inflow'"
-            class="h-25 w-25"
-          />
-          <DoughnutChart
-            :propData="outflow"
-            v-if="flow.toLowerCase() === 'outflow'"
-            class="h-25 w-25"
-          />
-        </div>
-      </v-container>
-    </v-card>
+    <v-row>
+      <v-col
+        ><v-card
+          variant="flat"
+          color="white"
+          class="rounded h-100"
+        >
+          <v-container fluid>
+            <div class="d-flex justify-space-between">
+              <div>
+                <h1 class="text-h6 font-weight-regular">Inflow</h1>
+                <h2 class="text-caption text-grey-darken-2 font-weight-regular">
+                  Summary Of Inflow Transactions
+                </h2>
+              </div>
+            </div>
+            <DoughnutChart
+              :propData="inflow"
+              v-if="InflowLoaded"
+              class="h-75 w-75"
+            />
+          </v-container> </v-card
+      ></v-col>
+      <v-col
+        ><v-card
+          variant="flat"
+          color="white"
+          class="rounded h-100"
+        >
+          <v-container fluid>
+            <div class="d-flex justify-space-between">
+              <div>
+                <h1 class="text-h6 font-weight-regular">Outflow</h1>
+                <h2 class="text-caption text-grey-darken-2 font-weight-regular">
+                  Summary Of Outflow Transactions
+                </h2>
+              </div>
+            </div>
+            <DoughnutChart
+              :propData="outflow"
+              v-if="OutflowLoaded"
+              class="h-75 w-75"
+            />
+          </v-container> </v-card
+      ></v-col>
+    </v-row>
   </v-container>
 </template>

@@ -12,13 +12,24 @@ interface Flow {
 
 const route = useRoute();
 
-const inflowData = ref<Flow[]>([])
-const outflowData = ref<Flow[]>([])
+const inflowData = ref<Flow[]>([]);
+const outflowData = ref<Flow[]>([]);
+const loaded = ref(false);
 
 const getMonthName = (month: number): string => {
   const months = [
-    'January', 'February', 'March', 'April', 'May', 'June',
-    'July', 'August', 'September', 'October', 'November', 'December'
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
   ];
   return months[month - 1];
 };
@@ -28,7 +39,7 @@ const inflow = computed(() => {
   const data: string[] = [];
 
   for (const item of inflowData.value) {
-    const [month] = item.name.split('/').map(Number);
+    const [month] = item.name.split("/").map(Number);
     const label = getMonthName(month);
     const monthIndex = labels.indexOf(label);
 
@@ -49,7 +60,7 @@ const outflow = computed(() => {
   const data: string[] = [];
 
   for (const item of outflowData.value) {
-    const [month] = item.name.split('/').map(Number);
+    const [month] = item.name.split("/").map(Number);
     const label = getMonthName(month);
     const monthIndex = labels.indexOf(label);
 
@@ -65,30 +76,37 @@ const outflow = computed(() => {
   return { labels, data };
 });
 
-const flow = ref<string>('Inflow');
+const flow = ref<string>("Inflow");
 
-const baseUrl: string = "https://staging-lending.presta.co.ke/bank_scoring/api/v1"
+const baseUrl: string =
+  "https://staging-lending.presta.co.ke/bank_scoring/api/v1";
 
 // API Call: Get In-Flow Data
 const loadInFlowData = async () => {
+  loaded.value = false;
   await axiosInstance
     .get(`${baseUrl}/bank_analysis/bank_inflow?idNumber=${route.params.slug}`)
-    .then(response => (inflowData.value = response.data))
+    .then(response => {
+      inflowData.value = response.data;
+      loaded.value = true;
+    })
     .catch(error => console.error(error));
 };
 
 // API Call: Get Out-Flow Data
 const loadOutFlowData = async () => {
   await axiosInstance
-    .get(`${baseUrl}/bank_analysis/bank_expense_flow?idNumber=${route.params.slug}`)
+    .get(
+      `${baseUrl}/bank_analysis/bank_expense_flow?idNumber=${route.params.slug}`
+    )
     .then(response => (outflowData.value = response.data))
     .catch(error => console.error(error));
 };
 
 onMounted(() => {
-  loadInFlowData() 
-  loadOutFlowData()
-})
+  loadInFlowData();
+  loadOutFlowData();
+});
 </script>
 
 <template>
@@ -143,12 +161,12 @@ onMounted(() => {
         <div class="my-10">
           <LineChart
             :propData="inflow"
-            v-if="flow.toLowerCase() === 'inflow'"
+            v-if="flow.toLowerCase() === 'inflow' && loaded"
             class="h-75 w-75"
           />
           <LineChart
             :propData="outflow"
-            v-if="flow.toLowerCase() === 'outflow'"
+            v-if="flow.toLowerCase() === 'outflow' && loaded"
             class="h-75 w-75"
           />
         </div>
