@@ -14,12 +14,12 @@ interface AgentDataItem {
 }
 
 interface AgentTopTransData {
-  agent_no: string; 
-  highest: string; 
-  count: string; 
-  total: string; 
-  name: string; 
-  transactiontype: string; 
+  agent_no: string;
+  highest: string;
+  count: string;
+  total: string;
+  name: string;
+  transactiontype: string;
 }
 
 const route = useRoute();
@@ -27,7 +27,7 @@ const route = useRoute();
 const open = ref(true);
 const loading = ref(false);
 const itemsPerPage = ref(5);
-const totalItems = computed(()=>agentTopTransData.value.length);
+const totalItems = computed(() => agentTopTransData.value.length);
 const headers = ref<
   { title: string; key: string; align: string; sortable: boolean }[]
 >([
@@ -50,7 +50,7 @@ const headers = ref<
 ]);
 
 const agentTransData = ref<AgentDataItem[]>([]);
-const agentTopTransData = ref<AgentTopTransData[]>([])
+const agentTopTransData = ref<AgentTopTransData[]>([]);
 
 // API Call: Get Agent Transactions Data
 const loadAgentTransData = async () => {
@@ -65,7 +65,9 @@ const loadAgentTransData = async () => {
 // API Call: Get Top Agent Trans Data
 const loadAgentTopTransData = async () => {
   await axiosInstance
-    .get(`/e_statement/top_agent_transactions?idNumber=${route.params.slug}&pageSize=${itemsPerPage.value}&sortBy=id`)
+    .get(
+      `/e_statement/top_agent_transactions?idNumber=${route.params.slug}&pageSize=${itemsPerPage.value}&sortBy=id`
+    )
     .then(response => (agentTopTransData.value = response.data.content))
     .catch(error => console.error(error));
 };
@@ -177,8 +179,12 @@ onMounted(() => {
               item-value="name"
               @update:options="loadAgentTopTransData()"
             >
-            <template v-slot:[`item.highest`]="{ item }"><span>{{ formatter(item.columns.highest) }}</span></template>
-            <template v-slot:[`item.total`]="{ item }"><span>{{ formatter(item.columns.total) }}</span></template>
+              <template v-slot:[`item.highest`]="{ item }"
+                ><span>{{ formatter(item.columns.highest) }}</span></template
+              >
+              <template v-slot:[`item.total`]="{ item }"
+                ><span>{{ formatter(item.columns.total) }}</span></template
+              >
             </v-data-table-server>
           </v-card>
         </v-container>

@@ -1,15 +1,15 @@
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
-import { useRoute } from "vue-router"; 
+import { useRoute } from "vue-router";
 import axiosInstance from "@/services/api/axiosInstance";
-import formatter from "@/helpers/currency"
+import formatter from "@/helpers/currency";
 
 interface CustomerInformation {
   customer_names: string;
   identity_number: string;
   email: string;
   phone_number: string;
-  statement_period: string; 
+  statement_period: string;
 }
 
 interface CustomerStatement {
@@ -130,7 +130,9 @@ onMounted(() => {
                   ><h3 class="py-1 text-body-2 text-blue">
                     {{ customerInformation[0]?.customer_names }}
                   </h3>
-                  <h3 class="py-1 text-body-2">{{ customerStatement[0]?.file_type }}</h3>
+                  <h3 class="py-1 text-body-2">
+                    {{ customerStatement[0]?.file_type }}
+                  </h3>
                   <h3 class="py-1 text-body-2">
                     {{ customerInformation[0]?.phone_number }}
                   </h3>
@@ -157,9 +159,15 @@ onMounted(() => {
                   <h3 class="py-1 text-grey text-body-2">Currency</h3>
                 </v-col>
                 <v-col
-                  ><h3 class="py-1 text-body-2 text-blue">{{ customerStatement[0]?.documentName }}</h3>
-                  <h3 class="py-1 text-body-2">{{ customerStatement[0]?.status }}</h3>
-                  <h3 class="py-1 text-body-2">{{ customerStatement[0]?.date }}</h3>
+                  ><h3 class="py-1 text-body-2 text-blue">
+                    {{ customerStatement[0]?.documentName }}
+                  </h3>
+                  <h3 class="py-1 text-body-2">
+                    {{ customerStatement[0]?.status }}
+                  </h3>
+                  <h3 class="py-1 text-body-2">
+                    {{ customerStatement[0]?.date }}
+                  </h3>
                   <h3 class="py-1 text-body-2"></h3
                 ></v-col>
               </v-row>
@@ -180,12 +188,16 @@ onMounted(() => {
                   <h3 class="py-1 text-grey text-body-2">Duration</h3>
                 </v-col>
                 <v-col
-                  ><h3 class="py-1 text-body-2 text-blue">{{ customerAnalysis[0]?.received_on }}</h3>
+                  ><h3 class="py-1 text-body-2 text-blue">
+                    {{ customerAnalysis[0]?.received_on }}
+                  </h3>
                   <h3 class="py-1 text-body-2"></h3>
                   <h3 class="py-1 text-body-2">
                     {{ customerInformation[0]?.statement_period }}
                   </h3>
-                  <h3 class="py-1 text-body-2">{{ customerAnalysis[0]?.duration_in_months }} Months</h3></v-col
+                  <h3 class="py-1 text-body-2">
+                    {{ customerAnalysis[0]?.duration_in_months }} Months
+                  </h3></v-col
                 >
               </v-row>
             </v-container>
@@ -300,7 +312,9 @@ onMounted(() => {
                   <v-divider class="my-2"></v-divider>
                   <div class="mt-4 d-flex justify-space-between">
                     <h1 class="text-caption font-weight-medium">Risk Level</h1>
-                    <h1 class="text-caption">{{ longTermScore[0]?.risk_level }}</h1>
+                    <h1 class="text-caption">
+                      {{ longTermScore[0]?.risk_level }}
+                    </h1>
                   </div>
                   <v-divider
                     class="my-2"
@@ -317,14 +331,19 @@ onMounted(() => {
                     <h1 class="text-caption font-weight-medium">
                       Gross Loanable (R)
                     </h1>
-                    <h1 class="text-caption">KES {{ formatter(longTermScore[0]?.loanable_highest) }}</h1>
+                    <h1 class="text-caption">
+                      KES {{ formatter(longTermScore[0]?.loanable_highest) }}
+                    </h1>
                   </div>
                   <v-divider class="my-2"></v-divider>
                   <div class="mt-4 d-flex justify-space-between">
                     <h1 class="text-caption font-weight-medium">
                       Net Loanable (R)
                     </h1>
-                    <h1 class="text-caption">KES {{ formatter(longTermScore[0]?.net_loanable_highest) }}</h1>
+                    <h1 class="text-caption">
+                      KES
+                      {{ formatter(longTermScore[0]?.net_loanable_highest) }}
+                    </h1>
                   </div>
                   <v-divider class="my-2"></v-divider>
                 </div>

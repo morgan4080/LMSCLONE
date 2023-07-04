@@ -115,7 +115,7 @@ const loadData = async (filters?: string) => {
 
   try {
     const response = await axiosInstance.get(url);
-   apiData.value = transformData(response.data.content);
+    apiData.value = transformData(response.data.content);
   } catch (error) {
     console.error(error);
   } finally {
@@ -217,9 +217,7 @@ watch(params, () => {
       <p>
         {{ item.columns.statementPeriod }}
       </p>
-      <p>
-        Months
-      </p>
+      <p>Months</p>
     </template>
     <template v-slot:[`item.password`]="{ item }">
       {{ item.columns.password || "N/A" }}
@@ -228,12 +226,20 @@ watch(params, () => {
       <div class="justify-end d-flex">
         <div
           class="px-1 border rounded hover-cursor-pointer"
-          @click="  item.columns.status?.toLowerCase() === 'completed' ?
-            $router.push(`/scoring/${item.columns.statement.doctype === 'BANK' ? 'bank' : 'mobile'}/${item.columns.customer.idnum}`) : ''
+          @click="
+            item.columns.status?.toLowerCase() === 'completed'
+              ? $router.push(
+                  `/scoring/${
+                    item.columns.statement.doctype === 'BANK'
+                      ? 'bank'
+                      : 'mobile'
+                  }/${item.columns.customer.idnum}`
+                )
+              : ''
           "
         >
           <v-icon
-          :color="
+            :color="
               item.columns.status?.toLowerCase() === 'completed'
                 ? 'blue'
                 : 'blue-grey-lighten-4'
@@ -243,7 +249,13 @@ watch(params, () => {
           ></v-icon>
         </div>
         <div
-          @click.stop="queryStatementStatus(item.columns.id, item.columns.statement.bankcode, item.columns.statement.uniqueId)"
+          @click.stop="
+            queryStatementStatus(
+              item.columns.id,
+              item.columns.statement.bankcode,
+              item.columns.statement.uniqueId
+            )
+          "
           class="px-1 ml-1 border rounded hover-cursor-pointer"
         >
           <v-icon

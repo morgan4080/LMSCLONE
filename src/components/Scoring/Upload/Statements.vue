@@ -9,7 +9,7 @@ interface Bank {
   bankCode: string;
 }
 
-const banks = ref<string[]>([])
+const banks = ref<string[]>([]);
 const mobile = ["MPESA", "Airtel Money"];
 const searchUploadedStatement = ref("");
 const headers = ref<
@@ -152,9 +152,9 @@ watch(filters, () => {
   filters.status && (params.value += `&status=${filters.status}`);
 });
 
-onMounted(()=>{
-  loadBanks()
-})
+onMounted(() => {
+  loadBanks();
+});
 </script>
 
 <template>

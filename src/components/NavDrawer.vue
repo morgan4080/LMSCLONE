@@ -632,6 +632,10 @@ const items = ref<
     href: "#",
     subItems: [
       {
+        text: "Agent/Sales Overview",
+        href: "/",
+      },
+      {
         text: "Correlation Analysis Dashboard",
         href: "/lms/agentsales/correlations",
       },

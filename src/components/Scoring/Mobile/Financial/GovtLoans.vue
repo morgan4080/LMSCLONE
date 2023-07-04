@@ -37,8 +37,8 @@ const loadHustlerData = async () => {
 };
 
 onMounted(() => {
-  loadHustlerData() 
-})
+  loadHustlerData();
+});
 </script>
 
 <template>

@@ -8,19 +8,19 @@ interface BankDataItem {
   total: number;
   highest: string;
   highest_who: string;
-  lowest: string;  
+  lowest: string;
   lowest_who: string;
   classification: string;
 }
 
 interface BankTopTransData {
-  last_draw: string; 
-  last: string; 
-  highest: string; 
-  count: string; 
-  name: string; 
-  transactiontype: string; 
-  classification: string; 
+  last_draw: string;
+  last: string;
+  highest: string;
+  count: string;
+  name: string;
+  transactiontype: string;
+  classification: string;
 }
 
 const route = useRoute();
@@ -28,7 +28,7 @@ const route = useRoute();
 const open = ref(true);
 const loading = ref(false);
 const itemsPerPage = ref(5);
-const totalItems = computed(()=>bankTopTransData.value.length);
+const totalItems = computed(() => bankTopTransData.value.length);
 const headers = ref<
   { title: string; key: string; align: string; sortable: boolean }[]
 >([
@@ -50,30 +50,46 @@ const headers = ref<
   { title: "Last Amount", key: "last", align: "end", sortable: false },
 ]);
 
-const bankTransReceivedData = ref<BankDataItem[]>([])
-const bankTransSentData = ref<BankDataItem[]>([])
-const bankTopAccountsData = ref<{name: string; account: string; }[]>([])
-const bankTopTransData = ref<BankTopTransData[]>([])
+const bankTransReceivedData = ref<BankDataItem[]>([]);
+const bankTransSentData = ref<BankDataItem[]>([]);
+const bankTopAccountsData = ref<{ name: string; account: string }[]>([]);
+const bankTopTransData = ref<BankTopTransData[]>([]);
 
 // API Call: Get Bank Transactions Data
 const loadBankTransReceivedData = async () => {
   await axiosInstance
-    .get(`/e_statement/pay_bill_classifications_received?idNumber=${route.params.slug}&pageSize=100&sortBy=id`)
-    .then(response => (bankTransReceivedData.value = response.data.content.filter((item: BankDataItem) => item.classification === "Banks")))
+    .get(
+      `/e_statement/pay_bill_classifications_received?idNumber=${route.params.slug}&pageSize=100&sortBy=id`
+    )
+    .then(
+      response =>
+        (bankTransReceivedData.value = response.data.content.filter(
+          (item: BankDataItem) => item.classification === "Banks"
+        ))
+    )
     .catch(error => console.error(error));
 };
 
 const loadBankTransSentData = async () => {
   await axiosInstance
-    .get(`/e_statement/pay_bill_classifications_sent?idNumber=${route.params.slug}&pageSize=100&sortBy=id`)
-    .then(response => (bankTransSentData.value = response.data.content.filter((item: BankDataItem) => item.classification === "Banks")))
+    .get(
+      `/e_statement/pay_bill_classifications_sent?idNumber=${route.params.slug}&pageSize=100&sortBy=id`
+    )
+    .then(
+      response =>
+        (bankTransSentData.value = response.data.content.filter(
+          (item: BankDataItem) => item.classification === "Banks"
+        ))
+    )
     .catch(error => console.error(error));
 };
 
 // API Call: Get Top Bank Accounts Data
 const loadBankTopAccountsData = async () => {
   await axiosInstance
-    .get(`/e_statement/top_bank_accounts?idNumber=${route.params.slug}&pageSize=100&sortBy=id`)
+    .get(
+      `/e_statement/top_bank_accounts?idNumber=${route.params.slug}&pageSize=100&sortBy=id`
+    )
     .then(response => (bankTopAccountsData.value = response.data.content))
     .catch(error => console.error(error));
 };
@@ -81,16 +97,18 @@ const loadBankTopAccountsData = async () => {
 // API Call: Get Top Bank Trans Data
 const loadBankTopTransData = async () => {
   await axiosInstance
-  // https://staging-lending.presta.co.ke/scoring/api/v1/e_statement/top_paybill_classifications?classification=Banks&pageSize=15&sortBy=id
-    .get(`/e_statement/top_paybill_classifications?idNumber=${route.params.slug}&classification=Banks&pageSize=${itemsPerPage.value}&sortBy=id`)
+    // https://staging-lending.presta.co.ke/scoring/api/v1/e_statement/top_paybill_classifications?classification=Banks&pageSize=15&sortBy=id
+    .get(
+      `/e_statement/top_paybill_classifications?idNumber=${route.params.slug}&classification=Banks&pageSize=${itemsPerPage.value}&sortBy=id`
+    )
     .then(response => (bankTopTransData.value = response.data.content))
     .catch(error => console.error(error));
 };
 
 onMounted(() => {
   loadBankTransReceivedData();
-  loadBankTransSentData()
-  loadBankTopAccountsData()
+  loadBankTransSentData();
+  loadBankTopAccountsData();
 });
 </script>
 
@@ -133,7 +151,9 @@ onMounted(() => {
                 />
                 <v-row class="justify-space-between d-flex">
                   <v-col class="font-weight-medium">Highest</v-col>
-                  <v-col>{{ formatter(bankTransReceivedData[0]?.highest) }}</v-col>
+                  <v-col>{{
+                    formatter(bankTransReceivedData[0]?.highest)
+                  }}</v-col>
                   <v-col>{{ formatter(bankTransSentData[0]?.highest) }}</v-col>
                 </v-row>
                 <v-divider class="my-2" />
@@ -145,7 +165,9 @@ onMounted(() => {
                 <v-divider class="my-2" />
                 <v-row class="justify-space-between d-flex">
                   <v-col class="font-weight-medium">Lowest</v-col>
-                  <v-col>{{ formatter(bankTransReceivedData[0]?.lowest) }}</v-col>
+                  <v-col>{{
+                    formatter(bankTransReceivedData[0]?.lowest)
+                  }}</v-col>
                   <v-col>{{ formatter(bankTransSentData[0]?.lowest) }}</v-col>
                 </v-row>
                 <v-divider class="my-2" />
@@ -160,7 +182,9 @@ onMounted(() => {
                 />
                 <v-row class="font-weight-bold justify-space-between d-flex">
                   <v-col>Total</v-col>
-                  <v-col>{{ formatter(bankTransReceivedData[0]?.total) }}</v-col>
+                  <v-col>{{
+                    formatter(bankTransReceivedData[0]?.total)
+                  }}</v-col>
                   <v-col>{{ formatter(bankTransSentData[0]?.total) }}</v-col>
                 </v-row>
               </div>
@@ -188,10 +212,18 @@ onMounted(() => {
                   <h1 class="text-caption font-weight-bold">Account Name</h1>
                   <h2 class="text-caption font-weight-bold">Account Number</h2>
                 </div>
-                <v-divider class="my-3" :thickness="3"/>
-                <div v-for="(topAccount, i) in bankTopAccountsData" :key="i">
+                <v-divider
+                  class="my-3"
+                  :thickness="3"
+                />
+                <div
+                  v-for="(topAccount, i) in bankTopAccountsData"
+                  :key="i"
+                >
                   <div class="mx-4 d-flex justify-space-between">
-                    <h1 class="text-caption font-weight-medium">{{ topAccount.name }}</h1>
+                    <h1 class="text-caption font-weight-medium">
+                      {{ topAccount.name }}
+                    </h1>
                     <h2 class="text-caption">{{ topAccount.account }}</h2>
                   </div>
                   <v-divider class="my-3" />
@@ -226,8 +258,12 @@ onMounted(() => {
               item-value="name"
               @update:options="loadBankTopTransData()"
             >
-            <template v-slot:[`item.highest`]="{ item }"><span>{{ formatter(item.columns.highest) }}</span></template>
-            <template v-slot:[`item.last`]="{ item }"><span>{{ formatter(item.columns.last) }}</span></template>
+              <template v-slot:[`item.highest`]="{ item }"
+                ><span>{{ formatter(item.columns.highest) }}</span></template
+              >
+              <template v-slot:[`item.last`]="{ item }"
+                ><span>{{ formatter(item.columns.last) }}</span></template
+              >
             </v-data-table-server>
           </v-card>
         </v-container>

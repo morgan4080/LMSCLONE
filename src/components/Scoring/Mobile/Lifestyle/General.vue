@@ -9,19 +9,19 @@ interface GeneralDataItem {
   total: number;
   highest: string;
   highest_who: string;
-  lowest: string;  
+  lowest: string;
   lowest_who: string;
   classification: string;
 }
 
 interface GeneralTopTransData {
-  last_draw: string; 
-  last: string; 
-  highest: string; 
-  count: string; 
-  name: string; 
-  transactiontype: string; 
-  classification: string; 
+  last_draw: string;
+  last: string;
+  highest: string;
+  count: string;
+  name: string;
+  transactiontype: string;
+  classification: string;
 }
 
 const route = useRoute();
@@ -29,7 +29,7 @@ const route = useRoute();
 const open = ref(true);
 const loading = ref(false);
 const itemsPerPage = ref(5);
-const totalItems = computed(()=>generalTopTransData.value.length);
+const totalItems = computed(() => generalTopTransData.value.length);
 const headers = ref<
   { title: string; key: string; align: string; sortable: boolean }[]
 >([
@@ -51,21 +51,25 @@ const headers = ref<
   { title: "Last Amount", key: "last", align: "end", sortable: false },
 ]);
 
-const generalTransReceivedData = ref<GeneralDataItem[]>([])
-const generalTransSentData = ref<GeneralDataItem[]>([])
-const generalTopTransData = ref<GeneralTopTransData[]>([])
+const generalTransReceivedData = ref<GeneralDataItem[]>([]);
+const generalTransSentData = ref<GeneralDataItem[]>([]);
+const generalTopTransData = ref<GeneralTopTransData[]>([]);
 
 // API Call: Get General Transactions Data
 const loadGeneralTransReceivedData = async () => {
   await axiosInstance
-    .get(`/e_statement/pay_bill_classifications_received?idNumber=${route.params.slug}&classification=General&pageSize=100&sortBy=id`)
+    .get(
+      `/e_statement/pay_bill_classifications_received?idNumber=${route.params.slug}&classification=General&pageSize=100&sortBy=id`
+    )
     .then(response => (generalTransReceivedData.value = response.data.content))
     .catch(error => console.error(error));
 };
 
 const loadGeneralTransSentData = async () => {
   await axiosInstance
-    .get(`/e_statement/pay_bill_classifications_sent?idNumber=${route.params.slug}&classification=General&pageSize=100&sortBy=id`)
+    .get(
+      `/e_statement/pay_bill_classifications_sent?idNumber=${route.params.slug}&classification=General&pageSize=100&sortBy=id`
+    )
     .then(response => (generalTransSentData.value = response.data.content))
     .catch(error => console.error(error));
 };
@@ -73,14 +77,16 @@ const loadGeneralTransSentData = async () => {
 // API Call: Get Top General Trans Data
 const loadGeneralTopTransData = async () => {
   await axiosInstance
-    .get(`/e_statement/top_paybill_classifications?idNumber=${route.params.slug}&classification=General&pageSize=${itemsPerPage.value}&sortBy=id`)
+    .get(
+      `/e_statement/top_paybill_classifications?idNumber=${route.params.slug}&classification=General&pageSize=${itemsPerPage.value}&sortBy=id`
+    )
     .then(response => (generalTopTransData.value = response.data.content))
     .catch(error => console.error(error));
 };
 
 onMounted(() => {
   loadGeneralTransReceivedData();
-  loadGeneralTransSentData()
+  loadGeneralTransSentData();
 });
 </script>
 
@@ -125,8 +131,12 @@ onMounted(() => {
                 />
                 <v-row class="justify-space-between d-flex">
                   <v-col class="font-weight-medium">Highest</v-col>
-                  <v-col>{{ formatter(generalTransReceivedData[0]?.highest) }}</v-col>
-                  <v-col>{{ formatter(generalTransSentData[0]?.highest) }}</v-col>
+                  <v-col>{{
+                    formatter(generalTransReceivedData[0]?.highest)
+                  }}</v-col>
+                  <v-col>{{
+                    formatter(generalTransSentData[0]?.highest)
+                  }}</v-col>
                 </v-row>
                 <v-divider class="my-2" />
                 <v-row class="justify-space-between d-flex">
@@ -137,8 +147,12 @@ onMounted(() => {
                 <v-divider class="my-2" />
                 <v-row class="justify-space-between d-flex">
                   <v-col class="font-weight-medium">Lowest</v-col>
-                  <v-col>{{ formatter(generalTransReceivedData[0]?.lowest) }}</v-col>
-                  <v-col>{{ formatter(generalTransSentData[0]?.lowest) }}</v-col>
+                  <v-col>{{
+                    formatter(generalTransReceivedData[0]?.lowest)
+                  }}</v-col>
+                  <v-col>{{
+                    formatter(generalTransSentData[0]?.lowest)
+                  }}</v-col>
                 </v-row>
                 <v-divider class="my-2" />
                 <v-row class="justify-space-between d-flex">
@@ -152,7 +166,9 @@ onMounted(() => {
                 />
                 <v-row class="font-weight-bold justify-space-between d-flex">
                   <v-col>Total</v-col>
-                  <v-col>{{ formatter(generalTransReceivedData[0]?.total) }}</v-col>
+                  <v-col>{{
+                    formatter(generalTransReceivedData[0]?.total)
+                  }}</v-col>
                   <v-col>{{ formatter(generalTransSentData[0]?.total) }}</v-col>
                 </v-row>
               </div>
@@ -188,8 +204,12 @@ onMounted(() => {
               item-value="name"
               @update:options="loadGeneralTopTransData()"
             >
-            <template v-slot:[`item.highest`]="{ item }"><span>{{ formatter(item.columns.highest) }}</span></template>
-            <template v-slot:[`item.last`]="{ item }"><span>{{ formatter(item.columns.last) }}</span></template>
+              <template v-slot:[`item.highest`]="{ item }"
+                ><span>{{ formatter(item.columns.highest) }}</span></template
+              >
+              <template v-slot:[`item.last`]="{ item }"
+                ><span>{{ formatter(item.columns.last) }}</span></template
+              >
             </v-data-table-server>
           </v-card>
         </v-container>

@@ -10,7 +10,7 @@ interface Bank {
 }
 
 // const banks = ["NCBA", "KCB", "Equity", "Coop"];
-const banks = ref<string[]>([])
+const banks = ref<string[]>([]);
 const mobile = ["MPESA", "Airtel Money"];
 const searchStatementListing = ref("");
 const params = ref("");
@@ -147,9 +147,9 @@ watch(filters, () => {
   filters.status && (params.value += `&status=${filters.status}`);
 });
 
-onMounted(()=>{
-  loadBanks()
-})
+onMounted(() => {
+  loadBanks();
+});
 </script>
 
 <template>

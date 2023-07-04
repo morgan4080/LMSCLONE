@@ -2,7 +2,7 @@
 import { ref, onMounted } from "vue";
 import { useRoute } from "vue-router";
 import axiosInstance from "@/services/api/axiosInstance";
-import formatter from "@/helpers/currency"
+import formatter from "@/helpers/currency";
 
 interface SummaryData {
   total_send_amt: string;
@@ -228,7 +228,7 @@ onMounted(() => {
             <h3 class="text-subtitle-1 font-weight-regular text-blue">
               {{ formatter(summaryData.total_others) }}
             </h3>
-          </v-container> 
+          </v-container>
         </v-card>
       </v-col>
       <v-col>

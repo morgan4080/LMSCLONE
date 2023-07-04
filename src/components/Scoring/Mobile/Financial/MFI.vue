@@ -1,26 +1,26 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from "vue";
 import { useRoute } from "vue-router";
-import axiosInstance from "@/services/api/axiosInstance"; 
+import axiosInstance from "@/services/api/axiosInstance";
 import formatter from "@/helpers/currency";
 
 interface MfiDataItem {
   total: number;
   highest: string;
   highest_who: string;
-  lowest: string;  
+  lowest: string;
   lowest_who: string;
   classification: string;
 }
 
 interface MfiTopTransData {
-  last_draw: string; 
-  last: string; 
-  highest: string; 
-  count: string; 
-  name: string; 
-  transactiontype: string; 
-  classification: string; 
+  last_draw: string;
+  last: string;
+  highest: string;
+  count: string;
+  name: string;
+  transactiontype: string;
+  classification: string;
 }
 
 const route = useRoute();
@@ -28,7 +28,7 @@ const route = useRoute();
 const open = ref(true);
 const loading = ref(false);
 const itemsPerPage = ref(5);
-const totalItems = computed(()=>mfiTopTransData.value.length);
+const totalItems = computed(() => mfiTopTransData.value.length);
 const headers = ref<
   { title: string; key: string; align: string; sortable: boolean }[]
 >([
@@ -50,21 +50,25 @@ const headers = ref<
   { title: "Last Amount", key: "last", align: "end", sortable: false },
 ]);
 
-const mfiTransReceivedData = ref<MfiDataItem[]>([])
-const mfiTransSentData = ref<MfiDataItem[]>([])
-const mfiTopTransData = ref<MfiTopTransData[]>([])
+const mfiTransReceivedData = ref<MfiDataItem[]>([]);
+const mfiTransSentData = ref<MfiDataItem[]>([]);
+const mfiTopTransData = ref<MfiTopTransData[]>([]);
 
 // API Call: Get Mfi Transactions Data
 const loadMfiTransReceivedData = async () => {
   await axiosInstance
-    .get(`/e_statement/pay_bill_classifications_received?idNumber=${route.params.slug}&classification=MFIs&pageSize=100&sortBy=id`)
+    .get(
+      `/e_statement/pay_bill_classifications_received?idNumber=${route.params.slug}&classification=MFIs&pageSize=100&sortBy=id`
+    )
     .then(response => (mfiTransReceivedData.value = response.data.content))
     .catch(error => console.error(error));
 };
 
 const loadMfiTransSentData = async () => {
   await axiosInstance
-    .get(`/e_statement/pay_bill_classifications_sent?idNumber=${route.params.slug}&classification=MFIs&pageSize=100&sortBy=id`)
+    .get(
+      `/e_statement/pay_bill_classifications_sent?idNumber=${route.params.slug}&classification=MFIs&pageSize=100&sortBy=id`
+    )
     .then(response => (mfiTransSentData.value = response.data.content))
     .catch(error => console.error(error));
 };
@@ -72,14 +76,16 @@ const loadMfiTransSentData = async () => {
 // API Call: Get Top Mfi Trans Data
 const loadMfiTopTransData = async () => {
   await axiosInstance
-    .get(`/e_statement/top_paybill_classifications?idNumber=${route.params.slug}&classification=MFIs&pageSize=${itemsPerPage.value}&sortBy=id`)
+    .get(
+      `/e_statement/top_paybill_classifications?idNumber=${route.params.slug}&classification=MFIs&pageSize=${itemsPerPage.value}&sortBy=id`
+    )
     .then(response => (mfiTopTransData.value = response.data.content))
     .catch(error => console.error(error));
 };
 
 onMounted(() => {
   loadMfiTransReceivedData();
-  loadMfiTransSentData()
+  loadMfiTransSentData();
 });
 </script>
 
@@ -122,7 +128,9 @@ onMounted(() => {
                 />
                 <v-row class="justify-space-between d-flex">
                   <v-col class="font-weight-medium">Highest</v-col>
-                  <v-col>{{ formatter(mfiTransReceivedData[0]?.highest) }}</v-col>
+                  <v-col>{{
+                    formatter(mfiTransReceivedData[0]?.highest)
+                  }}</v-col>
                   <v-col>{{ formatter(mfiTransSentData[0]?.highest) }}</v-col>
                 </v-row>
                 <v-divider class="my-2" />
@@ -134,7 +142,9 @@ onMounted(() => {
                 <v-divider class="my-2" />
                 <v-row class="justify-space-between d-flex">
                   <v-col class="font-weight-medium">Lowest</v-col>
-                  <v-col>{{ formatter(mfiTransReceivedData[0]?.lowest) }}</v-col>
+                  <v-col>{{
+                    formatter(mfiTransReceivedData[0]?.lowest)
+                  }}</v-col>
                   <v-col>{{ formatter(mfiTransSentData[0]?.lowest) }}</v-col>
                 </v-row>
                 <v-divider class="my-2" />
@@ -183,8 +193,12 @@ onMounted(() => {
               item-value="name"
               @update:options="loadMfiTopTransData()"
             >
-            <template v-slot:[`item.highest`]="{ item }"><span>{{ formatter(item.columns.highest) }}</span></template>
-            <template v-slot:[`item.last`]="{ item }"><span>{{ formatter(item.columns.last) }}</span></template>
+              <template v-slot:[`item.highest`]="{ item }"
+                ><span>{{ formatter(item.columns.highest) }}</span></template
+              >
+              <template v-slot:[`item.last`]="{ item }"
+                ><span>{{ formatter(item.columns.last) }}</span></template
+              >
             </v-data-table-server>
           </v-card>
         </v-container>

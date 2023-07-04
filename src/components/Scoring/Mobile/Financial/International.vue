@@ -9,19 +9,19 @@ interface RemittanceDataItem {
   total: number;
   highest: string;
   highest_who: string;
-  lowest: string;  
+  lowest: string;
   lowest_who: string;
   classification: string;
 }
 
 interface RemittanceTopTransData {
-  last_draw: string; 
-  last: string; 
-  highest: string; 
-  count: string; 
-  name: string; 
-  transactiontype: string; 
-  classification: string; 
+  last_draw: string;
+  last: string;
+  highest: string;
+  count: string;
+  name: string;
+  transactiontype: string;
+  classification: string;
 }
 
 const route = useRoute();
@@ -29,7 +29,7 @@ const route = useRoute();
 const open = ref(true);
 const loading = ref(false);
 const itemsPerPage = ref(5);
-const totalItems = computed(()=>remittanceTopTransData.value.length);
+const totalItems = computed(() => remittanceTopTransData.value.length);
 const headers = ref<
   { title: string; key: string; align: string; sortable: boolean }[]
 >([
@@ -51,21 +51,27 @@ const headers = ref<
   { title: "Last Amount", key: "last", align: "end", sortable: false },
 ]);
 
-const remittanceTransReceivedData = ref<RemittanceDataItem[]>([])
-const remittanceTransSentData = ref<RemittanceDataItem[]>([])
-const remittanceTopTransData = ref<RemittanceTopTransData[]>([])
+const remittanceTransReceivedData = ref<RemittanceDataItem[]>([]);
+const remittanceTransSentData = ref<RemittanceDataItem[]>([]);
+const remittanceTopTransData = ref<RemittanceTopTransData[]>([]);
 
 // API Call: Get Remittance Transactions Data
 const loadRemittanceTransReceivedData = async () => {
   await axiosInstance
-    .get(`/e_statement/pay_bill_classifications_received?idNumber=${route.params.slug}&classification=InternationalRemitance&pageSize=100&sortBy=id`)
-    .then(response => (remittanceTransReceivedData.value = response.data.content))
+    .get(
+      `/e_statement/pay_bill_classifications_received?idNumber=${route.params.slug}&classification=InternationalRemitance&pageSize=100&sortBy=id`
+    )
+    .then(
+      response => (remittanceTransReceivedData.value = response.data.content)
+    )
     .catch(error => console.error(error));
 };
 
 const loadRemittanceTransSentData = async () => {
   await axiosInstance
-    .get(`/e_statement/pay_bill_classifications_sent?idNumber=${route.params.slug}&classification=InternationalRemitance&pageSize=100&sortBy=id`)
+    .get(
+      `/e_statement/pay_bill_classifications_sent?idNumber=${route.params.slug}&classification=InternationalRemitance&pageSize=100&sortBy=id`
+    )
     .then(response => (remittanceTransSentData.value = response.data.content))
     .catch(error => console.error(error));
 };
@@ -73,14 +79,16 @@ const loadRemittanceTransSentData = async () => {
 // API Call: Get Top Remittance Trans Data
 const loadRemittanceTopTransData = async () => {
   await axiosInstance
-    .get(`/e_statement/top_paybill_classifications?idNumber=${route.params.slug}&classification=InternationalRemitance&pageSize=${itemsPerPage.value}&sortBy=id`)
+    .get(
+      `/e_statement/top_paybill_classifications?idNumber=${route.params.slug}&classification=InternationalRemitance&pageSize=${itemsPerPage.value}&sortBy=id`
+    )
     .then(response => (remittanceTopTransData.value = response.data.content))
     .catch(error => console.error(error));
 };
 
-onMounted(() => { 
+onMounted(() => {
   loadRemittanceTransReceivedData();
-  loadRemittanceTransSentData()
+  loadRemittanceTransSentData();
 });
 </script>
 
@@ -125,25 +133,37 @@ onMounted(() => {
                 />
                 <v-row class="justify-space-between d-flex">
                   <v-col class="font-weight-medium">Highest</v-col>
-                  <v-col>{{ formatter(remittanceTransReceivedData[0]?.highest) }}</v-col>
-                  <v-col>{{ formatter(remittanceTransSentData[0]?.highest) }}</v-col>
+                  <v-col>{{
+                    formatter(remittanceTransReceivedData[0]?.highest)
+                  }}</v-col>
+                  <v-col>{{
+                    formatter(remittanceTransSentData[0]?.highest)
+                  }}</v-col>
                 </v-row>
                 <v-divider class="my-2" />
                 <v-row class="justify-space-between d-flex">
                   <v-col class="font-weight-medium">Highest To</v-col>
-                  <v-col>{{ remittanceTransReceivedData[0]?.highest_who }}</v-col>
+                  <v-col>{{
+                    remittanceTransReceivedData[0]?.highest_who
+                  }}</v-col>
                   <v-col>{{ remittanceTransSentData[0]?.highest_who }}</v-col>
                 </v-row>
                 <v-divider class="my-2" />
                 <v-row class="justify-space-between d-flex">
                   <v-col class="font-weight-medium">Lowest</v-col>
-                  <v-col>{{ formatter(remittanceTransReceivedData[0]?.lowest) }}</v-col>
-                  <v-col>{{ formatter(remittanceTransSentData[0]?.lowest) }}</v-col>
+                  <v-col>{{
+                    formatter(remittanceTransReceivedData[0]?.lowest)
+                  }}</v-col>
+                  <v-col>{{
+                    formatter(remittanceTransSentData[0]?.lowest)
+                  }}</v-col>
                 </v-row>
                 <v-divider class="my-2" />
                 <v-row class="justify-space-between d-flex">
                   <v-col class="font-weight-medium">Lowest To</v-col>
-                  <v-col>{{ remittanceTransReceivedData[0]?.lowest_who }}</v-col>
+                  <v-col>{{
+                    remittanceTransReceivedData[0]?.lowest_who
+                  }}</v-col>
                   <v-col>{{ remittanceTransSentData[0]?.lowest_who }}</v-col>
                 </v-row>
                 <v-divider
@@ -152,8 +172,12 @@ onMounted(() => {
                 />
                 <v-row class="font-weight-bold justify-space-between d-flex">
                   <v-col>Total</v-col>
-                  <v-col>{{ formatter(remittanceTransReceivedData[0]?.total) }}</v-col>
-                  <v-col>{{ formatter(remittanceTransSentData[0]?.total) }}</v-col>
+                  <v-col>{{
+                    formatter(remittanceTransReceivedData[0]?.total)
+                  }}</v-col>
+                  <v-col>{{
+                    formatter(remittanceTransSentData[0]?.total)
+                  }}</v-col>
                 </v-row>
               </div>
             </v-container>
@@ -188,8 +212,12 @@ onMounted(() => {
               item-value="name"
               @update:options="loadRemittanceTopTransData()"
             >
-            <template v-slot:[`item.highest`]="{ item }"><span>{{ formatter(item.columns.highest) }}</span></template>
-            <template v-slot:[`item.last`]="{ item }"><span>{{ formatter(item.columns.last) }}</span></template>
+              <template v-slot:[`item.highest`]="{ item }"
+                ><span>{{ formatter(item.columns.highest) }}</span></template
+              >
+              <template v-slot:[`item.last`]="{ item }"
+                ><span>{{ formatter(item.columns.last) }}</span></template
+              >
             </v-data-table-server>
           </v-card>
         </v-container>

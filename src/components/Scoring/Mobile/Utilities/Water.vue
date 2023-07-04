@@ -9,19 +9,19 @@ interface WaterDataItem {
   total: number;
   highest: string;
   highest_who: string;
-  lowest: string;  
+  lowest: string;
   lowest_who: string;
   classification: string;
 }
 
 interface WaterTopTransData {
-  last_draw: string; 
-  last: string; 
-  highest: string; 
-  count: string; 
-  name: string; 
-  transactiontype: string; 
-  classification: string; 
+  last_draw: string;
+  last: string;
+  highest: string;
+  count: string;
+  name: string;
+  transactiontype: string;
+  classification: string;
 }
 
 const route = useRoute();
@@ -29,7 +29,7 @@ const route = useRoute();
 const open = ref(true);
 const loading = ref(false);
 const itemsPerPage = ref(5);
-const totalItems = computed(()=>waterTopTransData.value.length);
+const totalItems = computed(() => waterTopTransData.value.length);
 const headers = ref<
   { title: string; key: string; align: string; sortable: boolean }[]
 >([
@@ -51,13 +51,15 @@ const headers = ref<
   { title: "Last Amount", key: "last", align: "end", sortable: false },
 ]);
 
-const waterTransSentData = ref<WaterDataItem[]>([])
-const waterTopTransData = ref<WaterTopTransData[]>([])
+const waterTransSentData = ref<WaterDataItem[]>([]);
+const waterTopTransData = ref<WaterTopTransData[]>([]);
 
 // API Call: Get Water Transactions Data
 const loadWaterTransSentData = async () => {
   await axiosInstance
-    .get(`/e_statement/pay_bill_classifications_sent?idNumber=${route.params.slug}&classification=WaterAndSewarageServices&pageSize=100&sortBy=id`)
+    .get(
+      `/e_statement/pay_bill_classifications_sent?idNumber=${route.params.slug}&classification=WaterAndSewarageServices&pageSize=100&sortBy=id`
+    )
     .then(response => (waterTransSentData.value = response.data.content))
     .catch(error => console.error(error));
 };
@@ -65,13 +67,15 @@ const loadWaterTransSentData = async () => {
 // API Call: Get Top Water Trans Data
 const loadWaterTopTransData = async () => {
   await axiosInstance
-    .get(`/e_statement/top_paybill_classifications?idNumber=${route.params.slug}&classification=WaterAndSewarageServices&pageSize=${itemsPerPage.value}&sortBy=id`)
+    .get(
+      `/e_statement/top_paybill_classifications?idNumber=${route.params.slug}&classification=WaterAndSewarageServices&pageSize=${itemsPerPage.value}&sortBy=id`
+    )
     .then(response => (waterTopTransData.value = response.data.content))
     .catch(error => console.error(error));
 };
 
-onMounted(() => { 
-  loadWaterTransSentData()
+onMounted(() => {
+  loadWaterTransSentData();
 });
 </script>
 
@@ -179,8 +183,12 @@ onMounted(() => {
               item-value="name"
               @update:options="loadWaterTopTransData()"
             >
-            <template v-slot:[`item.highest`]="{ item }"><span>{{ formatter(item.columns.highest) }}</span></template>
-            <template v-slot:[`item.last`]="{ item }"><span>{{ formatter(item.columns.last) }}</span></template>
+              <template v-slot:[`item.highest`]="{ item }"
+                ><span>{{ formatter(item.columns.highest) }}</span></template
+              >
+              <template v-slot:[`item.last`]="{ item }"
+                ><span>{{ formatter(item.columns.last) }}</span></template
+              >
             </v-data-table-server>
           </v-card>
         </v-container>

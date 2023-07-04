@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
 import { useRoute } from "vue-router";
-import axios from 'axios';
+import axios from "axios";
 import formatter from "@/helpers/currency";
 
 interface OverviewInformation {
@@ -14,19 +14,22 @@ const route = useRoute();
 
 const overviewInformation = ref<OverviewInformation[]>([]);
 
-const baseUrl: string = "https://staging-lending.presta.co.ke/bank_scoring/api/v1"
+const baseUrl: string =
+  "https://staging-lending.presta.co.ke/bank_scoring/api/v1";
 
 // API Call: Get overview information
 const loadOverviewInformation = async () => {
   await axios
-    .get(`${baseUrl}/bank_analysis/bank_totals?idNumber=${route.params.slug}&pageSize=100&sortBy=id`)
+    .get(
+      `${baseUrl}/bank_analysis/bank_totals?idNumber=${route.params.slug}&pageSize=100&sortBy=id`
+    )
     .then(response => (overviewInformation.value = response.data.content))
     .catch(error => console.error(error));
 };
 
 onMounted(() => {
-  loadOverviewInformation()
-})
+  loadOverviewInformation();
+});
 </script>
 
 <template>

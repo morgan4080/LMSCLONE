@@ -12,12 +12,12 @@ interface FlowDataItem {
 }
 
 interface FlowTopData {
-  last_draw: string; 
-  paymentname: string; 
-  description: string; 
-  last_amount: string; 
-  total: string; 
-  count: number; 
+  last_draw: string;
+  paymentname: string;
+  description: string;
+  last_amount: string;
+  total: string;
+  count: number;
 }
 
 const route = useRoute();
@@ -25,7 +25,7 @@ const route = useRoute();
 const open = ref(true);
 const loading = ref(false);
 const itemsPerPage = ref(5);
-const totalItems = computed(()=>flowTopData.value.length);
+const totalItems = computed(() => flowTopData.value.length);
 const options = ["Option 1", "Option 2", "Option 3"];
 
 const headers = ref<
@@ -53,14 +53,17 @@ const flowMobileMoney = ref<FlowDataItem[]>([]);
 const flowCashWithdrawal = ref<FlowDataItem[]>([]);
 const flowReversals = ref<FlowDataItem[]>([]);
 const flowOthers = ref<FlowDataItem[]>([]);
-const flowTopData = ref<FlowTopData[]>([])
+const flowTopData = ref<FlowTopData[]>([]);
 
-const baseUrl: string = "https://staging-lending.presta.co.ke/bank_scoring/api/v1"
+const baseUrl: string =
+  "https://staging-lending.presta.co.ke/bank_scoring/api/v1";
 
 // API Call: Get Flow Mobile Money
 const loadFlowMobileMoney = async () => {
   await axiosInstance
-    .get(`${baseUrl}/bank_analysis/bank_payments_summary?idNumber=${route.params.slug}&paymentName=MobileMoney&pageSize=100&sortBy=id`)
+    .get(
+      `${baseUrl}/bank_analysis/bank_payments_summary?idNumber=${route.params.slug}&paymentName=MobileMoney&pageSize=100&sortBy=id`
+    )
     .then(response => (flowMobileMoney.value = response.data.content))
     .catch(error => console.error(error));
 };
@@ -68,7 +71,9 @@ const loadFlowMobileMoney = async () => {
 // API Call: Get Flow Cash Withdrawal
 const loadFlowCashWithdrawal = async () => {
   await axiosInstance
-    .get(`${baseUrl}/bank_analysis/bank_payments_summary?idNumber=${route.params.slug}&paymentName=CashWithdrawal&pageSize=100&sortBy=id`)
+    .get(
+      `${baseUrl}/bank_analysis/bank_payments_summary?idNumber=${route.params.slug}&paymentName=CashWithdrawal&pageSize=100&sortBy=id`
+    )
     .then(response => (flowCashWithdrawal.value = response.data.content))
     .catch(error => console.error(error));
 };
@@ -76,7 +81,9 @@ const loadFlowCashWithdrawal = async () => {
 // API Call: Get Flow Reversals
 const loadFlowReversals = async () => {
   await axiosInstance
-    .get(`${baseUrl}/bank_analysis/bank_payments_summary?idNumber=${route.params.slug}&paymentName=Reversals&pageSize=100&sortBy=id`)
+    .get(
+      `${baseUrl}/bank_analysis/bank_payments_summary?idNumber=${route.params.slug}&paymentName=Reversals&pageSize=100&sortBy=id`
+    )
     .then(response => (flowReversals.value = response.data.content))
     .catch(error => console.error(error));
 };
@@ -84,7 +91,9 @@ const loadFlowReversals = async () => {
 // API Call: Get Flow Others
 const loadFlowOthers = async () => {
   await axiosInstance
-    .get(`${baseUrl}/bank_analysis/bank_payments_summary?idNumber=${route.params.slug}&paymentName=Others&pageSize=100&sortBy=id`)
+    .get(
+      `${baseUrl}/bank_analysis/bank_payments_summary?idNumber=${route.params.slug}&paymentName=Others&pageSize=100&sortBy=id`
+    )
     .then(response => (flowOthers.value = response.data.content))
     .catch(error => console.error(error));
 };
@@ -92,16 +101,18 @@ const loadFlowOthers = async () => {
 // API Call: Get Top Flow Data
 const loadFlowTopData = async () => {
   await axiosInstance
-    .get(`${baseUrl}/bank_analysis/top_bank_payment_transactions?idNumber=${route.params.slug}&pageSize=${itemsPerPage.value}&sortBy=id`)
+    .get(
+      `${baseUrl}/bank_analysis/top_bank_payment_transactions?idNumber=${route.params.slug}&pageSize=${itemsPerPage.value}&sortBy=id`
+    )
     .then(response => (flowTopData.value = response.data.content))
     .catch(error => console.error(error));
 };
 
 onMounted(() => {
   loadFlowMobileMoney();
-  loadFlowCashWithdrawal()
-  loadFlowReversals()
-  loadFlowOthers()
+  loadFlowCashWithdrawal();
+  loadFlowReversals();
+  loadFlowOthers();
 });
 </script>
 
@@ -144,17 +155,23 @@ onMounted(() => {
                 />
                 <v-row class="justify-space-between d-flex">
                   <v-col class="font-weight-medium">Count</v-col>
-                  <v-col class="text-right">{{ flowMobileMoney[0]?.count }}</v-col>
+                  <v-col class="text-right">{{
+                    flowMobileMoney[0]?.count
+                  }}</v-col>
                 </v-row>
                 <v-divider class="my-2" />
                 <v-row class="justify-space-between d-flex">
                   <v-col class="font-weight-medium">Total</v-col>
-                  <v-col class="text-right">{{ formatter(flowMobileMoney[0]?.total) }}</v-col>
+                  <v-col class="text-right">{{
+                    formatter(flowMobileMoney[0]?.total)
+                  }}</v-col>
                 </v-row>
                 <v-divider class="my-2" />
                 <v-row class="justify-space-between d-flex">
                   <v-col class="font-weight-medium">Highest</v-col>
-                  <v-col class="text-right">{{ formatter(flowMobileMoney[0]?.highest) }}</v-col>
+                  <v-col class="text-right">{{
+                    formatter(flowMobileMoney[0]?.highest)
+                  }}</v-col>
                 </v-row>
                 <v-divider
                   :thickness="3"
@@ -162,7 +179,9 @@ onMounted(() => {
                 />
                 <v-row class="justify-space-between d-flex">
                   <v-col class="font-weight-medium">Last On</v-col>
-                  <v-col class="text-right">{{ flowMobileMoney[0]?.last_draw }}</v-col>
+                  <v-col class="text-right">{{
+                    flowMobileMoney[0]?.last_draw
+                  }}</v-col>
                 </v-row>
                 <v-divider class="my-3" />
               </div>
@@ -193,17 +212,23 @@ onMounted(() => {
                 />
                 <v-row class="justify-space-between d-flex">
                   <v-col class="font-weight-medium">Count</v-col>
-                  <v-col class="text-right">{{ flowCashWithdrawal[0]?.count }}</v-col>
+                  <v-col class="text-right">{{
+                    flowCashWithdrawal[0]?.count
+                  }}</v-col>
                 </v-row>
                 <v-divider class="my-2" />
                 <v-row class="justify-space-between d-flex">
                   <v-col class="font-weight-medium">Total</v-col>
-                  <v-col class="text-right">{{ formatter(flowCashWithdrawal[0]?.total) }}</v-col>
+                  <v-col class="text-right">{{
+                    formatter(flowCashWithdrawal[0]?.total)
+                  }}</v-col>
                 </v-row>
                 <v-divider class="my-2" />
                 <v-row class="justify-space-between d-flex">
                   <v-col class="font-weight-medium">Highest</v-col>
-                  <v-col class="text-right">{{ formatter(flowCashWithdrawal[0]?.highest) }}</v-col>
+                  <v-col class="text-right">{{
+                    formatter(flowCashWithdrawal[0]?.highest)
+                  }}</v-col>
                 </v-row>
                 <v-divider
                   :thickness="3"
@@ -211,7 +236,9 @@ onMounted(() => {
                 />
                 <v-row class="justify-space-between d-flex">
                   <v-col class="font-weight-medium">Last On</v-col>
-                  <v-col class="text-right">{{ flowCashWithdrawal[0]?.last_draw }}</v-col>
+                  <v-col class="text-right">{{
+                    flowCashWithdrawal[0]?.last_draw
+                  }}</v-col>
                 </v-row>
                 <v-divider class="my-3" />
               </div>
@@ -245,17 +272,23 @@ onMounted(() => {
                 />
                 <v-row class="justify-space-between d-flex">
                   <v-col class="font-weight-medium">Count</v-col>
-                  <v-col class="text-right">{{ flowReversals[0]?.count }}</v-col>
+                  <v-col class="text-right">{{
+                    flowReversals[0]?.count
+                  }}</v-col>
                 </v-row>
                 <v-divider class="my-2" />
                 <v-row class="justify-space-between d-flex">
                   <v-col class="font-weight-medium">Total</v-col>
-                  <v-col class="text-right">{{ formatter(flowReversals[0]?.total) }}</v-col>
+                  <v-col class="text-right">{{
+                    formatter(flowReversals[0]?.total)
+                  }}</v-col>
                 </v-row>
                 <v-divider class="my-2" />
                 <v-row class="justify-space-between d-flex">
                   <v-col class="font-weight-medium">Highest</v-col>
-                  <v-col class="text-right">{{ formatter(flowReversals[0]?.highest) }}</v-col>
+                  <v-col class="text-right">{{
+                    formatter(flowReversals[0]?.highest)
+                  }}</v-col>
                 </v-row>
                 <v-divider
                   :thickness="3"
@@ -263,7 +296,9 @@ onMounted(() => {
                 />
                 <v-row class="justify-space-between d-flex">
                   <v-col class="font-weight-medium">Last On</v-col>
-                  <v-col class="text-right">{{ flowReversals[0]?.last_draw }}</v-col>
+                  <v-col class="text-right">{{
+                    flowReversals[0]?.last_draw
+                  }}</v-col>
                 </v-row>
                 <v-divider class="my-3" />
               </div>
@@ -299,12 +334,16 @@ onMounted(() => {
                 <v-divider class="my-2" />
                 <v-row class="justify-space-between d-flex">
                   <v-col class="font-weight-medium">Total</v-col>
-                  <v-col class="text-right">{{ formatter(flowOthers[0]?.total) }}</v-col>
+                  <v-col class="text-right">{{
+                    formatter(flowOthers[0]?.total)
+                  }}</v-col>
                 </v-row>
                 <v-divider class="my-2" />
                 <v-row class="justify-space-between d-flex">
                   <v-col class="font-weight-medium">Highest</v-col>
-                  <v-col class="text-right">{{ formatter(flowOthers[0]?.highest) }}</v-col>
+                  <v-col class="text-right">{{
+                    formatter(flowOthers[0]?.highest)
+                  }}</v-col>
                 </v-row>
                 <v-divider
                   :thickness="3"
@@ -312,7 +351,9 @@ onMounted(() => {
                 />
                 <v-row class="justify-space-between d-flex">
                   <v-col class="font-weight-medium">Last On</v-col>
-                  <v-col class="text-right">{{ flowOthers[0]?.last_draw }}</v-col>
+                  <v-col class="text-right">{{
+                    flowOthers[0]?.last_draw
+                  }}</v-col>
                 </v-row>
                 <v-divider class="my-3" />
               </div>
@@ -510,8 +551,12 @@ onMounted(() => {
               item-value="name"
               @update:options="loadFlowTopData()"
             >
-            <template v-slot:[`item.highest`]="{ item }"><span>{{ formatter(item.columns.highest) }}</span></template>
-            <template v-slot:[`item.last`]="{ item }"><span>{{ formatter(item.columns.last) }}</span></template>
+              <template v-slot:[`item.highest`]="{ item }"
+                ><span>{{ formatter(item.columns.highest) }}</span></template
+              >
+              <template v-slot:[`item.last`]="{ item }"
+                ><span>{{ formatter(item.columns.last) }}</span></template
+              >
             </v-data-table-server>
           </v-card>
         </v-container>

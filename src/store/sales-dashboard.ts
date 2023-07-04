@@ -128,14 +128,15 @@ export const useSalesDashboardStore = defineStore("sales-dashboard-store", {
         })
         .finally(() => (this.upcomingCollections.loading = false));
     },
-    getOverdueCollections: function () {
+    getOverdueCollections: function (filters?: string) {
       this.overdueCollections.loading = true;
+      let url = `${
+        import.meta.env.VITE_KOPESHA_API_URL
+      }/api/v1/salesrep/collections/overdue${this.params}`;
+
+      filters && (url += filters);
       axios
-        .get(
-          `${
-            import.meta.env.VITE_KOPESHA_API_URL
-          }/api/v1/salesrep/collections/overdue${this.params}`
-        )
+        .get(url)
         .then(response => {
           this.overdueCollections = response.data;
         })

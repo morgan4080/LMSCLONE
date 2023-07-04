@@ -9,19 +9,19 @@ interface OnlineDataItem {
   total: number;
   highest: string;
   highest_who: string;
-  lowest: string;  
+  lowest: string;
   lowest_who: string;
   classification: string;
 }
 
 interface OnlineTopTransData {
-  last_draw: string; 
-  last: string; 
-  highest: string; 
-  count: string; 
-  name: string; 
-  transactiontype: string; 
-  classification: string; 
+  last_draw: string;
+  last: string;
+  highest: string;
+  count: string;
+  name: string;
+  transactiontype: string;
+  classification: string;
 }
 
 const route = useRoute();
@@ -29,7 +29,7 @@ const route = useRoute();
 const open = ref(true);
 const loading = ref(false);
 const itemsPerPage = ref(5);
-const totalItems = computed(()=>onlineTopTransData.value.length);
+const totalItems = computed(() => onlineTopTransData.value.length);
 const headers = ref<
   { title: string; key: string; align: string; sortable: boolean }[]
 >([
@@ -50,13 +50,15 @@ const headers = ref<
   { title: "Last Draw", key: "last_draw", align: "end", sortable: false },
   { title: "Last Amount", key: "last", align: "end", sortable: false },
 ]);
-const onlineTransSentData = ref<OnlineDataItem[]>([]) 
-const onlineTopTransData = ref<OnlineTopTransData[]>([])
+const onlineTransSentData = ref<OnlineDataItem[]>([]);
+const onlineTopTransData = ref<OnlineTopTransData[]>([]);
 
 // API Call: Get Online Transactions Data
-const loadOnlineTransSentData = async () => { 
+const loadOnlineTransSentData = async () => {
   await axiosInstance
-    .get(`/e_statement/pay_bill_classifications_sent?idNumber=${route.params.slug}&classification=OnlinePurchases&pageSize=100&sortBy=id`)
+    .get(
+      `/e_statement/pay_bill_classifications_sent?idNumber=${route.params.slug}&classification=OnlinePurchases&pageSize=100&sortBy=id`
+    )
     .then(response => (onlineTransSentData.value = response.data.content))
     .catch(error => console.error(error));
 };
@@ -64,13 +66,15 @@ const loadOnlineTransSentData = async () => {
 // API Call: Get Top Online Trans Data
 const loadOnlineTopTransData = async () => {
   await axiosInstance
-    .get(`/e_statement/top_paybill_classifications?idNumber=${route.params.slug}&classification=OnlinePurchases&pageSize=${itemsPerPage.value}&sortBy=id`)
+    .get(
+      `/e_statement/top_paybill_classifications?idNumber=${route.params.slug}&classification=OnlinePurchases&pageSize=${itemsPerPage.value}&sortBy=id`
+    )
     .then(response => (onlineTopTransData.value = response.data.conten))
     .catch(error => console.error(error));
 };
 
 onMounted(() => {
-  loadOnlineTransSentData()
+  loadOnlineTransSentData();
 });
 </script>
 
@@ -116,7 +120,9 @@ onMounted(() => {
                 <v-row class="justify-space-between d-flex">
                   <v-col class="font-weight-medium">Highest</v-col>
                   <v-col> - </v-col>
-            <v-col>{{ formatter(onlineTransSentData[0]?.highest) }}</v-col>
+                  <v-col>{{
+                    formatter(onlineTransSentData[0]?.highest)
+                  }}</v-col>
                 </v-row>
                 <v-divider class="my-2" />
                 <v-row class="justify-space-between d-flex">
@@ -178,8 +184,12 @@ onMounted(() => {
               item-value="name"
               @update:options="loadOnlineTopTransData()"
             >
-            <template v-slot:[`item.highest`]="{ item }"><span>{{ formatter(item.columns.highest) }}</span></template>
-            <template v-slot:[`item.last`]="{ item }"><span>{{ formatter(item.columns.last) }}</span></template>
+              <template v-slot:[`item.highest`]="{ item }"
+                ><span>{{ formatter(item.columns.highest) }}</span></template
+              >
+              <template v-slot:[`item.last`]="{ item }"
+                ><span>{{ formatter(item.columns.last) }}</span></template
+              >
             </v-data-table-server>
           </v-card>
         </v-container>

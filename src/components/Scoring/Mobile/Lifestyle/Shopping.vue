@@ -9,19 +9,19 @@ interface ShoppingDataItem {
   total: number;
   highest: string;
   highest_who: string;
-  lowest: string;  
+  lowest: string;
   lowest_who: string;
   classification: string;
 }
 
 interface ShoppingTopTransData {
-  last_draw: string; 
-  last: string; 
-  highest: string; 
-  count: string; 
-  name: string; 
-  transactiontype: string; 
-  classification: string; 
+  last_draw: string;
+  last: string;
+  highest: string;
+  count: string;
+  name: string;
+  transactiontype: string;
+  classification: string;
 }
 
 const route = useRoute();
@@ -29,7 +29,7 @@ const route = useRoute();
 const open = ref(true);
 const loading = ref(false);
 const itemsPerPage = ref(5);
-const totalItems = computed(()=>shoppingTopTransData.value.length);
+const totalItems = computed(() => shoppingTopTransData.value.length);
 const headers = ref<
   { title: string; key: string; align: string; sortable: boolean }[]
 >([
@@ -51,13 +51,15 @@ const headers = ref<
   { title: "Last Amount", key: "last", align: "end", sortable: false },
 ]);
 
-const shoppingTransBuyGoodsData = ref<ShoppingDataItem[]>([])
-const shoppingTopTransData = ref<ShoppingTopTransData[]>([])
+const shoppingTransBuyGoodsData = ref<ShoppingDataItem[]>([]);
+const shoppingTopTransData = ref<ShoppingTopTransData[]>([]);
 
 // API Call: Get Shopping Transactions Data
 const loadShoppingTransBuyGoodsData = async () => {
   await axiosInstance
-    .get(`/e_statement/buy_goods_classifications_summary?idNumber=${route.params.slug}&classification=ShoppingOutlets&pageSize=100&sortBy=id`)
+    .get(
+      `/e_statement/buy_goods_classifications_summary?idNumber=${route.params.slug}&classification=ShoppingOutlets&pageSize=100&sortBy=id`
+    )
     .then(response => (shoppingTransBuyGoodsData.value = response.data.content))
     .catch(error => console.error(error));
 };
@@ -65,13 +67,15 @@ const loadShoppingTransBuyGoodsData = async () => {
 // API Call: Get Top Shopping Trans Data
 const loadShoppingTopTransData = async () => {
   await axiosInstance
-    .get(`/e_statement/top_paybill_classifications?idNumber=${route.params.slug}&classification=ShoppingOutlets&pageSize=${itemsPerPage.value}&sortBy=id`)
+    .get(
+      `/e_statement/top_paybill_classifications?idNumber=${route.params.slug}&classification=ShoppingOutlets&pageSize=${itemsPerPage.value}&sortBy=id`
+    )
     .then(response => (shoppingTopTransData.value = response.data.content))
     .catch(error => console.error(error));
 };
 
 onMounted(() => {
-  loadShoppingTransBuyGoodsData()
+  loadShoppingTransBuyGoodsData();
 });
 </script>
 
@@ -117,7 +121,9 @@ onMounted(() => {
                 <v-row class="justify-space-between d-flex">
                   <v-col class="font-weight-medium">Highest</v-col>
                   <v-col> - </v-col>
-                  <v-col>{{ formatter(shoppingTransBuyGoodsData[0]?.highest) }}</v-col>
+                  <v-col>{{
+                    formatter(shoppingTransBuyGoodsData[0]?.highest)
+                  }}</v-col>
                 </v-row>
                 <v-divider class="my-2" />
                 <v-row class="justify-space-between d-flex">
@@ -129,7 +135,9 @@ onMounted(() => {
                 <v-row class="justify-space-between d-flex">
                   <v-col class="font-weight-medium">Lowest</v-col>
                   <v-col> - </v-col>
-                  <v-col>{{ formatter(shoppingTransBuyGoodsData[0]?.lowest) }}</v-col>
+                  <v-col>{{
+                    formatter(shoppingTransBuyGoodsData[0]?.lowest)
+                  }}</v-col>
                 </v-row>
                 <v-divider class="my-2" />
                 <v-row class="justify-space-between d-flex">
@@ -144,7 +152,9 @@ onMounted(() => {
                 <v-row class="font-weight-bold justify-space-between d-flex">
                   <v-col>Total</v-col>
                   <v-col> - </v-col>
-                  <v-col>{{ formatter(shoppingTransBuyGoodsData[0]?.total) }}</v-col>
+                  <v-col>{{
+                    formatter(shoppingTransBuyGoodsData[0]?.total)
+                  }}</v-col>
                 </v-row>
               </div>
             </v-container>
@@ -179,8 +189,12 @@ onMounted(() => {
               item-value="name"
               @update:options="loadShoppingTopTransData()"
             >
-            <template v-slot:[`item.highest`]="{ item }"><span>{{ formatter(item.columns.highest) }}</span></template>
-            <template v-slot:[`item.last`]="{ item }"><span>{{ formatter(item.columns.last) }}</span></template>
+              <template v-slot:[`item.highest`]="{ item }"
+                ><span>{{ formatter(item.columns.highest) }}</span></template
+              >
+              <template v-slot:[`item.last`]="{ item }"
+                ><span>{{ formatter(item.columns.last) }}</span></template
+              >
             </v-data-table-server>
           </v-card>
         </v-container>

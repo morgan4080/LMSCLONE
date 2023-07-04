@@ -135,8 +135,9 @@ onMounted(() => {
               v-if="InflowLoaded"
               class="h-75 w-75"
             />
-          </v-container> </v-card
-      ></v-col>
+          </v-container>
+        </v-card>
+      </v-col>
       <v-col
         ><v-card
           variant="flat"

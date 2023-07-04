@@ -6,7 +6,6 @@ import { formatMoney } from "../helpers";
 const salesDashboardStore = useSalesDashboardStore();
 
 const selected = ref([]);
-const loading = ref(false);
 const search = ref("");
 
 const headers = ref<
@@ -44,7 +43,7 @@ const headers = ref<
     :headers="headers"
     :items-length="salesDashboardStore.overdueCollections.recordsTotal"
     :items="salesDashboardStore.overdueCollections.data"
-    :loading="loading"
+    :loading="salesDashboardStore.overdueCollections.loading"
     :search="search"
     item-value="name"
     show-select

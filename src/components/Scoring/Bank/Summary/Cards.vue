@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
 import { useRoute } from "vue-router";
-import axios from 'axios';
+import axios from "axios";
 import formatter from "@/helpers/currency";
 
 interface AccountInfo {
@@ -53,18 +53,21 @@ interface BalanceInformation {
 const route = useRoute();
 
 const customerInformation = ref<CustomerInformation>({
-  accountInfo: [ ],
-  personalInfo: []
+  accountInfo: [],
+  personalInfo: [],
 });
 const analysisInformation = ref<AnalysisInformation[]>([]);
 const balanceInformation = ref<BalanceInformation[]>([]);
 
-const baseUrl: string = "https://staging-lending.presta.co.ke/bank_scoring/api/v1"
+const baseUrl: string =
+  "https://staging-lending.presta.co.ke/bank_scoring/api/v1";
 
 // API Call: Get customer information
 const loadCustomerInformation = async () => {
   await axios
-    .get(`${baseUrl}/bank_analysis/get_customer_info?idNumber=${route.params.slug}`)
+    .get(
+      `${baseUrl}/bank_analysis/get_customer_info?idNumber=${route.params.slug}`
+    )
     .then(response => (customerInformation.value = response.data))
     .catch(error => console.error(error));
 };
@@ -86,10 +89,10 @@ const loadBalanceInformation = async () => {
 };
 
 onMounted(() => {
-  loadCustomerInformation() 
-  loadAnalysisInformation()
-  loadBalanceInformation()
-})
+  loadCustomerInformation();
+  loadAnalysisInformation();
+  loadBalanceInformation();
+});
 </script>
 
 <template>
@@ -110,10 +113,16 @@ onMounted(() => {
                 <h3 class="py-1 text-grey text-body-2">Email</h3>
               </v-col>
               <v-col
-                ><h3 class="py-1 text-body-2 text-blue">{{ customerInformation.accountInfo[0]?.accountOwner }}</h3>
-                <h3 class="py-1 text-body-2"> - </h3>
-                <h3 class="py-1 text-body-2">{{ customerInformation.accountInfo[0]?.customerPhoneNumber }}</h3>
-                <h3 class="py-1 text-body-2">{{ customerInformation.accountInfo[0]?.accountEmail }}</h3></v-col
+                ><h3 class="py-1 text-body-2 text-blue">
+                  {{ customerInformation.accountInfo[0]?.accountOwner }}
+                </h3>
+                <h3 class="py-1 text-body-2">-</h3>
+                <h3 class="py-1 text-body-2">
+                  {{ customerInformation.accountInfo[0]?.customerPhoneNumber }}
+                </h3>
+                <h3 class="py-1 text-body-2">
+                  {{ customerInformation.accountInfo[0]?.accountEmail }}
+                </h3></v-col
               >
             </v-row>
           </v-container>
@@ -134,10 +143,18 @@ onMounted(() => {
                 <h3 class="py-1 text-grey text-body-2">Currency</h3>
               </v-col>
               <v-col
-                ><h3 class="py-1 text-body-2 text-blue">{{ customerInformation.personalInfo[0]?.bank_name }}</h3>
-                <h3 class="py-1 text-body-2">{{ customerInformation.accountInfo[0]?.accountType }}</h3>
-                <h3 class="py-1 text-body-2">{{ customerInformation.accountInfo[0]?.accountNo }}</h3>
-                <h3 class="py-1 text-body-2">{{ customerInformation.accountInfo[0]?.currency }}</h3></v-col
+                ><h3 class="py-1 text-body-2 text-blue">
+                  {{ customerInformation.personalInfo[0]?.bank_name }}
+                </h3>
+                <h3 class="py-1 text-body-2">
+                  {{ customerInformation.accountInfo[0]?.accountType }}
+                </h3>
+                <h3 class="py-1 text-body-2">
+                  {{ customerInformation.accountInfo[0]?.accountNo }}
+                </h3>
+                <h3 class="py-1 text-body-2">
+                  {{ customerInformation.accountInfo[0]?.currency }}
+                </h3></v-col
               >
             </v-row>
           </v-container>
@@ -158,12 +175,16 @@ onMounted(() => {
                 <h3 class="py-1 text-grey text-body-2">Submission Age</h3>
               </v-col>
               <v-col
-                ><h3 class="py-1 text-body-2">{{ customerInformation.accountInfo[0]?.statementDate }}</h3>
-                <h3 class="py-1 text-body-2">{{ customerInformation.personalInfo[0]?.duration }} Months</h3>
+                ><h3 class="py-1 text-body-2">
+                  {{ customerInformation.accountInfo[0]?.statementDate }}
+                </h3>
+                <h3 class="py-1 text-body-2">
+                  {{ customerInformation.personalInfo[0]?.duration }} Months
+                </h3>
                 <h3 class="py-1 text-body-2 text-blue">
                   {{ customerInformation.personalInfo[0]?.timestamp }}
                 </h3>
-                <h3 class="py-1 text-body-2"> - </h3>
+                <h3 class="py-1 text-body-2">-</h3>
               </v-col>
             </v-row>
           </v-container>
@@ -203,21 +224,29 @@ onMounted(() => {
                   <h1 class="text-caption font-weight-bold">
                     Gross Monthly Income
                   </h1>
-                  <h1 class="text-caption">{{ formatter(analysisInformation[0]?.gross_monthly_income) }}</h1>
+                  <h1 class="text-caption">
+                    {{
+                      formatter(analysisInformation[0]?.gross_monthly_income)
+                    }}
+                  </h1>
                 </div>
                 <v-divider class="my-2"></v-divider>
                 <div class="mt-4 d-flex justify-space-between">
                   <h1 class="text-caption font-weight-bold">
                     Net Monthly Income
                   </h1>
-                  <h1 class="text-caption">{{ formatter(analysisInformation[0]?.monthly_net_income) }}</h1>
+                  <h1 class="text-caption">
+                    {{ formatter(analysisInformation[0]?.monthly_net_income) }}
+                  </h1>
                 </div>
                 <v-divider class="my-2"></v-divider>
                 <div class="mt-4 d-flex justify-space-between">
                   <h1 class="text-caption font-weight-bold">
                     Max Loanable (R) P.M.
                   </h1>
-                  <h1 class="text-caption">{{ formatter(analysisInformation[0]?.monthly_loanable) }}</h1>
+                  <h1 class="text-caption">
+                    {{ formatter(analysisInformation[0]?.monthly_loanable) }}
+                  </h1>
                 </div>
                 <v-divider class="my-2"></v-divider>
               </div>
@@ -254,17 +283,23 @@ onMounted(() => {
                 ></v-divider>
                 <div class="mt-4 d-flex justify-space-between">
                   <h1 class="text-caption font-weight-bold">Opening</h1>
-                  <h1 class="text-caption">{{ formatter(balanceInformation[0]?.opening) }}</h1>
+                  <h1 class="text-caption">
+                    {{ formatter(balanceInformation[0]?.opening) }}
+                  </h1>
                 </div>
                 <v-divider class="my-2"></v-divider>
                 <div class="mt-4 d-flex justify-space-between">
                   <h1 class="text-caption font-weight-bold">Closing</h1>
-                  <h1 class="text-caption">{{ formatter(balanceInformation[0]?.closing) }}</h1>
+                  <h1 class="text-caption">
+                    {{ formatter(balanceInformation[0]?.closing) }}
+                  </h1>
                 </div>
                 <v-divider class="my-2"></v-divider>
                 <div class="mt-4 d-flex justify-space-between">
                   <h1 class="text-caption font-weight-bold">Uncleared</h1>
-                  <h1 class="text-caption">{{ formatter(balanceInformation[0]?.uncleared) }}</h1>
+                  <h1 class="text-caption">
+                    {{ formatter(balanceInformation[0]?.uncleared) }}
+                  </h1>
                 </div>
                 <v-divider class="my-2"></v-divider>
               </div>

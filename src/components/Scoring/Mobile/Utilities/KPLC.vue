@@ -9,19 +9,19 @@ interface KplcDataItem {
   total: number;
   highest: string;
   highest_who: string;
-  lowest: string;  
+  lowest: string;
   lowest_who: string;
   classification: string;
 }
 
 interface KplcTopTransData {
-  last_draw: string; 
-  last: string; 
-  highest: string; 
-  count: string; 
-  name: string; 
-  transactiontype: string; 
-  classification: string; 
+  last_draw: string;
+  last: string;
+  highest: string;
+  count: string;
+  name: string;
+  transactiontype: string;
+  classification: string;
 }
 
 const route = useRoute();
@@ -29,7 +29,7 @@ const route = useRoute();
 const open = ref(true);
 const loading = ref(false);
 const itemsPerPage = ref(5);
-const totalItems = computed(()=>kplcTopTransData.value.length);
+const totalItems = computed(() => kplcTopTransData.value.length);
 const headers = ref<
   { title: string; key: string; align: string; sortable: boolean }[]
 >([
@@ -51,13 +51,15 @@ const headers = ref<
   { title: "Last Amount", key: "last", align: "end", sortable: false },
 ]);
 
-const kplcTransSentData = ref<KplcDataItem[]>([])
-const kplcTopTransData = ref<KplcTopTransData[]>([])
+const kplcTransSentData = ref<KplcDataItem[]>([]);
+const kplcTopTransData = ref<KplcTopTransData[]>([]);
 
 // API Call: Get Kplc Transactions Data
 const loadKplcTransSentData = async () => {
   await axiosInstance
-    .get(`/e_statement/pay_bill_classifications_sent?idNumber=${route.params.slug}&classification=KPLC&pageSize=100&sortBy=id`)
+    .get(
+      `/e_statement/pay_bill_classifications_sent?idNumber=${route.params.slug}&classification=KPLC&pageSize=100&sortBy=id`
+    )
     .then(response => (kplcTransSentData.value = response.data.conten))
     .catch(error => console.error(error));
 };
@@ -65,13 +67,15 @@ const loadKplcTransSentData = async () => {
 // API Call: Get Top Kplc Trans Data
 const loadKplcTopTransData = async () => {
   await axiosInstance
-    .get(`/e_statement/top_paybill_classifications?idNumber=${route.params.slug}&classification=KPLC&pageSize=${itemsPerPage.value}&sortBy=id`)
+    .get(
+      `/e_statement/top_paybill_classifications?idNumber=${route.params.slug}&classification=KPLC&pageSize=${itemsPerPage.value}&sortBy=id`
+    )
     .then(response => (kplcTopTransData.value = response.data.content))
     .catch(error => console.error(error));
 };
 
-onMounted(() => { 
-  loadKplcTransSentData()
+onMounted(() => {
+  loadKplcTransSentData();
 });
 </script>
 
@@ -175,8 +179,12 @@ onMounted(() => {
               item-value="name"
               @update:options="loadKplcTopTransData()"
             >
-            <template v-slot:[`item.highest`]="{ item }"><span>{{ formatter(item.columns.highest) }}</span></template>
-            <template v-slot:[`item.last`]="{ item }"><span>{{ formatter(item.columns.last) }}</span></template>
+              <template v-slot:[`item.highest`]="{ item }"
+                ><span>{{ formatter(item.columns.highest) }}</span></template
+              >
+              <template v-slot:[`item.last`]="{ item }"
+                ><span>{{ formatter(item.columns.last) }}</span></template
+              >
             </v-data-table-server>
           </v-card>
         </v-container>

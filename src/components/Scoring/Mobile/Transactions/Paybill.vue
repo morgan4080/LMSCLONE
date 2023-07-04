@@ -82,11 +82,15 @@ const loadBuyGoodsTransData = async () => {
 const loadTopTransData = async () => {
   try {
     // Top Paybill
-    const paybillResponse = await axiosInstance.get(`/e_statement/top_paybill_transactions?idNumber=${route.params.slug}&pageSize=${itemsPerPage.value}&sortBy=id`);
+    const paybillResponse = await axiosInstance.get(
+      `/e_statement/top_paybill_transactions?idNumber=${route.params.slug}&pageSize=${itemsPerPage.value}&sortBy=id`
+    );
     const paybill = paybillResponse.data.content;
 
     // Top Buy Goods
-    const buyGoodsResponse = await axiosInstance.get(`/e_statement/top_buy_goods_transactions?idNumber=${route.params.slug}&pageSize=${itemsPerPage.value}&sortBy=id`);
+    const buyGoodsResponse = await axiosInstance.get(
+      `/e_statement/top_buy_goods_transactions?idNumber=${route.params.slug}&pageSize=${itemsPerPage.value}&sortBy=id`
+    );
     const buyGoods = buyGoodsResponse.data.content;
 
     topTransData.value = [paybill, ...buyGoods].flat();
@@ -94,7 +98,6 @@ const loadTopTransData = async () => {
     console.error(error);
   }
 };
-
 
 onMounted(() => {
   loadPaybillTransData();
@@ -254,8 +257,12 @@ onMounted(() => {
               item-value="name"
               @update:options="loadTopTransData()"
             >
-            <template v-slot:[`item.highest`]="{ item }"><span>{{ formatter(item.columns.highest) }}</span></template>
-            <template v-slot:[`item.total`]="{ item }"><span>{{ formatter(item.columns.total) }}</span></template>
+              <template v-slot:[`item.highest`]="{ item }"
+                ><span>{{ formatter(item.columns.highest) }}</span></template
+              >
+              <template v-slot:[`item.total`]="{ item }"
+                ><span>{{ formatter(item.columns.total) }}</span></template
+              >
             </v-data-table-server>
           </v-card>
         </v-container>

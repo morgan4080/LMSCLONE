@@ -401,6 +401,69 @@
                         </v-sheet>
                       </v-menu>
                     </div>
+                    <div
+                      v-if="
+                        collectionFilter.collections.name.toLowerCase() ===
+                        'overdue'
+                      "
+                      class="px-3"
+                    >
+                      <v-menu transition="slide-y-transition">
+                        <template v-slot:activator="{ props }">
+                          <v-btn
+                            class="v-btn--size-default text-caption text-capitalize"
+                            density="default"
+                            :append-icon="
+                              overdueCollectionFilters.product.appendIcon
+                            "
+                            v-bind="props"
+                            flat
+                            style="border: 1px solid rgba(128, 128, 128, 0.25)"
+                          >
+                            {{
+                              overdueCollectionFilters.product.text ||
+                              "Select Product"
+                            }}
+                          </v-btn>
+                        </template>
+                        <v-sheet
+                          border
+                          rounded
+                        >
+                          <v-list
+                            nav
+                            density="compact"
+                            role="listbox"
+                          >
+                            <v-list-item
+                              density="compact"
+                              @click="
+                                overdueCollectionFilters.product.text = null;
+                                overdueCollectionFilters.product.filterParam =
+                                  '';
+                                overdueCollectionFilterFetch();
+                              "
+                              >All Products</v-list-item
+                            >
+                            <v-list-item
+                              v-for="(
+                                dropDownMenu, it
+                              ) in overdueCollectionFilters.product.menus"
+                              :key="it"
+                              :value="it"
+                              density="compact"
+                              @click="
+                                overdueCollectionFilters.product.text =
+                                  dropDownMenu;
+                                overdueCollectionFilters.product.filterParam = `&productName=${dropDownMenu}`;
+                                overdueCollectionFilterFetch();
+                              "
+                              >{{ dropDownMenu }}</v-list-item
+                            >
+                          </v-list>
+                        </v-sheet>
+                      </v-menu>
+                    </div>
 
                     <div
                       v-if="
@@ -454,6 +517,71 @@
                               @click="
                                 upcomingCollectionFilters.status.text =
                                   dropDownMenu.title
+                              "
+                              >{{ dropDownMenu.title }}</v-list-item
+                            >
+                          </v-list>
+                        </v-sheet>
+                      </v-menu>
+                    </div>
+                    <div
+                      v-if="
+                        collectionFilter.collections.name.toLowerCase() ===
+                        'overdue'
+                      "
+                      class="px-3"
+                    >
+                      <v-menu transition="slide-y-transition">
+                        <template v-slot:activator="{ props }">
+                          <v-btn
+                            class="v-btn--size-default text-caption text-capitalize"
+                            density="default"
+                            :append-icon="
+                              overdueCollectionFilters.status.appendIcon
+                            "
+                            v-bind="props"
+                            flat
+                            style="border: 1px solid rgba(128, 128, 128, 0.25)"
+                          >
+                            {{
+                              overdueCollectionFilters.status.text ||
+                              "Select Status"
+                            }}
+                          </v-btn>
+                        </template>
+                        <v-sheet
+                          border
+                          rounded
+                        >
+                          <v-list
+                            nav
+                            density="compact"
+                            role="listbox"
+                          >
+                            <v-list-item
+                              value="All"
+                              density="compact"
+                              @click="
+                                overdueCollectionFilters.status.text = null;
+                                overdueCollectionFilters.status.filterParam =
+                                  '';
+                                overdueCollectionFilterFetch();
+                              "
+                              >All</v-list-item
+                            >
+                            <v-list-item
+                              v-for="(
+                                dropDownMenu, it
+                              ) in overdueCollectionFilters.status.menus"
+                              :key="it"
+                              :value="it"
+                              density="compact"
+                              @click="
+                                overdueCollectionFilters.status.text =
+                                  dropDownMenu.title;
+                                overdueCollectionFilters.status.filterParam =
+                                  dropDownMenu.value;
+                                overdueCollectionFilterFetch();
                               "
                               >{{ dropDownMenu.title }}</v-list-item
                             >
@@ -625,8 +753,8 @@
                             <v-list-item
                               @click="
                                 newCustomerFilters.status.text = '';
-                                StatusParam = '';
-                                newCustomerFilter();
+                                newCustomerFilters.status.filterParam = '';
+                                newCustomerFilterFetch();
                               "
                               title="All"
                               density="compact"
@@ -636,8 +764,9 @@
                               v-for="(dropDownMenu, it) in newCustomerFilters
                                 .status.menus"
                               @click="
-                                StatusParam = dropDownMenu.param;
-                                newCustomerFilter();
+                                newCustomerFilters.status.filterParam =
+                                  dropDownMenu.param;
+                                newCustomerFilterFetch();
                                 newCustomerFilters.status.text =
                                   dropDownMenu.title;
                               "
@@ -680,8 +809,8 @@
                             <v-list-item
                               title="All USSD"
                               @click="
-                                UssdParam = '';
-                                newCustomerFilter();
+                                newCustomerFilters.ussd.filterParam = '';
+                                newCustomerFilterFetch();
                                 newCustomerFilters.ussd.text = '';
                               "
                               density="compact"
@@ -693,8 +822,9 @@
                               :title="dropDownMenu.text"
                               :value="it"
                               @click="
-                                UssdParam = dropDownMenu.param;
-                                newCustomerFilter();
+                                newCustomerFilters.ussd.filterParam =
+                                  dropDownMenu.param;
+                                newCustomerFilterFetch();
                                 newCustomerFilters.ussd.text =
                                   dropDownMenu.text;
                               "
@@ -830,29 +960,6 @@ const salesOverviewFilters = reactive({
   },
 });
 
-// const upComingCollectionFilters = reactive({
-//   branches: {
-//     text: "All Branches",
-//     appendIcon: "mdi:mdi-chevron-down",
-//   } as {
-//     text: string | null;
-//     appendIcon: string;
-//   },
-//   salesRep: {
-//     text: "All Sales Rep",
-//     id: null,
-//     appendIcon: "mdi:mdi-chevron-down",
-//   } as {
-//     text: string | null;
-//     id: string | null;
-//     appendIcon: string;
-//   },
-//   dateFilters: {
-//     text: "All Time",
-//     appendIcon: "mdi:mdi-chevron-down",
-//     menus: ["All Time", "This Year", "This Month", "This Week"],
-//   },
-// });
 const collectionFilter = ref({
   collections: {
     name: "Upcoming",
@@ -892,6 +999,49 @@ const upcomingCollectionFilters = ref({
   } as {
     text: string | null;
     appendIcon: string;
+    menus: { title: string; value: string }[];
+  },
+});
+const overdueCollectionFilters = ref({
+  product: {
+    text: null,
+    appendIcon: "mdi:mdi-chevron-down",
+    filterParam: "",
+    menus: [
+      "Biashara",
+      "PRESTA LMS",
+      "Corporate Loan",
+      "Okoa",
+      "Salary Advance",
+    ],
+  } as {
+    text: string | null;
+    appendIcon: string;
+    filterParam: string;
+    menus: string[];
+  },
+  status: {
+    text: null,
+    appendIcon: "mdi:mdi-chevron-down",
+    filterParam: "",
+    menus: [
+      {
+        title: "Paid",
+        value: "&status=Paid",
+      },
+      {
+        title: "Not Paid",
+        value: "&status=NOTPAID",
+      },
+      {
+        title: "Partially Paid",
+        value: "&status=Partially Paid",
+      },
+    ],
+  } as {
+    text: string | null;
+    appendIcon: string;
+    filterParam: string;
     menus: { title: string; value: string }[];
   },
 });
@@ -961,6 +1111,7 @@ const upComingCollectionActions = ref([
 const newCustomerFilters = ref({
   status: {
     text: "Select Onboarding ",
+    filterParam: "",
     appendIcon: "mdi:mdi-chevron-down",
     menus: [
       {
@@ -972,6 +1123,7 @@ const newCustomerFilters = ref({
   },
   ussd: {
     text: "Select USSD Status",
+    filterParam: "",
     appendIcon: "mdi:mdi-chevron-down",
     menus: [
       {
@@ -1049,9 +1201,6 @@ const newCustomerActions = ref([
   },
 ]);
 
-const UssdParam = ref("");
-const StatusParam = ref("");
-
 watch(salesOverviewFilters, () => {
   salesOverviewFilters.branches.text
     ? ((salesDashboardStore.branchIds = [salesOverviewFilters.branches.text]),
@@ -1075,9 +1224,17 @@ function dateReturn(text: string) {
   salesDashboardStore.stats.startDate = start;
   salesDashboardStore.stats.endDate = end;
 }
-function newCustomerFilter() {
-  let newParam = UssdParam.value.concat(StatusParam.value);
+function newCustomerFilterFetch() {
+  let newParam = newCustomerFilters.value.ussd.filterParam.concat(
+    newCustomerFilters.value.status.filterParam
+  );
   salesDashboardStore.getNewCustomers(newParam);
+}
+function overdueCollectionFilterFetch() {
+  let newParam = overdueCollectionFilters.value.product.filterParam.concat(
+    overdueCollectionFilters.value.status.filterParam
+  );
+  salesDashboardStore.getOverdueCollections(newParam);
 }
 </script>
 

@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { ref, computed, } from "vue";
+import { ref, computed } from "vue";
 import { useRoute } from "vue-router";
-import axios from 'axios';
+import axios from "axios";
 import formatter from "@/helpers/currency";
 
 interface MonthlyBreakdown {
@@ -14,9 +14,10 @@ interface MonthlyBreakdown {
 const route = useRoute();
 
 const monthlyBreakdown = ref<MonthlyBreakdown[]>([]);
-const totalItems = computed(()=>monthlyBreakdown.value.length);
+const totalItems = computed(() => monthlyBreakdown.value.length);
 
-const baseUrl: string = "https://staging-lending.presta.co.ke/bank_scoring/api/v1"
+const baseUrl: string =
+  "https://staging-lending.presta.co.ke/bank_scoring/api/v1";
 
 const headers = ref<
   { title: string; key: string; align: string; sortable: boolean }[]
@@ -41,7 +42,9 @@ const loading = ref(false);
 // API Call: Get monthlyBreakdown
 const loadMonthlyBreakdown = async () => {
   await axios
-    .get(`${baseUrl}/bank_analysis/bank_income_expense_tabulated?idNumber=${route.params.slug}`)
+    .get(
+      `${baseUrl}/bank_analysis/bank_income_expense_tabulated?idNumber=${route.params.slug}`
+    )
     .then(response => (monthlyBreakdown.value = response.data))
     .catch(error => console.error(error));
 };
@@ -80,10 +83,16 @@ const loadMonthlyBreakdown = async () => {
               item-value="name"
               @update:options="loadMonthlyBreakdown()"
             >
-            <template v-slot:[`item.debits`]="{ item }"><span>{{ formatter(item.columns.debits) }}</span></template>
-            <template v-slot:[`item.credits`]="{ item }"><span>{{ formatter(item.columns.credits) }}</span></template>
-            <template v-slot:[`item.closing`]="{ item }"><span>{{ formatter(item.columns.closing) }}</span></template>
-            <template v-slot:bottom> </template>
+              <template v-slot:[`item.debits`]="{ item }"
+                ><span>{{ formatter(item.columns.debits) }}</span></template
+              >
+              <template v-slot:[`item.credits`]="{ item }"
+                ><span>{{ formatter(item.columns.credits) }}</span></template
+              >
+              <template v-slot:[`item.closing`]="{ item }"
+                ><span>{{ formatter(item.columns.closing) }}</span></template
+              >
+              <template v-slot:bottom> </template>
             </v-data-table-server>
           </div>
         </v-container>

@@ -9,19 +9,19 @@ interface FaibaDataItem {
   total: number;
   highest: string;
   highest_who: string;
-  lowest: string;  
+  lowest: string;
   lowest_who: string;
   classification: string;
 }
 
 interface FaibaTopTransData {
-  last_draw: string; 
-  last: string; 
-  highest: string; 
-  count: string; 
-  name: string; 
-  transactiontype: string; 
-  classification: string; 
+  last_draw: string;
+  last: string;
+  highest: string;
+  count: string;
+  name: string;
+  transactiontype: string;
+  classification: string;
 }
 
 const route = useRoute();
@@ -29,7 +29,7 @@ const route = useRoute();
 const open = ref(true);
 const loading = ref(false);
 const itemsPerPage = ref(5);
-const totalItems = computed(()=>faibaTopTransData.value.length);
+const totalItems = computed(() => faibaTopTransData.value.length);
 const headers = ref<
   { title: string; key: string; align: string; sortable: boolean }[]
 >([
@@ -51,12 +51,14 @@ const headers = ref<
   { title: "Last Amount", key: "last", align: "end", sortable: false },
 ]);
 
-const faibaTransSentData = ref<FaibaDataItem[]>([])
-const faibaTopTransData = ref<FaibaTopTransData[]>([])
+const faibaTransSentData = ref<FaibaDataItem[]>([]);
+const faibaTopTransData = ref<FaibaTopTransData[]>([]);
 
 const loadFaibaTransSentData = async () => {
   await axiosInstance
-    .get(`/e_statement/pay_bill_classifications_sent?idNumber=${route.params.slug}&classification=FaibaJTL&pageSize=100&sortBy=id`)
+    .get(
+      `/e_statement/pay_bill_classifications_sent?idNumber=${route.params.slug}&classification=FaibaJTL&pageSize=100&sortBy=id`
+    )
     .then(response => (faibaTransSentData.value = response.data.content))
     .catch(error => console.error(error));
 };
@@ -64,13 +66,15 @@ const loadFaibaTransSentData = async () => {
 // API Call: Get Top Faiba Trans Data
 const loadFaibaTopTransData = async () => {
   await axiosInstance
-    .get(`/e_statement/top_paybill_classifications?idNumber=${route.params.slug}&classification=FaibaJTL&pageSize=${itemsPerPage.value}&sortBy=id`)
+    .get(
+      `/e_statement/top_paybill_classifications?idNumber=${route.params.slug}&classification=FaibaJTL&pageSize=${itemsPerPage.value}&sortBy=id`
+    )
     .then(response => (faibaTopTransData.value = response.data.content))
     .catch(error => console.error(error));
 };
 
-onMounted(() => { 
-  loadFaibaTransSentData()
+onMounted(() => {
+  loadFaibaTransSentData();
 });
 </script>
 
@@ -177,8 +181,12 @@ onMounted(() => {
               loading-text="Loading...Please Wait"
               item-value="name"
               @update:options="loadFaibaTopTransData()"
-            ><template v-slot:[`item.highest`]="{ item }"><span>{{ formatter(item.columns.highest) }}</span></template>
-            <template v-slot:[`item.last`]="{ item }"><span>{{ formatter(item.columns.last) }}</span></template>
+              ><template v-slot:[`item.highest`]="{ item }"
+                ><span>{{ formatter(item.columns.highest) }}</span></template
+              >
+              <template v-slot:[`item.last`]="{ item }"
+                ><span>{{ formatter(item.columns.last) }}</span></template
+              >
             </v-data-table-server>
           </v-card>
         </v-container>

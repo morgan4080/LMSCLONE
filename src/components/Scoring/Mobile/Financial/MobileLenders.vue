@@ -8,19 +8,19 @@ interface MobileDataItem {
   total: number;
   highest: string;
   highest_who: string;
-  lowest: string;  
+  lowest: string;
   lowest_who: string;
   classification: string;
 }
 
 interface MobileTopTransData {
-  last_draw: string; 
-  last: string; 
-  highest: string; 
-  count: string; 
-  name: string; 
-  transactiontype: string; 
-  classification: string; 
+  last_draw: string;
+  last: string;
+  highest: string;
+  count: string;
+  name: string;
+  transactiontype: string;
+  classification: string;
 }
 
 const route = useRoute();
@@ -28,7 +28,7 @@ const route = useRoute();
 const open = ref(true);
 const loading = ref(false);
 const itemsPerPage = ref(5);
-const totalItems = computed(()=>mobileTopTransData.value.length);
+const totalItems = computed(() => mobileTopTransData.value.length);
 const headers = ref<
   { title: string; key: string; align: string; sortable: boolean }[]
 >([
@@ -50,21 +50,25 @@ const headers = ref<
   { title: "Last Amount", key: "last", align: "end", sortable: false },
 ]);
 
-const mobileTransReceivedData = ref<MobileDataItem[]>([])
-const mobileTransSentData = ref<MobileDataItem[]>([])
-const mobileTopTransData = ref<MobileTopTransData[]>([])
+const mobileTransReceivedData = ref<MobileDataItem[]>([]);
+const mobileTransSentData = ref<MobileDataItem[]>([]);
+const mobileTopTransData = ref<MobileTopTransData[]>([]);
 
 // API Call: Get Mobile Transactions Data
 const loadMobileTransReceivedData = async () => {
   await axiosInstance
-    .get(`/e_statement/pay_bill_classifications_received?idNumber=${route.params.slug}&classification=MobileLenders&pageSize=100&sortBy=id`)
+    .get(
+      `/e_statement/pay_bill_classifications_received?idNumber=${route.params.slug}&classification=MobileLenders&pageSize=100&sortBy=id`
+    )
     .then(response => (mobileTransReceivedData.value = response.data.content))
     .catch(error => console.error(error));
 };
 
 const loadMobileTransSentData = async () => {
   await axiosInstance
-    .get(`/e_statement/pay_bill_classifications_sent?idNumber=${route.params.slug}&classification=MobileLenders&pageSize=100&sortBy=id`)
+    .get(
+      `/e_statement/pay_bill_classifications_sent?idNumber=${route.params.slug}&classification=MobileLenders&pageSize=100&sortBy=id`
+    )
     .then(response => (mobileTransSentData.value = response.data.content))
     .catch(error => console.error(error));
 };
@@ -72,14 +76,16 @@ const loadMobileTransSentData = async () => {
 // API Call: Get Top Mobile Trans Data
 const loadMobileTopTransData = async () => {
   await axiosInstance
-    .get(`/e_statement/top_paybill_classifications?idNumber=${route.params.slug}&classification=MobileLenders&pageSize=${itemsPerPage.value}&sortBy=id`)
+    .get(
+      `/e_statement/top_paybill_classifications?idNumber=${route.params.slug}&classification=MobileLenders&pageSize=${itemsPerPage.value}&sortBy=id`
+    )
     .then(response => (mobileTopTransData.value = response.data.content))
     .catch(error => console.error(error));
 };
 
 onMounted(() => {
   loadMobileTransReceivedData();
-  loadMobileTransSentData()
+  loadMobileTransSentData();
 });
 </script>
 
@@ -124,8 +130,12 @@ onMounted(() => {
                 />
                 <v-row class="justify-space-between d-flex">
                   <v-col class="font-weight-medium">Highhest</v-col>
-                  <v-col>{{ formatter(mobileTransReceivedData[0]?.highest) }}</v-col>
-                  <v-col>{{ formatter(mobileTransSentData[0]?.highest) }}</v-col>
+                  <v-col>{{
+                    formatter(mobileTransReceivedData[0]?.highest)
+                  }}</v-col>
+                  <v-col>{{
+                    formatter(mobileTransSentData[0]?.highest)
+                  }}</v-col>
                 </v-row>
                 <v-divider class="my-2" />
                 <v-row class="justify-space-between d-flex">
@@ -136,7 +146,9 @@ onMounted(() => {
                 <v-divider class="my-2" />
                 <v-row class="justify-space-between d-flex">
                   <v-col class="font-weight-medium">Lowest</v-col>
-                  <v-col>{{ formatter(mobileTransReceivedData[0]?.lowest) }}</v-col>
+                  <v-col>{{
+                    formatter(mobileTransReceivedData[0]?.lowest)
+                  }}</v-col>
                   <v-col>{{ formatter(mobileTransSentData[0]?.lowest) }}</v-col>
                 </v-row>
                 <v-divider class="my-2" />
@@ -151,7 +163,9 @@ onMounted(() => {
                 />
                 <v-row class="font-weight-bold justify-space-between d-flex">
                   <v-col>Total</v-col>
-                  <v-col>{{ formatter(mobileTransReceivedData[0]?.total) }}</v-col>
+                  <v-col>{{
+                    formatter(mobileTransReceivedData[0]?.total)
+                  }}</v-col>
                   <v-col>{{ formatter(mobileTransSentData[0]?.total) }}</v-col>
                 </v-row>
               </div>
@@ -187,8 +201,12 @@ onMounted(() => {
               item-value="name"
               @update:options="loadMobileTopTransData()"
             >
-            <template v-slot:[`item.highest`]="{ item }"><span>{{ formatter(item.columns.highest) }}</span></template>
-            <template v-slot:[`item.last`]="{ item }"><span>{{ formatter(item.columns.last) }}</span></template>
+              <template v-slot:[`item.highest`]="{ item }"
+                ><span>{{ formatter(item.columns.highest) }}</span></template
+              >
+              <template v-slot:[`item.last`]="{ item }"
+                ><span>{{ formatter(item.columns.last) }}</span></template
+              >
             </v-data-table-server>
           </v-card>
         </v-container>

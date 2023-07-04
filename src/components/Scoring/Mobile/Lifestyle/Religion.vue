@@ -9,19 +9,19 @@ interface ReligionDataItem {
   total: number;
   highest: string;
   highest_who: string;
-  lowest: string;  
+  lowest: string;
   lowest_who: string;
   classification: string;
 }
 
 interface ReligionTopTransData {
-  last_draw: string; 
-  last: string; 
-  highest: string; 
-  count: string; 
-  name: string; 
-  transactiontype: string; 
-  classification: string; 
+  last_draw: string;
+  last: string;
+  highest: string;
+  count: string;
+  name: string;
+  transactiontype: string;
+  classification: string;
 }
 
 const route = useRoute();
@@ -29,7 +29,7 @@ const route = useRoute();
 const open = ref(true);
 const loading = ref(false);
 const itemsPerPage = ref(5);
-const totalItems = computed(()=>religionTopTransData.value.length);
+const totalItems = computed(() => religionTopTransData.value.length);
 const headers = ref<
   { title: string; key: string; align: string; sortable: boolean }[]
 >([
@@ -51,21 +51,25 @@ const headers = ref<
   { title: "Last Amount", key: "last", align: "end", sortable: false },
 ]);
 
-const religionTransSentData = ref<ReligionDataItem[]>([])
-const religionTransBuyGoodsData = ref<ReligionDataItem[]>([])
-const religionTopTransData = ref<ReligionTopTransData[]>([])
+const religionTransSentData = ref<ReligionDataItem[]>([]);
+const religionTransBuyGoodsData = ref<ReligionDataItem[]>([]);
+const religionTopTransData = ref<ReligionTopTransData[]>([]);
 
 // API Call: Get Religion Transactions Data
 const loadReligionTransSentData = async () => {
   await axiosInstance
-    .get(`/e_statement/pay_bill_classifications_sent?idNumber=${route.params.slug}&classification=Religion&pageSize=100&sortBy=id`)
+    .get(
+      `/e_statement/pay_bill_classifications_sent?idNumber=${route.params.slug}&classification=Religion&pageSize=100&sortBy=id`
+    )
     .then(response => (religionTransSentData.value = response.data.content))
     .catch(error => console.error(error));
 };
 
 const loadReligionTransBuyGoodsData = async () => {
   await axiosInstance
-    .get(`/e_statement/buy_goods_classifications_summary?idNumber=${route.params.slug}&classification=Religion&pageSize=100&sortBy=id`)
+    .get(
+      `/e_statement/buy_goods_classifications_summary?idNumber=${route.params.slug}&classification=Religion&pageSize=100&sortBy=id`
+    )
     .then(response => (religionTransBuyGoodsData.value = response.data.content))
     .catch(error => console.error(error));
 };
@@ -73,14 +77,16 @@ const loadReligionTransBuyGoodsData = async () => {
 // API Call: Get Top Religion Trans Data
 const loadReligionTopTransData = async () => {
   await axiosInstance
-    .get(`/e_statement/top_paybill_classifications?idNumber=${route.params.slug}&classification=Religion&pageSize=${itemsPerPage.value}&sortBy=id`)
+    .get(
+      `/e_statement/top_paybill_classifications?idNumber=${route.params.slug}&classification=Religion&pageSize=${itemsPerPage.value}&sortBy=id`
+    )
     .then(response => (religionTopTransData.value = response.data.content))
     .catch(error => console.error(error));
 };
 
 onMounted(() => {
-  loadReligionTransSentData()
-  loadReligionTransBuyGoodsData()
+  loadReligionTransSentData();
+  loadReligionTransBuyGoodsData();
 });
 </script>
 
@@ -126,7 +132,9 @@ onMounted(() => {
                 <v-row class="justify-space-between d-flex">
                   <v-col class="font-weight-medium">Highest</v-col>
                   <v-col> - </v-col>
-                  <v-col>{{ formatter(religionTransSentData[0]?.highest) }}</v-col>
+                  <v-col>{{
+                    formatter(religionTransSentData[0]?.highest)
+                  }}</v-col>
                 </v-row>
                 <v-divider class="my-2" />
                 <v-row class="justify-space-between d-flex">
@@ -138,7 +146,9 @@ onMounted(() => {
                 <v-row class="justify-space-between d-flex">
                   <v-col class="font-weight-medium">Lowest</v-col>
                   <v-col> - </v-col>
-                  <v-col>{{ formatter(religionTransSentData[0]?.lowest) }}</v-col>
+                  <v-col>{{
+                    formatter(religionTransSentData[0]?.lowest)
+                  }}</v-col>
                 </v-row>
                 <v-divider class="my-2" />
                 <v-row class="justify-space-between d-flex">
@@ -153,7 +163,9 @@ onMounted(() => {
                 <v-row class="font-weight-bold justify-space-between d-flex">
                   <v-col>Total</v-col>
                   <v-col> - </v-col>
-                  <v-col>{{ formatter(religionTransSentData[0]?.total) }}</v-col>
+                  <v-col>{{
+                    formatter(religionTransSentData[0]?.total)
+                  }}</v-col>
                 </v-row>
               </div>
             </v-container>
@@ -187,7 +199,9 @@ onMounted(() => {
                 <v-row class="justify-space-between d-flex">
                   <v-col class="font-weight-medium">Highest</v-col>
                   <v-col> - </v-col>
-                  <v-col>{{ formatter(religionTransBuyGoodsData[0]?.highest) }}</v-col>
+                  <v-col>{{
+                    formatter(religionTransBuyGoodsData[0]?.highest)
+                  }}</v-col>
                 </v-row>
                 <v-divider class="my-2" />
                 <v-row class="justify-space-between d-flex">
@@ -199,7 +213,9 @@ onMounted(() => {
                 <v-row class="justify-space-between d-flex">
                   <v-col class="font-weight-medium">Lowest</v-col>
                   <v-col> - </v-col>
-                  <v-col>{{ formatter(religionTransBuyGoodsData[0]?.lowest) }}</v-col>
+                  <v-col>{{
+                    formatter(religionTransBuyGoodsData[0]?.lowest)
+                  }}</v-col>
                 </v-row>
                 <v-divider class="my-2" />
                 <v-row class="justify-space-between d-flex">
@@ -214,7 +230,9 @@ onMounted(() => {
                 <v-row class="font-weight-bold justify-space-between d-flex">
                   <v-col>Total</v-col>
                   <v-col> - </v-col>
-                  <v-col>{{ formatter(religionTransBuyGoodsData[0]?.total) }}</v-col>
+                  <v-col>{{
+                    formatter(religionTransBuyGoodsData[0]?.total)
+                  }}</v-col>
                 </v-row>
               </div>
             </v-container>
@@ -248,8 +266,12 @@ onMounted(() => {
               item-value="name"
               @update:options="loadReligionTopTransData()"
             >
-            <template v-slot:[`item.highest`]="{ item }"><span>{{ formatter(item.columns.highest) }}</span></template>
-            <template v-slot:[`item.last`]="{ item }"><span>{{ formatter(item.columns.last) }}</span></template>
+              <template v-slot:[`item.highest`]="{ item }"
+                ><span>{{ formatter(item.columns.highest) }}</span></template
+              >
+              <template v-slot:[`item.last`]="{ item }"
+                ><span>{{ formatter(item.columns.last) }}</span></template
+              >
             </v-data-table-server>
           </v-card>
         </v-container>
