@@ -12,4 +12,3 @@ else
   docker build --build-arg env=staging -t presta-lms/latest . &&
          docker run -d -p 4080:80 presta-lms/latest
 fi
-
