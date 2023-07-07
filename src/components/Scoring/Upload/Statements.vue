@@ -196,7 +196,7 @@ onMounted(() => {
                 </v-input>
               </div>
             </div>
-            <v-row class="mt-12">
+            <v-row class="my-2">
               <v-col>
                 <v-menu transition="slide-y-transition">
                   <template v-slot:activator="{ props }">

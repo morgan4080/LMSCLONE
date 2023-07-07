@@ -1,9 +1,11 @@
 <script setup lang="ts">
-import { ref, computed, toRef, watch } from "vue";
+import { ref, computed, toRef, watch, onMounted } from "vue";
 import axiosInstance from "@/services/api/axiosInstance";
+import { fa } from "vuetify/iconsets/fa4";
 
 interface Statement {
   id: number;
+  refId: string;
   doctype: string;
   statementtype: string;
   idnum: string;
@@ -11,6 +13,7 @@ interface Statement {
   customername: string;
   status: string;
   bankcode: string;
+  statementid: string;
   uploaderName: string;
   uploaderPhone: string | null;
   statementPeriod: string;
@@ -22,6 +25,7 @@ interface Statement {
 
 interface DataItem {
   id: number;
+  refId: string;
   statement: {
     doctype: string;
     bankcode: string;
@@ -63,11 +67,13 @@ const params = toRef(props, "params");
 const apiData = ref<DataItem[]>([]);
 
 // Transform the API Data
-const transformData = (payload: Statement[]) =>
+const transformData = (payload: Statement[]): any =>
   payload.map(item => {
     return {
       id: item.id,
+      refId: item.refId,
       statement: {
+        refId: item.refId,
         doctype: item.doctype,
         bankcode: item.bankcode,
         uniqueId: item.statementid,
@@ -95,6 +101,7 @@ const queryStatementStatus = async (
   uniqueId: string
 ) => {
   try {
+    loading.value = true;
     const response = await axiosInstance.post(
       `/e_statement/query_status?scoreType=${score}&uniqueId=${uniqueId}`
     );
@@ -104,6 +111,8 @@ const queryStatementStatus = async (
     }
   } catch (error) {
     console.error(error);
+  } finally {
+    loading.value = false;
   }
 };
 
@@ -149,6 +158,10 @@ const deleteStatement = async (payload: number) => {
 
 watch(params, () => {
   loadData(params.value);
+});
+
+watch(apiData, () => {
+  console.log("apiData", apiData.value);
 });
 </script>
 
@@ -223,87 +236,138 @@ watch(params, () => {
       {{ item.columns.password || "N/A" }}
     </template>
     <template v-slot:[`item.actions`]="{ item }">
-      <div class="justify-end d-flex">
-        <div
-          class="px-1 border rounded hover-cursor-pointer"
-          @click="
-            item.columns.status?.toLowerCase() === 'completed'
-              ? $router.push(
-                  `/scoring/${
-                    item.columns.statement.doctype === 'BANK'
-                      ? 'bank'
-                      : 'mobile'
-                  }/${item.columns.customer.idnum}`
+      <div class="justify-start align-center d-flex">
+        <v-tooltip
+          location="bottom"
+          text="Statement"
+        >
+          <template v-slot:activator="{ props }">
+            <v-btn
+              size="small"
+              variant="tonal"
+              density="compact"
+              icon
+              @click="
+                $router.push(
+                  item.columns.status?.toLowerCase() === 'completed'
+                    ? `/scoring/${
+                        item.columns.statement.doctype === 'BANK'
+                          ? 'bank'
+                          : 'mobile'
+                      }/${item.columns.statement.refId}`
+                    : ''
                 )
-              : ''
-          "
+              "
+              :color="
+                item.columns.status?.toLowerCase() === 'completed'
+                  ? 'blue'
+                  : 'blue-grey-lighten-4'
+              "
+              v-bind="props"
+            >
+              <v-icon
+                size="x-small"
+                icon="mdi:mdi-eye-outline"
+              ></v-icon>
+            </v-btn>
+          </template>
+        </v-tooltip>
+        <v-tooltip
+          location="bottom"
+          text="Sync Status"
         >
-          <v-icon
-            :color="
-              item.columns.status?.toLowerCase() === 'completed'
-                ? 'blue'
-                : 'blue-grey-lighten-4'
-            "
-            size="x-small"
-            icon="mdi:mdi-eye-outline"
-          ></v-icon>
-        </div>
-        <div
-          @click.stop="
-            queryStatementStatus(
-              item.columns.id,
-              item.columns.statement.bankcode,
-              item.columns.statement.uniqueId
-            )
-          "
-          class="px-1 ml-1 border rounded hover-cursor-pointer"
+          <template v-slot:activator="{ props }">
+            <v-btn
+              size="small"
+              density="compact"
+              variant="tonal"
+              :loading="false"
+              @click.stop="
+                queryStatementStatus(
+                  item.columns.id,
+                  item.columns.statement.doctype === 'BANK'
+                    ? 'BANK'
+                    : item.columns.statement.bankcode,
+                  item.columns.statement.uniqueId
+                )
+              "
+              class="ml-1"
+              icon
+              :color="
+                item.columns.status?.toLowerCase() === 'processing'
+                  ? 'orange'
+                  : 'grey-lighten-4'
+              "
+              v-bind="props"
+            >
+              <v-icon
+                size="x-small"
+                icon="mdi:mdi-sync"
+              ></v-icon>
+            </v-btn>
+          </template>
+        </v-tooltip>
+        <v-tooltip
+          location="bottom"
+          text="Re-Upload"
         >
-          <v-icon
-            :color="
-              item.columns.status?.toLowerCase() === 'processing'
-                ? 'orange'
-                : 'grey-lighten-4'
-            "
-            size="x-small"
-            icon="mdi:mdi-sync"
-            class=""
-          ></v-icon>
-        </div>
-        <div
-          @click.stop="
-            item.columns.status?.toLowerCase() === 'failed'
-              ? reuploadStatement(item.columns.customer.idnum)
-              : ''
-          "
-          class="px-1 ml-1 border rounded"
-          :class="
-            item.columns.status?.toLowerCase() === 'failed'
-              ? 'hover-cursor-pointer'
-              : ''
-          "
+          <template v-slot:activator="{ props }">
+            <v-btn
+              size="small"
+              density="compact"
+              variant="tonal"
+              :loading="false"
+              @click.stop="
+                item.columns.status?.toLowerCase() === 'failed'
+                  ? reuploadStatement(item.columns.refId)
+                  : ''
+              "
+              class="ml-1"
+              :class="
+                item.columns.status?.toLowerCase() === 'failed'
+                  ? 'hover-cursor-pointer'
+                  : ''
+              "
+              icon
+              :color="
+                item.columns.status?.toLowerCase() === 'failed'
+                  ? 'green'
+                  : 'blue-grey-lighten-4'
+              "
+              v-bind="props"
+            >
+              <v-icon
+                size="x-small"
+                icon="mdi:mdi-reload"
+              ></v-icon>
+            </v-btn>
+          </template>
+        </v-tooltip>
+        <v-tooltip
+          location="bottom"
+          text="Re-Upload"
         >
-          <v-icon
-            :color="
-              item.columns.status?.toLowerCase() === 'failed'
-                ? 'green'
-                : 'blue-grey-lighten-4'
-            "
-            size="x-small"
-            icon="mdi:mdi-reload"
-            class=""
-          ></v-icon>
-        </div>
-        <div
-          @click.stop="deleteStatement(item.columns.customer.idnum)"
-          class="px-1 ml-1 border rounded hover-cursor-pointer"
-        >
-          <v-icon
-            color="red"
-            size="x-small"
-            icon="mdi:mdi-trash-can-outline"
-            class=""
-          ></v-icon>
-        </div>
+          <template v-slot:activator="{ props }">
+            <v-btn
+              size="small"
+              density="compact"
+              variant="tonal"
+              :loading="false"
+              @click.stop="deleteStatement(item.columns.refId)"
+              class="ml-1"
+              icon
+              color="red"
+              v-bind="props"
+            >
+              <v-icon
+                color="red"
+                size="x-small"
+                icon="mdi:mdi-trash-can-outline"
+                class=""
+              ></v-icon>
+            </v-btn>
+          </template>
+        </v-tooltip>
       </div>
     </template>
   </VDataTableServer>

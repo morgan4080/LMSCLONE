@@ -85,7 +85,7 @@ const baseUrl: string =
 const loadInFlowData = async () => {
   loaded.value = false;
   await axiosInstance
-    .get(`${baseUrl}/bank_analysis/bank_inflow?idNumber=${route.params.slug}`)
+    .get(`${baseUrl}/bank_analysis/bank_inflow?refId=${route.params.slug}`)
     .then(response => {
       inflowData.value = response.data;
       loaded.value = true;
@@ -97,7 +97,7 @@ const loadInFlowData = async () => {
 const loadOutFlowData = async () => {
   await axiosInstance
     .get(
-      `${baseUrl}/bank_analysis/bank_expense_flow?idNumber=${route.params.slug}`
+      `${baseUrl}/bank_analysis/bank_expense_flow?refId=${route.params.slug}`
     )
     .then(response => (outflowData.value = response.data))
     .catch(error => console.error(error));

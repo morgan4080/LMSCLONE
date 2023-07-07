@@ -66,7 +66,7 @@ const baseUrl: string =
 const loadCustomerInformation = async () => {
   await axios
     .get(
-      `${baseUrl}/bank_analysis/get_customer_info?idNumber=${route.params.slug}`
+      `${baseUrl}/bank_analysis/get_customer_info?refId=${route.params.slug}`
     )
     .then(response => (customerInformation.value = response.data))
     .catch(error => console.error(error));
@@ -75,7 +75,7 @@ const loadCustomerInformation = async () => {
 // API Call: Get analysis information
 const loadAnalysisInformation = async () => {
   await axios
-    .get(`${baseUrl}/bank_analysis/bank_scores?idNumber=${route.params.slug}`)
+    .get(`${baseUrl}/bank_analysis/bank_scores?refId=${route.params.slug}`)
     .then(response => (analysisInformation.value = response.data))
     .catch(error => console.error(error));
 };
@@ -83,7 +83,7 @@ const loadAnalysisInformation = async () => {
 // API Call: Get balance information
 const loadBalanceInformation = async () => {
   await axios
-    .get(`${baseUrl}/bank_analysis/bank_balances?idNumber=${route.params.slug}`)
+    .get(`${baseUrl}/bank_analysis/bank_balances?refId=${route.params.slug}`)
     .then(response => (balanceInformation.value = response.data))
     .catch(error => console.error(error));
 };

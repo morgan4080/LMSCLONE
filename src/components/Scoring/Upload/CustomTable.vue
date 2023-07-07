@@ -62,7 +62,7 @@ const { upload } = storeToRefs(useUploadStore());
 const apiData = ref<DataItem[]>([]);
 
 // Transform the API Data
-const transformData = (payload: Statement[]) =>
+const transformData = (payload: Statement[]): any =>
   payload.map(item => {
     return {
       id: item.id,
@@ -98,6 +98,7 @@ const queryStatementStatus = async (
   type: string
 ) => {
   try {
+    loading.value = true;
     const response =
       type === "MOBILE"
         ? await axiosInstance.post(
@@ -112,6 +113,8 @@ const queryStatementStatus = async (
     }
   } catch (error) {
     console.error(error);
+  } finally {
+    loading.value = false;
   }
 };
 
@@ -206,53 +209,80 @@ watch(upload, val => {
       <p>{{ item.columns.customer.uploaderPhone }}</p>
     </template>
     <template v-slot:[`item.actions`]="{ item }">
-      <div class="justify-end d-flex">
-        <div
-          class="px-1 border rounded hover-cursor-pointer"
-          @click="
-            item.columns.status?.toLowerCase() === 'completed'
-              ? $router.push(
-                  `/scoring/${
-                    item.columns.statement.doctype !== 'MOBILE'
-                      ? 'bank'
-                      : 'mobile'
-                  }/${item.columns.customer.idnum}`
+      <div class="justify-start d-flex">
+        <v-tooltip
+          location="bottom"
+          text="Statement"
+        >
+          <template v-slot:activator="{ props }">
+            <v-btn
+              size="small"
+              density="compact"
+              variant="tonal"
+              :loading="false"
+              @click="
+                item.columns.status?.toLowerCase() === 'completed'
+                  ? $router.push(
+                      `/scoring/${
+                        item.columns.statement.doctype !== 'MOBILE'
+                          ? 'bank'
+                          : 'mobile'
+                      }/${item.columns.refId}`
+                    )
+                  : ''
+              "
+              icon
+              v-bind="props"
+              :color="
+                item.columns.status?.toLowerCase() === 'completed'
+                  ? 'blue'
+                  : 'blue-grey-lighten-4'
+              "
+            >
+              <v-icon
+                size="x-small"
+                icon="mdi:mdi-eye-outline"
+              ></v-icon>
+            </v-btn>
+          </template>
+        </v-tooltip>
+        <v-tooltip
+          location="bottom"
+          text="Sync"
+        >
+          <template v-slot:activator="{ props }">
+            <v-btn
+              size="small"
+              density="compact"
+              variant="tonal"
+              :loading="false"
+              @click.stop="
+                queryStatementStatus(
+                  item.columns.id,
+                  item.columns.statement.doctype !== 'MOBILE'
+                    ? 'BANK'
+                    : item.columns.statement.bankcode,
+                  item.columns.statement.uniqueId,
+                  item.columns.statement.doctype
                 )
-              : ''
-          "
-        >
-          <v-icon
-            :color="
-              item.columns.status?.toLowerCase() === 'completed'
-                ? 'blue'
-                : 'blue-grey-lighten-4'
-            "
-            size="x-small"
-            icon="mdi:mdi-eye-outline"
-          ></v-icon>
-        </div>
-        <div
-          @click.stop="
-            queryStatementStatus(
-              item.columns.id,
-              item.columns.statement.bankcode,
-              item.columns.statement.uniqueId,
-              item.columns.statement.doctype
-            )
-          "
-          class="px-1 ml-1 border rounded hover-cursor-pointer"
-        >
-          <v-icon
-            :color="
-              item.columns.status?.toLowerCase() === 'processing'
-                ? 'orange'
-                : 'grey-lighten-4'
-            "
-            size="x-small"
-            icon="mdi:mdi-sync"
-            class=""
-          ></v-icon>
-        </div>
+              "
+              class="ml-1"
+              v-bind="props"
+              icon
+              :color="
+                item.columns.status?.toLowerCase() === 'processing'
+                  ? 'orange'
+                  : 'grey-lighten-4'
+              "
+            >
+              <v-icon
+                size="x-small"
+                icon="mdi:mdi-sync"
+                class=""
+              ></v-icon>
+            </v-btn>
+          </template>
+        </v-tooltip>
       </div>
     </template>
   </VDataTableServer>

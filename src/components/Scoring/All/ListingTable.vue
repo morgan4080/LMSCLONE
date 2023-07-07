@@ -191,37 +191,6 @@ onMounted(() => {
             </div>
             <v-row class="mt-6 mb-1">
               <v-col>
-                <!--                <v-menu transition="slide-y-transition">-->
-                <!--                  <template v-slot:activator="{ props }">-->
-                <!--                    <v-btn-->
-                <!--                      variant="outlined"-->
-                <!--                      append-icon="mdi:mdi-chevron-down"-->
-                <!--                      v-bind="props"-->
-                <!--                      class="text-none text-caption"-->
-                <!--                      style="border: 1px solid rgba(128, 128, 128, 0.25)"-->
-                <!--                    >-->
-                <!--                      Select Customer-->
-                <!--                    </v-btn>-->
-                <!--                  </template>-->
-                <!--                  <v-sheet-->
-                <!--                    border-->
-                <!--                    rounded-->
-                <!--                  >-->
-                <!--                    <v-list-->
-                <!--                      nav-->
-                <!--                      density="compact"-->
-                <!--                      role="listbox"-->
-                <!--                    >-->
-                <!--                      <v-list-item-->
-                <!--                        v-for="(item, idx) in options"-->
-                <!--                        :key="idx"-->
-                <!--                        :value="item"-->
-                <!--                        >{{ item }}</v-list-item-->
-                <!--                      >-->
-                <!--                    </v-list>-->
-                <!--                  </v-sheet>-->
-                <!--                </v-menu>-->
-
                 <v-menu transition="slide-y-transition">
                   <template v-slot:activator="{ props }">
                     <v-btn

@@ -21,7 +21,7 @@ const baseUrl: string =
 const loadOverviewInformation = async () => {
   await axios
     .get(
-      `${baseUrl}/bank_analysis/bank_totals?idNumber=${route.params.slug}&pageSize=100&sortBy=id`
+      `${baseUrl}/bank_analysis/bank_totals?refId=${route.params.slug}&pageSize=100&sortBy=id`
     )
     .then(response => (overviewInformation.value = response.data.content))
     .catch(error => console.error(error));

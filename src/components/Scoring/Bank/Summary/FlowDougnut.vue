@@ -79,12 +79,12 @@ const outflow = computed(() => {
 
 const baseUrl: string =
   "https://staging-lending.presta.co.ke/bank_scoring/api/v1";
-
+const flow = ref<string>("Inflow");
 // API Call: Get In-Flow Data
 const loadInFlowData = async () => {
   InflowLoaded.value = false;
   await axiosInstance
-    .get(`${baseUrl}/bank_analysis/bank_inflow?idNumber=${route.params.slug}`)
+    .get(`${baseUrl}/bank_analysis/bank_inflow?refId=${route.params.slug}`)
     .then(response => {
       inflowData.value = response.data;
       InflowLoaded.value = true;
@@ -97,7 +97,7 @@ const loadOutFlowData = async () => {
   OutflowLoaded.value = false;
   await axiosInstance
     .get(
-      `${baseUrl}/bank_analysis/bank_expense_flow?idNumber=${route.params.slug}`
+      `${baseUrl}/bank_analysis/bank_expense_flow?refId=${route.params.slug}`
     )
     .then(response => {
       outflowData.value = response.data;
