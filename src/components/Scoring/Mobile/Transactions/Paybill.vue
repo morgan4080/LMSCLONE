@@ -62,7 +62,7 @@ const topTransData = ref<TopPaybillDataItem[]>([]);
 const loadPaybillTransData = async () => {
   await axiosInstance
     .get(
-      `/e_statement/paybill_summary?idNumber=${route.params.slug}&pageSize=100&sortBy=id`
+      `/e_statement/paybill_summary?refId=${route.params.slug}&pageSize=100&sortBy=id`
     )
     .then(response => (paybillTransData.value = response.data.content))
     .catch(error => console.error(error));
@@ -72,7 +72,7 @@ const loadPaybillTransData = async () => {
 const loadBuyGoodsTransData = async () => {
   await axiosInstance
     .get(
-      `/e_statement/buy_goods_summary?idNumber=${route.params.slug}&pageSize=100&sortBy=id`
+      `/e_statement/buy_goods_summary?refId=${route.params.slug}&pageSize=100&sortBy=id`
     )
     .then(response => (buyGoodsTransData.value = response.data.content))
     .catch(error => console.error(error));
@@ -83,13 +83,13 @@ const loadTopTransData = async () => {
   try {
     // Top Paybill
     const paybillResponse = await axiosInstance.get(
-      `/e_statement/top_paybill_transactions?idNumber=${route.params.slug}&pageSize=${itemsPerPage.value}&sortBy=id`
+      `/e_statement/top_paybill_transactions?refId=${route.params.slug}&pageSize=${itemsPerPage.value}&sortBy=id`
     );
     const paybill = paybillResponse.data.content;
 
     // Top Buy Goods
     const buyGoodsResponse = await axiosInstance.get(
-      `/e_statement/top_buy_goods_transactions?idNumber=${route.params.slug}&pageSize=${itemsPerPage.value}&sortBy=id`
+      `/e_statement/top_buy_goods_transactions?refId=${route.params.slug}&pageSize=${itemsPerPage.value}&sortBy=id`
     );
     const buyGoods = buyGoodsResponse.data.content;
 

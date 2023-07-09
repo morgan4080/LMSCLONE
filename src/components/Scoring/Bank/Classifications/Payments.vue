@@ -62,7 +62,7 @@ const baseUrl: string =
 const loadFlowMobileMoney = async () => {
   await axiosInstance
     .get(
-      `${baseUrl}/bank_analysis/bank_payments_summary?idNumber=${route.params.slug}&paymentName=MobileMoney&pageSize=100&sortBy=id`
+      `${baseUrl}/bank_analysis/bank_payments_summary?refId=${route.params.slug}&paymentName=MobileMoney&pageSize=100&sortBy=id`
     )
     .then(response => (flowMobileMoney.value = response.data.content))
     .catch(error => console.error(error));
@@ -72,7 +72,7 @@ const loadFlowMobileMoney = async () => {
 const loadFlowCashWithdrawal = async () => {
   await axiosInstance
     .get(
-      `${baseUrl}/bank_analysis/bank_payments_summary?idNumber=${route.params.slug}&paymentName=CashWithdrawal&pageSize=100&sortBy=id`
+      `${baseUrl}/bank_analysis/bank_payments_summary?refId=${route.params.slug}&paymentName=CashWithdrawal&pageSize=100&sortBy=id`
     )
     .then(response => (flowCashWithdrawal.value = response.data.content))
     .catch(error => console.error(error));
@@ -82,7 +82,7 @@ const loadFlowCashWithdrawal = async () => {
 const loadFlowReversals = async () => {
   await axiosInstance
     .get(
-      `${baseUrl}/bank_analysis/bank_payments_summary?idNumber=${route.params.slug}&paymentName=Reversals&pageSize=100&sortBy=id`
+      `${baseUrl}/bank_analysis/bank_payments_summary?refId=${route.params.slug}&paymentName=Reversals&pageSize=100&sortBy=id`
     )
     .then(response => (flowReversals.value = response.data.content))
     .catch(error => console.error(error));
@@ -92,7 +92,7 @@ const loadFlowReversals = async () => {
 const loadFlowOthers = async () => {
   await axiosInstance
     .get(
-      `${baseUrl}/bank_analysis/bank_payments_summary?idNumber=${route.params.slug}&paymentName=Others&pageSize=100&sortBy=id`
+      `${baseUrl}/bank_analysis/bank_payments_summary?refId=${route.params.slug}&paymentName=Others&pageSize=100&sortBy=id`
     )
     .then(response => (flowOthers.value = response.data.content))
     .catch(error => console.error(error));
@@ -102,7 +102,7 @@ const loadFlowOthers = async () => {
 const loadFlowTopData = async () => {
   await axiosInstance
     .get(
-      `${baseUrl}/bank_analysis/top_bank_payment_transactions?idNumber=${route.params.slug}&pageSize=${itemsPerPage.value}&sortBy=id`
+      `${baseUrl}/bank_analysis/top_bank_payment_transactions?refId=${route.params.slug}&pageSize=${itemsPerPage.value}&sortBy=id`
     )
     .then(response => (flowTopData.value = response.data.content))
     .catch(error => console.error(error));

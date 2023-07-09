@@ -56,7 +56,7 @@ const agentTopTransData = ref<AgentTopTransData[]>([]);
 const loadAgentTransData = async () => {
   await axiosInstance
     .get(
-      `/e_statement/agent_transaction_summary?idNumber=${route.params.slug}&pageSize=100&sortBy=id`
+      `/e_statement/agent_transaction_summary?refId=${route.params.slug}&pageSize=100&sortBy=id`
     )
     .then(response => (agentTransData.value = response.data.content))
     .catch(error => console.error(error));
@@ -66,7 +66,7 @@ const loadAgentTransData = async () => {
 const loadAgentTopTransData = async () => {
   await axiosInstance
     .get(
-      `/e_statement/top_agent_transactions?idNumber=${route.params.slug}&pageSize=${itemsPerPage.value}&sortBy=id`
+      `/e_statement/top_agent_transactions?refId=${route.params.slug}&pageSize=${itemsPerPage.value}&sortBy=id`
     )
     .then(response => (agentTopTransData.value = response.data.content))
     .catch(error => console.error(error));

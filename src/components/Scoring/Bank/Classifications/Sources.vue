@@ -60,7 +60,7 @@ const baseUrl: string =
 const loadFlowMobileMoney = async () => {
   await axiosInstance
     .get(
-      `${baseUrl}/bank_analysis/bank_sources_summary?idNumber=${route.params.slug}&sourceName=MobileMoney&pageSize=100&sortBy=id`
+      `${baseUrl}/bank_analysis/bank_sources_summary?refId=${route.params.slug}&sourceName=MobileMoney&pageSize=100&sortBy=id`
     )
     .then(response => (flowMobileMoney.value = response.data.content))
     .catch(error => console.error(error));
@@ -70,7 +70,7 @@ const loadFlowMobileMoney = async () => {
 const loadFlowCashDeposit = async () => {
   await axiosInstance
     .get(
-      `${baseUrl}/bank_analysis/bank_sources_summary?idNumber=${route.params.slug}&sourceName=CashDeposit&pageSize=100&sortBy=id`
+      `${baseUrl}/bank_analysis/bank_sources_summary?refId=${route.params.slug}&sourceName=CashDeposit&pageSize=100&sortBy=id`
     )
     .then(response => (flowCashDeposit.value = response.data.content))
     .catch(error => console.error(error));
@@ -80,7 +80,7 @@ const loadFlowCashDeposit = async () => {
 const loadFlowTopData = async () => {
   await axiosInstance
     .get(
-      `${baseUrl}/bank_analysis/top_bank_sources_transactions?idNumber=${route.params.slug}&pageSize=${itemsPerPage.value}&sortBy=id`
+      `${baseUrl}/bank_analysis/top_bank_sources_transactions?refId=${route.params.slug}&pageSize=${itemsPerPage.value}&sortBy=id`
     )
     .then(response => (flowTopData.value = response.data.content))
     .catch(error => console.error(error));

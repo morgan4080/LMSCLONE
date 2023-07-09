@@ -7,6 +7,7 @@ import axiosInstance from "@/services/api/axiosInstance";
 
 interface Statement {
   id: number;
+  refId: string;
   doctype: string;
   statementtype: string;
   statementid: string;
@@ -67,6 +68,7 @@ const transformData = (payload: Statement[]): any =>
     return {
       id: item.id,
       statement: {
+        refId: item.refId,
         doctype: item.doctype,
         bankcode: item.bankcode,
         uniqueId: item.statementid,
@@ -227,7 +229,7 @@ watch(upload, val => {
                         item.columns.statement.doctype !== 'MOBILE'
                           ? 'bank'
                           : 'mobile'
-                      }/${item.columns.refId}`
+                      }/${item.columns.statement.refId}`
                     )
                   : ''
               "

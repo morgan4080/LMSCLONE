@@ -59,7 +59,7 @@ const insuranceTopTransData = ref<InsuranceTopTransData[]>([]);
 const loadInsuranceTransReceivedData = async () => {
   await axiosInstance
     .get(
-      `/e_statement/pay_bill_classifications_received?idNumber=${route.params.slug}&classification=Insurance&pageSize=100&sortBy=id`
+      `/e_statement/pay_bill_classifications_received?refId=${route.params.slug}&classification=Insurance&pageSize=100&sortBy=id`
     )
     .then(
       response => (insuranceTransReceivedData.value = response.data.content)
@@ -70,7 +70,7 @@ const loadInsuranceTransReceivedData = async () => {
 const loadInsuranceTransSentData = async () => {
   await axiosInstance
     .get(
-      `/e_statement/pay_bill_classifications_sent?idNumber=${route.params.slug}&classification=Insurance&pageSize=100&sortBy=id`
+      `/e_statement/pay_bill_classifications_sent?refId=${route.params.slug}&classification=Insurance&pageSize=100&sortBy=id`
     )
     .then(response => (insuranceTransSentData.value = response.data.content))
     .catch(error => console.error(error));
@@ -80,7 +80,7 @@ const loadInsuranceTransSentData = async () => {
 const loadInsuranceTopTransData = async () => {
   await axiosInstance
     .get(
-      `/e_statement/top_paybill_classifications?idNumber=${route.params.slug}&classification=Insurance&pageSize=${itemsPerPage.value}&sortBy=id`
+      `/e_statement/top_paybill_classifications?refId=${route.params.slug}&classification=Insurance&pageSize=${itemsPerPage.value}&sortBy=id`
     )
     .then(response => (insuranceTopTransData.value = response.data.content))
     .catch(error => console.error(error));

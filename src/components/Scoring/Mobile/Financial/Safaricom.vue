@@ -35,7 +35,7 @@ const fulizaData = ref<FulizaDataItem[]>([]);
 const loadMshariData = async () => {
   await axiosInstance
     .get(
-      `/e_statement/mshwari_summary?/e_statement/mshwari_summary?idNumber=${route.params.slug}&pageSize=100&sortBy=id`
+      `/e_statement/mshwari_summary?/e_statement/mshwari_summary?refId=${route.params.slug}&pageSize=100&sortBy=id`
     )
     .then(response => (mshwariData.value = response.data.content))
     .catch(error => console.error(error));
@@ -45,7 +45,7 @@ const loadMshariData = async () => {
 const loadKcbMpesaData = async () => {
   await axiosInstance
     .get(
-      `/e_statement/kcb_mpesa_summary?/e_statement/kcb_mpesa_summary?idNumber=${route.params.slug}&pageSize=100&sortBy=id`
+      `/e_statement/kcb_mpesa_summary?/e_statement/kcb_mpesa_summary?refId=${route.params.slug}&pageSize=100&sortBy=id`
     )
     .then(response => (kcbMpesaData.value = response.data.content))
     .catch(error => console.error(error));
@@ -55,7 +55,7 @@ const loadKcbMpesaData = async () => {
 const loadFulizaData = async () => {
   await axiosInstance
     .get(
-      `/e_statement/fuliza_summary?/e_statement/fuliza_summary?idNumber=${route.params.slug}&pageSize=100&sortBy=id`
+      `/e_statement/fuliza_summary?/e_statement/fuliza_summary?refId=${route.params.slug}&pageSize=100&sortBy=id`
     )
     .then(response => (fulizaData.value = response.data.content))
     .catch(error => console.error(error));

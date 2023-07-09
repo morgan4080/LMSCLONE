@@ -58,7 +58,7 @@ const hotelsTopTransData = ref<HotelsTopTransData[]>([]);
 const loadHotelsTransBuyGoodsData = async () => {
   await axiosInstance
     .get(
-      `/e_statement/buy_goods_classifications_summary?idNumber=${route.params.slug}&classification=Hotel&pageSize=100&sortBy=id`
+      `/e_statement/buy_goods_classifications_summary?refId=${route.params.slug}&classification=Hotel&pageSize=100&sortBy=id`
     )
     .then(response => (hotelsTransBuyGoodsData.value = response.data.content))
     .catch(error => console.error(error));
@@ -68,7 +68,7 @@ const loadHotelsTransBuyGoodsData = async () => {
 const loadHotelsTopTransData = async () => {
   await axiosInstance
     .get(
-      `/e_statement/top_paybill_classifications?idNumber=${route.params.slug}&classification=Hotel&pageSize=${itemsPerPage.value}&sortBy=id`
+      `/e_statement/top_paybill_classifications?refId=${route.params.slug}&classification=Hotel&pageSize=${itemsPerPage.value}&sortBy=id`
     )
     .then(response => (hotelsTopTransData.value = response.data.content))
     .catch(error => console.error(error));

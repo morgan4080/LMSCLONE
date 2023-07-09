@@ -57,7 +57,7 @@ const dstvTopTransData = ref<DstvTopTransData[]>([]);
 const loadDstvTransSentData = async () => {
   await axiosInstance
     .get(
-      `/e_statement/pay_bill_classifications_sent?idNumber=${route.params.slug}&classification=DstvOrGotv&pageSize=100&sortBy=id`
+      `/e_statement/pay_bill_classifications_sent?refId=${route.params.slug}&classification=DstvOrGotv&pageSize=100&sortBy=id`
     )
     .then(response => (dstvTransSentData.value = response.data.content))
     .catch(error => console.error(error));
@@ -67,7 +67,7 @@ const loadDstvTransSentData = async () => {
 const loadDstvTopTransData = async () => {
   await axiosInstance
     .get(
-      `/e_statement/top_paybill_classifications?idNumber=${route.params.slug}&classification=DstvOrGotv&pageSize=${itemsPerPage.value}&sortBy=id`
+      `/e_statement/top_paybill_classifications?refId=${route.params.slug}&classification=DstvOrGotv&pageSize=${itemsPerPage.value}&sortBy=id`
     )
     .then(response => (dstvTopTransData.value = response.data.content))
     .catch(error => console.error(error));

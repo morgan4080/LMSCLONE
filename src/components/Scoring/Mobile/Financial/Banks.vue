@@ -59,7 +59,7 @@ const bankTopTransData = ref<BankTopTransData[]>([]);
 const loadBankTransReceivedData = async () => {
   await axiosInstance
     .get(
-      `/e_statement/pay_bill_classifications_received?idNumber=${route.params.slug}&pageSize=100&sortBy=id`
+      `/e_statement/pay_bill_classifications_received?refId=${route.params.slug}&pageSize=100&sortBy=id`
     )
     .then(
       response =>
@@ -73,7 +73,7 @@ const loadBankTransReceivedData = async () => {
 const loadBankTransSentData = async () => {
   await axiosInstance
     .get(
-      `/e_statement/pay_bill_classifications_sent?idNumber=${route.params.slug}&pageSize=100&sortBy=id`
+      `/e_statement/pay_bill_classifications_sent?refId=${route.params.slug}&pageSize=100&sortBy=id`
     )
     .then(
       response =>
@@ -88,7 +88,7 @@ const loadBankTransSentData = async () => {
 const loadBankTopAccountsData = async () => {
   await axiosInstance
     .get(
-      `/e_statement/top_bank_accounts?idNumber=${route.params.slug}&pageSize=100&sortBy=id`
+      `/e_statement/top_bank_accounts?refId=${route.params.slug}&pageSize=100&sortBy=id`
     )
     .then(response => (bankTopAccountsData.value = response.data.content))
     .catch(error => console.error(error));
@@ -99,7 +99,7 @@ const loadBankTopTransData = async () => {
   await axiosInstance
     // https://staging-lending.presta.co.ke/scoring/api/v1/e_statement/top_paybill_classifications?classification=Banks&pageSize=15&sortBy=id
     .get(
-      `/e_statement/top_paybill_classifications?idNumber=${route.params.slug}&classification=Banks&pageSize=${itemsPerPage.value}&sortBy=id`
+      `/e_statement/top_paybill_classifications?refId=${route.params.slug}&classification=Banks&pageSize=${itemsPerPage.value}&sortBy=id`
     )
     .then(response => (bankTopTransData.value = response.data.content))
     .catch(error => console.error(error));

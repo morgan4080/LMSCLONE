@@ -57,7 +57,7 @@ const faibaTopTransData = ref<FaibaTopTransData[]>([]);
 const loadFaibaTransSentData = async () => {
   await axiosInstance
     .get(
-      `/e_statement/pay_bill_classifications_sent?idNumber=${route.params.slug}&classification=FaibaJTL&pageSize=100&sortBy=id`
+      `/e_statement/pay_bill_classifications_sent?refId=${route.params.slug}&classification=FaibaJTL&pageSize=100&sortBy=id`
     )
     .then(response => (faibaTransSentData.value = response.data.content))
     .catch(error => console.error(error));
@@ -67,7 +67,7 @@ const loadFaibaTransSentData = async () => {
 const loadFaibaTopTransData = async () => {
   await axiosInstance
     .get(
-      `/e_statement/top_paybill_classifications?idNumber=${route.params.slug}&classification=FaibaJTL&pageSize=${itemsPerPage.value}&sortBy=id`
+      `/e_statement/top_paybill_classifications?refId=${route.params.slug}&classification=FaibaJTL&pageSize=${itemsPerPage.value}&sortBy=id`
     )
     .then(response => (faibaTopTransData.value = response.data.content))
     .catch(error => console.error(error));

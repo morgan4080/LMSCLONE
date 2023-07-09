@@ -58,7 +58,7 @@ const entertainmentTopTransData = ref<EntertainmentTopTransData[]>([]);
 const loadEntertainmentTransBuyGoodsData = async () => {
   await axiosInstance
     .get(
-      `/e_statement/buy_goods_classifications_summary?idNumber=${route.params.slug}&classification=Entertainment&pageSize=100&sortBy=id`
+      `/e_statement/buy_goods_classifications_summary?refId=${route.params.slug}&classification=Entertainment&pageSize=100&sortBy=id`
     )
     .then(
       response => (entertainmentTransBuyGoodsData.value = response.data.content)
@@ -70,7 +70,7 @@ const loadEntertainmentTransBuyGoodsData = async () => {
 const loadEntertainmentTopTransData = async () => {
   await axiosInstance
     .get(
-      `/e_statement/top_paybill_classifications?idNumber=${route.params.slug}&classification=Entertainment&pageSize=${itemsPerPage.value}&sortBy=id`
+      `/e_statement/top_paybill_classifications?refId=${route.params.slug}&classification=Entertainment&pageSize=${itemsPerPage.value}&sortBy=id`
     )
     .then(response => (entertainmentTopTransData.value = response.data.content))
     .catch(error => console.error(error));

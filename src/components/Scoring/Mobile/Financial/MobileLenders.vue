@@ -58,7 +58,7 @@ const mobileTopTransData = ref<MobileTopTransData[]>([]);
 const loadMobileTransReceivedData = async () => {
   await axiosInstance
     .get(
-      `/e_statement/pay_bill_classifications_received?idNumber=${route.params.slug}&classification=MobileLenders&pageSize=100&sortBy=id`
+      `/e_statement/pay_bill_classifications_received?refId=${route.params.slug}&classification=MobileLenders&pageSize=100&sortBy=id`
     )
     .then(response => (mobileTransReceivedData.value = response.data.content))
     .catch(error => console.error(error));
@@ -67,7 +67,7 @@ const loadMobileTransReceivedData = async () => {
 const loadMobileTransSentData = async () => {
   await axiosInstance
     .get(
-      `/e_statement/pay_bill_classifications_sent?idNumber=${route.params.slug}&classification=MobileLenders&pageSize=100&sortBy=id`
+      `/e_statement/pay_bill_classifications_sent?refId=${route.params.slug}&classification=MobileLenders&pageSize=100&sortBy=id`
     )
     .then(response => (mobileTransSentData.value = response.data.content))
     .catch(error => console.error(error));
@@ -77,7 +77,7 @@ const loadMobileTransSentData = async () => {
 const loadMobileTopTransData = async () => {
   await axiosInstance
     .get(
-      `/e_statement/top_paybill_classifications?idNumber=${route.params.slug}&classification=MobileLenders&pageSize=${itemsPerPage.value}&sortBy=id`
+      `/e_statement/top_paybill_classifications?refId=${route.params.slug}&classification=MobileLenders&pageSize=${itemsPerPage.value}&sortBy=id`
     )
     .then(response => (mobileTopTransData.value = response.data.content))
     .catch(error => console.error(error));

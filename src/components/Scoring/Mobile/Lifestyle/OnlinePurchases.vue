@@ -57,7 +57,7 @@ const onlineTopTransData = ref<OnlineTopTransData[]>([]);
 const loadOnlineTransSentData = async () => {
   await axiosInstance
     .get(
-      `/e_statement/pay_bill_classifications_sent?idNumber=${route.params.slug}&classification=OnlinePurchases&pageSize=100&sortBy=id`
+      `/e_statement/pay_bill_classifications_sent?refId=${route.params.slug}&classification=OnlinePurchases&pageSize=100&sortBy=id`
     )
     .then(response => (onlineTransSentData.value = response.data.content))
     .catch(error => console.error(error));
@@ -67,7 +67,7 @@ const loadOnlineTransSentData = async () => {
 const loadOnlineTopTransData = async () => {
   await axiosInstance
     .get(
-      `/e_statement/top_paybill_classifications?idNumber=${route.params.slug}&classification=OnlinePurchases&pageSize=${itemsPerPage.value}&sortBy=id`
+      `/e_statement/top_paybill_classifications?refId=${route.params.slug}&classification=OnlinePurchases&pageSize=${itemsPerPage.value}&sortBy=id`
     )
     .then(response => (onlineTopTransData.value = response.data.conten))
     .catch(error => console.error(error));
