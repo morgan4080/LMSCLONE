@@ -49,7 +49,7 @@
         <v-list-group
           v-if="item.subItems.length > 0"
           :value="item"
-          active-color="primary"
+          color="primary"
           expand-icon="mdi:mdi-chevron-down"
           collapse-icon="mdi:mdi-chevron-up"
         >
@@ -74,7 +74,7 @@
             v-for="(it, i) in item.subItems"
             :key="i"
             :value="it"
-            active-color="primary"
+            color="primary"
             class="subItems"
             :href="it.href"
           >
@@ -88,7 +88,7 @@
           v-else
           :key="i"
           :value="item"
-          active-color="primary"
+          color="primary"
           :href="item.href"
         >
           <template v-slot:prepend>
