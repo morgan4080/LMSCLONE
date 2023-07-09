@@ -97,17 +97,18 @@ const queryStatementStatus = async (
   id: number,
   score: string,
   uniqueId: string,
-  type: string
+  type: string,
+  refId: string
 ) => {
   try {
     loading.value = true;
     const response =
       type === "MOBILE"
         ? await axiosInstance.post(
-            `/e_statement/query_status?scoreType=${score}&uniqueId=${uniqueId}`
+            `/e_statement/query_status?scoreType=${score}&refId=${refId}`
           )
         : await axios.post(
-            `${baseUrl}/bank_analysis/query_status?scoreType=${score}&uniqueId=${uniqueId}`
+            `${baseUrl}/bank_analysis/query_status?scoreType=${score}&refId=${refId}`
           );
     const element = apiData.value.find(item => item.id === id);
     if (element) {
@@ -265,7 +266,8 @@ watch(upload, val => {
                     ? 'BANK'
                     : item.columns.statement.bankcode,
                   item.columns.statement.uniqueId,
-                  item.columns.statement.doctype
+                  item.columns.statement.doctype,
+                  item.columns.statement.refId
                 )
               "
               class="ml-1"

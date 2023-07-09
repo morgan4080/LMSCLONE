@@ -1,8 +1,7 @@
 <script setup lang="ts">
-import { ref, computed, toRef, watch, onMounted } from "vue";
+import { ref, computed, toRef, watch } from "vue";
 import axiosInstance from "@/services/api/axiosInstance";
-import { fa } from "vuetify/iconsets/fa4";
-
+import axios from "axios";
 interface Statement {
   id: number;
   refId: string;
@@ -13,6 +12,7 @@ interface Statement {
   customername: string;
   status: string;
   bankcode: string;
+  fileUniqueId: string;
   statementid: string;
   uploaderName: string;
   uploaderPhone: string | null;
@@ -76,7 +76,7 @@ const transformData = (payload: Statement[]): any =>
         refId: item.refId,
         doctype: item.doctype,
         bankcode: item.bankcode,
-        uniqueId: item.statementid,
+        uniqueId: item.fileUniqueId,
       },
       fileName: item.fileName,
       customer: {
@@ -98,13 +98,19 @@ const transformData = (payload: Statement[]): any =>
 const queryStatementStatus = async (
   id: number,
   score: string,
-  uniqueId: string
+  uniqueId: string,
+  refId: string
 ) => {
   try {
     loading.value = true;
-    const response = await axiosInstance.post(
-      `/e_statement/query_status?scoreType=${score}&uniqueId=${uniqueId}`
-    );
+    const url = (): string => {
+      if (score == "BANK") {
+        return `https://staging-lending.presta.co.ke/bank_scoring/api/v1/bank_analysis/query_status?scoreType=${score}&uniqueId=${uniqueId}`;
+      } else {
+        return `https://staging-lending.presta.co.ke/scoring/api/v1/e_statement/query_status?scoreType=${score}&uniqueId=${uniqueId}`;
+      }
+    };
+    const response = await axios.post(url());
     const element = apiData.value.find(item => item.id === id);
     if (element) {
       element.status = response.data.data.state_name;
@@ -124,6 +130,7 @@ const loadData = async (filters?: string) => {
 
   try {
     const response = await axiosInstance.get(url);
+    console.log(response.data.content);
     apiData.value = transformData(response.data.content);
   } catch (error) {
     console.error(error);
@@ -288,7 +295,8 @@ watch(apiData, () => {
                   item.columns.statement.doctype === 'BANK'
                     ? 'BANK'
                     : item.columns.statement.bankcode,
-                  item.columns.statement.uniqueId
+                  item.columns.statement.uniqueId,
+                  item.columns.statement.refId
                 )
               "
               class="ml-1"
