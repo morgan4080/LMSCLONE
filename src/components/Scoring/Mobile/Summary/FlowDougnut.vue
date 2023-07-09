@@ -3,9 +3,11 @@ import { ref, computed, onMounted } from "vue";
 import { useRoute } from "vue-router";
 import axios from "axios";
 import DoughnutChart from "@/components/Scoring/DoughnutChart.vue";
+import { tr } from "vuetify/locale";
 
 interface Flow {
   id: number;
+  data: string[];
   labels: string[];
   labeltype: string;
   refId: string;
@@ -37,56 +39,28 @@ const getMonthName = (month: number): string => {
 };
 
 const inflow = computed(() => {
-  const labels: string[] = [];
-  const data: string[] = [];
-
-  console.log(":::::apiData.value::::::");
-  console.log(apiData.value);
-
-  // for (const item of apiData.value) {
-  //   if (item.labeltype === "Income") {
-  //     const [month] = item.name.split("/").map(Number);
-  //     const label = getMonthName(month);
-  //     const monthIndex = labels.indexOf(label);
-  //
-  //     if (monthIndex === -1) {
-  //       labels.push(label);
-  //       data.push(String(item.value));
-  //     } else {
-  //       const currentValue = parseFloat(data[monthIndex]);
-  //       data[monthIndex] = String(currentValue);
-  //     }
-  //   }
-  // }
+  let labels: string[] = [];
+  let data: string[] = [];
+  for (const item of apiData.value) {
+    if (item.labeltype === "Income") {
+      labels = [...item.labels];
+      data = [...item.data];
+    }
+  }
 
   return { labels, data };
 });
 
 const outflow = computed(() => {
-  const labels: string[] = [];
-  const data: string[] = [];
+  let labels: string[] = [];
+  let data: string[] = [];
 
-  console.log(":::::apiData.value::::::");
-  console.log(apiData.value);
-
-  // for (const item of apiData.value) {
-  //   if (item.labeltype === "Expenditure") {
-  //     const [month] = item.name.split("/").map(Number);
-  //     const label = getMonthName(month);
-  //     const monthIndex = labels.indexOf(label);
-  //
-  //     if (monthIndex === -1) {
-  //       console.log("::::::item.value::::::");
-  //       console.log(item.value);
-  //       console.log("::::::label::::::");
-  //       labels.push(label);
-  //       data.push(String(item.value));
-  //     } else {
-  //       const currentValue = parseFloat(data[monthIndex]);
-  //       data[monthIndex] = String(currentValue);
-  //     }
-  //   }
-  // }
+  for (const item of apiData.value) {
+    if (item.labeltype === "Expenditure") {
+      labels = [...item.labels];
+      data = [...item.data];
+    }
+  }
 
   return { labels, data };
 });
@@ -96,18 +70,6 @@ const flow = ref<string>("Inflow");
 // API Call: Get In-Out Flow Data
 const loadFlowData = async () => {
   loaded.value = false;
-  /*await axiosInstance
-    .get(
-      `/income/income_expense_flow?refId=${route.params.slug}&pageSize=100&sortBy=id`
-    )
-    .then(response => {
-      console.log(":::::::response.data.content:::::");
-      console.log(response.data.content);
-      apiData.value = response.data.content;
-      loaded.value = true;
-    })
-    .catch(error => console.error(error));*/
-
   const getUrl = (): string => {
     return `https://staging-lending.presta.co.ke/scoring/api/v1/e_statement/chart_labels?refId=${route.params.slug}`;
   };
@@ -115,11 +77,12 @@ const loadFlowData = async () => {
   await axios
     .get(getUrl())
     .then(response => {
-      console.log(":::::::response.data: e_statement:::::");
-      console.log(response.data);
-      // apiData.value = response.data;
+      apiData.value = response.data;
     })
-    .catch(error => console.error(error));
+    .catch(error => console.error(error))
+    .finally(() => {
+      loaded.value = true;
+    });
 };
 
 onMounted(async () => {

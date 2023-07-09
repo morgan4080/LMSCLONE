@@ -109,7 +109,7 @@ const loadFlowData = async () => {
       `/income/income_expense_flow?refId=${route.params.slug}&pageSize=100&sortBy=id`
     )
     .then(response => {
-      console.log(":::::response data:::::");
+      console.log(":::::response data: flow line:::::");
       console.log(response.data.content);
       apiData.value = response.data.content;
       loaded.value = true;
