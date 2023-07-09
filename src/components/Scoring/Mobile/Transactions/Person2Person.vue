@@ -1,9 +1,11 @@
 <script setup lang="ts">
-import { ref, computed, onMounted } from "vue";
+import { ref, computed, onMounted, watch } from "vue";
 import { useRoute } from "vue-router";
 
 import axiosInstance from "@/services/api/axiosInstance";
 import formatter from "@/helpers/currency";
+
+const flow = ref<string>("Sent");
 
 interface Rerson2personDataItem {
   count: number;
@@ -27,7 +29,12 @@ const route = useRoute();
 const open = ref(true);
 const loading = ref(false);
 const itemsPerPage = ref(5);
-const totalItems = computed(() => person2personTopTransData.value.length);
+const totalItems = computed(
+  () =>
+    person2personTopTransData.value.filter(
+      data => data.transactiontype == flow.value
+    ).length
+);
 const headers = ref<
   { title: string; key: string; align: string; sortable: boolean }[]
 >([
@@ -76,7 +83,6 @@ const loadRerson2personTransSentData = async () => {
     .catch(error => console.error(error));
 };
 
-// API Call: Get Top Person2person Trans Data
 const loadPerson2personTopTransData = async () => {
   try {
     // Top Customers Received
@@ -98,7 +104,11 @@ const loadPerson2personTopTransData = async () => {
       (obj: Person2personTopTransData) => ({ ...obj, transactiontype: "Sent" })
     );
 
-    person2personTopTransData.value = [received, ...sent].flat();
+    if (flow.value == "Received") {
+      person2personTopTransData.value = [received].flat();
+    } else {
+      person2personTopTransData.value = [sent].flat();
+    }
   } catch (error) {
     console.error(error);
   }
@@ -107,6 +117,14 @@ const loadPerson2personTopTransData = async () => {
 onMounted(() => {
   loadRerson2personTransReceivedData();
   loadRerson2personTransSentData();
+});
+
+watch(flow, () => {
+  loadPerson2personTopTransData().then(() => {
+    person2personTopTransData.value = person2personTopTransData.value.filter(
+      data => data.transactiontype == flow.value
+    );
+  });
 });
 </script>
 
@@ -131,13 +149,17 @@ onMounted(() => {
             color="white"
           >
             <v-container fluid>
-              <div class="mx-4">
-                <h1 class="text-h6 font-weight-regular">
-                  Person To Person Transactions
-                </h1>
-                <h2 class="text-caption text-grey-darken-2 font-weight-regular">
-                  Summary of Person To Person Transactions
-                </h2>
+              <div class="d-flex justify-space-between">
+                <div class="mx-4">
+                  <h1 class="text-h6 font-weight-regular">
+                    Person To Person Transactions
+                  </h1>
+                  <h2
+                    class="text-caption text-grey-darken-2 font-weight-regular"
+                  >
+                    Summary of Person To Person Transactions
+                  </h2>
+                </div>
               </div>
               <div class="mx-4 my-8">
                 <v-row class="justify-space-between d-flex font-weight-bold">
@@ -201,13 +223,48 @@ onMounted(() => {
             class="py-4 rounded"
             color="white"
           >
-            <div class="px-8">
-              <h1 class="text-h6 font-weight-regular">
-                Top Person To Person Transactions
-              </h1>
-              <h2 class="text-caption text-grey-darken-2 font-weight-regular">
-                Summary of Person To Person Transactions
-              </h2>
+            <div class="d-flex justify-space-between">
+              <div class="px-8">
+                <h1 class="text-h6 font-weight-regular">
+                  Top Person To Person Transactions
+                </h1>
+                <h2 class="text-caption text-grey-darken-2 font-weight-regular">
+                  Summary of Person To Person Transactions
+                </h2>
+              </div>
+
+              <div class="d-flex mx-4">
+                <v-btn
+                  variant="outlined"
+                  @click="
+                    () => {
+                      flow = 'Sent';
+                    }
+                  "
+                  :class="
+                    flow.toLowerCase() === 'sent'
+                      ? 'bg-black text-white'
+                      : 'bg-white text-black'
+                  "
+                  class="text-none font-weight-regular rounded-e-0 border"
+                  >Sent</v-btn
+                >
+                <v-btn
+                  variant="outlined"
+                  @click="
+                    () => {
+                      flow = 'Received';
+                    }
+                  "
+                  :class="
+                    flow.toLowerCase() === 'received'
+                      ? 'bg-black text-white'
+                      : 'bg-white text-black'
+                  "
+                  class="text-none font-weight-regular rounded-s-0 border"
+                  >Received</v-btn
+                >
+              </div>
             </div>
             <v-data-table-server
               class="px-4 text-caption"
