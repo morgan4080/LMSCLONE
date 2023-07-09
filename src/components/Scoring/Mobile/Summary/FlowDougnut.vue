@@ -39,6 +39,9 @@ const inflow = computed(() => {
   const labels: string[] = [];
   const data: string[] = [];
 
+  console.log(":::::apiData.value::::::");
+  console.log(apiData.value);
+
   for (const item of apiData.value) {
     if (item.expenseflowname === "Inflow") {
       const [month] = item.name.split("/").map(Number);
@@ -62,6 +65,9 @@ const outflow = computed(() => {
   const labels: string[] = [];
   const data: string[] = [];
 
+  console.log(":::::apiData.value::::::");
+  console.log(apiData.value);
+
   for (const item of apiData.value) {
     if (item.expenseflowname === "Outflow") {
       const [month] = item.name.split("/").map(Number);
@@ -69,6 +75,9 @@ const outflow = computed(() => {
       const monthIndex = labels.indexOf(label);
 
       if (monthIndex === -1) {
+        console.log("::::::item.value::::::");
+        console.log(item.value);
+        console.log("::::::label::::::");
         labels.push(label);
         data.push(String(item.value));
       } else {
@@ -91,6 +100,8 @@ const loadFlowData = async () => {
       `/income/income_expense_flow?refId=${route.params.slug}&pageSize=100&sortBy=id`
     )
     .then(response => {
+      console.log(":::::::response.data.content:::::");
+      console.log(response.data.content);
       apiData.value = response.data.content;
       loaded.value = true;
     })

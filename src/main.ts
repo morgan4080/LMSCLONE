@@ -18,13 +18,13 @@ router.beforeEach(to => {
         authStore.setAuthState(data);
       })
       .catch(() => {
-        // authStore.setAuthPrompt(true);
-        // setTimeout(() => {
-        //   const currentUrl = window.location.href;
-        //   window.location.href = `${
-        //     import.meta.env.VITE_APP_ROOT
-        //   }?redirect_url=${currentUrl}`;
-        // }, 5000);
+        authStore.setAuthPrompt(true);
+        setTimeout(() => {
+          const currentUrl = window.location.href;
+          window.location.href = `${
+            import.meta.env.VITE_APP_ROOT
+          }?redirect_url=${currentUrl}`;
+        }, 5000);
       })
       .catch((e: any) => {
         console.log(JSON.stringify(e));

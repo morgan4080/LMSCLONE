@@ -39,12 +39,21 @@ const inflow = computed(() => {
   const labels: string[] = [];
   const data: string[] = [];
 
+  console.log(":::::inflowData.value::::::");
+  console.log(inflowData.value);
+
   for (const item of inflowData.value) {
     const [month] = item.name.split("/").map(Number);
     const label = getMonthName(month);
     const monthIndex = labels.indexOf(label);
 
+    console.log("inflowData.value");
+
     if (monthIndex === -1) {
+      console.log("::::::item.value::::::");
+      console.log(item.value);
+      console.log("::::::label::::::");
+      console.log(label);
       labels.push(label);
       data.push(String(item.value));
     } else {
