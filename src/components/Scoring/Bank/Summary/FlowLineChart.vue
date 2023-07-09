@@ -38,6 +38,9 @@ const inflow = computed(() => {
   const labels: string[] = [];
   const data: string[] = [];
 
+  console.log(":::::line chart data inflow: inflowData:::::");
+  console.log(inflowData.value);
+
   for (const item of inflowData.value) {
     const [month] = item.name.split("/").map(Number);
     const label = getMonthName(month);
@@ -58,6 +61,9 @@ const inflow = computed(() => {
 const outflow = computed(() => {
   const labels: string[] = [];
   const data: string[] = [];
+
+  console.log(":::::line chart data inflow: bank outflowData::::");
+  console.log(outflowData.value);
 
   for (const item of outflowData.value) {
     const [month] = item.name.split("/").map(Number);

@@ -1,15 +1,16 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from "vue";
 import { useRoute } from "vue-router";
-import axiosInstance from "@/services/api/axiosInstance";
+import axios from "axios";
 import DoughnutChart from "@/components/Scoring/DoughnutChart.vue";
 
 interface Flow {
   id: number;
-  idnum: string;
-  name: string;
-  value: number;
-  expenseflowname: string;
+  labels: string[];
+  labeltype: string;
+  refId: string;
+  statementRefId: string;
+  tenantId: string | null;
 }
 
 const route = useRoute();
@@ -42,21 +43,21 @@ const inflow = computed(() => {
   console.log(":::::apiData.value::::::");
   console.log(apiData.value);
 
-  for (const item of apiData.value) {
-    if (item.expenseflowname === "Inflow") {
-      const [month] = item.name.split("/").map(Number);
-      const label = getMonthName(month);
-      const monthIndex = labels.indexOf(label);
-
-      if (monthIndex === -1) {
-        labels.push(label);
-        data.push(String(item.value));
-      } else {
-        const currentValue = parseFloat(data[monthIndex]);
-        data[monthIndex] = String(currentValue);
-      }
-    }
-  }
+  // for (const item of apiData.value) {
+  //   if (item.labeltype === "Income") {
+  //     const [month] = item.name.split("/").map(Number);
+  //     const label = getMonthName(month);
+  //     const monthIndex = labels.indexOf(label);
+  //
+  //     if (monthIndex === -1) {
+  //       labels.push(label);
+  //       data.push(String(item.value));
+  //     } else {
+  //       const currentValue = parseFloat(data[monthIndex]);
+  //       data[monthIndex] = String(currentValue);
+  //     }
+  //   }
+  // }
 
   return { labels, data };
 });
@@ -68,24 +69,24 @@ const outflow = computed(() => {
   console.log(":::::apiData.value::::::");
   console.log(apiData.value);
 
-  for (const item of apiData.value) {
-    if (item.expenseflowname === "Outflow") {
-      const [month] = item.name.split("/").map(Number);
-      const label = getMonthName(month);
-      const monthIndex = labels.indexOf(label);
-
-      if (monthIndex === -1) {
-        console.log("::::::item.value::::::");
-        console.log(item.value);
-        console.log("::::::label::::::");
-        labels.push(label);
-        data.push(String(item.value));
-      } else {
-        const currentValue = parseFloat(data[monthIndex]);
-        data[monthIndex] = String(currentValue);
-      }
-    }
-  }
+  // for (const item of apiData.value) {
+  //   if (item.labeltype === "Expenditure") {
+  //     const [month] = item.name.split("/").map(Number);
+  //     const label = getMonthName(month);
+  //     const monthIndex = labels.indexOf(label);
+  //
+  //     if (monthIndex === -1) {
+  //       console.log("::::::item.value::::::");
+  //       console.log(item.value);
+  //       console.log("::::::label::::::");
+  //       labels.push(label);
+  //       data.push(String(item.value));
+  //     } else {
+  //       const currentValue = parseFloat(data[monthIndex]);
+  //       data[monthIndex] = String(currentValue);
+  //     }
+  //   }
+  // }
 
   return { labels, data };
 });
@@ -95,7 +96,7 @@ const flow = ref<string>("Inflow");
 // API Call: Get In-Out Flow Data
 const loadFlowData = async () => {
   loaded.value = false;
-  await axiosInstance
+  /*await axiosInstance
     .get(
       `/income/income_expense_flow?refId=${route.params.slug}&pageSize=100&sortBy=id`
     )
@@ -104,6 +105,19 @@ const loadFlowData = async () => {
       console.log(response.data.content);
       apiData.value = response.data.content;
       loaded.value = true;
+    })
+    .catch(error => console.error(error));*/
+
+  const getUrl = (): string => {
+    return `https://staging-lending.presta.co.ke/scoring/api/v1/e_statement/chart_labels?refId=${route.params.slug}`;
+  };
+
+  await axios
+    .get(getUrl())
+    .then(response => {
+      console.log(":::::::response.data: e_statement:::::");
+      console.log(response.data);
+      // apiData.value = response.data;
     })
     .catch(error => console.error(error));
 };

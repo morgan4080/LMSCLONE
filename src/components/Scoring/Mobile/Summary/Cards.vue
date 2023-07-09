@@ -189,18 +189,17 @@ onMounted(() => {
                   ><h3 class="py-1 text-body-2 text-blue">
                     {{ customerAnalysis[0]?.received_on }}
                   </h3>
-                  <h3 class="py-1 text-body-2"></h3>
                   <h3 class="py-1 text-body-2">
                     {{ customerInformation[0]?.statement_period }}
                   </h3>
                   <h3 class="py-1 text-body-2">
                     {{ customerAnalysis[0]?.duration_in_months }} Months
-                  </h3></v-col
-                >
+                  </h3>
+                  <h3 class="py-1 text-body-2"></h3>
+                </v-col>
               </v-row>
-            </v-container>
-          </v-card></v-col
-        >
+            </v-container> </v-card
+        ></v-col>
       </v-row>
 
       <v-row>

@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import router from "@/router";
-import { ref, toRef } from "vue";
+import { onMounted, ref, toRef } from "vue";
+import { useRoute } from "vue-router";
 
 const emit = defineEmits(["clickedTab"]);
 const selectedTab = ref(0);
+const route = useRoute();
 
 const options = ["Option 1", "Option 2", "Option 3", "Option 4"];
 const tabs = [
@@ -14,9 +16,18 @@ const tabs = [
   "Transactions",
 ];
 
-function onTabClick(id: number) {
+function onTabClick(id: number, tab: string) {
+  router.push({ path: route.path, query: { tab: tab } });
   emit("clickedTab", id);
 }
+onMounted(() => {
+  tabs.find((tab, i) => {
+    if (tab == route.query.tab) {
+      selectedTab.value = i;
+      emit("clickedTab", i);
+    }
+  });
+});
 </script>
 
 <template>
@@ -24,41 +35,7 @@ function onTabClick(id: number) {
     <div class="bg-white border-none">
       <v-container fluid>
         <v-row class="d-flex pb-4">
-          <v-col>
-            <!--            <v-menu-->
-            <!--              transition="slide-y-transition"-->
-            <!--              class="d-none"-->
-            <!--            >-->
-            <!--              <template v-slot:activator="{ props }">-->
-            <!--                <v-btn-->
-            <!--                  variant="outlined"-->
-            <!--                  append-icon="mdi:mdi-chevron-down"-->
-            <!--                  v-bind="props"-->
-            <!--                  class="text-none text-caption"-->
-            <!--                  style="border: 1px solid rgba(128, 128, 128, 0.25)"-->
-            <!--                >-->
-            <!--                  Customer Name-->
-            <!--                </v-btn>-->
-            <!--              </template>-->
-            <!--              <v-sheet-->
-            <!--                border-->
-            <!--                rounded-->
-            <!--              >-->
-            <!--                <v-list-->
-            <!--                  nav-->
-            <!--                  density="compact"-->
-            <!--                  role="listbox"-->
-            <!--                >-->
-            <!--                  <v-list-item-->
-            <!--                    v-for="(item, idx) in options"-->
-            <!--                    :key="idx"-->
-            <!--                    :value="item"-->
-            <!--                    >{{ item }}</v-list-item-->
-            <!--                  >-->
-            <!--                </v-list>-->
-            <!--              </v-sheet>-->
-            <!--            </v-menu>-->
-          </v-col>
+          <v-col> </v-col>
           <v-col
             cols="auto"
             class="d-flex align-center pt-6"
@@ -97,7 +74,7 @@ function onTabClick(id: number) {
             v-model="selectedTab"
           >
             <v-tab
-              @click="onTabClick(idx)"
+              @click="onTabClick(idx, tab)"
               v-for="(tab, idx) in tabs"
               :key="idx"
               :value="idx"
