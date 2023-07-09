@@ -98,7 +98,7 @@ onMounted(() => {
 <template>
   <v-container fluid>
     <v-row>
-      <v-col>
+      <!--      <v-col>
         <v-card
           variant="flat"
           color="white"
@@ -127,7 +127,7 @@ onMounted(() => {
             </v-row>
           </v-container>
         </v-card>
-      </v-col>
+      </v-col>-->
       <v-col
         ><v-card
           variant="flat"
@@ -138,8 +138,8 @@ onMounted(() => {
             <v-row class="mx-2">
               <v-col cols="auto">
                 <h3 class="py-1 text-grey text-body-2">Bank</h3>
-                <h3 class="py-1 text-grey text-body-2">Acc Type</h3>
                 <h3 class="py-1 text-grey text-body-2">Acc No</h3>
+                <h3 class="py-1 text-grey text-body-2">Acc Type</h3>
                 <h3 class="py-1 text-grey text-body-2">Currency</h3>
               </v-col>
               <v-col
@@ -147,10 +147,10 @@ onMounted(() => {
                   {{ customerInformation.personalInfo[0]?.bank_name }}
                 </h3>
                 <h3 class="py-1 text-body-2">
-                  {{ customerInformation.accountInfo[0]?.accountType }}
+                  {{ customerInformation.accountInfo[0]?.accountNo }}
                 </h3>
                 <h3 class="py-1 text-body-2">
-                  {{ customerInformation.accountInfo[0]?.accountNo }}
+                  {{ customerInformation.accountInfo[0]?.accountType }}
                 </h3>
                 <h3 class="py-1 text-body-2">
                   {{ customerInformation.accountInfo[0]?.currency }}
