@@ -23,14 +23,6 @@
               >
                 All Statements
               </v-btn>
-              <v-btn
-                prepend-icon="mdi:mdi-refresh"
-                variant="flat"
-                color="info"
-                class="mx-4 text-none text-caption"
-              >
-                Refresh
-              </v-btn>
             </v-row>
           </v-col>
         </v-row>
