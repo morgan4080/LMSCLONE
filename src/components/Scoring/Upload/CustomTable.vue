@@ -15,6 +15,7 @@ interface Statement {
   fileName: string;
   customername: string;
   status: string;
+  fileUniqueId: string;
   bankcode: string;
   uploaderName: string;
   uploaderPhone: string | null;
@@ -71,7 +72,7 @@ const transformData = (payload: Statement[]): any =>
         refId: item.refId,
         doctype: item.doctype,
         bankcode: item.bankcode,
-        uniqueId: item.statementid,
+        uniqueId: item.fileUniqueId,
       },
       fileName: item.fileName,
       customer: {
@@ -102,14 +103,15 @@ const queryStatementStatus = async (
 ) => {
   try {
     loading.value = true;
+    const url = (): string => {
+      if (score == "BANK") {
+        return `https://staging-lending.presta.co.ke/bank_scoring/api/v1/bank_analysis/query_status?scoreType=${score}&uniqueId=${uniqueId}`;
+      } else {
+        return `https://staging-lending.presta.co.ke/scoring/api/v1/e_statement/query_status?scoreType=${score}&uniqueId=${uniqueId}`;
+      }
+    };
     const response =
-      type === "MOBILE"
-        ? await axiosInstance.post(
-            `/e_statement/query_status?scoreType=${score}&refId=${refId}`
-          )
-        : await axios.post(
-            `${baseUrl}/bank_analysis/query_status?scoreType=${score}&refId=${refId}`
-          );
+      type === "MOBILE" ? await axios.post(url()) : await axios.post(url());
     const element = apiData.value.find(item => item.id === id);
     if (element) {
       element.status = response.data.data.state_name;
