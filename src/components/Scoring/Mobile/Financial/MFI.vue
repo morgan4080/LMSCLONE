@@ -169,7 +169,7 @@ onMounted(() => {
         <v-col></v-col>
       </v-row>
       <!--      Table-->
-      <v-row>
+      <!--      <v-row>
         <v-container fluid>
           <v-card
             variant="flat"
@@ -202,7 +202,7 @@ onMounted(() => {
             </v-data-table-server>
           </v-card>
         </v-container>
-      </v-row>
+      </v-row>-->
     </div>
   </v-container>
 </template>
