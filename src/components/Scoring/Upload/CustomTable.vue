@@ -90,9 +90,6 @@ const transformData = (payload: Statement[]): any =>
     };
   });
 
-const baseUrl: string =
-  "https://staging-lending.presta.co.ke/bank_scoring/api/v1";
-
 // API Call: Query statement status
 const queryStatementStatus = async (
   id: number,
@@ -193,7 +190,9 @@ watch(upload, val => {
       <span
         class="px-3 py-1 rounded"
         :class="{
-          'bg-red-lighten-5 text-red': item.columns.status === 'Failed',
+          'bg-red-lighten-5 text-red':
+            (item.columns.status === 'Failed')
+            | (item.columns.status === 'Fraudulent'),
           'bg-green-lighten-5 text-green': item.columns.status === 'Completed',
           'bg-blue-lighten-5 text-blue': item.columns.status === 'Processing',
           'bg-yellow-lighten-5 text-yellow-darken-3':

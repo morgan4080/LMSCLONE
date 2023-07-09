@@ -1,8 +1,10 @@
 <script setup lang="ts">
-import { ref, computed, onMounted } from "vue";
+import { ref, computed, onMounted, watch } from "vue";
 import { useRoute } from "vue-router";
 import axiosInstance from "@/services/api/axiosInstance";
 import formatter from "@/helpers/currency";
+
+const flow = ref<string>("Sent");
 
 interface PaybillDataItem {
   count: number;
@@ -26,7 +28,10 @@ const route = useRoute();
 const open = ref(true);
 const loading = ref(false);
 const itemsPerPage = ref(5);
-const totalItems = computed(() => topTransData.value.length);
+const totalItems = computed(
+  () =>
+    topTransData.value.filter(data => data.transactiontype == flow.value).length
+);
 
 const headers = ref<
   { title: string; key: string; align: string; sortable: boolean }[]
@@ -94,6 +99,9 @@ const loadTopTransData = async () => {
     const buyGoods = buyGoodsResponse.data.content;
 
     topTransData.value = [paybill, ...buyGoods].flat();
+    topTransData.value = topTransData.value.filter(
+      data => data.transactiontype == flow.value
+    );
   } catch (error) {
     console.error(error);
   }
@@ -102,6 +110,14 @@ const loadTopTransData = async () => {
 onMounted(() => {
   loadPaybillTransData();
   loadBuyGoodsTransData();
+});
+
+watch(flow, () => {
+  loadTopTransData().then(() => {
+    topTransData.value = topTransData.value.filter(
+      data => data.transactiontype == flow.value
+    );
+  });
 });
 </script>
 
@@ -238,13 +254,48 @@ onMounted(() => {
             class="py-4 rounded"
             color="white"
           >
-            <div class="px-8">
-              <h1 class="text-h6 font-weight-regular">
-                Top Paybill & Buy Goods Transactions
-              </h1>
-              <h2 class="text-caption text-grey-darken-2 font-weight-regular">
-                Summary of Paybill & Buy Goods Transactions
-              </h2>
+            <div class="d-flex justify-space-between">
+              <div class="px-8">
+                <h1 class="text-h6 font-weight-regular">
+                  Top Paybill & Buy Goods Transactions
+                </h1>
+                <h2 class="text-caption text-grey-darken-2 font-weight-regular">
+                  Summary of Paybill & Buy Goods Transactions
+                </h2>
+              </div>
+
+              <div class="d-flex mx-4">
+                <v-btn
+                  variant="outlined"
+                  @click="
+                    () => {
+                      flow = 'Sent';
+                    }
+                  "
+                  :class="
+                    flow.toLowerCase() === 'sent'
+                      ? 'bg-black text-white'
+                      : 'bg-white text-black'
+                  "
+                  class="text-none font-weight-regular rounded-e-0 border"
+                  >Sent</v-btn
+                >
+                <v-btn
+                  variant="outlined"
+                  @click="
+                    () => {
+                      flow = 'Received';
+                    }
+                  "
+                  :class="
+                    flow.toLowerCase() === 'received'
+                      ? 'bg-black text-white'
+                      : 'bg-white text-black'
+                  "
+                  class="text-none font-weight-regular rounded-s-0 border"
+                  >Received</v-btn
+                >
+              </div>
             </div>
             <v-data-table-server
               class="px-4 text-caption"
