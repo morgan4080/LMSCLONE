@@ -1,3 +1,5 @@
+#!/bin/bash
+
 echo '===> Compiling & Packaging prestaapps/scoring-ui ...'
 
 GIT_BRANCH=$(git name-rev --name-only HEAD | sed "s/~.*//")
