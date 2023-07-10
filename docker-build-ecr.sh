@@ -6,7 +6,6 @@ GIT_BRANCH=$(git name-rev --name-only HEAD | sed "s/~.*//")
 GIT_COMMIT=$(git rev-parse HEAD)
 APP_VERSION=$(git describe --always)
 GIT_DIRTY='false'
-ENVIRONMENT='production'
 BUILD_CREATOR=$(git config user.email)
 BUILD_NUMBER="${BUILDKITE_BUILD_NUMBER-0}"
 # Whether the repo has uncommitted changes
@@ -27,7 +26,7 @@ docker build \
   --build-arg GIT_DIRTY="$GIT_DIRTY" \
   --build-arg BUILD_CREATOR="$BUILD_CREATOR" \
   --build-arg BUILD_NUMBER="$BUILD_NUMBER" \
-  --build-arg env="$ENVIRONMENT" \
+  --build-arg env=production \
   .
 echo "Done building prestaapps/scoring-ui: $APP_VERSION"
 # Upload to ecr only if -a option is active
