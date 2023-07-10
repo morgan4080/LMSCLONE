@@ -3,6 +3,7 @@ import { ref, computed, onMounted, watch } from "vue";
 import { useRoute } from "vue-router";
 import axiosInstance from "@/services/api/axiosbank";
 import formatter from "@/helpers/currency";
+import moment from "moment";
 
 interface FlowDataItem {
   count: number;
@@ -236,12 +237,22 @@ onMounted(async () => {
                 />
                 <v-row class="justify-space-between d-flex">
                   <v-col class="font-weight-medium">Last On</v-col>
-                  <v-col class="text-right">{{
-                    flowMobileMoney[0]?.last_on
-                  }}</v-col>
-                  <v-col class="text-right">{{
-                    flowBankTransfers[0]?.last_on
-                  }}</v-col>
+                  <v-col class="text-right">
+                    {{
+                      moment(
+                        `${flowMobileMoney[0]?.last_on}`,
+                        "DDMMYYYY"
+                      ).format("DD-MM-YYYY")
+                    }}
+                  </v-col>
+                  <v-col class="text-right">
+                    {{
+                      moment(
+                        `${flowBankTransfers[0]?.last_on}`,
+                        "DDMMYYYY"
+                      ).format("DD-MM-YYYY")
+                    }}
+                  </v-col>
                 </v-row>
                 <v-divider class="my-3" />
               </div>
@@ -308,11 +319,22 @@ onMounted(async () => {
                 />
                 <v-row class="justify-space-between d-flex">
                   <v-col class="font-weight-medium">Last On</v-col>
-                  <v-col class="text-right">{{
-                    flowCashDeposit[0]?.last_on
-                  }}</v-col>
+                  <v-col class="text-right">
+                    {{
+                      moment(
+                        `${flowCashDeposit[0]?.last_on}`,
+                        "DDMMYYYY"
+                      ).format("DD-MM-YYYY")
+                    }}
+                  </v-col>
                   <v-col class="text-right">
                     {{ flowChequeDeposit[0]?.last_on }}
+                    {{
+                      moment(
+                        `${flowChequeDeposit[0]?.last_on}`,
+                        "DDMMYYYY"
+                      ).format("DD-MM-YYYY")
+                    }}
                   </v-col>
                 </v-row>
                 <v-divider class="my-3" />
@@ -384,10 +406,15 @@ onMounted(async () => {
                 <v-row class="justify-space-between d-flex">
                   <v-col class="font-weight-medium">Last On</v-col>
                   <v-col class="text-right">{{
-                    flowAgentDeposit[0]?.last_on
+                    moment(
+                      `${flowAgentDeposit[0]?.last_on}`,
+                      "DDMMYYYY"
+                    ).format("DD-MM-YYYY")
                   }}</v-col>
                   <v-col class="text-right">{{
-                    flowReversals[0]?.last_on
+                    moment(`${flowReversals[0]?.last_on}`, "DDMMYYYY").format(
+                      "DD-MM-YYYY"
+                    )
                   }}</v-col>
                 </v-row>
                 <v-divider class="my-3" />
@@ -456,10 +483,17 @@ onMounted(async () => {
                 <v-row class="justify-space-between d-flex">
                   <v-col class="font-weight-medium">Last On</v-col>
                   <v-col class="text-right">{{
-                    flowCardPayment[0]?.last_on
+                    moment(`${flowCardPayment[0]?.last_on}`, "DDMMYYYY").format(
+                      "DD-MM-YYYY"
+                    )
                   }}</v-col>
                   <v-col class="text-right">
-                    {{ flowATMDeposit[0]?.last_on }}
+                    {{
+                      moment(
+                        `${flowATMDeposit[0]?.last_on}`,
+                        "DDMMYYYY"
+                      ).format("DD-MM-YYYY")
+                    }}
                   </v-col>
                 </v-row>
                 <v-divider class="my-3" />
