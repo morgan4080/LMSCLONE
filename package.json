@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "vite",
     "development": "vite build --base=/lms/ --mode development",
+    "production": "vite build --base=/lms/ --mode production",
     "staging": "vite build --base=/lms/ --mode staging",
     "clean": "rm -rf node_modules",
     "reinstall": "npm run clean && npm install",

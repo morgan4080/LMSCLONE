@@ -18,7 +18,6 @@ echo "APP VERSION = $APP_VERSION"
 echo '===> Building prestaapps/scoring-ui docker image...'
 #Oauth service
 docker build \
-  -q \
   -t 665804139994.dkr.ecr.us-west-2.amazonaws.com/prestaapps/scoring-ui:latest \
   -t 665804139994.dkr.ecr.us-west-2.amazonaws.com/prestaapps/scoring-ui:"$APP_VERSION" \
   --build-arg GIT_BRANCH="$GIT_BRANCH" \
