@@ -239,18 +239,22 @@ onMounted(async () => {
                   <v-col class="font-weight-medium">Last On</v-col>
                   <v-col class="text-right">
                     {{
-                      moment(
-                        `${flowMobileMoney[0]?.last_on}`,
-                        "DDMMYYYY"
-                      ).format("DD-MM-YYYY")
+                      flowMobileMoney[0]?.last_on !== ""
+                        ? moment(
+                            `${flowMobileMoney[0]?.last_on}`,
+                            "DDMMYYYY"
+                          ).format("DD-MM-YYYY")
+                        : ""
                     }}
                   </v-col>
                   <v-col class="text-right">
                     {{
-                      moment(
-                        `${flowBankTransfers[0]?.last_on}`,
-                        "DDMMYYYY"
-                      ).format("DD-MM-YYYY")
+                      flowBankTransfers[0]?.last_on !== ""
+                        ? moment(
+                            `${flowBankTransfers[0]?.last_on}`,
+                            "DDMMYYYY"
+                          ).format("DD-MM-YYYY")
+                        : ""
                     }}
                   </v-col>
                 </v-row>
@@ -321,19 +325,22 @@ onMounted(async () => {
                   <v-col class="font-weight-medium">Last On</v-col>
                   <v-col class="text-right">
                     {{
-                      moment(
-                        `${flowCashDeposit[0]?.last_on}`,
-                        "DDMMYYYY"
-                      ).format("DD-MM-YYYY")
+                      flowCashDeposit[0]?.last_on !== ""
+                        ? moment(
+                            `${flowCashDeposit[0]?.last_on}`,
+                            "DDMMYYYY"
+                          ).format("DD-MM-YYYY")
+                        : ""
                     }}
                   </v-col>
                   <v-col class="text-right">
-                    {{ flowChequeDeposit[0]?.last_on }}
                     {{
-                      moment(
-                        `${flowChequeDeposit[0]?.last_on}`,
-                        "DDMMYYYY"
-                      ).format("DD-MM-YYYY")
+                      flowChequeDeposit[0]?.last_on !== ""
+                        ? moment(
+                            `${flowChequeDeposit[0]?.last_on}`,
+                            "DDMMYYYY"
+                          ).format("DD-MM-YYYY")
+                        : ""
                     }}
                   </v-col>
                 </v-row>
@@ -406,15 +413,20 @@ onMounted(async () => {
                 <v-row class="justify-space-between d-flex">
                   <v-col class="font-weight-medium">Last On</v-col>
                   <v-col class="text-right">{{
-                    moment(
-                      `${flowAgentDeposit[0]?.last_on}`,
-                      "DDMMYYYY"
-                    ).format("DD-MM-YYYY")
+                    flowAgentDeposit[0]?.last_on !== ""
+                      ? moment(
+                          `${flowAgentDeposit[0]?.last_on}`,
+                          "DDMMYYYY"
+                        ).format("DD-MM-YYYY")
+                      : ""
                   }}</v-col>
                   <v-col class="text-right">{{
-                    moment(`${flowReversals[0]?.last_on}`, "DDMMYYYY").format(
-                      "DD-MM-YYYY"
-                    )
+                    flowReversals[0]?.last_on !== ""
+                      ? moment(
+                          `${flowReversals[0]?.last_on}`,
+                          "DDMMYYYY"
+                        ).format("DD-MM-YYYY")
+                      : ""
                   }}</v-col>
                 </v-row>
                 <v-divider class="my-3" />
@@ -483,16 +495,21 @@ onMounted(async () => {
                 <v-row class="justify-space-between d-flex">
                   <v-col class="font-weight-medium">Last On</v-col>
                   <v-col class="text-right">{{
-                    moment(`${flowCardPayment[0]?.last_on}`, "DDMMYYYY").format(
-                      "DD-MM-YYYY"
-                    )
+                    flowCardPayment[0]?.last_on !== ""
+                      ? moment(
+                          `${flowCardPayment[0]?.last_on}`,
+                          "DDMMYYYY"
+                        ).format("DD-MM-YYYY")
+                      : ""
                   }}</v-col>
                   <v-col class="text-right">
                     {{
-                      moment(
-                        `${flowATMDeposit[0]?.last_on}`,
-                        "DDMMYYYY"
-                      ).format("DD-MM-YYYY")
+                      flowATMDeposit[0]?.last_on !== ""
+                        ? moment(
+                            `${flowATMDeposit[0]?.last_on}`,
+                            "DDMMYYYY"
+                          ).format("DD-MM-YYYY")
+                        : ""
                     }}
                   </v-col>
                 </v-row>
