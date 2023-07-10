@@ -239,7 +239,7 @@ onMounted(async () => {
                   <v-col class="font-weight-medium">Last On</v-col>
                   <v-col class="text-right">
                     {{
-                      flowMobileMoney[0]?.last_on !== ""
+                      flowMobileMoney[0] && flowMobileMoney[0]?.last_on !== ""
                         ? moment(
                             `${flowMobileMoney[0]?.last_on}`,
                             "DDMMYYYY"
@@ -249,6 +249,7 @@ onMounted(async () => {
                   </v-col>
                   <v-col class="text-right">
                     {{
+                      flowBankTransfers[0] &&
                       flowBankTransfers[0]?.last_on !== ""
                         ? moment(
                             `${flowBankTransfers[0]?.last_on}`,
@@ -325,7 +326,7 @@ onMounted(async () => {
                   <v-col class="font-weight-medium">Last On</v-col>
                   <v-col class="text-right">
                     {{
-                      flowCashDeposit[0]?.last_on !== ""
+                      flowCashDeposit[0] && flowCashDeposit[0]?.last_on !== ""
                         ? moment(
                             `${flowCashDeposit[0]?.last_on}`,
                             "DDMMYYYY"
@@ -335,6 +336,7 @@ onMounted(async () => {
                   </v-col>
                   <v-col class="text-right">
                     {{
+                      flowChequeDeposit[0] &&
                       flowChequeDeposit[0]?.last_on !== ""
                         ? moment(
                             `${flowChequeDeposit[0]?.last_on}`,
@@ -413,7 +415,7 @@ onMounted(async () => {
                 <v-row class="justify-space-between d-flex">
                   <v-col class="font-weight-medium">Last On</v-col>
                   <v-col class="text-right">{{
-                    flowAgentDeposit[0]?.last_on !== ""
+                    flowAgentDeposit[0] && flowAgentDeposit[0]?.last_on !== ""
                       ? moment(
                           `${flowAgentDeposit[0]?.last_on}`,
                           "DDMMYYYY"
@@ -421,7 +423,7 @@ onMounted(async () => {
                       : ""
                   }}</v-col>
                   <v-col class="text-right">{{
-                    flowReversals[0]?.last_on !== ""
+                    flowReversals[0] && flowReversals[0]?.last_on !== ""
                       ? moment(
                           `${flowReversals[0]?.last_on}`,
                           "DDMMYYYY"
@@ -495,7 +497,7 @@ onMounted(async () => {
                 <v-row class="justify-space-between d-flex">
                   <v-col class="font-weight-medium">Last On</v-col>
                   <v-col class="text-right">{{
-                    flowCardPayment[0]?.last_on !== ""
+                    flowCardPayment[0] && flowCardPayment[0]?.last_on !== ""
                       ? moment(
                           `${flowCardPayment[0]?.last_on}`,
                           "DDMMYYYY"
@@ -504,7 +506,7 @@ onMounted(async () => {
                   }}</v-col>
                   <v-col class="text-right">
                     {{
-                      flowATMDeposit[0]?.last_on !== ""
+                      flowATMDeposit[0] && flowATMDeposit[0]?.last_on !== ""
                         ? moment(
                             `${flowATMDeposit[0]?.last_on}`,
                             "DDMMYYYY"
