@@ -409,7 +409,7 @@ onMounted(() => {
                       </v-list>
                     </v-sheet>
                   </v-menu>
-                  <v-menu transition="slide-y-transition">
+                  <!--                  <v-menu transition="slide-y-transition">
                     <template v-slot:activator="{ props }">
                       <v-btn
                         size="small"
@@ -439,10 +439,10 @@ onMounted(() => {
                         >
                       </v-list>
                     </v-sheet>
-                  </v-menu>
+                  </v-menu>-->
                 </div>
                 <div>
-                  <v-menu transition="slide-y-transition">
+                  <!--                  <v-menu transition="slide-y-transition">
                     <template v-slot:activator="{ props }">
                       <v-btn
                         size="small"
@@ -533,7 +533,7 @@ onMounted(() => {
                         >
                       </v-list>
                     </v-sheet>
-                  </v-menu>
+                  </v-menu>-->
                 </div>
               </div>
             </v-container>

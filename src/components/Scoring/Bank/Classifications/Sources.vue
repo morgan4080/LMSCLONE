@@ -490,7 +490,11 @@ onMounted(async () => {
                         class="ml-2 text-none text-caption font-weight-regular"
                         style="border: 1px solid rgba(128, 128, 128, 0.25)"
                       >
-                        Select Inflow Type
+                        {{
+                          currentInflowType == "All"
+                            ? "Select Inflow Type"
+                            : currentInflowType
+                        }}
                       </v-btn>
                     </template>
                     <v-sheet
