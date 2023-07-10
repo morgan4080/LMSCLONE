@@ -196,10 +196,13 @@ onMounted(() => {
             class=""
           ></v-icon>
         </button>
-        <button
+        <v-btn
+          variant="tonal"
+          density="compact"
           type="button"
-          class="border rounded px-1 ml-1"
+          class="px-1 ml-1"
           @click="clearUpload"
+          icon
         >
           <v-icon
             color="red"
@@ -207,23 +210,26 @@ onMounted(() => {
             icon="mdi:mdi-close"
             class=""
           ></v-icon>
-        </button>
+        </v-btn>
       </div>
       <div
         class="my-1 d-flex"
         v-if="uploading"
       >
-        <button
+        <v-btn
+          variant="tonal"
+          density="compact"
           type="button"
-          class="border rounded px-1 ml-1"
+          class="px-1 ml-1"
           @click="cancelUpload"
+          icon
         >
           <v-icon
             size="x-small"
             icon="mdi:mdi-close"
             class=""
           ></v-icon>
-        </button>
+        </v-btn>
       </div>
       <div
         class="my-1 d-flex"
