@@ -4,7 +4,7 @@ WORKDIR /lms
 COPY package*.json ./
 RUN npm install
 COPY . .
-ARG env
+ARG env=production
 RUN npm run ${env}
 COPY . .
 
