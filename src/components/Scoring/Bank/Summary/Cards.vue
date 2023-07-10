@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
 import { useRoute } from "vue-router";
-import axios from "axios";
+import axios from "@/services/api/axiosbank";
 import formatter from "@/helpers/currency";
 
 interface AccountInfo {
@@ -59,15 +59,10 @@ const customerInformation = ref<CustomerInformation>({
 const analysisInformation = ref<AnalysisInformation[]>([]);
 const balanceInformation = ref<BalanceInformation[]>([]);
 
-const baseUrl: string =
-  "https://staging-lending.presta.co.ke/bank_scoring/api/v1";
-
 // API Call: Get customer information
 const loadCustomerInformation = async () => {
   await axios
-    .get(
-      `${baseUrl}/bank_analysis/get_customer_info?refId=${route.params.slug}`
-    )
+    .get(`/bank_analysis/get_customer_info?refId=${route.params.slug}`)
     .then(response => (customerInformation.value = response.data))
     .catch(error => console.error(error));
 };
@@ -75,7 +70,7 @@ const loadCustomerInformation = async () => {
 // API Call: Get analysis information
 const loadAnalysisInformation = async () => {
   await axios
-    .get(`${baseUrl}/bank_analysis/bank_scores?refId=${route.params.slug}`)
+    .get(`/bank_analysis/bank_scores?refId=${route.params.slug}`)
     .then(response => (analysisInformation.value = response.data))
     .catch(error => console.error(error));
 };
@@ -83,7 +78,7 @@ const loadAnalysisInformation = async () => {
 // API Call: Get balance information
 const loadBalanceInformation = async () => {
   await axios
-    .get(`${baseUrl}/bank_analysis/bank_balances?refId=${route.params.slug}`)
+    .get(`/bank_analysis/bank_balances?refId=${route.params.slug}`)
     .then(response => (balanceInformation.value = response.data))
     .catch(error => console.error(error));
 };

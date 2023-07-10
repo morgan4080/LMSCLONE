@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { ref, watch, toRef } from "vue";
 import { storeToRefs } from "pinia";
-import axios from "axios";
 import { useUploadStore } from "@/store/uploadStore";
-import axiosInstance from "@/services/api/axiosInstance";
+import axiosBankInstance from "@/services/api/axiosbank";
+import axiosMobileInstance from "@/services/api/axiosInstance";
 
 interface Statement {
   id: number;
@@ -51,12 +51,14 @@ interface DataItem {
 const props = defineProps<{
   headers: { title: string; key: string; align: string; sortable: boolean }[];
   params: string;
+  flow: string;
 }>();
 const loading = ref(true);
 const itemsPerPage = ref(5);
 const totalItems = ref(0);
 const headers = toRef(props, "headers");
 const params = toRef(props, "params");
+const flow = toRef(props, "flow");
 
 const { setUploadFalse } = useUploadStore();
 const { upload } = storeToRefs(useUploadStore());
@@ -100,15 +102,18 @@ const queryStatementStatus = async (
 ) => {
   try {
     loading.value = true;
-    const url = (): string => {
-      if (score == "BANK") {
-        return `https://staging-lending.presta.co.ke/bank_scoring/api/v1/bank_analysis/query_status?scoreType=${score}&uniqueId=${uniqueId}`;
+    const request = async () => {
+      if (flow.value == "BANK") {
+        return await axiosBankInstance.post(
+          `/bank_analysis/query_status?scoreType=${score}&uniqueId=${uniqueId}`
+        );
       } else {
-        return `https://staging-lending.presta.co.ke/scoring/api/v1/e_statement/query_status?scoreType=${score}&uniqueId=${uniqueId}`;
+        return await axiosMobileInstance.post(
+          `/e_statement/query_status?scoreType=${score}&uniqueId=${uniqueId}`
+        );
       }
     };
-    const response =
-      type === "MOBILE" ? await axios.post(url()) : await axios.post(url());
+    const response = await request();
     const element = apiData.value.find(item => item.id === id);
     if (element) {
       element.status = response.data.data.state_name;
@@ -123,11 +128,20 @@ const queryStatementStatus = async (
 // API Call: Get recently uploaded statements
 const loadData = async (filters?: string) => {
   loading.value = true;
-  let url = `/e_statement/get_uploaded_statements?pageSize=${itemsPerPage.value}&sortBy=id`;
-  if (filters) url += filters;
 
   try {
-    const response = await axiosInstance.get(url);
+    const request = async () => {
+      if (flow.value == "BANK") {
+        let url = `/bank_analysis/get_uploaded_statements?pageSize=${itemsPerPage.value}&sortBy=id`;
+        if (filters) url += filters;
+        return await axiosBankInstance.post(url);
+      } else {
+        let url = `/e_statement/get_uploaded_statements?pageSize=${itemsPerPage.value}&sortBy=id`;
+        if (filters) url += filters;
+        return await axiosMobileInstance.post(url);
+      }
+    };
+    const response = await request();
     apiData.value = transformData(response.data.content);
     totalItems.value = response.data.totalElements;
     setUploadFalse();

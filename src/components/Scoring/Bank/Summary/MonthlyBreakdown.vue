@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, computed } from "vue";
 import { useRoute } from "vue-router";
-import axios from "axios";
+import axios from "@/services/api/axiosbank";
 import formatter from "@/helpers/currency";
 
 interface MonthlyBreakdown {
@@ -15,9 +15,6 @@ const route = useRoute();
 
 const monthlyBreakdown = ref<MonthlyBreakdown[]>([]);
 const totalItems = computed(() => monthlyBreakdown.value.length);
-
-const baseUrl: string =
-  "https://staging-lending.presta.co.ke/bank_scoring/api/v1";
 
 const headers = ref<
   { title: string; key: string; align: string; sortable: boolean }[]
@@ -43,7 +40,7 @@ const loading = ref(false);
 const loadMonthlyBreakdown = async () => {
   await axios
     .get(
-      `${baseUrl}/bank_analysis/bank_income_expense_tabulated?refId=${route.params.slug}`
+      `/bank_analysis/bank_income_expense_tabulated?refId=${route.params.slug}`
     )
     .then(response => (monthlyBreakdown.value = response.data))
     .catch(error => console.error(error));

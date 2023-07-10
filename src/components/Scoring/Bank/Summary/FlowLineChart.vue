@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from "vue";
 import { useRoute } from "vue-router";
-import axiosInstance from "@/services/api/axiosInstance";
+import axiosInstance from "@/services/api/axiosbank";
 
 import LineChart from "@/components/Scoring/LineChart.vue";
 
@@ -84,14 +84,11 @@ const outflow = computed(() => {
 
 const flow = ref<string>("Inflow");
 
-const baseUrl: string =
-  "https://staging-lending.presta.co.ke/bank_scoring/api/v1";
-
 // API Call: Get In-Flow Data
 const loadInFlowData = async () => {
   loaded.value = false;
   await axiosInstance
-    .get(`${baseUrl}/bank_analysis/bank_inflow?refId=${route.params.slug}`)
+    .get(`/bank_analysis/bank_inflow?refId=${route.params.slug}`)
     .then(response => {
       inflowData.value = response.data;
       loaded.value = true;
@@ -102,9 +99,7 @@ const loadInFlowData = async () => {
 // API Call: Get Out-Flow Data
 const loadOutFlowData = async () => {
   await axiosInstance
-    .get(
-      `${baseUrl}/bank_analysis/bank_expense_flow?refId=${route.params.slug}`
-    )
+    .get(`/bank_analysis/bank_expense_flow?refId=${route.params.slug}`)
     .then(response => (outflowData.value = response.data))
     .catch(error => console.error(error));
 };

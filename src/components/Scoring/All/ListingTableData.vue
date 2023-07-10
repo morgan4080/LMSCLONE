@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, toRef, watch } from "vue";
-import axiosInstance from "@/services/api/axiosInstance";
-import axios from "axios";
+import axiosMobileInstance from "@/services/api/axiosInstance";
+import axiosBankInstance from "@/services/api/axiosbank";
 interface Statement {
   id: number;
   refId: string;
@@ -55,6 +55,7 @@ const props = defineProps<{
     visible: boolean;
   }[];
   params: string;
+  flow: string;
 }>();
 
 const loading = ref(false);
@@ -63,6 +64,7 @@ const search = ref("");
 const totalItems = computed(() => apiData.value.length);
 const headers = toRef(props, "headers");
 const params = toRef(props, "params");
+const flow = toRef(props, "flow");
 
 const apiData = ref<DataItem[]>([]);
 
@@ -103,16 +105,20 @@ const queryStatementStatus = async (
 ) => {
   try {
     loading.value = true;
-    const url = (): string => {
-      if (score == "BANK") {
-        return `https://staging-lending.presta.co.ke/bank_scoring/api/v1/bank_analysis/query_status?scoreType=${score}&uniqueId=${uniqueId}`;
+    const request = async () => {
+      if (flow.value == "BANK") {
+        return await axiosBankInstance.post(
+          `/bank_analysis/query_status?scoreType=${score}&uniqueId=${uniqueId}`
+        );
       } else {
-        return `https://staging-lending.presta.co.ke/scoring/api/v1/e_statement/query_status?scoreType=${score}&uniqueId=${uniqueId}`;
+        return await axiosMobileInstance.post(
+          `/e_statement/query_status?scoreType=${score}&uniqueId=${uniqueId}`
+        );
       }
     };
-    const response = await axios.post(url());
     const element = apiData.value.find(item => item.id === id);
     if (element) {
+      const response = await request();
       element.status = response.data.data.state_name;
     }
   } catch (error) {
@@ -125,11 +131,20 @@ const queryStatementStatus = async (
 // API Call: Get all uploaded statements
 const loadData = async (filters?: string) => {
   loading.value = true;
-  let url = `/e_statement/get_uploaded_statements?pageSize=${itemsPerPage.value}&sortBy=id`;
-  if (filters) url += filters;
 
   try {
-    const response = await axiosInstance.get(url);
+    const request = async () => {
+      if (flow.value == "BANK") {
+        let url = `/bank_analysis/get_uploaded_statements?pageSize=${itemsPerPage.value}&sortBy=id`;
+        if (filters) url += filters;
+        return await axiosBankInstance.post(url);
+      } else {
+        let url = `/e_statement/get_uploaded_statements?pageSize=${itemsPerPage.value}&sortBy=id`;
+        if (filters) url += filters;
+        return await axiosMobileInstance.post(url);
+      }
+    };
+    const response = await request();
     console.log(response.data.content);
     apiData.value = transformData(response.data.content);
   } catch (error) {
@@ -142,8 +157,16 @@ const loadData = async (filters?: string) => {
 // API Call: Reupload failed statement
 const reuploadStatement = async (payload: number) => {
   loading.value = true;
-  await axiosInstance
-    .post(`/e_statement/retry_upload_statement?statementUploadId=${payload}`)
+  const request = async () => {
+    if (flow.value == "BANK") {
+      let url = `/bank_analysis/retry_upload_statement?statementUploadId=${payload}`;
+      return await axiosBankInstance.post(url);
+    } else {
+      let url = `/e_statement/retry_upload_statement?statementUploadId=${payload}`;
+      return await axiosMobileInstance.post(url);
+    }
+  };
+  await request()
     .then(response => {
       response.data.status === "200" ? loadData() : "";
     })
@@ -154,8 +177,16 @@ const reuploadStatement = async (payload: number) => {
 // API Call: Delete uploaded statement
 const deleteStatement = async (payload: number) => {
   loading.value = true;
-  await axiosInstance
-    .delete(`/e_statement/uploaded_statement/delete?statementId=${payload}`)
+  const request = async () => {
+    if (flow.value == "BANK") {
+      let url = `/bank_analysis/uploaded_statement/delete?statementId=${payload}`;
+      return await axiosBankInstance.delete(url);
+    } else {
+      let url = `/e_statement/uploaded_statement/delete?statementId=${payload}`;
+      return await axiosMobileInstance.delete(url);
+    }
+  };
+  await request()
     .then(response => {
       response.data.status === "200" ? loadData() : "";
     })

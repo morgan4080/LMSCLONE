@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from "vue";
 import { useRoute } from "vue-router";
-import axios from "axios";
+import axios from "@/services/api/axiosInstance";
 import DoughnutChart from "@/components/Scoring/DoughnutChart.vue";
 
 interface Flow {
@@ -70,7 +70,7 @@ const flow = ref<string>("Inflow");
 const loadFlowData = async () => {
   loaded.value = false;
   const getUrl = (): string => {
-    return `https://staging-lending.presta.co.ke/scoring/api/v1/e_statement/chart_labels?refId=${route.params.slug}`;
+    return `/e_statement/chart_labels?refId=${route.params.slug}`;
   };
 
   await axios

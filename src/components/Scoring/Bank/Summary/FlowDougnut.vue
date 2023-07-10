@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from "vue";
 import { useRoute } from "vue-router";
-import axios from "axios";
+import axios from "@/services/api/axiosbank";
 import DoughnutChart from "@/components/Scoring/DoughnutChart.vue";
 
 interface Flow {
@@ -54,7 +54,7 @@ const loadInFlowData = async () => {
   InflowLoaded.value = false;
 
   const getUrl = () => {
-    return `https://staging-lending.presta.co.ke/bank_scoring/api/v1/bank_analysis/chart_labels?StatementRefId=${route.params.slug}`;
+    return `/bank_analysis/chart_labels?StatementRefId=${route.params.slug}`;
   };
 
   await axios
@@ -73,7 +73,7 @@ const loadOutFlowData = async () => {
   OutflowLoaded.value = false;
 
   const getUrl = () => {
-    return `https://staging-lending.presta.co.ke/bank_scoring/api/v1/bank_analysis/chart_labels?StatementRefId=${route.params.slug}`;
+    return `/bank_analysis/chart_labels?StatementRefId=${route.params.slug}`;
   };
 
   await axios

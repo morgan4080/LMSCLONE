@@ -9,6 +9,7 @@ interface Bank {
   bankCode: string;
 }
 
+const flow = ref<string>("MOBILE");
 const banks = ref<string[]>([]);
 const mobile = ["MPESA", "Airtel Money"];
 const searchUploadedStatement = ref("");
@@ -402,11 +403,52 @@ onMounted(() => {
                     </v-list>
                   </v-sheet>
                 </v-menu>
+
+                <div class="d-flex mx-4">
+                  <v-btn
+                    variant="outlined"
+                    @click="
+                      () => {
+                        flow = 'MOBILE';
+                      }
+                    "
+                    :class="
+                      flow.toLowerCase() === 'mobile'
+                        ? 'bg-black text-white'
+                        : 'bg-white text-black'
+                    "
+                    class="text-none font-weight-regular rounded-e-0 border"
+                    >Mobile</v-btn
+                  >
+                  <v-btn
+                    variant="outlined"
+                    @click="
+                      () => {
+                        flow = 'BANK';
+                      }
+                    "
+                    :class="
+                      flow.toLowerCase() === 'bank'
+                        ? 'bg-black text-white'
+                        : 'bg-white text-black'
+                    "
+                    class="text-none font-weight-regular rounded-s-0 border"
+                    >Bank</v-btn
+                  >
+                </div>
               </v-col>
             </v-row>
             <CustomTable
+              v-if="flow == 'BANK'"
               :params="params"
               :headers="headers"
+              :flow="flow"
+            />
+            <CustomTable
+              v-if="flow == 'MOBILE'"
+              :params="params"
+              :headers="headers"
+              :flow="flow"
             />
           </v-container>
         </v-col>

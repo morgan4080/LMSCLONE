@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import { ref, computed, ComputedRef, onMounted } from "vue";
 import axios from "axios";
-import axiosInstance from "@/services/api/axiosInstance";
+import axiosMobileInstance from "@/services/api/axiosInstance";
+import axiosBankInstance from "@/services/api/axiosbank";
 import { useUploadStore } from "@/store/uploadStore";
+import stores from "@/store";
 const { checkForPassword } = useUploadStore();
-
+const authStore = stores.authStore;
 const emit = defineEmits(["clear", "checkingPassword"]);
 
 const props = defineProps<{
@@ -44,21 +46,60 @@ const uploadFile = async () => {
     formData.append("file", props.statement.document_file);
     formData.append("document_type", props.statement.document_type);
     formData.append("bank_code", props.statement.document_code);
-    formData.append("sender", "jane@gmail.com");
+    formData.append(
+      "sender",
+      authStore.getLoggedInUser ? `${authStore.getLoggedInUser.email}` : ""
+    );
     formData.append("decrypter", document_password.value);
     formData.append("remote_identifier", "2320092");
-    formData.append("identifier", "Jane");
-    formData.append("createdBy", "Jane");
-    formData.append("updatedBy", "string");
+    formData.append(
+      "identifier",
+      authStore.getLoggedInUser
+        ? `${authStore.getLoggedInUser.firstName} ${authStore.getLoggedInUser.lastName}`
+        : ""
+    );
+    formData.append(
+      "createdBy",
+      authStore.getLoggedInUser
+        ? `${authStore.getLoggedInUser.firstName} ${authStore.getLoggedInUser.lastName}`
+        : ""
+    );
+    formData.append(
+      "updatedBy",
+      authStore.getLoggedInUser
+        ? `${authStore.getLoggedInUser.firstName} ${authStore.getLoggedInUser.lastName}`
+        : ""
+    );
 
-    await axiosInstance
-      .post("/e_statement/upload_statement", formData, {
-        signal: controller.signal,
-        onUploadProgress: event => {
-          progress.value = event.progress;
-          timing.value = event.estimated;
-        },
-      })
+    const call = async () => {
+      if (props.statement.document_type == "Mobile") {
+        return await axiosMobileInstance.post(
+          "/e_statement/upload_statement",
+          formData,
+          {
+            signal: controller.signal,
+            onUploadProgress: event => {
+              progress.value = event.progress;
+              timing.value = event.estimated;
+            },
+          }
+        );
+      } else {
+        return await axiosBankInstance.post(
+          "/bank_analysis/upload_bank_statement",
+          formData,
+          {
+            signal: controller.signal,
+            onUploadProgress: event => {
+              progress.value = event.progress;
+              timing.value = event.estimated;
+            },
+          }
+        );
+      }
+    };
+
+    call()
       .then(response => {
         if (response.data.status === "200") {
           uploaded.value = true;

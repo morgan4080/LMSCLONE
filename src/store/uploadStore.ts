@@ -2,7 +2,7 @@ import { ref } from "vue";
 import { defineStore } from "pinia";
 import axios, { AxiosError, AxiosInstance, AxiosResponse } from "axios";
 const AXIOSBANK: AxiosInstance = axios.create({
-  baseURL: "https://staging-lending.presta.co.ke/bank_scoring/api/v1/",
+  baseURL: `${import.meta.env.VITE_BANK_API_BASE_URL}`,
 });
 export const useUploadStore = defineStore("upload", () => {
   const upload = ref(false);
@@ -15,7 +15,7 @@ export const useUploadStore = defineStore("upload", () => {
   ): Promise<{ message: string; passwordRequired: boolean }> => {
     const formData = new FormData();
     formData.append("file", file);
-    return AXIOSBANK.post("bank_analysis/check_encryption", formData, {
+    return AXIOSBANK.post("/bank_analysis/check_encryption", formData, {
       headers: {
         "Content-Type": "multipart/form-data",
         Accept: "application/json",
