@@ -1,7 +1,7 @@
 ## Production Build
-
+# -a to push to ECR
 ```
-docker build -t presta-lms/latest .
+./docker-build-ecr.sh -a
 ```
 
 ## Staging Build

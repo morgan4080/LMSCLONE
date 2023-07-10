@@ -32,6 +32,7 @@ echo "Done building prestaapps/scoring-ui: $APP_VERSION"
 if  [[ $1 = "-a" ]]; then
   docker push 665804139994.dkr.ecr.us-west-2.amazonaws.com/prestaapps/scoring-ui:"$APP_VERSION"
   docker push 665804139994.dkr.ecr.us-west-2.amazonaws.com/prestaapps/scoring-ui:latest
+  echo "Done pushing prestaapps/scoring-ui to ECR: $APP_VERSION"
 fi;
 
 
