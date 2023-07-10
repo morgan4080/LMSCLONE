@@ -8,11 +8,11 @@ interface FlowDataItem {
   count: number;
   highest: string;
   total: string;
-  last_draw: string;
+  last_on: string;
 }
 
 interface FlowTopData {
-  last_draw: string;
+  last_on: string;
   sourcename: string;
   description: string;
   last_amount: string;
@@ -70,7 +70,7 @@ const headers = ref<
   { title: "Description", key: "description", align: "start", sortable: false },
   { title: "Total", key: "total", align: "end", sortable: false },
   { title: "Last Amount", key: "last_amount", align: "end", sortable: false },
-  { title: "Last On", key: "last_draw", align: "end", sortable: false },
+  { title: "Last On", key: "last_on", align: "end", sortable: false },
 ]);
 
 const flowMobileMoney = ref<FlowDataItem[]>([]);
@@ -237,10 +237,10 @@ onMounted(async () => {
                 <v-row class="justify-space-between d-flex">
                   <v-col class="font-weight-medium">Last On</v-col>
                   <v-col class="text-right">{{
-                    flowMobileMoney[0]?.last_draw
+                    flowMobileMoney[0]?.last_on
                   }}</v-col>
                   <v-col class="text-right">{{
-                    flowBankTransfers[0]?.last_draw
+                    flowBankTransfers[0]?.last_on
                   }}</v-col>
                 </v-row>
                 <v-divider class="my-3" />
@@ -309,10 +309,10 @@ onMounted(async () => {
                 <v-row class="justify-space-between d-flex">
                   <v-col class="font-weight-medium">Last On</v-col>
                   <v-col class="text-right">{{
-                    flowCashDeposit[0]?.last_draw
+                    flowCashDeposit[0]?.last_on
                   }}</v-col>
                   <v-col class="text-right">
-                    {{ flowChequeDeposit[0]?.last_draw }}
+                    {{ flowChequeDeposit[0]?.last_on }}
                   </v-col>
                 </v-row>
                 <v-divider class="my-3" />
@@ -384,10 +384,10 @@ onMounted(async () => {
                 <v-row class="justify-space-between d-flex">
                   <v-col class="font-weight-medium">Last On</v-col>
                   <v-col class="text-right">{{
-                    flowAgentDeposit[0]?.last_draw
+                    flowAgentDeposit[0]?.last_on
                   }}</v-col>
                   <v-col class="text-right">{{
-                    flowReversals[0]?.last_draw
+                    flowReversals[0]?.last_on
                   }}</v-col>
                 </v-row>
                 <v-divider class="my-3" />
@@ -456,10 +456,10 @@ onMounted(async () => {
                 <v-row class="justify-space-between d-flex">
                   <v-col class="font-weight-medium">Last On</v-col>
                   <v-col class="text-right">{{
-                    flowCardPayment[0]?.last_draw
+                    flowCardPayment[0]?.last_on
                   }}</v-col>
                   <v-col class="text-right">
-                    {{ flowATMDeposit[0]?.last_draw }}
+                    {{ flowATMDeposit[0]?.last_on }}
                   </v-col>
                 </v-row>
                 <v-divider class="my-3" />
