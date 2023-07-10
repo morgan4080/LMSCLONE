@@ -1,4 +1,4 @@
-echo '===> Compiling & Packaging prestaapps/lms ...'
+echo '===> Compiling & Packaging prestaapps/scoring-ui ...'
 
 GIT_BRANCH=$(git name-rev --name-only HEAD | sed "s/~.*//")
 GIT_COMMIT=$(git rev-parse HEAD)
@@ -14,11 +14,11 @@ fi
 
 echo "APP VERSION = "$APP_VERSION
 
-echo '===> Building prestaapps/lms docker image...'
+echo '===> Building prestaapps/scoring-ui docker image...'
 #Oauth service
 docker build \
   -q \
-  -t 665804139994.dkr.ecr.us-west-2.amazonaws.com/prestaapps/lms:latest \
+  -t 665804139994.dkr.ecr.us-west-2.amazonaws.com/prestaapps/scoring-ui:latest \
   --build-arg GIT_BRANCH="$GIT_BRANCH" \
   --build-arg GIT_COMMIT="$GIT_COMMIT" \
   --build-arg GIT_DIRTY="$GIT_DIRTY" \
@@ -26,4 +26,4 @@ docker build \
   --build-arg BUILD_NUMBER="$BUILD_NUMBER" \
   --build-arg env="$ENVIRONMENT" \
   .
-echo "Done building prestaapps/lms:"$APP_VERSION
+echo "Done building prestaapps/scoring-ui:"$APP_VERSION
