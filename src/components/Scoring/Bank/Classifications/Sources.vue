@@ -129,6 +129,7 @@ const loadFlow = async (sourceName: optionTypes) => {
 
 // API Call: Get Top Flow Data
 const loadFlowTopData = async () => {
+  loading.value = true;
   await axiosInstance
     .get(
       currentInflowType.value == "All"
@@ -136,7 +137,10 @@ const loadFlowTopData = async () => {
         : `/bank_analysis/top_bank_sources_transactions?refId=${route.params.slug}&pageSize=${itemsPerPage.value}&sortBy=id&sourceName=${currentInflowType.value}`
     )
     .then(response => (flowTopData.value = response.data.content))
-    .catch(error => console.error(error));
+    .catch(error => console.error(error))
+    .finally(() => {
+      loading.value = false;
+    });
 };
 
 watch(currentInflowType, () => {
