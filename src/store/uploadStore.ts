@@ -1,9 +1,8 @@
 import { ref } from "vue";
 import { defineStore } from "pinia";
-import axios, { AxiosError, AxiosInstance, AxiosResponse } from "axios";
-const AXIOSBANK: AxiosInstance = axios.create({
-  baseURL: `${import.meta.env.VITE_BANK_API_BASE_URL}`,
-});
+import { AxiosError, AxiosInstance, AxiosResponse } from "axios";
+import axiosBank from "@/services/api/axiosbank";
+import axiosMobile from "@/services/api/axiosInstance";
 export const useUploadStore = defineStore("upload", () => {
   const upload = ref(false);
 
@@ -11,16 +10,29 @@ export const useUploadStore = defineStore("upload", () => {
   const setUploadFalse = () => (upload.value = false);
 
   const checkForPassword = async (
+    context: "BANK" | "MOBILE",
     file: File
   ): Promise<{ message: string; passwordRequired: boolean }> => {
     const formData = new FormData();
     formData.append("file", file);
-    return AXIOSBANK.post("/bank_analysis/check_encryption", formData, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-        Accept: "application/json",
-      },
-    })
+    const axiosCall = () => {
+      if (context == "BANK") {
+        return axiosBank.post("/bank_analysis/check_encryption", formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Accept: "application/json",
+          },
+        });
+      } else {
+        return axiosMobile.post("/e_statement/check_encryption", formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Accept: "application/json",
+          },
+        });
+      }
+    };
+    return axiosCall()
       .then(
         (
           response: AxiosResponse<{

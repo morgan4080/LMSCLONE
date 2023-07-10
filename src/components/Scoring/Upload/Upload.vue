@@ -89,7 +89,10 @@ const handleFile = async (file: File) => {
   try {
     // check if file requires a password an only open pop up if that is the case
     checkingPassword.value = true;
-    const response = await checkForPassword(file);
+    const response = await checkForPassword(
+      form_upload.value.type === "BANK" ? "BANK" : "MOBILE",
+      file
+    );
     popupOpen.value = response.passwordRequired;
     form_upload.value.file = file;
     form_upload.value.id = docId.value;

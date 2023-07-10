@@ -139,7 +139,10 @@ const retryUpload = async () => {
     if (props.statement.document_file) {
       message.value = "";
       emit("checkingPassword", true);
-      const response = await checkForPassword(props.statement.document_file);
+      const response = await checkForPassword(
+        props.statement.document_type == "Mobile" ? "MOBILE" : "BANK",
+        props.statement.document_file
+      );
       popupOpen.value = response.passwordRequired;
       emit("checkingPassword", false);
       if (!response.passwordRequired) await uploadFile();
