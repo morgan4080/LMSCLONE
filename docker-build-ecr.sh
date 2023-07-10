@@ -12,13 +12,14 @@ if [[ $(git status -s) ]]; then
     GIT_DIRTY='true'
 fi
 
-echo "APP VERSION = "$APP_VERSION
+echo "APP VERSION = $APP_VERSION"
 
 echo '===> Building prestaapps/scoring-ui docker image...'
 #Oauth service
 docker build \
   -q \
   -t 665804139994.dkr.ecr.us-west-2.amazonaws.com/prestaapps/scoring-ui:latest \
+  -t 665804139994.dkr.ecr.us-west-2.amazonaws.com/prestaapps/scoring-ui:"$APP_VERSION" \
   --build-arg GIT_BRANCH="$GIT_BRANCH" \
   --build-arg GIT_COMMIT="$GIT_COMMIT" \
   --build-arg GIT_DIRTY="$GIT_DIRTY" \
@@ -26,4 +27,4 @@ docker build \
   --build-arg BUILD_NUMBER="$BUILD_NUMBER" \
   --build-arg env="$ENVIRONMENT" \
   .
-echo "Done building prestaapps/scoring-ui:"$APP_VERSION
+echo "Done building prestaapps/scoring-ui: $APP_VERSION"
