@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, onMounted } from "vue";
+import { ref, computed, onMounted, watch } from "vue";
 import { useRoute } from "vue-router";
 import axiosInstance from "@/services/api/axiosbank";
 import formatter from "@/helpers/currency";
@@ -138,6 +138,10 @@ const loadFlowTopData = async () => {
     .then(response => (flowTopData.value = response.data.content))
     .catch(error => console.error(error));
 };
+
+watch(currentInflowType, () => {
+  loadFlowTopData();
+});
 
 onMounted(async () => {
   await Promise.all([
