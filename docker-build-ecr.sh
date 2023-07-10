@@ -28,3 +28,14 @@ docker build \
   --build-arg env="$ENVIRONMENT" \
   .
 echo "Done building prestaapps/scoring-ui: $APP_VERSION"
+# Upload to ecr only if -a option is active
+if  [[ $1 = "-a" ]]; then
+  docker push 665804139994.dkr.ecr.us-west-2.amazonaws.com/prestaapps/scoring-ui:"$APP_VERSION"
+  docker push 665804139994.dkr.ecr.us-west-2.amazonaws.com/prestaapps/scoring-ui:latest
+fi;
+
+
+
+
+
+
