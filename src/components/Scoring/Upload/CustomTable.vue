@@ -134,11 +134,11 @@ const loadData = async (filters?: string) => {
       if (flow.value == "BANK") {
         let url = `/bank_analysis/get_uploaded_statements?pageSize=${itemsPerPage.value}&sortBy=id`;
         if (filters) url += filters;
-        return await axiosBankInstance.post(url);
+        return await axiosBankInstance.get(url);
       } else {
         let url = `/e_statement/get_uploaded_statements?pageSize=${itemsPerPage.value}&sortBy=id`;
         if (filters) url += filters;
-        return await axiosMobileInstance.post(url);
+        return await axiosMobileInstance.get(url);
       }
     };
     const response = await request();
