@@ -404,7 +404,7 @@ onMounted(() => {
                   </v-sheet>
                 </v-menu>
 
-                <div class="d-flex mx-4">
+                <div class="d-flex">
                   <v-btn
                     variant="outlined"
                     @click="

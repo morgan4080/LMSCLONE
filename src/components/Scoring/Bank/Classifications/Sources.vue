@@ -20,13 +20,37 @@ interface FlowTopData {
   count: number;
 }
 
+type optionTypes =
+  | "BankTransfers"
+  | "CashDeposit"
+  | "MobileMoney"
+  | "Reversals"
+  | "ChequeDeposit"
+  | "AgentDeposit"
+  | "CardPayment"
+  | "All"
+  | "ATMDeposit";
+
 const route = useRoute();
 
 const open = ref(true);
 const loading = ref(false);
 const itemsPerPage = ref(5);
 const totalItems = computed(() => flowTopData.value.length);
-const options = ["Option 1", "Option 2", "Option 3"];
+
+const options: optionTypes[] = [
+  "All",
+  "BankTransfers",
+  "CashDeposit",
+  "MobileMoney",
+  "Reversals",
+  "ChequeDeposit",
+  "AgentDeposit",
+  "CardPayment",
+  "ATMDeposit",
+];
+
+const currentInflowType = ref<optionTypes>(options[0]);
 
 const headers = ref<
   { title: string; key: string; align: string; sortable: boolean }[]
@@ -51,25 +75,55 @@ const headers = ref<
 
 const flowMobileMoney = ref<FlowDataItem[]>([]);
 const flowCashDeposit = ref<FlowDataItem[]>([]);
+const flowBankTransfers = ref<FlowDataItem[]>([]);
+const flowReversals = ref<FlowDataItem[]>([]);
+const flowChequeDeposit = ref<FlowDataItem[]>([]);
+const flowAgentDeposit = ref<FlowDataItem[]>([]);
+const flowCardPayment = ref<FlowDataItem[]>([]);
+const flowATMDeposit = ref<FlowDataItem[]>([]);
 const flowTopData = ref<FlowTopData[]>([]);
 
-// API Call: Get Flow Mobile Money
-const loadFlowMobileMoney = async () => {
-  await axiosInstance
-    .get(
-      `/bank_analysis/bank_sources_summary?refId=${route.params.slug}&sourceName=MobileMoney&pageSize=100&sortBy=id`
-    )
-    .then(response => (flowMobileMoney.value = response.data.content))
-    .catch(error => console.error(error));
-};
-
 // API Call: Get Flow Cash Deposit
-const loadFlowCashDeposit = async () => {
+const loadFlow = async (sourceName: optionTypes) => {
   await axiosInstance
     .get(
-      `/bank_analysis/bank_sources_summary?refId=${route.params.slug}&sourceName=CashDeposit&pageSize=100&sortBy=id`
+      `/bank_analysis/bank_sources_summary?refId=${route.params.slug}&sourceName=${sourceName}&pageSize=100&sortBy=id`
     )
-    .then(response => (flowCashDeposit.value = response.data.content))
+    .then(response => {
+      switch (sourceName) {
+        case "BankTransfers":
+          flowBankTransfers.value = response.data.content;
+          break;
+
+        case "CashDeposit":
+          flowCashDeposit.value = response.data.content;
+          break;
+
+        case "MobileMoney":
+          flowMobileMoney.value = response.data.content;
+          break;
+
+        case "Reversals":
+          flowReversals.value = response.data.content;
+          break;
+
+        case "ChequeDeposit":
+          flowChequeDeposit.value = response.data.content;
+          break;
+
+        case "AgentDeposit":
+          flowAgentDeposit.value = response.data.content;
+          break;
+
+        case "CardPayment":
+          flowCardPayment.value = response.data.content;
+          break;
+
+        case "ATMDeposit":
+          flowATMDeposit.value = response.data.content;
+          break;
+      }
+    })
     .catch(error => console.error(error));
 };
 
@@ -77,15 +131,26 @@ const loadFlowCashDeposit = async () => {
 const loadFlowTopData = async () => {
   await axiosInstance
     .get(
-      `/bank_analysis/top_bank_sources_transactions?refId=${route.params.slug}&pageSize=${itemsPerPage.value}&sortBy=id`
+      currentInflowType.value == "All"
+        ? `/bank_analysis/top_bank_sources_transactions?refId=${route.params.slug}&pageSize=${itemsPerPage.value}&sortBy=id`
+        : `/bank_analysis/top_bank_sources_transactions?refId=${route.params.slug}&pageSize=${itemsPerPage.value}&sortBy=id&sourceName=${currentInflowType.value}`
     )
     .then(response => (flowTopData.value = response.data.content))
     .catch(error => console.error(error));
 };
 
-onMounted(() => {
-  loadFlowMobileMoney();
-  loadFlowCashDeposit();
+onMounted(async () => {
+  await Promise.all([
+    loadFlow("BankTransfers"),
+    loadFlow("MobileMoney"),
+    loadFlow("Reversals"),
+    loadFlow("CashDeposit"),
+    loadFlow("ChequeDeposit"),
+    loadFlow("AgentDeposit"),
+    loadFlow("CardPayment"),
+    loadFlow("ATMDeposit"),
+    loadFlowTopData(),
+  ]);
 });
 </script>
 
@@ -111,15 +176,18 @@ onMounted(() => {
           >
             <v-container fluid>
               <div class="mx-4">
-                <h1 class="text-h6 font-weight-regular">Mobile Money</h1>
+                <h1 class="text-h6 font-weight-regular">
+                  Mobile Money & Bank Transfers
+                </h1>
                 <h2 class="text-caption text-grey-darken-2 font-weight-regular">
-                  Summary of Mobile Money
+                  Summary Of Mobile Money & Bank Transfers
                 </h2>
               </div>
               <div class="mx-4 my-8">
                 <v-row class="justify-space-between d-flex font-weight-bold">
                   <v-col>Title</v-col>
-                  <v-col class="text-right">Description</v-col>
+                  <v-col class="text-right">Mobile Money</v-col>
+                  <v-col class="text-right">Bank Transfer</v-col>
                 </v-row>
                 <v-divider
                   class="my-3"
@@ -130,6 +198,9 @@ onMounted(() => {
                   <v-col class="text-right">{{
                     flowMobileMoney[0]?.count
                   }}</v-col>
+                  <v-col class="text-right">{{
+                    flowBankTransfers[0]?.count
+                  }}</v-col>
                 </v-row>
                 <v-divider class="my-2" />
                 <v-row class="justify-space-between d-flex">
@@ -137,12 +208,18 @@ onMounted(() => {
                   <v-col class="text-right">{{
                     formatter(flowMobileMoney[0]?.total)
                   }}</v-col>
+                  <v-col class="text-right">{{
+                    flowBankTransfers[0]?.total
+                  }}</v-col>
                 </v-row>
                 <v-divider class="my-2" />
                 <v-row class="justify-space-between d-flex">
                   <v-col class="font-weight-medium">Highest</v-col>
                   <v-col class="text-right">{{
                     formatter(flowMobileMoney[0]?.highest)
+                  }}</v-col>
+                  <v-col class="text-right">{{
+                    flowBankTransfers[0]?.highest
                   }}</v-col>
                 </v-row>
                 <v-divider
@@ -153,6 +230,9 @@ onMounted(() => {
                   <v-col class="font-weight-medium">Last On</v-col>
                   <v-col class="text-right">{{
                     flowMobileMoney[0]?.last_draw
+                  }}</v-col>
+                  <v-col class="text-right">{{
+                    flowBankTransfers[0]?.last_draw
                   }}</v-col>
                 </v-row>
                 <v-divider class="my-3" />
@@ -168,15 +248,18 @@ onMounted(() => {
           >
             <v-container fluid>
               <div class="mx-4">
-                <h1 class="text-h6 font-weight-regular">Cash Deposit</h1>
+                <h1 class="text-h6 font-weight-regular">
+                  Cash Deposit & Cheque Deposit
+                </h1>
                 <h2 class="text-caption text-grey-darken-2 font-weight-regular">
-                  Summary of Cash Deposit
+                  Summary Of Cash Deposit & Cheque Deposit
                 </h2>
               </div>
               <div class="mx-4 my-8">
                 <v-row class="justify-space-between d-flex font-weight-bold">
                   <v-col>Title</v-col>
-                  <v-col class="text-right">Description</v-col>
+                  <v-col class="text-right">Cash Deposit</v-col>
+                  <v-col class="text-right">Cheque Deposit</v-col>
                 </v-row>
                 <v-divider
                   class="my-3"
@@ -187,6 +270,9 @@ onMounted(() => {
                   <v-col class="text-right">{{
                     flowCashDeposit[0]?.count
                   }}</v-col>
+                  <v-col class="text-right">
+                    {{ flowChequeDeposit[0]?.count }}
+                  </v-col>
                 </v-row>
                 <v-divider class="my-2" />
                 <v-row class="justify-space-between d-flex">
@@ -194,6 +280,9 @@ onMounted(() => {
                   <v-col class="text-right">{{
                     formatter(flowCashDeposit[0]?.total)
                   }}</v-col>
+                  <v-col class="text-right">
+                    {{ flowChequeDeposit[0]?.total }}
+                  </v-col>
                 </v-row>
                 <v-divider class="my-2" />
                 <v-row class="justify-space-between d-flex">
@@ -201,6 +290,9 @@ onMounted(() => {
                   <v-col class="text-right">{{
                     formatter(flowCashDeposit[0]?.highest)
                   }}</v-col>
+                  <v-col class="text-right">
+                    {{ flowChequeDeposit[0]?.highest }}
+                  </v-col>
                 </v-row>
                 <v-divider
                   :thickness="3"
@@ -211,6 +303,156 @@ onMounted(() => {
                   <v-col class="text-right">{{
                     flowCashDeposit[0]?.last_draw
                   }}</v-col>
+                  <v-col class="text-right">
+                    {{ flowChequeDeposit[0]?.last_draw }}
+                  </v-col>
+                </v-row>
+                <v-divider class="my-3" />
+              </div>
+            </v-container>
+          </v-card>
+        </v-col>
+      </v-row>
+
+      <v-row>
+        <v-col class="my-2">
+          <v-card
+            class="rounded text-caption"
+            variant="flat"
+            color="white"
+          >
+            <v-container fluid>
+              <div class="mx-4">
+                <h1 class="text-h6 font-weight-regular">
+                  Agent Deposit & Reversals
+                </h1>
+                <h2 class="text-caption text-grey-darken-2 font-weight-regular">
+                  Summary Of Agent Deposit & Reversals
+                </h2>
+              </div>
+              <div class="mx-4 my-8">
+                <v-row class="justify-space-between d-flex font-weight-bold">
+                  <v-col>Title</v-col>
+                  <v-col class="text-right">Agent Deposit</v-col>
+                  <v-col class="text-right">Reversal</v-col>
+                </v-row>
+                <v-divider
+                  class="my-3"
+                  :thickness="3"
+                />
+                <v-row class="justify-space-between d-flex">
+                  <v-col class="font-weight-medium">Count</v-col>
+                  <v-col class="text-right">{{
+                    flowAgentDeposit[0]?.count
+                  }}</v-col>
+                  <v-col class="text-right">{{
+                    flowReversals[0]?.count
+                  }}</v-col>
+                </v-row>
+                <v-divider class="my-2" />
+                <v-row class="justify-space-between d-flex">
+                  <v-col class="font-weight-medium">Total</v-col>
+                  <v-col class="text-right">{{
+                    formatter(flowAgentDeposit[0]?.total)
+                  }}</v-col>
+                  <v-col class="text-right">{{
+                    flowReversals[0]?.total
+                  }}</v-col>
+                </v-row>
+                <v-divider class="my-2" />
+                <v-row class="justify-space-between d-flex">
+                  <v-col class="font-weight-medium">Highest</v-col>
+                  <v-col class="text-right">{{
+                    formatter(flowAgentDeposit[0]?.highest)
+                  }}</v-col>
+                  <v-col class="text-right">{{
+                    flowReversals[0]?.highest
+                  }}</v-col>
+                </v-row>
+                <v-divider
+                  :thickness="3"
+                  class="my-2"
+                />
+                <v-row class="justify-space-between d-flex">
+                  <v-col class="font-weight-medium">Last On</v-col>
+                  <v-col class="text-right">{{
+                    flowAgentDeposit[0]?.last_draw
+                  }}</v-col>
+                  <v-col class="text-right">{{
+                    flowReversals[0]?.last_draw
+                  }}</v-col>
+                </v-row>
+                <v-divider class="my-3" />
+              </div>
+            </v-container>
+          </v-card>
+        </v-col>
+        <v-col class="my-2">
+          <v-card
+            class="rounded text-caption"
+            variant="flat"
+            color="white"
+          >
+            <v-container fluid>
+              <div class="mx-4">
+                <h1 class="text-h6 font-weight-regular">
+                  Card Payment & ATM Deposit
+                </h1>
+                <h2 class="text-caption text-grey-darken-2 font-weight-regular">
+                  Summary Of Card Payment & ATM Deposit
+                </h2>
+              </div>
+              <div class="mx-4 my-8">
+                <v-row class="justify-space-between d-flex font-weight-bold">
+                  <v-col>Title</v-col>
+                  <v-col class="text-right">Card Payment</v-col>
+                  <v-col class="text-right">ATM Deposit</v-col>
+                </v-row>
+                <v-divider
+                  class="my-3"
+                  :thickness="3"
+                />
+                <v-row class="justify-space-between d-flex">
+                  <v-col class="font-weight-medium">Count</v-col>
+                  <v-col class="text-right">{{
+                    flowCardPayment[0]?.count
+                  }}</v-col>
+                  <v-col class="text-right">
+                    {{ flowATMDeposit[0]?.count }}
+                  </v-col>
+                </v-row>
+                <v-divider class="my-2" />
+                <v-row class="justify-space-between d-flex">
+                  <v-col class="font-weight-medium">Total</v-col>
+                  <v-col class="text-right">{{
+                    formatter(flowCardPayment[0]?.total)
+                  }}</v-col>
+                  <v-col class="text-right">
+                    {{ flowATMDeposit[0]?.total }}
+                  </v-col>
+                </v-row>
+                <v-divider class="my-2" />
+                <v-row class="justify-space-between d-flex">
+                  <v-col class="font-weight-medium">Highest</v-col>
+                  <v-col class="text-right">{{
+                    formatter(flowCardPayment[0]?.highest)
+                  }}</v-col>
+                  <v-col class="text-right">
+                    {{ flowATMDeposit[0]?.highest }}
+                  </v-col>
+                </v-row>
+                <v-divider
+                  :thickness="3"
+                  class="my-2"
+                />
+                <v-row class="justify-space-between d-flex">
+                  <v-col class="font-weight-medium">Last On</v-col>
+                  <v-col class="text-right">{{
+                    flowCardPayment[0]?.last_draw
+                  }}</v-col>
+                  <v-col class="text-right">
+                    {{ flowATMDeposit[0]?.last_draw }}
+                  </v-col>
                 </v-row>
                 <v-divider class="my-3" />
               </div>
@@ -264,12 +506,13 @@ onMounted(() => {
                           v-for="(item, idx) in options"
                           :key="idx"
                           :value="item"
+                          @click="currentInflowType = item"
                           >{{ item }}</v-list-item
                         >
                       </v-list>
                     </v-sheet>
                   </v-menu>
-                  <v-menu transition="slide-y-transition">
+                  <!--                  <v-menu transition="slide-y-transition">
                     <template v-slot:activator="{ props }">
                       <v-btn
                         size="small"
@@ -299,101 +542,101 @@ onMounted(() => {
                         >
                       </v-list>
                     </v-sheet>
-                  </v-menu>
+                  </v-menu>-->
                 </div>
                 <div>
-                  <v-menu transition="slide-y-transition">
-                    <template v-slot:activator="{ props }">
-                      <v-btn
-                        size="small"
-                        variant="outlined"
-                        append-icon="mdi:mdi-chevron-down"
-                        v-bind="props"
-                        class="ml-2 text-none text-caption font-weight-regular"
-                        style="border: 1px solid rgba(128, 128, 128, 0.25)"
-                      >
-                        Export
-                      </v-btn>
-                    </template>
-                    <v-sheet
-                      border
-                      rounded
-                    >
-                      <v-list
-                        nav
-                        density="compact"
-                        role="listbox"
-                      >
-                        <v-list-item
-                          v-for="(item, idx) in options"
-                          :key="idx"
-                          :value="item"
-                          >{{ item }}</v-list-item
-                        >
-                      </v-list>
-                    </v-sheet>
-                  </v-menu>
-                  <v-menu transition="slide-y-transition">
-                    <template v-slot:activator="{ props }">
-                      <v-btn
-                        size="small"
-                        variant="outlined"
-                        append-icon="mdi:mdi-chevron-down"
-                        v-bind="props"
-                        class="ml-2 text-none text-caption font-weight-regular"
-                        style="border: 1px solid rgba(128, 128, 128, 0.25)"
-                      >
-                        Show/Hide
-                      </v-btn>
-                    </template>
-                    <v-sheet
-                      border
-                      rounded
-                    >
-                      <v-list
-                        nav
-                        density="compact"
-                        role="listbox"
-                      >
-                        <v-list-item
-                          v-for="(item, idx) in options"
-                          :key="idx"
-                          :value="item"
-                          >{{ item }}</v-list-item
-                        >
-                      </v-list>
-                    </v-sheet>
-                  </v-menu>
-                  <v-menu transition="slide-y-transition">
-                    <template v-slot:activator="{ props }">
-                      <v-btn
-                        size="small"
-                        variant="outlined"
-                        v-bind="props"
-                        class="ml-2 text-none text-caption font-weight-regular"
-                        style="border: 1px solid rgba(128, 128, 128, 0.25)"
-                      >
-                        <v-icon icon="mdi:mdi-dots-vertical" />
-                      </v-btn>
-                    </template>
-                    <v-sheet
-                      border
-                      rounded
-                    >
-                      <v-list
-                        nav
-                        density="compact"
-                        role="listbox"
-                      >
-                        <v-list-item
-                          v-for="(item, idx) in options"
-                          :key="idx"
-                          :value="item"
-                          >{{ item }}</v-list-item
-                        >
-                      </v-list>
-                    </v-sheet>
-                  </v-menu>
+                  <!--                  <v-menu transition="slide-y-transition">-->
+                  <!--                    <template v-slot:activator="{ props }">-->
+                  <!--                      <v-btn-->
+                  <!--                        size="small"-->
+                  <!--                        variant="outlined"-->
+                  <!--                        append-icon="mdi:mdi-chevron-down"-->
+                  <!--                        v-bind="props"-->
+                  <!--                        class="ml-2 text-none text-caption font-weight-regular"-->
+                  <!--                        style="border: 1px solid rgba(128, 128, 128, 0.25)"-->
+                  <!--                      >-->
+                  <!--                        Export-->
+                  <!--                      </v-btn>-->
+                  <!--                    </template>-->
+                  <!--                    <v-sheet-->
+                  <!--                      border-->
+                  <!--                      rounded-->
+                  <!--                    >-->
+                  <!--                      <v-list-->
+                  <!--                        nav-->
+                  <!--                        density="compact"-->
+                  <!--                        role="listbox"-->
+                  <!--                      >-->
+                  <!--                        <v-list-item-->
+                  <!--                          v-for="(item, idx) in options"-->
+                  <!--                          :key="idx"-->
+                  <!--                          :value="item"-->
+                  <!--                          >{{ item }}</v-list-item-->
+                  <!--                        >-->
+                  <!--                      </v-list>-->
+                  <!--                    </v-sheet>-->
+                  <!--                  </v-menu>-->
+                  <!--                  <v-menu transition="slide-y-transition">-->
+                  <!--                    <template v-slot:activator="{ props }">-->
+                  <!--                      <v-btn-->
+                  <!--                        size="small"-->
+                  <!--                        variant="outlined"-->
+                  <!--                        append-icon="mdi:mdi-chevron-down"-->
+                  <!--                        v-bind="props"-->
+                  <!--                        class="ml-2 text-none text-caption font-weight-regular"-->
+                  <!--                        style="border: 1px solid rgba(128, 128, 128, 0.25)"-->
+                  <!--                      >-->
+                  <!--                        Show/Hide-->
+                  <!--                      </v-btn>-->
+                  <!--                    </template>-->
+                  <!--                    <v-sheet-->
+                  <!--                      border-->
+                  <!--                      rounded-->
+                  <!--                    >-->
+                  <!--                      <v-list-->
+                  <!--                        nav-->
+                  <!--                        density="compact"-->
+                  <!--                        role="listbox"-->
+                  <!--                      >-->
+                  <!--                        <v-list-item-->
+                  <!--                          v-for="(item, idx) in options"-->
+                  <!--                          :key="idx"-->
+                  <!--                          :value="item"-->
+                  <!--                          >{{ item }}</v-list-item-->
+                  <!--                        >-->
+                  <!--                      </v-list>-->
+                  <!--                    </v-sheet>-->
+                  <!--                  </v-menu>-->
+                  <!--                  <v-menu transition="slide-y-transition">-->
+                  <!--                    <template v-slot:activator="{ props }">-->
+                  <!--                      <v-btn-->
+                  <!--                        size="small"-->
+                  <!--                        variant="outlined"-->
+                  <!--                        v-bind="props"-->
+                  <!--                        class="ml-2 text-none text-caption font-weight-regular"-->
+                  <!--                        style="border: 1px solid rgba(128, 128, 128, 0.25)"-->
+                  <!--                      >-->
+                  <!--                        <v-icon icon="mdi:mdi-dots-vertical" />-->
+                  <!--                      </v-btn>-->
+                  <!--                    </template>-->
+                  <!--                    <v-sheet-->
+                  <!--                      border-->
+                  <!--                      rounded-->
+                  <!--                    >-->
+                  <!--                      <v-list-->
+                  <!--                        nav-->
+                  <!--                        density="compact"-->
+                  <!--                        role="listbox"-->
+                  <!--                      >-->
+                  <!--                        <v-list-item-->
+                  <!--                          v-for="(item, idx) in options"-->
+                  <!--                          :key="idx"-->
+                  <!--                          :value="item"-->
+                  <!--                          >{{ item }}</v-list-item-->
+                  <!--                        >-->
+                  <!--                      </v-list>-->
+                  <!--                    </v-sheet>-->
+                  <!--                  </v-menu>-->
                 </div>
               </div>
             </v-container>

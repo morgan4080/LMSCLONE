@@ -337,7 +337,7 @@
   >
     <v-card
       class="pa-2 mt-8"
-      style="width: 66.6vh"
+      width="550"
     >
       <v-card-title class="text-subtitle-2"
         >Please Login To Continue</v-card-title

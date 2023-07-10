@@ -286,15 +286,15 @@ watch(apiData, () => {
               density="compact"
               icon
               @click="
-                $router.push(
-                  item.columns.status?.toLowerCase() === 'completed'
-                    ? `/scoring/${
-                        item.columns.statement.doctype === 'BANK'
+                item.columns.status?.toLowerCase() === 'completed'
+                  ? $router.push(
+                      `/scoring/${
+                        item.columns.statement.doctype !== 'MOBILE'
                           ? 'bank'
                           : 'mobile'
                       }/${item.columns.statement.refId}`
-                    : ''
-                )
+                    )
+                  : ''
               "
               :color="
                 item.columns.status?.toLowerCase() === 'completed'

@@ -13,7 +13,7 @@
             cols="auto"
             class="d-flex align-center"
           >
-            <v-row class="d-flex justify-end">
+            <v-row class="d-flex px-4 justify-end">
               <v-btn
                 prepend-icon="mdi:mdi-file-outline"
                 variant="flat"
