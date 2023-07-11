@@ -59,7 +59,7 @@ const religionTopTransData = ref<ReligionTopTransData[]>([]);
 const loadReligionTransSentData = async () => {
   await axiosInstance
     .get(
-      `/e_statement/pay_bill_classifications_sent?refId=${route.params.slug}&classification=Religion&pageSize=100&sortBy=id`
+      `/e_statement/pay_bill_classifications_sent?statementRefId=${route.params.slug}&classification=Religion&pageSize=100&sortBy=id`
     )
     .then(response => (religionTransSentData.value = response.data.content))
     .catch(error => console.error(error));
@@ -68,7 +68,7 @@ const loadReligionTransSentData = async () => {
 const loadReligionTransBuyGoodsData = async () => {
   await axiosInstance
     .get(
-      `/e_statement/buy_goods_classifications_summary?refId=${route.params.slug}&classification=Religion&pageSize=100&sortBy=id`
+      `/e_statement/buy_goods_classifications_summary?statementRefId=${route.params.slug}&classification=Religion&pageSize=100&sortBy=id`
     )
     .then(response => (religionTransBuyGoodsData.value = response.data.content))
     .catch(error => console.error(error));
@@ -78,7 +78,7 @@ const loadReligionTransBuyGoodsData = async () => {
 const loadReligionTopTransData = async () => {
   await axiosInstance
     .get(
-      `/e_statement/top_paybill_classifications?refId=${route.params.slug}&classification=Religion&pageSize=${itemsPerPage.value}&sortBy=id`
+      `/e_statement/top_paybill_classifications?statementRefId=${route.params.slug}&classification=Religion&pageSize=${itemsPerPage.value}&sortBy=id`
     )
     .then(response => (religionTopTransData.value = response.data.content))
     .catch(error => console.error(error));

@@ -59,7 +59,7 @@ const healthcareTopTransData = ref<HealthcareTopTransData[]>([]);
 const loadHealthcareTransSentData = async () => {
   await axiosInstance
     .get(
-      `/e_statement/pay_bill_classifications_sent?refId=${route.params.slug}&classification=Healthcare&pageSize=100&sortBy=id`
+      `/e_statement/pay_bill_classifications_sent?statementRefId=${route.params.slug}&classification=Healthcare&pageSize=100&sortBy=id`
     )
     .then(response => (healthcareTransSentData.value = response.data.content))
     .catch(error => console.error(error));
@@ -68,7 +68,7 @@ const loadHealthcareTransSentData = async () => {
 const loadHealthcareTransBuyGoodsData = async () => {
   await axiosInstance
     .get(
-      `/e_statement/buy_goods_classifications_summary?refId=${route.params.slug}&classification=Healthcare&pageSize=100&sortBy=id`
+      `/e_statement/buy_goods_classifications_summary?statementRefId=${route.params.slug}&classification=Healthcare&pageSize=100&sortBy=id`
     )
     .then(
       response => (healthcareTransBuyGoodsData.value = response.data.content)
@@ -80,7 +80,7 @@ const loadHealthcareTransBuyGoodsData = async () => {
 const loadHealthcareTopTransData = async () => {
   await axiosInstance
     .get(
-      `/e_statement/top_paybill_classifications?refId=${route.params.slug}&classification=Healthcare&pageSize=${itemsPerPage.value}&sortBy=id`
+      `/e_statement/top_paybill_classifications?statementRefId=${route.params.slug}&classification=Healthcare&pageSize=${itemsPerPage.value}&sortBy=id`
     )
     .then(response => (healthcareTopTransData.value = response.data.content))
     .catch(error => console.error(error));

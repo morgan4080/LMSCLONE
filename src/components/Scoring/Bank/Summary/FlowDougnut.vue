@@ -54,7 +54,7 @@ const loadInFlowData = async () => {
   InflowLoaded.value = false;
 
   const getUrl = () => {
-    return `/bank_analysis/chart_labels?StatementRefId=${route.params.slug}`;
+    return `/bank_analysis/chart_labels?statementRefId=${route.params.slug}`;
   };
 
   await axios
@@ -73,7 +73,7 @@ const loadOutFlowData = async () => {
   OutflowLoaded.value = false;
 
   const getUrl = () => {
-    return `/bank_analysis/chart_labels?StatementRefId=${route.params.slug}`;
+    return `/bank_analysis/chart_labels?statementRefId=${route.params.slug}`;
   };
 
   await axios

@@ -106,7 +106,7 @@ const loadFlowData = async () => {
   loaded.value = false;
   await axiosInstance
     .get(
-      `/income/income_expense_flow?refId=${route.params.slug}&pageSize=100&sortBy=id`
+      `/income/income_expense_flow?statementRefId=${route.params.slug}&pageSize=100&sortBy=id`
     )
     .then(response => {
       console.log(":::::response data: flow line:::::");

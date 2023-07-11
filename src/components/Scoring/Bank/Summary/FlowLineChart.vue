@@ -88,7 +88,7 @@ const flow = ref<string>("Inflow");
 const loadInFlowData = async () => {
   loaded.value = false;
   await axiosInstance
-    .get(`/bank_analysis/bank_inflow?refId=${route.params.slug}`)
+    .get(`/bank_analysis/bank_inflow?statementRefId=${route.params.slug}`)
     .then(response => {
       inflowData.value = response.data;
       loaded.value = true;
@@ -99,7 +99,7 @@ const loadInFlowData = async () => {
 // API Call: Get Out-Flow Data
 const loadOutFlowData = async () => {
   await axiosInstance
-    .get(`/bank_analysis/bank_expense_flow?refId=${route.params.slug}`)
+    .get(`/bank_analysis/bank_expense_flow?statementRefId=${route.params.slug}`)
     .then(response => (outflowData.value = response.data))
     .catch(error => console.error(error));
 };

@@ -88,7 +88,7 @@ const flowTopData = ref<FlowTopData[]>([]);
 const loadFlow = async (sourceName: optionTypes) => {
   await axiosInstance
     .get(
-      `/bank_analysis/bank_payments_summary?refId=${route.params.slug}&paymentName=${sourceName}&pageSize=100&sortBy=id`
+      `/bank_analysis/bank_payments_summary?statementRefId=${route.params.slug}&paymentName=${sourceName}&pageSize=100&sortBy=id`
     )
     .then(response => {
       switch (sourceName) {
@@ -134,8 +134,8 @@ const loadFlowTopData = async () => {
   await axiosInstance
     .get(
       currentOutflowType.value == "All"
-        ? `/bank_analysis/top_bank_payment_transactions?refId=${route.params.slug}&pageSize=${itemsPerPage.value}&sortBy=id`
-        : `/bank_analysis/top_bank_payment_transactions?refId=${route.params.slug}&pageSize=${itemsPerPage.value}&sortBy=id&paymentName=${currentOutflowType.value}`
+        ? `/bank_analysis/top_bank_payment_transactions?statementRefId=${route.params.slug}&pageSize=${itemsPerPage.value}&sortBy=id`
+        : `/bank_analysis/top_bank_payment_transactions?statementRefId=${route.params.slug}&pageSize=${itemsPerPage.value}&sortBy=id&paymentName=${currentOutflowType.value}`
     )
     .then(response => (flowTopData.value = response.data.content))
     .catch(error => console.error(error))

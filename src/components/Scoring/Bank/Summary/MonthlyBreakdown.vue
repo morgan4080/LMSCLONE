@@ -40,7 +40,7 @@ const loading = ref(false);
 const loadMonthlyBreakdown = async () => {
   await axios
     .get(
-      `/bank_analysis/bank_income_expense_tabulated?refId=${route.params.slug}`
+      `/bank_analysis/bank_income_expense_tabulated?statementRefId=${route.params.slug}`
     )
     .then(response => (monthlyBreakdown.value = response.data))
     .catch(error => console.error(error));

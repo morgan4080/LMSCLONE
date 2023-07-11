@@ -60,7 +60,7 @@ const bettingTopTransData = ref<BettingTopTransData[]>([]);
 const loadBettingTransReceivedData = async () => {
   await axiosInstance
     .get(
-      `/e_statement/pay_bill_classifications_received?refId=${route.params.slug}&classification=Betting&pageSize=100&sortBy=id`
+      `/e_statement/pay_bill_classifications_received?statementRefId=${route.params.slug}&classification=Betting&pageSize=100&sortBy=id`
     )
     .then(response => (bettingTransReceivedData.value = response.data.content))
     .catch(error => console.error(error));
@@ -69,7 +69,7 @@ const loadBettingTransReceivedData = async () => {
 const loadBettingTransSentData = async () => {
   await axiosInstance
     .get(
-      `/e_statement/pay_bill_classifications_sent?refId=${route.params.slug}&classification=Betting&pageSize=100&sortBy=id`
+      `/e_statement/pay_bill_classifications_sent?statementRefId=${route.params.slug}&classification=Betting&pageSize=100&sortBy=id`
     )
     .then(response => (bettingTransSentData.value = response.data.content))
     .catch(error => console.error(error));
@@ -78,7 +78,7 @@ const loadBettingTransSentData = async () => {
 const loadBettingTransBuyGoodsData = async () => {
   await axiosInstance
     .get(
-      `/e_statement/buy_goods_classifications_summary?refId=${route.params.slug}&classification=Betting&pageSize=100&sortBy=id`
+      `/e_statement/buy_goods_classifications_summary?statementRefId=${route.params.slug}&classification=Betting&pageSize=100&sortBy=id`
     )
     .then(response => (bettingTransBuyGoodsData.value = response.data.content))
     .catch(error => console.error(error));
@@ -88,7 +88,7 @@ const loadBettingTransBuyGoodsData = async () => {
 const loadBettingTopTransData = async () => {
   await axiosInstance
     .get(
-      `/e_statement/top_paybill_classifications?refId=${route.params.slug}&pageSize=${itemsPerPage.value}&sortBy=id`
+      `/e_statement/top_paybill_classifications?statementRefId=${route.params.slug}&pageSize=${itemsPerPage.value}&sortBy=id`
     )
     .then(
       response =>

@@ -58,7 +58,7 @@ const mfiTopTransData = ref<MfiTopTransData[]>([]);
 const loadMfiTransReceivedData = async () => {
   await axiosInstance
     .get(
-      `/e_statement/pay_bill_classifications_received?refId=${route.params.slug}&classification=MFIs&pageSize=100&sortBy=id`
+      `/e_statement/pay_bill_classifications_received?statementRefId=${route.params.slug}&classification=MFIs&pageSize=100&sortBy=id`
     )
     .then(response => (mfiTransReceivedData.value = response.data.content))
     .catch(error => console.error(error));
@@ -67,7 +67,7 @@ const loadMfiTransReceivedData = async () => {
 const loadMfiTransSentData = async () => {
   await axiosInstance
     .get(
-      `/e_statement/pay_bill_classifications_sent?refId=${route.params.slug}&classification=MFIs&pageSize=100&sortBy=id`
+      `/e_statement/pay_bill_classifications_sent?statementRefId=${route.params.slug}&classification=MFIs&pageSize=100&sortBy=id`
     )
     .then(response => (mfiTransSentData.value = response.data.content))
     .catch(error => console.error(error));
@@ -77,7 +77,7 @@ const loadMfiTransSentData = async () => {
 const loadMfiTopTransData = async () => {
   await axiosInstance
     .get(
-      `/e_statement/top_paybill_classifications?refId=${route.params.slug}&classification=MFIs&pageSize=${itemsPerPage.value}&sortBy=id`
+      `/e_statement/top_paybill_classifications?statementRefId=${route.params.slug}&classification=MFIs&pageSize=${itemsPerPage.value}&sortBy=id`
     )
     .then(response => (mfiTopTransData.value = response.data.content))
     .catch(error => console.error(error));

@@ -59,7 +59,7 @@ const fuelTopTransData = ref<FuelTopTransData[]>([]);
 const loadFuelTransSentData = async () => {
   await axiosInstance
     .get(
-      `/e_statement/pay_bill_classifications_sent?refId=${route.params.slug}&classification=FuelStations&pageSize=100&sortBy=id`
+      `/e_statement/pay_bill_classifications_sent?statementRefId=${route.params.slug}&classification=FuelStations&pageSize=100&sortBy=id`
     )
     .then(response => (fuelTransSentData.value = response.data.content))
     .catch(error => console.error(error));
@@ -68,7 +68,7 @@ const loadFuelTransSentData = async () => {
 const loadFuelTransBuyGoodsData = async () => {
   await axiosInstance
     .get(
-      `/e_statement/buy_goods_classifications_summary?refId=${route.params.slug}&classification=FuelStations&pageSize=100&sortBy=id`
+      `/e_statement/buy_goods_classifications_summary?statementRefId=${route.params.slug}&classification=FuelStations&pageSize=100&sortBy=id`
     )
     .then(response => (fuelTransBuyGoodsData.value = response.data.content))
     .catch(error => console.error(error));
@@ -78,7 +78,7 @@ const loadFuelTransBuyGoodsData = async () => {
 const loadFuelTopTransData = async () => {
   await axiosInstance
     .get(
-      `/e_statement/top_paybill_classifications?refId=${route.params.slug}&classification=FuelStations&pageSize=${itemsPerPage.value}&sortBy=id`
+      `/e_statement/top_paybill_classifications?statementRefId=${route.params.slug}&classification=FuelStations&pageSize=${itemsPerPage.value}&sortBy=id`
     )
     .then(response => (fuelTopTransData.value = response.data.content))
     .catch(error => console.error(error));

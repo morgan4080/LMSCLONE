@@ -58,7 +58,7 @@ const waterTopTransData = ref<WaterTopTransData[]>([]);
 const loadWaterTransSentData = async () => {
   await axiosInstance
     .get(
-      `/e_statement/pay_bill_classifications_sent?refId=${route.params.slug}&classification=WaterAndSewarageServices&pageSize=100&sortBy=id`
+      `/e_statement/pay_bill_classifications_sent?statementRefId=${route.params.slug}&classification=WaterAndSewarageServices&pageSize=100&sortBy=id`
     )
     .then(response => (waterTransSentData.value = response.data.content))
     .catch(error => console.error(error));
@@ -68,7 +68,7 @@ const loadWaterTransSentData = async () => {
 const loadWaterTopTransData = async () => {
   await axiosInstance
     .get(
-      `/e_statement/top_paybill_classifications?refId=${route.params.slug}&classification=WaterAndSewarageServices&pageSize=${itemsPerPage.value}&sortBy=id`
+      `/e_statement/top_paybill_classifications?statementRefId=${route.params.slug}&classification=WaterAndSewarageServices&pageSize=${itemsPerPage.value}&sortBy=id`
     )
     .then(response => (waterTopTransData.value = response.data.content))
     .catch(error => console.error(error));

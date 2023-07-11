@@ -32,7 +32,7 @@ const headers = ref<
   { title: "Closing", key: "closing", align: "end", sortable: false },
 ]);
 const itemsPerPage = ref(100);
-const totalItems = computed(() => tableData.value.length);
+const totalItems = ref(0);
 const loading = ref(false);
 
 // API Call: Get monthly breakdown
@@ -41,7 +41,10 @@ const loadMonthlyBreakdown = async () => {
     .get(
       `income/income_expense_tabulated?statementRefId=${route.params.slug}&pageSize=100&sortBy=id`
     )
-    .then(response => (tableData.value = response.data.content))
+    .then(response => {
+      tableData.value = response.data.content;
+      totalItems.value = response.data.totalElements;
+    })
     .catch(error => console.error(error));
 };
 </script>

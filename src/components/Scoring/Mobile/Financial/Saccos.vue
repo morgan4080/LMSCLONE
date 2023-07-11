@@ -59,7 +59,7 @@ const saccoTopTransData = ref<SaccoTopTransData[]>([]);
 const loadSaccoTransReceivedData = async () => {
   await axiosInstance
     .get(
-      `/e_statement/pay_bill_classifications_received?refId=${route.params.slug}&classification=Saccos&pageSize=100&sortBy=id`
+      `/e_statement/pay_bill_classifications_received?statementRefId=${route.params.slug}&classification=Saccos&pageSize=100&sortBy=id`
     )
     .then(response => (saccoTransReceivedData.value = response.data.content))
     .catch(error => console.error(error));
@@ -68,7 +68,7 @@ const loadSaccoTransReceivedData = async () => {
 const loadSaccoTransSentData = async () => {
   await axiosInstance
     .get(
-      `/e_statement/pay_bill_classifications_sent?refId=${route.params.slug}&classification=Saccos&pageSize=100&sortBy=id`
+      `/e_statement/pay_bill_classifications_sent?statementRefId=${route.params.slug}&classification=Saccos&pageSize=100&sortBy=id`
     )
     .then(response => (saccoTransSentData.value = response.data.content))
     .catch(error => console.error(error));
@@ -78,7 +78,7 @@ const loadSaccoTransSentData = async () => {
 const loadSaccoTopTransData = async () => {
   await axiosInstance
     .get(
-      `/e_statement/top_paybill_classifications?refId=${route.params.slug}&classification=Saccos&pageSize=${itemsPerPage.value}&sortBy=id`
+      `/e_statement/top_paybill_classifications?statementRefId=${route.params.slug}&classification=Saccos&pageSize=${itemsPerPage.value}&sortBy=id`
     )
     .then(response => (saccoTopTransData.value = response.data.content))
     .catch(error => console.error(error));

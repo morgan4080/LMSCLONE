@@ -58,7 +58,7 @@ const educationTopTransData = ref<EducationTopTransData[]>([]);
 const loadEducationTransSentData = async () => {
   await axiosInstance
     .get(
-      `/e_statement/pay_bill_classifications_sent?refId=${route.params.slug}&classification=Education&pageSize=100&sortBy=id`
+      `/e_statement/pay_bill_classifications_sent?statementRefId=${route.params.slug}&classification=Education&pageSize=100&sortBy=id`
     )
     .then(response => (educationTransSentData.value = response.data.content))
     .catch(error => console.error(error));
@@ -68,7 +68,7 @@ const loadEducationTransSentData = async () => {
 const loadEducationTopTransData = async () => {
   await axiosInstance
     .get(
-      `/e_statement/top_paybill_classifications?refId=${route.params.slug}&classification=Education&pageSize=${itemsPerPage.value}&sortBy=id`
+      `/e_statement/top_paybill_classifications?statementRefId=${route.params.slug}&classification=Education&pageSize=${itemsPerPage.value}&sortBy=id`
     )
     .then(response => (educationTopTransData.value = response.data.content))
     .catch(error => console.error(error));

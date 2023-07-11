@@ -58,7 +58,7 @@ const shoppingTopTransData = ref<ShoppingTopTransData[]>([]);
 const loadShoppingTransBuyGoodsData = async () => {
   await axiosInstance
     .get(
-      `/e_statement/buy_goods_classifications_summary?refId=${route.params.slug}&classification=ShoppingOutlets&pageSize=100&sortBy=id`
+      `/e_statement/buy_goods_classifications_summary?statementRefId=${route.params.slug}&classification=ShoppingOutlets&pageSize=100&sortBy=id`
     )
     .then(response => (shoppingTransBuyGoodsData.value = response.data.content))
     .catch(error => console.error(error));
@@ -68,7 +68,7 @@ const loadShoppingTransBuyGoodsData = async () => {
 const loadShoppingTopTransData = async () => {
   await axiosInstance
     .get(
-      `/e_statement/top_paybill_classifications?refId=${route.params.slug}&classification=ShoppingOutlets&pageSize=${itemsPerPage.value}&sortBy=id`
+      `/e_statement/top_paybill_classifications?statementRefId=${route.params.slug}&classification=ShoppingOutlets&pageSize=${itemsPerPage.value}&sortBy=id`
     )
     .then(response => (shoppingTopTransData.value = response.data.content))
     .catch(error => console.error(error));

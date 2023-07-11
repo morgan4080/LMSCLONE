@@ -58,7 +58,7 @@ const kplcTopTransData = ref<KplcTopTransData[]>([]);
 const loadKplcTransSentData = async () => {
   await axiosInstance
     .get(
-      `/e_statement/pay_bill_classifications_sent?refId=${route.params.slug}&classification=KPLC&pageSize=100&sortBy=id`
+      `/e_statement/pay_bill_classifications_sent?statementRefId=${route.params.slug}&classification=KPLC&pageSize=100&sortBy=id`
     )
     .then(response => (kplcTransSentData.value = response.data.conten))
     .catch(error => console.error(error));
@@ -68,7 +68,7 @@ const loadKplcTransSentData = async () => {
 const loadKplcTopTransData = async () => {
   await axiosInstance
     .get(
-      `/e_statement/top_paybill_classifications?refId=${route.params.slug}&classification=KPLC&pageSize=${itemsPerPage.value}&sortBy=id`
+      `/e_statement/top_paybill_classifications?statementRefId=${route.params.slug}&classification=KPLC&pageSize=${itemsPerPage.value}&sortBy=id`
     )
     .then(response => (kplcTopTransData.value = response.data.content))
     .catch(error => console.error(error));

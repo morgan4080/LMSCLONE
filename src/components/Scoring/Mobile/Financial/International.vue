@@ -59,7 +59,7 @@ const remittanceTopTransData = ref<RemittanceTopTransData[]>([]);
 const loadRemittanceTransReceivedData = async () => {
   await axiosInstance
     .get(
-      `/e_statement/pay_bill_classifications_received?refId=${route.params.slug}&classification=InternationalRemitance&pageSize=100&sortBy=id`
+      `/e_statement/pay_bill_classifications_received?statementRefId=${route.params.slug}&classification=InternationalRemitance&pageSize=100&sortBy=id`
     )
     .then(
       response => (remittanceTransReceivedData.value = response.data.content)
@@ -70,7 +70,7 @@ const loadRemittanceTransReceivedData = async () => {
 const loadRemittanceTransSentData = async () => {
   await axiosInstance
     .get(
-      `/e_statement/pay_bill_classifications_sent?refId=${route.params.slug}&classification=InternationalRemitance&pageSize=100&sortBy=id`
+      `/e_statement/pay_bill_classifications_sent?statementRefId=${route.params.slug}&classification=InternationalRemitance&pageSize=100&sortBy=id`
     )
     .then(response => (remittanceTransSentData.value = response.data.content))
     .catch(error => console.error(error));
@@ -80,7 +80,7 @@ const loadRemittanceTransSentData = async () => {
 const loadRemittanceTopTransData = async () => {
   await axiosInstance
     .get(
-      `/e_statement/top_paybill_classifications?refId=${route.params.slug}&classification=InternationalRemitance&pageSize=${itemsPerPage.value}&sortBy=id`
+      `/e_statement/top_paybill_classifications?statementRefId=${route.params.slug}&classification=InternationalRemitance&pageSize=${itemsPerPage.value}&sortBy=id`
     )
     .then(response => (remittanceTopTransData.value = response.data.content))
     .catch(error => console.error(error));
