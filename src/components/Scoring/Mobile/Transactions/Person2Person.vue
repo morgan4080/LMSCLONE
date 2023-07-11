@@ -110,7 +110,7 @@ const loadPerson2personTopTransData = async () => {
       person2personTopTransData.value = [sent].flat();
     }
   } catch (error) {
-    console.error(error);
+    console.error("error", error);
   }
 };
 
