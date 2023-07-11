@@ -85,6 +85,18 @@ const loadBanks = async () => {
     .catch(error => console.error(error));
 };
 
+const addToProgress = () => {
+  popupOpen.value = false;
+  uploads.value.unshift(form_upload.value);
+  form_upload.value = {
+    id: null,
+    type: null,
+    code: null,
+    file: null,
+    password: null,
+  };
+};
+
 const handleFile = async (file: File) => {
   try {
     // check if file requires a password an only open pop up if that is the case
@@ -95,6 +107,7 @@ const handleFile = async (file: File) => {
     );
     if (popupOpen.value == false) {
       console.log("THE DOCUMENT DOESNT REQUIRE ANY PASSWORD", popupOpen.value);
+      addToProgress();
     }
     popupOpen.value = response.passwordRequired;
     form_upload.value.file = file;
@@ -114,18 +127,6 @@ const handleFile = async (file: File) => {
       console.error("Error:", error.message);
     }
   }
-};
-
-const addToProgress = () => {
-  popupOpen.value = false;
-  uploads.value.unshift(form_upload.value);
-  form_upload.value = {
-    id: null,
-    type: null,
-    code: null,
-    file: null,
-    password: null,
-  };
 };
 
 onMounted(() => {
