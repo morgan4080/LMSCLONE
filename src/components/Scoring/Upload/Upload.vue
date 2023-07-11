@@ -106,14 +106,15 @@ const handleFile = async (file: File) => {
       file
     );
     popupOpen.value = response.passwordRequired;
-    if (popupOpen.value == false) {
-      console.log("THE DOCUMENT DOESNT REQUIRE ANY PASSWORD", popupOpen.value);
-      addToProgress();
-    }
     form_upload.value.file = file;
     form_upload.value.id = docId.value;
     docId.value = docId.value + 1;
     checkingPassword.value = false;
+
+    if (popupOpen.value == false) {
+      console.log("THE DOCUMENT DOESNT REQUIRE ANY PASSWORD", popupOpen.value);
+      addToProgress();
+    }
   } catch (error: any) {
     if (error.response) {
       // The request was made and the server responded with a status code
