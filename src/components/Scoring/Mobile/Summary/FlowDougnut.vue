@@ -70,7 +70,7 @@ const flow = ref<string>("Inflow");
 const loadFlowData = async () => {
   loaded.value = false;
   const getUrl = (): string => {
-    return `/e_statement/chart_labels?refId=${route.params.slug}`;
+    return `/e_statement/chart_labels?statementRefId=${route.params.slug}`;
   };
 
   await axios

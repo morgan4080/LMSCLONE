@@ -39,7 +39,7 @@ const summaryData = ref<SummaryData>({
 // API Call: Get summary overview
 const loadData = async () => {
   await axiosInstance
-    .get(`/e_statement/account_summary?refId=${route.params.slug}`)
+    .get(`/e_statement/account_summary?statementRefId=${route.params.slug}`)
     .then(response => (summaryData.value = response.data.content[0]))
     .catch(error => console.error(error));
 };

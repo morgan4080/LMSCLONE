@@ -39,7 +39,7 @@ const loading = ref(false);
 const loadMonthlyBreakdown = async () => {
   await axiosInstance
     .get(
-      `income/income_expense_tabulated?refId=${route.params.slug}&pageSize=100&sortBy=id`
+      `income/income_expense_tabulated?statementRefId=${route.params.slug}&pageSize=100&sortBy=id`
     )
     .then(response => (tableData.value = response.data.content))
     .catch(error => console.error(error));

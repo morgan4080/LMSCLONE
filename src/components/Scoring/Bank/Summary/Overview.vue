@@ -18,7 +18,7 @@ const overviewInformation = ref<OverviewInformation[]>([]);
 const loadOverviewInformation = async () => {
   await axios
     .get(
-      `/bank_analysis/bank_totals?refId=${route.params.slug}&pageSize=100&sortBy=id`
+      `/bank_analysis/bank_totals?statementRefId=${route.params.slug}&pageSize=100&sortBy=id`
     )
     .then(response => (overviewInformation.value = response.data.content))
     .catch(error => console.error(error));

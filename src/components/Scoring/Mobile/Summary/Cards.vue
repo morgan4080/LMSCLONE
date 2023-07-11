@@ -60,7 +60,9 @@ const longTermScore = ref<LongTermScore[]>([]);
 // API Call: Get customer information
 const loadCustomerInformation = async () => {
   await axiosInstance
-    .get(`/e_statement/customer_information?refId=${route.params.slug}`)
+    .get(
+      `/e_statement/customer_information?statementRefId=${route.params.slug}`
+    )
     .then(response => (customerInformation.value = response.data))
     .catch(error => console.error(error));
 };
@@ -68,7 +70,9 @@ const loadCustomerInformation = async () => {
 // API Call: Get customer statement
 const loadCustomerStatement = async () => {
   await axiosInstance
-    .get(`/e_statement/analysis_customer_details?refId=${route.params.slug}`)
+    .get(
+      `/e_statement/analysis_customer_details?statementRefId=${route.params.slug}`
+    )
     .then(response => (customerStatement.value = response.data.content))
     .catch(error => console.error(error));
 };
@@ -76,7 +80,9 @@ const loadCustomerStatement = async () => {
 // API Call: Get customer analysis
 const loadCustomerAnalysis = async () => {
   await axiosInstance
-    .get(`/e_statement/get_personal_info_boundaries?refId=${route.params.slug}`)
+    .get(
+      `/e_statement/get_personal_info_boundaries?statementRefId=${route.params.slug}`
+    )
     .then(response => (customerAnalysis.value = response.data.content))
     .catch(error => console.error(error));
 };
@@ -84,7 +90,7 @@ const loadCustomerAnalysis = async () => {
 // API Call: Get mobile loan scrore
 const loadMobileScore = async () => {
   await axiosInstance
-    .get(`/score/mobile_score?refId=${route.params.slug}`)
+    .get(`/score/mobile_score?statementRefId=${route.params.slug}`)
     .then(response => (mobileScore.value = response.data.content))
     .catch(error => console.error(error));
 };
@@ -92,7 +98,7 @@ const loadMobileScore = async () => {
 // API Call: Get long-term loan scrore
 const loadLongTermScore = async () => {
   await axiosInstance
-    .get(`/score/g_long_term?refId=${route.params.slug}`)
+    .get(`/score/g_long_term?statementRefId=${route.params.slug}`)
     .then(response => (longTermScore.value = response.data.content))
     .catch(error => console.error(error));
 };
