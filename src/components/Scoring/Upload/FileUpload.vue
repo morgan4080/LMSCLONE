@@ -147,7 +147,7 @@ const retryUpload = async () => {
       emit("checkingPassword", false);
       if (popupOpen.value == false) {
         console.log("THE DOCUMENT DOESNT REQUIRE ANY PASSWORD");
-        await uploadFile();
+        uploadFile();
       }
     } else {
       throw new Error("File doesn't exist");
