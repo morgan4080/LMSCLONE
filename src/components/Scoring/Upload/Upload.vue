@@ -105,11 +105,11 @@ const handleFile = async (file: File) => {
       form_upload.value.type === "BANK" ? "BANK" : "MOBILE",
       file
     );
+    popupOpen.value = response.passwordRequired;
     if (popupOpen.value == false) {
       console.log("THE DOCUMENT DOESNT REQUIRE ANY PASSWORD", popupOpen.value);
       addToProgress();
     }
-    popupOpen.value = response.passwordRequired;
     form_upload.value.file = file;
     form_upload.value.id = docId.value;
     docId.value = docId.value + 1;
