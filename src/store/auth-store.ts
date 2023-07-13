@@ -83,14 +83,20 @@ export const useAuthStore = defineStore("auth-store", {
       this.isLoggedIn = true;
     },
     addAlerts(type: AlertTypes, message: string) {
-      this.alerts.push({
+      const withoutDuplicates: Set<{
+        alertType: AlertTypes;
+        alertMessage: string;
+      }> = new Set();
+      withoutDuplicates.add({
         alertType: type,
         alertMessage: message,
       });
 
+      this.alerts = [...withoutDuplicates];
+
       // .shift()
       setInterval(() => {
-        this.alerts.shift();
+        // this.alerts.shift();
       }, 2000);
     },
   },

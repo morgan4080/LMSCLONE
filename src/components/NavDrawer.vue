@@ -362,8 +362,8 @@
 
   <div
     v-if="authStore.showAlerts"
-    class="fixed pa-4"
-    style="top: 70px; right: 10px; z-index: 1"
+    class="pa-4"
+    style="position: fixed; top: 70px; right: 10px; z-index: 1"
   >
     <v-alert
       v-for="(alert, i) in authStore.getAlerts"
@@ -374,6 +374,7 @@
       border="top"
       width="auto"
       max-width="550"
+      min-width="350"
       closable
       close-label="Close Alert"
       class="bg-white mb-4"
