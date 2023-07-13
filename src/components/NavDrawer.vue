@@ -386,7 +386,6 @@
 
 <script lang="ts" setup>
 import { mergeProps, ref } from "vue";
-
 import { useBreakpoints } from "@vueuse/core";
 import stores from "../store";
 
