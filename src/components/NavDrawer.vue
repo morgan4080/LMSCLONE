@@ -626,7 +626,7 @@ const items = ref<
       },
     ],
   },
-  {
+  /*{
     text: "Agents/Sales",
     icon: "fa fa-user",
     href: "#",
@@ -656,7 +656,7 @@ const items = ref<
         href: "/lms/agentsales/applicationsMembership",
       },
     ],
-  },
+  },*/
 ]);
 
 const redirectAuth = () => {
