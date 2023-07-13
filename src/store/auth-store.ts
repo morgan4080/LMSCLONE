@@ -12,11 +12,19 @@ export interface User {
   roles: {};
 }
 
+type AlertTypes = "warning" | "error" | "success";
+
+type Alert = {
+  alertType: AlertTypes;
+  alertMessage: string;
+}[];
+
 export interface AuthState {
   isLoggedIn: boolean;
   user: null | User;
   loading: Boolean;
   authPrompt: Boolean;
+  alerts: Alert;
 }
 export const useAuthStore = defineStore("auth-store", {
   state: (): AuthState => ({
@@ -24,6 +32,7 @@ export const useAuthStore = defineStore("auth-store", {
     user: null,
     loading: false,
     authPrompt: false,
+    alerts: [],
   }),
   getters: {
     getLoggedInState(state) {
@@ -31,6 +40,12 @@ export const useAuthStore = defineStore("auth-store", {
     },
     getAuthPrompt(state) {
       return state.authPrompt;
+    },
+    showAlerts(state) {
+      return state.alerts.length > 0;
+    },
+    getAlerts(state): Alert {
+      return state.alerts;
     },
     getLoggedInUser(state): null | User {
       return state.user;
@@ -66,6 +81,17 @@ export const useAuthStore = defineStore("auth-store", {
     setAuthState(data: any): void {
       this.user = data;
       this.isLoggedIn = true;
+    },
+    addAlerts(type: AlertTypes, message: string) {
+      this.alerts.push({
+        alertType: type,
+        alertMessage: message,
+      });
+
+      // .shift()
+      setInterval(() => {
+        this.alerts.shift();
+      }, 2000);
     },
   },
 });

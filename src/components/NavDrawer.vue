@@ -359,6 +359,28 @@
       </v-card-actions>
     </v-card>
   </v-overlay>
+
+  <div
+    v-if="authStore.showAlerts"
+    class="fixed pa-4"
+    style="top: 70px; right: 10px; z-index: 1"
+  >
+    <v-alert
+      v-for="(alert, i) in authStore.getAlerts"
+      :key="i"
+      variant="outlined"
+      :type="alert.alertType"
+      prominent
+      border="top"
+      width="auto"
+      max-width="550"
+      closable
+      close-label="Close Alert"
+      class="bg-white mb-4"
+    >
+      {{ alert.alertMessage }}
+    </v-alert>
+  </div>
 </template>
 
 <script lang="ts" setup>
@@ -366,7 +388,6 @@ import { mergeProps, ref } from "vue";
 
 import { useBreakpoints } from "@vueuse/core";
 import stores from "../store";
-import { fa } from "vuetify/iconsets/fa4";
 
 const authStore = stores.authStore;
 

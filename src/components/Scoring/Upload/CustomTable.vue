@@ -114,7 +114,9 @@ const queryStatementStatus = async (
       }
     };
     const response = await request();
-    const element = apiData.value.find(item => item.id === id);
+    const element = apiData.value.find(
+      item => item.statement.uniqueId === uniqueId
+    );
     if (element) {
       element.status = response.data.data.state_name;
     }

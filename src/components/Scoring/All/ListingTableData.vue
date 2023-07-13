@@ -116,7 +116,10 @@ const queryStatementStatus = async (
         );
       }
     };
-    const element = apiData.value.find(item => item.id === id);
+    const element = apiData.value.find(
+      item => item.statement.uniqueId === uniqueId
+    );
+
     if (element) {
       const response = await request();
       element.status = response.data.data.state_name;
