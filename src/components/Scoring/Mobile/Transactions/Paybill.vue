@@ -40,7 +40,7 @@ const headers = ref<
     title: "count",
     align: "start",
     sortable: false,
-    key: "id",
+    key: "count",
   },
   {
     title: "Transaction Type",
