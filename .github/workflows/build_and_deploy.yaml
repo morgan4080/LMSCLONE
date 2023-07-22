@@ -55,6 +55,7 @@ jobs:
 
       - name: Get Cluster Services
         run: kubectl get svc
+
       - name: Helm update/install
         env:
           IMAGE_TAG: ${{ steps.buildtag.outputs.TAG_NAME }}
