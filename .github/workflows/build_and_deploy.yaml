@@ -3,7 +3,7 @@ run-name: LMS automatic deployment
 on:
   push:
     branches:
-      - cd-project
+      - main
 jobs:
   deploy:
     runs-on: ubuntu-22.04
