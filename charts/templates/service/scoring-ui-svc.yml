@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{.Values.scoringui.svc}}
+  labels:
+    app: {{.Values.scoringui.app}}
+    version: "0.9"
+spec:
+  type: ClusterIP
+  ports:
+    - port: {{.Values.scoringui.port}}
+      targetPort: 80
+      protocol: TCP
+      name: http
+  selector:
+    app: {{.Values.scoringui.app}}

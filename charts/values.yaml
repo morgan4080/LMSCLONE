@@ -1,0 +1,13 @@
+replicas: 2
+imagePullPolicy: IfNotPresent
+serviceAccountName: prod-sa
+
+scoringui:
+  image: 665804139994.dkr.ecr.us-west-2.amazonaws.com/prestaapps/scoring-ui
+  imageTag: c91f7b9
+  port: 80
+  host: lending.presta.co.ke
+  dep: scoring-ui-server
+  con: scoring-ui-container
+  app: scoring-ui
+  svc: scoring-ui

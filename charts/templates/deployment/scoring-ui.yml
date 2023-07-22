@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{.Values.scoringui.dep}}
+spec:
+  selector:
+    matchLabels:
+      app: {{.Values.scoringui.app}}
+  replicas: {{.Values.replicas}}
+  template:
+    metadata:
+      labels:
+        app: {{.Values.scoringui.app}}
+        version: "0.9"
+    spec:
+      serviceAccountName: {{.Values.serviceAccountName}}
+      containers:
+        - name: {{.Values.scoringui.con}}
+          image: {{.Values.scoringui.image}}:{{.Values.scoringui.imageTag}}
+          imagePullPolicy: {{.Values.imagePullPolicy}}
+          ports:
+            - containerPort: 80
+          resources:
+            limits:
+              memory: 256Mi
+            requests:
+              memory: 128Mi
