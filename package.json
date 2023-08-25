@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "dev": "vite",
+    "dev": "vite --base=/lms/ --port 4080",
     "development": "vite build --base=/lms/ --mode development",
     "production": "vite build --base=/lms/ --mode production",
     "staging": "vite build --base=/lms/ --mode staging",
