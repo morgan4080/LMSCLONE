@@ -7,6 +7,7 @@ export interface SalesDashboardState {
     startDate: string | null;
     endDate: string | null;
     upcomingCollections: string;
+    overdueCollectionsPercent: string;
     overdueCollections: string;
     upcomingCollectionsCount: string;
     overdueCollectionsCount: string;
@@ -77,3 +78,5 @@ export interface Pagination {
   recordsFiltered: number;
   recordsTotal: number;
 }
+
+

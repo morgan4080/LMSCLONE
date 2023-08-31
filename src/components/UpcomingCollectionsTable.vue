@@ -4,6 +4,7 @@ import { useSalesDashboardStore } from "@/store/sales-dashboard";
 import { formatMoney } from "../helpers";
 
 const salesDashboardStore = useSalesDashboardStore();
+const kopeshaURL = import.meta.env.VITE_KOPESHA_API_URL;
 
 const selected = ref([]);
 const loading = ref(false);
@@ -93,7 +94,7 @@ watch([currentPage, itemsPerPage], (newValues: [number, number]) => {
     <template v-slot:[`item.refId`]="{ item }">
       <v-btn
         icon
-        :href="`https://lending.presta.co.ke/kopesha/lender/index.html#/loans/loanprofile/${item.raw.refId}`"
+        :href="`${kopeshaURL}/lender/index.html#/loans/loanprofile/${item.raw.refId}`"
       >
         <v-icon
           icon="mdi-wifi"
@@ -102,4 +103,5 @@ watch([currentPage, itemsPerPage], (newValues: [number, number]) => {
       </v-btn>
     </template>
   </v-data-table-server>
+
 </template>

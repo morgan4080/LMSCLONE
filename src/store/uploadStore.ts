@@ -1,6 +1,6 @@
 import { ref } from "vue";
 import { defineStore } from "pinia";
-import { AxiosError, AxiosInstance, AxiosResponse } from "axios";
+import { AxiosError,  AxiosResponse } from "axios";
 import axiosBank from "@/services/api/axiosbank";
 import axiosMobile from "@/services/api/axiosInstance";
 export const useUploadStore = defineStore("upload", () => {

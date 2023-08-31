@@ -7,10 +7,10 @@
           sm="7"
         >
           <h1 class="text-h6 font-weight-regular text-grey-darken-2">
-            Dashboard Overview
+           My Customers
           </h1>
           <div class="text-caption font-weight-light mb-n1">
-            <span class="font-weight-medium">An Overview Performance</span> For The
+            <span class="font-weight-medium">An Overview of Customers</span> For The
             Period Between
             <span class="font-weight-medium">01/04/2023 - 30/04/2023</span>
           </div>
@@ -46,7 +46,7 @@
                     <v-list-item
                       density="compact"
                       @click="salesOverviewFilters.branches.text = ''"
-                      >All</v-list-item
+                    >All</v-list-item
                     >
                     <v-list-item
                       v-for="(dropDownMenu, it) in salesDashboardStore.branches"
@@ -57,7 +57,7 @@
                         salesOverviewFilters.branches.text =
                           dropDownMenu.toString()
                       "
-                      >{{ dropDownMenu }}</v-list-item
+                    >{{ dropDownMenu }}</v-list-item
                     >
                   </v-list>
                 </v-sheet>
@@ -92,7 +92,7 @@
                         (salesOverviewFilters.salesRep.text = null),
                           (salesOverviewFilters.salesRep.id = null)
                       "
-                      >All</v-list-item
+                    >All</v-list-item
                     >
                     <v-list-item
                       v-for="(
@@ -107,7 +107,7 @@
                           (salesOverviewFilters.salesRep.id =
                             dropDownMenu.refId)
                       "
-                      >{{ dropDownMenu.name }}</v-list-item
+                    >{{ dropDownMenu.name }}</v-list-item
                     >
                   </v-list>
                 </v-sheet>
@@ -148,13 +148,13 @@
                         salesOverviewFilters.dateFilters.value =
                           dropDownMenu.value;
                       "
-                      >{{ dropDownMenu.title }}</v-list-item
+                    >{{ dropDownMenu.title }}</v-list-item
                     >
                   </v-list>
                 </v-sheet>
               </v-menu>
             </div>
-<!--            button add customer-->
+            <!--            button add customer-->
             <div>
               <v-btn
                 class="v-btn--size-default text-caption text-capitalize pr-2"
@@ -181,17 +181,14 @@
           >
             <v-card-text>
               <div class="text-body-2 font-weight-light">
-                Expected Collections
+                Total Customers
               </div>
               <div class="text-h6 font-weight-regular py-2 text-primary">
-                {{ salesDashboardStore.stats.upcomingCollections }}
+                {{ salesDashboardStore.stats.upcomingCollections }} Customers
               </div>
               <div class="d-flex justify-space-between">
                 <div class="text-caption font-weight-regular text-normal">
-                  This Month
-                </div>
-                <div class="text-caption font-weight-regular text-primary">
-                  {{ salesDashboardStore.stats.upcomingCollectionsCount }} Loans
+                 Onboarded
                 </div>
               </div>
             </v-card-text>
@@ -208,15 +205,13 @@
           >
             <v-card-text>
               <div class="text-body-2 font-weight-light">
-                Loans In Arrears
+                New Customers
               </div>
               <div class="d-flex justify-space-between mx-1">
-              <div class="text-h6 font-weight-regular py-2 text-red">
-                {{ salesDashboardStore.stats.overdueCollections }}
-              </div>
-              <div  class="text-sm font-weight-regular py-2 text-red ">
-                {{ salesDashboardStore.stats.overdueCollectionsPercent}}
-              </div>
+                <div class="text-h6 font-weight-regular py-2 text-green">
+                  {{ salesDashboardStore.stats.overdueCollections }} Customers
+                </div>
+
               </div>
 
 
@@ -224,8 +219,8 @@
                 <div class="text-caption font-weight-regular text-normal">
                   This Month
                 </div>
-                <div class="text-caption font-weight-regular text-red">
-                  {{ salesDashboardStore.stats.overdueCollectionsCount }} Loans
+                <div class="text-caption font-weight-regular text-green">
+                  {{ salesDashboardStore.stats.overdueCollectionsCount }}
                 </div>
               </div>
             </v-card-text>
@@ -242,18 +237,16 @@
           >
             <v-card-text>
               <div class="text-body-2 font-weight-light">
-                Total New Customers
+                Onboarding Approvals
               </div>
-              <div class="text-h6 font-weight-regular py-2 text-success">
+              <div class="text-h6 font-weight-regular py-2 text-red">
                 {{ salesDashboardStore.stats.customersCount }} Customers
               </div>
               <div class="d-flex justify-space-between">
                 <div class="text-caption font-weight-regular text-normal">
-                  This Month
+                  Pending
                 </div>
-                <div class="text-caption font-weight-regular text-success">
-                  {{ salesDashboardStore.stats.customersCountIncrement }} Loans
-                </div>
+
               </div>
             </v-card-text>
           </v-card>
@@ -320,28 +313,15 @@
                       v-if="n === tabs[0]"
                       :fluid="true"
                     >
-                      <due-todaytable
-                      />
+                   <all-customers-table />
                     </v-container>
                     <v-container
                       v-else-if="n === tabs[1]"
                       :fluid="true"
                     >
-                      <due-this-week-table
-                      />
+                   <onboarding-approval-table/>
                     </v-container>
-                    <v-container
-                      v-if="n === tabs[2]"
-                      :fluid="true"
-                    >
-                     <arrears-table />
-                    </v-container>
-                    <v-container
-                      v-if="n === tabs[3]"
-                      :fluid="true"
-                    >
-                      <loan-approvals/>
-                    </v-container>
+
                   </v-window-item>
                 </v-window>
               </div>
@@ -357,31 +337,18 @@
           </v-card>
         </v-col>
       </v-row>
-      <v-row class="d-flex">
-        <v-col cols="12">
-          <v-card :loading="false">
-            <v-card-text class="px-7 py-4 mb-4">
-              <v-row class="d-flex mt-9 mx-1">
-                <NewCustomersTable />
-              </v-row>
-            </v-card-text>
-          </v-card>
-        </v-col>
-      </v-row>
+
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
-import {onBeforeMount, onMounted, reactive, ref, watch} from "vue";
+import {onBeforeMount, reactive, ref, watch} from "vue";
 import { useSalesDashboardStore } from "@/store/sales-dashboard";
-import NewCustomersTable from "@/components/NewCustomersTable.vue";
-import LoanApprovals from "@/components/collections/LoanApprovals.vue";
+import AllCustomersTable from "@/components/mycustomers/AllCustomersTable.vue";
+import OnboardingApprovalTable from "@/components/mycustomers/OnboardingApprovalTable.vue";
 import { dateFilters } from "@/helpers";
 import OverdueCollectionsTable from "@/components/OverdueCollectionsTable.vue";
-import DueTodaytable from "@/components/collections/DueTodaytable.vue";
-import DueThisWeekTable from "@/components/collections/DueThisWeekTable.vue";
-import ArrearsTable from "@/components/collections/ArrearsTable.vue";
 const salesDashboardStore = useSalesDashboardStore();
 
 async function initialize() {
@@ -392,15 +359,12 @@ async function initialize() {
   await salesDashboardStore.getSalesRepByBranch("HQ");
 }
 
-
-const tabs = ref(["Due Today", "Due This Week", "In Arrears","Loan Approvals"]);
+const tabs = ref(["All Customers", "Onboarding Approvals"]);
 const tab = ref<string | null>(null);
-
 
 onBeforeMount(async () => {
   await initialize();
 });
-
 
 const salesOverviewFilters = reactive({
   branches: {
@@ -439,244 +403,9 @@ const salesOverviewFilters = reactive({
 
 const collectionFilter = ref({
   collections: {
-    name: "Collections",
-    appendIcon: "mdi:mdi-chevron-down",
-    menu: ["Upcoming", "Overdue"],
+    name: "Customer Listing",
   },
 });
-const upcomingCollectionFilters = ref({
-  product: {
-    text: null,
-    appendIcon: "mdi:mdi-chevron-down",
-    menus: [
-      "Biashara",
-      "PRESTA LMS",
-      "Corporate Loan",
-      "Okoa",
-      "Salary Advance",
-    ],
-  } as { text: string | null; appendIcon: string; menus: string[] },
-  status: {
-    text: null,
-    appendIcon: "mdi:mdi-chevron-down",
-    menus: [
-      {
-        title: "Paid",
-        value: "Paid",
-      },
-      {
-        title: "Not Paid",
-        value: "NOTPAID",
-      },
-      {
-        title: "Partially Paid",
-        value: "Partially Paid",
-      },
-    ],
-  } as {
-    text: string | null;
-    appendIcon: string;
-    menus: { title: string; value: string }[];
-  },
-});
-const overdueCollectionFilters = ref({
-  product: {
-    text: null,
-    appendIcon: "mdi:mdi-chevron-down",
-    filterParam: "",
-    menus: [
-      "Biashara",
-      "PRESTA LMS",
-      "Corporate Loan",
-      "Okoa",
-      "Salary Advance",
-    ],
-  } as {
-    text: string | null;
-    appendIcon: string;
-    filterParam: string;
-    menus: string[];
-  },
-  status: {
-    text: null,
-    appendIcon: "mdi:mdi-chevron-down",
-    filterParam: "",
-    menus: [
-      {
-        title: "Paid",
-        value: "&status=Paid",
-      },
-      {
-        title: "Not Paid",
-        value: "&status=NOTPAID",
-      },
-      {
-        title: "Partially Paid",
-        value: "&status=Partially Paid",
-      },
-    ],
-  } as {
-    text: string | null;
-    appendIcon: string;
-    filterParam: string;
-    menus: { title: string; value: string }[];
-  },
-});
-const upComingCollectionActions = ref([
-  {
-    text: "Export",
-    appendIcon: "mdi:mdi-chevron-down",
-    menus: [
-      {
-        text: "Op 1",
-      },
-      {
-        text: "Op 2",
-      },
-      {
-        text: "Op 3",
-      },
-    ],
-  },
-  {
-    text: "Show/Hide",
-    appendIcon: "mdi:mdi-chevron-down",
-    menus: [
-      {
-        text: "Op 1",
-      },
-      {
-        text: "Op 2",
-      },
-      {
-        text: "Op 3",
-      },
-    ],
-  },
-  {
-    text: "This Week",
-    appendIcon: "mdi:mdi-chevron-down",
-    menus: [
-      {
-        text: "Op 1",
-      },
-      {
-        text: "Op 2",
-      },
-      {
-        text: "Op 3",
-      },
-    ],
-  },
-  {
-    text: null,
-    appendIcon: "mdi:mdi-dots-vertical",
-    menus: [
-      {
-        text: "Op 1",
-      },
-      {
-        text: "Op 2",
-      },
-      {
-        text: "Op 3",
-      },
-    ],
-  },
-]);
-
-const newCustomerFilters = ref({
-  status: {
-    text: "Select Onboarding ",
-    filterParam: "",
-    appendIcon: "mdi:mdi-chevron-down",
-    menus: [
-      {
-        title: "Approved",
-        param: "&onboardingStatus=Approved",
-      },
-      { title: "Denied", param: "&onboardingStatus=Denied" },
-    ],
-  },
-  ussd: {
-    text: "Select USSD Status",
-    filterParam: "",
-    appendIcon: "mdi:mdi-chevron-down",
-    menus: [
-      {
-        text: "Has USSD",
-        param: "&hasUssd=YES",
-      },
-      {
-        text: "Lacks USSD",
-        param: "&hasUssd=NO",
-      },
-    ],
-  },
-});
-
-const newCustomerActions = ref([
-  {
-    text: "Export",
-    appendIcon: "mdi:mdi-chevron-down",
-    menus: [
-      {
-        text: "Op 1",
-      },
-      {
-        text: "Op 2",
-      },
-      {
-        text: "Op 3",
-      },
-    ],
-  },
-  {
-    text: "Show/Hide",
-    appendIcon: "mdi:mdi-chevron-down",
-    menus: [
-      {
-        text: "Op 1",
-      },
-      {
-        text: "Op 2",
-      },
-      {
-        text: "Op 3",
-      },
-    ],
-  },
-  {
-    text: "This Week",
-    appendIcon: "mdi:mdi-chevron-down",
-    menus: [
-      {
-        text: "Op 1",
-      },
-      {
-        text: "Op 2",
-      },
-      {
-        text: "Op 3",
-      },
-    ],
-  },
-  {
-    text: null,
-    appendIcon: "mdi:mdi-dots-vertical",
-    menus: [
-      {
-        text: "Op 1",
-      },
-      {
-        text: "Op 2",
-      },
-      {
-        text: "Op 3",
-      },
-    ],
-  },
-]);
 
 watch(salesOverviewFilters, () => {
   salesOverviewFilters.branches.text
@@ -691,7 +420,7 @@ watch(salesOverviewFilters, () => {
     : (salesDashboardStore.salesRepIds = ["ALL"]);
 
   salesOverviewFilters.dateFilters.value &&
-    dateReturn(salesOverviewFilters.dateFilters.value);
+  dateReturn(salesOverviewFilters.dateFilters.value);
 
   salesDashboardStore.getStats();
 });
@@ -701,18 +430,7 @@ function dateReturn(text: string) {
   salesDashboardStore.stats.startDate = start;
   salesDashboardStore.stats.endDate = end;
 }
-function newCustomerFilterFetch() {
-  let newParam = newCustomerFilters.value.ussd.filterParam.concat(
-    newCustomerFilters.value.status.filterParam
-  );
-  salesDashboardStore.getNewCustomers(newParam);
-}
-function overdueCollectionFilterFetch() {
-  let newParam = overdueCollectionFilters.value.product.filterParam.concat(
-    overdueCollectionFilters.value.status.filterParam
-  );
-  salesDashboardStore.getOverdueCollections(newParam);
-}
+
 </script>
 
 <style scoped>

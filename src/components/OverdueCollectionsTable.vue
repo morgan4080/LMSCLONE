@@ -1,9 +1,12 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import { useSalesDashboardStore } from "@/store/sales-dashboard";
-import { formatMoney } from "../helpers";
+import { formatMoney } from "@/helpers";
 
 const salesDashboardStore = useSalesDashboardStore();
+
+const kopeshaURL = import.meta.env.VITE_KOPESHA_API_URL;
+
 
 const selected = ref([]);
 const search = ref("");
@@ -35,6 +38,8 @@ const headers = ref<
   { title: "Status", key: "status", align: "end", sortable: false },
   { title: "Actions", key: "refId", align: "end", sortable: false },
 ]);
+
+
 </script>
 
 <template>
@@ -101,8 +106,8 @@ const headers = ref<
         class="rounded border"
         icon="mdi:mdi-pencil-outline"
         variant="text"
-        :href="`https://lending.presta.co.ke/kopesha/lender/index.html#/customers/customer-profile/${item.raw.refId}`"
-      >
+
+       :href="`${kopeshaURL}/lender/index.html#/customers/customer-profile/${item.raw.refId}`">
       </v-btn>
     </template>
   </v-data-table-server>

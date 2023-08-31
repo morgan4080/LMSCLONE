@@ -18,10 +18,12 @@ export const useSalesDashboardStore = defineStore("sales-dashboard-store", {
       endDate: moment().format("DD/MM/YYYY"),
       upcomingCollections: "0.0",
       overdueCollections: "0.0",
+      overdueCollectionsPercent: "0%",
       upcomingCollectionsCount: "0",
       overdueCollectionsCount: "0",
       customersCount: "0",
       customersCountIncrement: "+0%",
+
     },
     upcomingCollections: {
       data: [],
