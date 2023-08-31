@@ -50,5 +50,6 @@ const vuetifyConf = createVuetify({
 
 export function registerPlugins(app: App) {
   loadFonts();
+  // @ts-ignore
   app.use(vuetifyConf).use(router).use(pinia);
 }

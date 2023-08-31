@@ -1,11 +1,14 @@
-import { Pageables } from "@/types";
+import { KopeshaPagination } from "@/salesDashboard/composables/collections/useToday";
 
-export const useSearch = (pageables: Pageables, callback: () => void) => {
+export const useSearch = (
+  pageables: KopeshaPagination,
+  callback: () => Promise<void>
+) => {
   async function search() {
-    if (pageables.searchTerm?.length === 0) pageables.searchTerm = undefined;
-    if (pageables.startDate?.length === 0) pageables.startDate = null;
-    if (pageables.endDate?.length === 0) pageables.endDate = null;
-    pageables.currentPage = 0;
+    if (pageables.searchTerm?.length === 0) pageables.searchTerm = "";
+    if (pageables.startDate?.length === 0) pageables.startDate = "";
+    if (pageables.endDate?.length === 0) pageables.endDate = "";
+    pageables.draw = 1;
     await callback();
   }
   return { search };

@@ -11,7 +11,7 @@
     "reinstall": "npm run clean && npm install",
     "preview": "vite preview  --host 0.0.0.0",
     "lint": "eslint . --fix --ignore-path .gitignore",
-    "format": "prettier .  --write \"src\""
+    "prettier": "prettier .  --write \"src\""
   },
   "dependencies": {
     "@vueuse/core": "^10.1.0",
@@ -38,6 +38,7 @@
     "@vue/eslint-config-typescript": "^11.0.0",
     "eslint": "^8.22.0",
     "eslint-config-prettier": "^8.8.0",
+    "eslint-plugin-prettier": "^4.2.1",
     "eslint-plugin-vue": "^9.3.0",
     "font-awesome": "^4.7.0",
     "prettier": "2.8.8",

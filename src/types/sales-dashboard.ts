@@ -25,7 +25,16 @@ export interface Branch {
 
 export interface SalesRep {
   refId: string;
-  name: string;
+  firstName: string;
+  lastName: string;
+  fullName: string;
+  emailAddress: string;
+  phoneNumber: string;
+  keycloakPhoneNumber: string;
+  keycloakId: string;
+  keycloakFullName: string;
+  isLoginUser: number;
+  enableAccess: number;
 }
 
 export interface UpcomingCollection {
@@ -78,5 +87,3 @@ export interface Pagination {
   recordsFiltered: number;
   recordsTotal: number;
 }
-
-

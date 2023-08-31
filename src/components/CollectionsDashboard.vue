@@ -1,3 +1,66 @@
+<script lang="ts" setup>
+import { onMounted, reactive, ref, watch } from "vue";
+import { useSalesDashboardStore } from "@/store/sales-dashboard";
+import NewCustomersTable from "@/components/NewCustomersTable.vue";
+import LoanApprovals from "@/components/collections/LoanApprovals.vue";
+import { dateFilters } from "@/helpers";
+import OverdueCollectionsTable from "@/components/OverdueCollectionsTable.vue";
+import DueTodaytable from "@/components/collections/DueTodaytable.vue";
+import DueThisWeekTable from "@/components/collections/DueThisWeekTable.vue";
+import ArrearsTable from "@/components/collections/ArrearsTable.vue";
+import { storeToRefs } from "pinia";
+const salesDashboardStore = useSalesDashboardStore();
+const {
+  tabs,
+  tab,
+  newCustomerFilters,
+  overdueCollectionFilters,
+  upcomingCollectionFilters,
+  upComingCollectionActions,
+  newCustomerActions,
+  collectionFilter,
+} = storeToRefs(salesDashboardStore);
+const {
+  getSalesRepByBranch,
+  getStats,
+  getBranches,
+  getUpcomingCollections,
+  getOverdueCollections,
+  salesOverviewFilters,
+} = salesDashboardStore;
+
+onMounted(() => {
+  getSalesRepByBranch();
+  getStats();
+  getBranches();
+  getUpcomingCollections();
+  getOverdueCollections();
+});
+
+watch(salesOverviewFilters, () => {
+  salesOverviewFilters.branches.text
+    ? ((salesDashboardStore.branchIds = [salesOverviewFilters.branches.text]),
+      salesDashboardStore.getSalesRepByBranch(
+        salesOverviewFilters.branches.text
+      ))
+    : (salesDashboardStore.branchIds = ["ALL"]);
+
+  salesOverviewFilters.salesRep.id
+    ? (salesDashboardStore.salesRepIds = [salesOverviewFilters.salesRep.id!])
+    : (salesDashboardStore.salesRepIds = ["ALL"]);
+
+  salesOverviewFilters.dateFilters.value &&
+    dateReturn(salesOverviewFilters.dateFilters.value);
+
+  salesDashboardStore.getStats();
+});
+
+function dateReturn(text: string) {
+  let [start, end] = dateFilters(text) as string[];
+  salesDashboardStore.stats.startDate = start;
+  salesDashboardStore.stats.endDate = end;
+}
+</script>
 <template>
   <div class="pa-6 fill-height bg-background">
     <div class="flex-column w-100 fill-height">
@@ -10,8 +73,8 @@
             Dashboard Overview
           </h1>
           <div class="text-caption font-weight-light mb-n1">
-            <span class="font-weight-medium">An Overview Performance</span> For The
-            Period Between
+            <span class="font-weight-medium">An Overview Performance</span> For
+            The Period Between
             <span class="font-weight-medium">01/04/2023 - 30/04/2023</span>
           </div>
         </v-col>
@@ -26,52 +89,9 @@
                   <v-btn
                     class="v-btn--size-default text-caption text-capitalize"
                     density="default"
-                    :append-icon="salesOverviewFilters.branches.appendIcon"
-                    v-bind="props"
-                    flat
-                    style="border: 1px solid rgba(128, 128, 128, 0.25)"
-                  >
-                    {{ salesOverviewFilters.branches.text || "All Branches" }}
-                  </v-btn>
-                </template>
-                <v-sheet
-                  border
-                  rounded
-                >
-                  <v-list
-                    nav
-                    density="compact"
-                    role="listbox"
-                  >
-                    <v-list-item
-                      density="compact"
-                      @click="salesOverviewFilters.branches.text = ''"
-                      >All</v-list-item
-                    >
-                    <v-list-item
-                      v-for="(dropDownMenu, it) in salesDashboardStore.branches"
-                      :key="it"
-                      :value="it"
-                      density="compact"
-                      @click="
-                        salesOverviewFilters.branches.text =
-                          dropDownMenu.toString()
-                      "
-                      >{{ dropDownMenu }}</v-list-item
-                    >
-                  </v-list>
-                </v-sheet>
-              </v-menu>
-            </div>
-            <div class="px-3">
-              <v-menu transition="slide-y-transition">
-                <template v-slot:activator="{ props }">
-                  <v-btn
-                    class="v-btn--size-default text-caption text-capitalize"
-                    density="default"
                     :append-icon="salesOverviewFilters.salesRep.appendIcon"
                     v-bind="props"
-                    flat
+                    :flat="true"
                     style="border: 1px solid rgba(128, 128, 128, 0.25)"
                   >
                     {{ salesOverviewFilters.salesRep.text || "All Sales Rep" }}
@@ -82,7 +102,7 @@
                   rounded
                 >
                   <v-list
-                    nav
+                    :nav="true"
                     density="compact"
                     role="listbox"
                   >
@@ -103,12 +123,14 @@
                       density="compact"
                       @click="
                         (salesOverviewFilters.salesRep.text =
-                          dropDownMenu.name.toString()),
+                          dropDownMenu.firstName.toString()),
                           (salesOverviewFilters.salesRep.id =
                             dropDownMenu.refId)
                       "
-                      >{{ dropDownMenu.name }}</v-list-item
+                      :title="`${dropDownMenu.firstName} ${dropDownMenu.lastName}`"
+                      :subtitle="`${dropDownMenu.phoneNumber}`"
                     >
+                    </v-list-item>
                   </v-list>
                 </v-sheet>
               </v-menu>
@@ -121,7 +143,7 @@
                     density="default"
                     :append-icon="salesOverviewFilters.dateFilters.appendIcon"
                     v-bind="props"
-                    flat
+                    :flat="true"
                     style="border: 1px solid rgba(128, 128, 128, 0.25)"
                   >
                     {{ salesOverviewFilters.dateFilters.text || "All Time" }}
@@ -132,7 +154,7 @@
                   rounded
                 >
                   <v-list
-                    nav
+                    :nav="true"
                     density="compact"
                     role="listbox"
                   >
@@ -154,12 +176,12 @@
                 </v-sheet>
               </v-menu>
             </div>
-<!--            button add customer-->
+            <!--            button add customer-->
             <div>
               <v-btn
                 class="v-btn--size-default text-caption text-capitalize pr-2"
                 density="default"
-                flat
+                :flat="true"
                 color="primary"
                 style="border: 1px solid rgba(128, 128, 128, 0.25)"
               >
@@ -207,18 +229,15 @@
             :loading="false"
           >
             <v-card-text>
-              <div class="text-body-2 font-weight-light">
-                Loans In Arrears
-              </div>
+              <div class="text-body-2 font-weight-light">Loans In Arrears</div>
               <div class="d-flex justify-space-between mx-1">
-              <div class="text-h6 font-weight-regular py-2 text-red">
-                {{ salesDashboardStore.stats.overdueCollections }}
+                <div class="text-h6 font-weight-regular py-2 text-red">
+                  {{ salesDashboardStore.stats.overdueCollections }}
+                </div>
+                <div class="text-sm font-weight-regular py-2 text-red">
+                  {{ salesDashboardStore.stats.overdueCollectionsPercent }}
+                </div>
               </div>
-              <div  class="text-sm font-weight-regular py-2 text-red ">
-                {{ salesDashboardStore.stats.overdueCollectionsPercent}}
-              </div>
-              </div>
-
 
               <div class="d-flex justify-space-between">
                 <div class="text-caption font-weight-regular text-normal">
@@ -306,9 +325,16 @@
                     :key="ind"
                     :value="t"
                     class="text-none text-caption"
-                  >{{ t }}</v-tab>
+                    >{{ t }}</v-tab
+                  >
                 </v-tabs>
-                <hr style="background: rgba(130,130,130,0.1); height: 1px;border: none">
+                <hr
+                  style="
+                    background: rgba(130, 130, 130, 0.1);
+                    height: 1px;
+                    border: none;
+                  "
+                />
 
                 <v-window v-model="tab">
                   <v-window-item
@@ -321,26 +347,27 @@
                       :fluid="true"
                     >
                       <due-todaytable
+                        :key="Math.random().toString(36).substr(2, 16)"
+                        :refId="salesOverviewFilters.salesRep.id"
                       />
                     </v-container>
                     <v-container
                       v-else-if="n === tabs[1]"
                       :fluid="true"
                     >
-                      <due-this-week-table
-                      />
+                      <due-this-week-table />
                     </v-container>
                     <v-container
                       v-if="n === tabs[2]"
                       :fluid="true"
                     >
-                     <arrears-table />
+                      <arrears-table />
                     </v-container>
                     <v-container
                       v-if="n === tabs[3]"
                       :fluid="true"
                     >
-                      <loan-approvals/>
+                      <loan-approvals />
                     </v-container>
                   </v-window-item>
                 </v-window>
@@ -371,350 +398,6 @@
     </div>
   </div>
 </template>
-
-<script lang="ts" setup>
-import {onBeforeMount, onMounted, reactive, ref, watch} from "vue";
-import { useSalesDashboardStore } from "@/store/sales-dashboard";
-import NewCustomersTable from "@/components/NewCustomersTable.vue";
-import LoanApprovals from "@/components/collections/LoanApprovals.vue";
-import { dateFilters } from "@/helpers";
-import OverdueCollectionsTable from "@/components/OverdueCollectionsTable.vue";
-import DueTodaytable from "@/components/collections/DueTodaytable.vue";
-import DueThisWeekTable from "@/components/collections/DueThisWeekTable.vue";
-import ArrearsTable from "@/components/collections/ArrearsTable.vue";
-const salesDashboardStore = useSalesDashboardStore();
-
-async function initialize() {
-  await salesDashboardStore.getBranches();
-  await salesDashboardStore.getStats();
-  await salesDashboardStore.getUpcomingCollections();
-  await salesDashboardStore.getOverdueCollections();
-  await salesDashboardStore.getSalesRepByBranch("HQ");
-}
-
-
-const tabs = ref(["Due Today", "Due This Week", "In Arrears","Loan Approvals"]);
-const tab = ref<string | null>(null);
-
-
-onBeforeMount(async () => {
-  await initialize();
-});
-
-
-const salesOverviewFilters = reactive({
-  branches: {
-    text: null,
-    appendIcon: "mdi:mdi-chevron-down",
-  } as {
-    text: string | null;
-    appendIcon: string;
-  },
-  salesRep: {
-    text: null,
-    id: null,
-    appendIcon: "mdi:mdi-chevron-down",
-  } as {
-    text: string | null;
-    id: string | null;
-    appendIcon: string;
-  },
-  dateFilters: {
-    text: "All Time",
-    value: null,
-    appendIcon: "mdi:mdi-chevron-down",
-    menus: [
-      { title: "All Time", value: "all" },
-      { title: "This Year", value: "year" },
-      { title: "This Month", value: "month" },
-      { title: "This Week", value: "week" },
-    ],
-  } as {
-    text: string;
-    value: string | null;
-    appendIcon: string;
-    menus: { title: string; value: string }[];
-  },
-});
-
-const collectionFilter = ref({
-  collections: {
-    name: "Collections",
-    appendIcon: "mdi:mdi-chevron-down",
-    menu: ["Upcoming", "Overdue"],
-  },
-});
-const upcomingCollectionFilters = ref({
-  product: {
-    text: null,
-    appendIcon: "mdi:mdi-chevron-down",
-    menus: [
-      "Biashara",
-      "PRESTA LMS",
-      "Corporate Loan",
-      "Okoa",
-      "Salary Advance",
-    ],
-  } as { text: string | null; appendIcon: string; menus: string[] },
-  status: {
-    text: null,
-    appendIcon: "mdi:mdi-chevron-down",
-    menus: [
-      {
-        title: "Paid",
-        value: "Paid",
-      },
-      {
-        title: "Not Paid",
-        value: "NOTPAID",
-      },
-      {
-        title: "Partially Paid",
-        value: "Partially Paid",
-      },
-    ],
-  } as {
-    text: string | null;
-    appendIcon: string;
-    menus: { title: string; value: string }[];
-  },
-});
-const overdueCollectionFilters = ref({
-  product: {
-    text: null,
-    appendIcon: "mdi:mdi-chevron-down",
-    filterParam: "",
-    menus: [
-      "Biashara",
-      "PRESTA LMS",
-      "Corporate Loan",
-      "Okoa",
-      "Salary Advance",
-    ],
-  } as {
-    text: string | null;
-    appendIcon: string;
-    filterParam: string;
-    menus: string[];
-  },
-  status: {
-    text: null,
-    appendIcon: "mdi:mdi-chevron-down",
-    filterParam: "",
-    menus: [
-      {
-        title: "Paid",
-        value: "&status=Paid",
-      },
-      {
-        title: "Not Paid",
-        value: "&status=NOTPAID",
-      },
-      {
-        title: "Partially Paid",
-        value: "&status=Partially Paid",
-      },
-    ],
-  } as {
-    text: string | null;
-    appendIcon: string;
-    filterParam: string;
-    menus: { title: string; value: string }[];
-  },
-});
-const upComingCollectionActions = ref([
-  {
-    text: "Export",
-    appendIcon: "mdi:mdi-chevron-down",
-    menus: [
-      {
-        text: "Op 1",
-      },
-      {
-        text: "Op 2",
-      },
-      {
-        text: "Op 3",
-      },
-    ],
-  },
-  {
-    text: "Show/Hide",
-    appendIcon: "mdi:mdi-chevron-down",
-    menus: [
-      {
-        text: "Op 1",
-      },
-      {
-        text: "Op 2",
-      },
-      {
-        text: "Op 3",
-      },
-    ],
-  },
-  {
-    text: "This Week",
-    appendIcon: "mdi:mdi-chevron-down",
-    menus: [
-      {
-        text: "Op 1",
-      },
-      {
-        text: "Op 2",
-      },
-      {
-        text: "Op 3",
-      },
-    ],
-  },
-  {
-    text: null,
-    appendIcon: "mdi:mdi-dots-vertical",
-    menus: [
-      {
-        text: "Op 1",
-      },
-      {
-        text: "Op 2",
-      },
-      {
-        text: "Op 3",
-      },
-    ],
-  },
-]);
-
-const newCustomerFilters = ref({
-  status: {
-    text: "Select Onboarding ",
-    filterParam: "",
-    appendIcon: "mdi:mdi-chevron-down",
-    menus: [
-      {
-        title: "Approved",
-        param: "&onboardingStatus=Approved",
-      },
-      { title: "Denied", param: "&onboardingStatus=Denied" },
-    ],
-  },
-  ussd: {
-    text: "Select USSD Status",
-    filterParam: "",
-    appendIcon: "mdi:mdi-chevron-down",
-    menus: [
-      {
-        text: "Has USSD",
-        param: "&hasUssd=YES",
-      },
-      {
-        text: "Lacks USSD",
-        param: "&hasUssd=NO",
-      },
-    ],
-  },
-});
-
-const newCustomerActions = ref([
-  {
-    text: "Export",
-    appendIcon: "mdi:mdi-chevron-down",
-    menus: [
-      {
-        text: "Op 1",
-      },
-      {
-        text: "Op 2",
-      },
-      {
-        text: "Op 3",
-      },
-    ],
-  },
-  {
-    text: "Show/Hide",
-    appendIcon: "mdi:mdi-chevron-down",
-    menus: [
-      {
-        text: "Op 1",
-      },
-      {
-        text: "Op 2",
-      },
-      {
-        text: "Op 3",
-      },
-    ],
-  },
-  {
-    text: "This Week",
-    appendIcon: "mdi:mdi-chevron-down",
-    menus: [
-      {
-        text: "Op 1",
-      },
-      {
-        text: "Op 2",
-      },
-      {
-        text: "Op 3",
-      },
-    ],
-  },
-  {
-    text: null,
-    appendIcon: "mdi:mdi-dots-vertical",
-    menus: [
-      {
-        text: "Op 1",
-      },
-      {
-        text: "Op 2",
-      },
-      {
-        text: "Op 3",
-      },
-    ],
-  },
-]);
-
-watch(salesOverviewFilters, () => {
-  salesOverviewFilters.branches.text
-    ? ((salesDashboardStore.branchIds = [salesOverviewFilters.branches.text]),
-      salesDashboardStore.getSalesRepByBranch(
-        salesOverviewFilters.branches.text
-      ))
-    : (salesDashboardStore.branchIds = ["ALL"]);
-
-  salesOverviewFilters.salesRep.id
-    ? (salesDashboardStore.salesRepIds = [salesOverviewFilters.salesRep.id!])
-    : (salesDashboardStore.salesRepIds = ["ALL"]);
-
-  salesOverviewFilters.dateFilters.value &&
-    dateReturn(salesOverviewFilters.dateFilters.value);
-
-  salesDashboardStore.getStats();
-});
-
-function dateReturn(text: string) {
-  let [start, end] = dateFilters(text) as string[];
-  salesDashboardStore.stats.startDate = start;
-  salesDashboardStore.stats.endDate = end;
-}
-function newCustomerFilterFetch() {
-  let newParam = newCustomerFilters.value.ussd.filterParam.concat(
-    newCustomerFilters.value.status.filterParam
-  );
-  salesDashboardStore.getNewCustomers(newParam);
-}
-function overdueCollectionFilterFetch() {
-  let newParam = overdueCollectionFilters.value.product.filterParam.concat(
-    overdueCollectionFilters.value.status.filterParam
-  );
-  salesDashboardStore.getOverdueCollections(newParam);
-}
-</script>
-
 <style scoped>
 .searchField:focus-visible {
   outline: rgba(128, 128, 128, 0.35) solid 0.5px;
