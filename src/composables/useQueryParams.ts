@@ -7,7 +7,7 @@ export const useQueryParams = (pageables: any) => {
     const queryParams = new URLSearchParams();
     queryParams.set("salesRepRefIds", pageables.salesRepRefIds);
     if (pageables.searchTerm) {
-      queryParams.set("salesRepRefIds", pageables.salesRepRefIds);
+      queryParams.set("searchTerm", pageables.searchTerm);
     }
     if (pageables.onboardingStatus && pageables.onboardingStatus !== "") {
       queryParams.set("onboardingStatus", pageables.onboardingStatus);

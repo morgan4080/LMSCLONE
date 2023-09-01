@@ -2,15 +2,13 @@
 import { onMounted, watch } from "vue";
 import { useSalesDashboardStore } from "@/store/sales-dashboard";
 import LoanApprovals from "@/components/collections/LoanApprovals.vue";
-import DueTodaytable from "@/components/collections/DueTodaytable.vue";
-import DueThisWeekTable from "@/components/collections/DueThisWeekTable.vue";
-import ArrearsTable from "@/components/collections/ArrearsTable.vue";
 import { storeToRefs } from "pinia";
 import { dateFilters } from "@/helpers";
-const salesDashboardStore = useSalesDashboardStore();
-const { tabs, tab, collectionFilter, salesRepIds, stats, salesReps } =
-  storeToRefs(salesDashboardStore);
-const { getSalesReps, getStats, salesOverviewFilters } = salesDashboardStore;
+import CollectionsTable from "@/components/collections/CollectionsTable.vue";
+const { tabs, tab, salesRepIds, collectionFilter, stats, salesReps } =
+  storeToRefs(useSalesDashboardStore());
+const { getSalesReps, getStats, salesOverviewFilters } =
+  useSalesDashboardStore();
 
 onMounted(() => {
   getSalesReps();
@@ -306,37 +304,43 @@ function dateReturn(
                     :value="n"
                   >
                     <v-container
-                      v-if="n === tabs[0]"
+                      v-if="tab === tabs[0]"
                       :fluid="true"
                     >
-                      <due-todaytable
+                      <CollectionsTable
                         :key="Math.random().toString(36).substr(2, 16)"
                         :refId="salesOverviewFilters.salesRep.id"
                         :period="'day'"
+                        title="Due Today"
                       />
                     </v-container>
+
                     <v-container
-                      v-else-if="n === tabs[1]"
+                      v-if="tab === tabs[1]"
                       :fluid="true"
                     >
-                      <due-this-week-table
+                      <CollectionsTable
                         :key="Math.random().toString(36).substr(2, 16)"
                         :ref-id="salesOverviewFilters.salesRep.id"
                         :period="'week'"
+                        title="Due This Week"
                       />
                     </v-container>
+
                     <v-container
-                      v-if="n === tabs[2]"
+                      v-if="tab === tabs[2]"
                       :fluid="true"
                     >
-                      <arrears-table
+                      <CollectionsTable
                         :key="Math.random().toString(36).substr(2, 16)"
                         :ref-id="salesOverviewFilters.salesRep.id"
                         :period="'arrears'"
+                        title="Arrears"
                       />
                     </v-container>
+
                     <v-container
-                      v-if="n === tabs[3]"
+                      v-if="tab === tabs[3]"
                       :fluid="true"
                     >
                       <loan-approvals

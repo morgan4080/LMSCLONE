@@ -15,7 +15,6 @@ export interface KopeshaPagination {
   endDate: string;
 }
 
-
 export interface Collections {
   data: {
     dueDate: string;
@@ -135,10 +134,7 @@ export const useToday = defineStore("todays", () => {
     await generateParams();
     const url = `/api/v1/salesrep/collections/overdue?${params.value}`;
     const { data } = await axios.get(url);
-
     todayCollections.value = data;
-    console.log("todayCollections", todayCollections);
-
     isLoading.value = false;
   };
 

@@ -4,7 +4,6 @@ import { dateFilters, formatMoney } from "@/helpers";
 import { useToday } from "@/salesDashboard/composables/collections/useToday";
 import { useSearch } from "@/composables/useSearch";
 import { storeToRefs } from "pinia";
-import { toRef } from "vue";
 const {
   pageables,
   fetchTodayCollections,
@@ -25,10 +24,8 @@ const { search } = useSearch(pageables, fetchTodayCollections);
 const props = defineProps<{
   refId: string | null;
   period: "day" | "week" | "month" | "quarter" | "year" | "all" | "arrears";
+  title: string;
 }>();
-
-const refId = toRef(props, "refId");
-const period = toRef(props, "period");
 
 const salesDashboardStore = useSalesDashboardStore();
 const kopeshaURL = import.meta.env.VITE_KOPESHA_API_URL;
@@ -40,10 +37,10 @@ type optionsType = {
 };
 
 const loadItems = (options: optionsType) => {
-  if (refId.value) {
-    pageables.salesRepRefIds = refId.value;
+  if (props.refId) {
+    pageables.salesRepRefIds = props.refId;
   }
-  const [start, end] = dateFilters(period.value);
+  const [start, end] = dateFilters(props.period);
   pageables.startDate = start;
   pageables.endDate = end;
   if (options.page === 1) {
@@ -60,7 +57,7 @@ const loadItems = (options: optionsType) => {
 <template>
   <v-row class="v-row d-flex pl-2 gap-4 justify-start my-6">
     <h4 class="font-weight-medium">
-      Due This Week ({{ todayCollections.recordsTotal }})
+      {{ title }} ({{ todayCollections.recordsTotal }})
     </h4>
     <v-spacer></v-spacer>
     <div>

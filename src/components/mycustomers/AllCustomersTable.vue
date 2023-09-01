@@ -1,9 +1,8 @@
 <script setup lang="ts">
-import { useSalesDashboardStore } from "@/store/sales-dashboard";
 import { formatMoney } from "@/helpers";
-import {useSearch} from "@/composables/useSearch";
-import {storeToRefs} from "pinia";
-import {useCustomer} from "@/salesDashboard/composables/mycustomers/useCustomers";
+import { useSearch } from "@/composables/useSearch";
+import { storeToRefs } from "pinia";
+import { useCustomer } from "@/salesDashboard/composables/mycustomers/useCustomers";
 import { toRef } from "vue";
 import { ref } from "vue";
 
@@ -19,20 +18,16 @@ const {
   isLoading,
   selectedOnboardingOption,
   onboardingOptions,
-  selectedExportOption,
-  exportOptions,
-  customersCollections
+  customersCollections,
 } = storeToRefs(useCustomer());
 
-const {search} = useSearch(pageables, fetchCustomersCollections);
+const { search } = useSearch(pageables, fetchCustomersCollections);
 const props = defineProps<{
   refId: string | null;
 }>();
 
 const refId = toRef(props, "refId");
 const selectedOption = ref<{ name: string; value: string } | null>(null);
-
-const salesDashboardStore = useSalesDashboardStore();
 const kopeshaURL = import.meta.env.VITE_KOPESHA_API_URL;
 
 type optionsType = {
@@ -53,16 +48,15 @@ const loadItems = (options: optionsType) => {
   pageables.length = options.itemsPerPage;
   // fetch due today again
   fetchCustomersCollections();
-
 };
-
 </script>
 <template>
   <v-col>
     <v-row class="d-flex justify-center my-2 mx-1">
-<!-- selected onboarding option  -->
-      <v-menu transition="slide-y-transition"
-              v-model="selectedOnboardingOption">
+      <v-menu
+        transition="slide-y-transition"
+        v-model="selectedOnboardingOption"
+      >
         <template #activator="{ props }">
           <v-btn
             variant="outlined"
@@ -72,7 +66,7 @@ const loadItems = (options: optionsType) => {
             class="mr-4 text-none text-caption"
             style="border: 1px solid rgba(128, 128, 128, 0.25)"
           >
-            {{ selectedOption ? selectedOption.name : "Select On-Boarding Period" }}
+            {{ selectedOption ? selectedOption.name : "Onboarded Date" }}
           </v-btn>
         </template>
 
@@ -97,21 +91,19 @@ const loadItems = (options: optionsType) => {
         </v-sheet>
       </v-menu>
 
-
       <v-spacer></v-spacer>
 
       <v-row class="d-flex justify-end">
-        <!-- Search -->
         <div>
           <v-input
             hide-details
             class="px-2 font-weight-light border rounded mr-4"
             density="comfortable"
             style="
-            height: 28px !important;
-            padding-left: 16px !important;
-            padding-right: 16px !important;
-          "
+              height: 28px !important;
+              padding-left: 16px !important;
+              padding-right: 16px !important;
+            "
           >
             <template #append>
               <v-icon
@@ -122,29 +114,24 @@ const loadItems = (options: optionsType) => {
             <template v-slot:default>
               <input
                 class="text-caption searchField custom-input"
-                type="text"
+                type="search"
                 placeholder="Search Here"
                 v-model="pageables.searchTerm"
-                @input="search"
+                @input="search()"
               />
             </template>
           </v-input>
         </div>
-<!--  Export Option -->
 
         <v-btn
           class="v-btn--size-default text-caption text-capitalize mr-6"
           density="comfortable"
-
           variant="tonal"
           style="border: 1px solid rgba(128, 128, 128, 0.25)"
-          @click="
-''
-        "
         >
-         Export
+          Export
         </v-btn>
-<!--  clearing options -->
+        <!--  clearing options -->
         <v-btn
           class="v-btn--size-default text-caption text-capitalize mr-6"
           density="comfortable"
@@ -153,20 +140,20 @@ const loadItems = (options: optionsType) => {
           variant="tonal"
           style="border: 1px solid rgba(128, 128, 128, 0.25)"
           @click="
-          setSelectedExportOption(null);
-          setSelectedOnboardingOption(null);
-          pageables.repaymentStatus = '';
-          pageables.draw = 1;
-          pageables.searchTerm = '';
-          pageables.salesRepRefIds = '';
-          pageables.startDate = '';
-          pageables.endDate = '';
-          pageables.endDate = '';
-          pageables.start = 0;
-          pageables.length = 10;
+            setSelectedExportOption(null);
+            setSelectedOnboardingOption(null);
+            pageables.repaymentStatus = '';
+            pageables.draw = 1;
+            pageables.searchTerm = '';
+            pageables.salesRepRefIds = '';
+            pageables.startDate = '';
+            pageables.endDate = '';
+            pageables.endDate = '';
+            pageables.start = 0;
+            pageables.length = 10;
 
-          fetchCustomersCollections();
-        "
+            fetchCustomersCollections();
+          "
         >
           Clear Filters
         </v-btn>
@@ -174,7 +161,7 @@ const loadItems = (options: optionsType) => {
     </v-row>
   </v-col>
 
-<!--  Table -->
+  <!--  Table -->
   <v-data-table-server
     :headers="headers as any"
     :items="customersCollections.data"
@@ -190,19 +177,19 @@ const loadItems = (options: optionsType) => {
     :last-icon="''"
     :show-current-page="true"
     :items-per-page-options="[
-            {
-              title: '5',
-              value: 5,
-            },
-            {
-              title: '10',
-              value: 10,
-            },
-            {
-              title: '50',
-              value: 50,
-            },
-          ]"
+      {
+        title: '5',
+        value: 5,
+      },
+      {
+        title: '10',
+        value: 10,
+      },
+      {
+        title: '50',
+        value: 50,
+      },
+    ]"
     @update:options="loadItems"
   >
     <template v-slot:[`item.dueDate`]="{ item }">
@@ -227,14 +214,14 @@ const loadItems = (options: optionsType) => {
     </template>
     <template v-slot:[`item.status`]="{ item }">
       <v-chip
-        label
+        :label="true"
         :color="
-            item.raw.status === 'Paid'
-              ? 'green'
-              : item.raw.status === 'Not Paid'
-              ? 'red'
-              : 'yellow'
-          "
+          item.raw.status === 'Paid'
+            ? 'green'
+            : item.raw.status === 'Not Paid'
+            ? 'red'
+            : 'yellow'
+        "
       >
         {{ item.raw.status }}
       </v-chip>
@@ -284,7 +271,7 @@ const loadItems = (options: optionsType) => {
 </template>
 
 <style scoped>
-.custom-input{
+.custom-input {
   outline-style: none;
 }
 </style>
