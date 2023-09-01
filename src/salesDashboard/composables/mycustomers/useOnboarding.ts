@@ -1,70 +1,139 @@
-import {reactive, ref, watch} from "vue";
+import { reactive, ref, watch } from "vue";
 import { useQueryParams } from "@/composables/useQueryParams";
-import { Pageables } from "@/types";
-import {defineStore} from "pinia";
-import axios from "@/services/api/axiosKopesha"
+import { defineStore } from "pinia";
+import axios from "@/services/api/axiosKopesha";
+
+export interface KopeshaPagination {
+  salesRepRefIds: string;
+  searchTerm: string;
+  productName: string;
+  repaymentStatus: string;
+  draw: number;
+  start: number;
+  length: number;
+  startDate: string;
+  endDate: string;
+}
+
+export interface Collections{
+  data: {
+    refId: string,
+    created: string,
+    fullName:string
+    phoneNumber: string,
+    approvalLimit: number,
+    activeLoan: number,
+    onboardingStatus: string,
+    hasUssd: string,
+    dayJoined: string,
+    keycloakId: string,
+  }[];
+  draw: number;
+  start: number;
+  length: number;
+  recordsFiltered: number;
+  recordsTotal: number;
+}
 
 export const useOnboarding = defineStore("onboarding", () => {
-    const pageables = reactive({
-        recordsPerPage: 5,
-        totalRecords: 0,
-        totalPages: 0,
-        currentPage: 0,
-        sort: "ASC",
-        searchTerm: undefined,
-        order: "ASC",
-        group: undefined,
-        appId: undefined,
-    }) as Pageables & { group: string | undefined; appId: string | undefined }
-    const {params, generateParams} = useQueryParams(pageables);
-    const onboardingCollections = ref([]);
-    const isLoading = ref(false);
+  const pageables = reactive({
+    salesRepRefIds: "ALL",
+    branchNames: "ALL",
+    searchTerm: "",
+    productName: "",
+    repaymentStatus: "",
+    draw: 1,
+    start: 0,
+    length: 10,
+    startDate: "",
+    endDate: "",
+  }) as KopeshaPagination & { branchNames: string };
 
-    // export
-    const selectedExportOption = ref<{ name: string; value: string } | null>(null);
-    const exportOptions = ref<{ name: string; value: string }[]>([
-        { name: "CSV", value: "csv" },
-    ]);
-    const setSelectedExportOption = async (option: { name: string; value: string } | null) => {
-        selectedExportOption.value = option;
+  const {params, generateParams} = useQueryParams(pageables);
+  const onBoardingCollections = ref<Collections>({
+    data: [],
+    draw: 1,
+    start: 0,
+    length: 10,
+    recordsFiltered: 0,
+    recordsTotal: 0,
+  } )
+  const isLoading = ref(false);
+
+  // export
+  const selectedExportOption = ref<{ name: string; value: string } | null>(null);
+  const exportOptions = ref<{ name: string; value: string }[]>([
+    { name: "CSV", value: "csv" },
+  ]);
+  const setSelectedExportOption = async (option: { name: string; value: string } | null) => {
+    selectedExportOption.value = option;
+  }
+  const exportData = async () => {
+    console.log("value changed", selectedExportOption.value);
+  }
+  watch(selectedExportOption, async (value) => {
+    if (value) {
+      await exportData();
     }
-    const exportData = async () => {
-        console.log("value changed", selectedExportOption.value);
+  })
+
+//   onboarding period
+
+  const selectedOnboardingOption = ref<{ name: string; value: string } | null>(null);
+  const onboardingOptions = ref<{ name: string; value: string }[]>([
+    { name: "All", value: "all" },
+    { name: "Approved", value: "approved" },
+    { name: "Declined", value: "declined" },
+  ]);
+  const setSelectedOnboardingOption = async (option: { name: string; value: string } | null) => {
+    selectedOnboardingOption.value = option;
+  }
+  const onboardingData = async () => {
+    console.log("value changed", selectedOnboardingOption.value);
+  }
+  watch(selectedOnboardingOption, async (value) => {
+    if (value) {
+      await onboardingData();
     }
-    watch(selectedExportOption, async (value) => {
-        if (value) {
-        await exportData();
-        }
-    })
-//    headers
+  })
+//   headers
   const headers = ref<
     { title: string; key: string; align: string; sortable: boolean }[]>([
-    {title: "Application Date", align: "start", sortable: false, key: "applicationdate",},
-    {title: "Names", key: "name", align: "end", sortable: false,},
-    { title: "Phone No", key: "phoneno", align: "end", sortable: false },
-    { title: "Loan Limit", key: "loanlimit", align: "end", sortable: false },
-    { title: "Onboarding", key: "onboarding", align: "end", sortable: false },
-    { title: "Actions", key: "refId", align: "end", sortable: false },
+    {title: "Application Date", align: "start", sortable: false, key: "dayJoined",},
+    {title: "Names", key: "fullName", align: "end", sortable: false,},
+    { title: "Phone No", key: "phoneNumber", align: "end", sortable: false },
+    { title: "Loan Limit", key: "approvalLimit", align: "end", sortable: false },
+    { title: "Onboarding", key: "activeLoan", align: "end", sortable: false },
+    { title: "Actions", key: "refId", align: "start", sortable: false },
   ]);
 
-//     fetch onboarding
-    const fetchOnboarding = async () => {
-        isLoading.value = true;
-        await generateParams();
-        const { data } = await axios.get(
-            `/api/v1/collections/onboarding?${params.value}`
-        );
-        onboardingCollections.value = data.data;
-        isLoading.value = false;
-    }
-    return {
-      pageables,
-      fetchOnboarding,
-      headers,
-      isLoading,
+  //fetching on the customers
+  const fetchOnBoardingCollections = async () => {
+    isLoading.value = true;
+    await generateParams();
+    const url = `/api/v1/salesrep/customers?${params.value}`;
+    const { data } = await axios.get(url);
+   onBoardingCollections.value = data;
+    isLoading.value = false;
+  }
 
-      setSelectedExportOption,
-      selectedExportOption,
-      exportOptions,
-    }
+  return {
+    pageables,
+    fetchOnBoardingCollections,
+    headers,
+    isLoading,
+    onBoardingCollections,
+
+    selectedOnboardingOption,
+    onboardingOptions,
+    setSelectedOnboardingOption,
+
+    selectedExportOption,
+    exportOptions,
+    setSelectedExportOption,
+  }
 });
+
+
+
+

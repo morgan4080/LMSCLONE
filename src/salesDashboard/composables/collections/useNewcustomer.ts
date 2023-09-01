@@ -47,8 +47,8 @@ export const useNewcustomer = defineStore("newcustomer", () => {
     const selectedUssdOption = ref<{ name: string; value: string } | null>(null);
     const ussdOptions = ref<{ name: string; value: string }[]>([
         { name: "All Ussd", value: "allussd" },
-        { name: "Has Ussd", value: "hasussd" },
-        { name: "No Ussd", value: "noussd" },
+        { name: "Has Ussd", value: "hasUssd" },
+        { name: "No Ussd", value: "noUssd" },
     ]);
     const setSelectedUssdOption = async (option: { name: string; value: string } | null) => {
         selectedUssdOption.value = option;

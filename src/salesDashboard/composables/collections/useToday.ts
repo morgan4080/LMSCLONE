@@ -15,6 +15,7 @@ export interface KopeshaPagination {
   endDate: string;
 }
 
+
 export interface Collections {
   data: {
     dueDate: string;
@@ -136,6 +137,7 @@ export const useToday = defineStore("todays", () => {
     const { data } = await axios.get(url);
 
     todayCollections.value = data;
+    console.log("todayCollections", todayCollections);
 
     isLoading.value = false;
   };

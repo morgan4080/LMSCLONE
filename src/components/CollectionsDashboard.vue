@@ -10,6 +10,7 @@ import DueThisWeekTable from "@/components/collections/DueThisWeekTable.vue";
 import ArrearsTable from "@/components/collections/ArrearsTable.vue";
 import { storeToRefs } from "pinia";
 const salesDashboardStore = useSalesDashboardStore();
+
 const {
   tabs,
   tab,

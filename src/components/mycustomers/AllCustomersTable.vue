@@ -3,11 +3,34 @@ import { useSalesDashboardStore } from "@/store/sales-dashboard";
 import { formatMoney } from "@/helpers";
 import {useSearch} from "@/composables/useSearch";
 import {storeToRefs} from "pinia";
-import {useCustomers} from "@/salesDashboard/composables/mycustomers/useCustomers";
+import {useCustomer} from "@/salesDashboard/composables/mycustomers/useCustomers";
+import { toRef } from "vue";
+import { ref } from "vue";
 
-const {pageables, fetchMyCustomers, setSelectedExportOption, setSelectedOnboardingOption,} = useCustomers();
-const {headers, isLoading, selectedOnboardingOption, onboardingOptions, selectedExportOption, exportOptions,} = storeToRefs(useCustomers());
-const {search} = useSearch(pageables, fetchMyCustomers);
+const {
+  pageables,
+  fetchCustomersCollections,
+  setSelectedExportOption,
+  setSelectedOnboardingOption,
+} = useCustomer();
+
+const {
+  headers,
+  isLoading,
+  selectedOnboardingOption,
+  onboardingOptions,
+  selectedExportOption,
+  exportOptions,
+  customersCollections
+} = storeToRefs(useCustomer());
+
+const {search} = useSearch(pageables, fetchCustomersCollections);
+const props = defineProps<{
+  refId: string | null;
+}>();
+
+const refId = toRef(props, "refId");
+const selectedOption = ref<{ name: string; value: string } | null>(null);
 
 const salesDashboardStore = useSalesDashboardStore();
 const kopeshaURL = import.meta.env.VITE_KOPESHA_API_URL;
@@ -19,9 +42,18 @@ type optionsType = {
 };
 
 const loadItems = (options: optionsType) => {
-  pageables.currentPage = options.page - 1;
-  pageables.recordsPerPage = options.itemsPerPage;
-  fetchMyCustomers();
+  if (refId.value) {
+    pageables.salesRepRefIds = refId.value;
+  }
+  if (options.page === 1) {
+    pageables.start = 0;
+  } else {
+    pageables.start = options.itemsPerPage + 1;
+  }
+  pageables.length = options.itemsPerPage;
+  // fetch due today again
+  fetchCustomersCollections();
+
 };
 
 </script>
@@ -29,39 +61,42 @@ const loadItems = (options: optionsType) => {
   <v-col>
     <v-row class="d-flex justify-center my-2 mx-1">
 <!-- selected onboarding option  -->
-      <v-menu transition="slide-y-transition">
+      <v-menu transition="slide-y-transition"
+              v-model="selectedOnboardingOption">
         <template #activator="{ props }">
           <v-btn
             variant="outlined"
-            density="compact"
+            density="comfortable"
             append-icon="mdi:mdi-chevron-down"
             v-bind="props"
             class="mr-4 text-none text-caption"
             style="border: 1px solid rgba(128, 128, 128, 0.25)"
           >
-            {{ selectedOnboardingOption ? selectedOnboardingOption.name : 'Select Onboarding Period' }}
+            {{ selectedOption ? selectedOption.name : "Select On-Boarding Period" }}
           </v-btn>
         </template>
+
         <v-sheet
           border
           rounded
         >
           <v-list
             :nav="true"
-            density="compact"
+            density="comfortable"
             role="listbox"
           >
             <v-list-item
               v-for="(item, idx) in onboardingOptions"
               :key="idx"
               :value="item"
-              @click="setSelectedOnboardingOption(item)"
+              @click="selectedOnboardingOption = item"
             >
-              {{ item.name }}</v-list-item
-            >
+              {{ item.name }}
+            </v-list-item>
           </v-list>
         </v-sheet>
       </v-menu>
+
 
       <v-spacer></v-spacer>
 
@@ -69,14 +104,24 @@ const loadItems = (options: optionsType) => {
         <!-- Search -->
         <div>
           <v-input
-            append-icon="mdi:mdi-magnify"
             hide-details
-            class="px-2 font-weight-light mx-10  border rounded "
+            class="px-2 font-weight-light border rounded mr-4"
             density="comfortable"
+            style="
+            height: 28px !important;
+            padding-left: 16px !important;
+            padding-right: 16px !important;
+          "
           >
+            <template #append>
+              <v-icon
+                icon="mdi mdi-magnify"
+                size="small"
+              />
+            </template>
             <template v-slot:default>
               <input
-                class="text-caption searchField custom-input "
+                class="text-caption searchField custom-input"
                 type="text"
                 placeholder="Search Here"
                 v-model="pageables.searchTerm"
@@ -86,51 +131,42 @@ const loadItems = (options: optionsType) => {
           </v-input>
         </div>
 <!--  Export Option -->
-        <v-menu transition="slide-y-transition">
-          <template #activator="{ props }">
-            <v-btn
-              variant="outlined"
-              density="compact"
-              append-icon="mdi:mdi-chevron-down"
-              v-bind="props"
-              class="mr-4 text-none text-caption"
-              style="border: 1px solid rgba(128, 128, 128, 0.25)"
-            >
-              {{ selectedExportOption ? selectedExportOption.name : 'Export' }}
-            </v-btn>
-          </template>
-          <v-sheet
-            border
-            rounded
-          >
-            <v-list
-              :nav="true"
-              density="compact"
-              role="listbox"
-            >
-              <v-list-item
-                v-for="(item, idx) in exportOptions"
-                :key="idx"
-                :value="item"
-                @click="setSelectedExportOption(item)"
-              >
-                {{ item.name }}</v-list-item
-              >
-            </v-list>
-          </v-sheet>
-        </v-menu>
+
+        <v-btn
+          class="v-btn--size-default text-caption text-capitalize mr-6"
+          density="comfortable"
+
+          variant="tonal"
+          style="border: 1px solid rgba(128, 128, 128, 0.25)"
+          @click="
+''
+        "
+        >
+         Export
+        </v-btn>
 <!--  clearing options -->
         <v-btn
           class="v-btn--size-default text-caption text-capitalize mr-6"
-          density="compact"
+          density="comfortable"
           append-icon="mdi:mdi-close"
           color="primary"
           variant="tonal"
           style="border: 1px solid rgba(128, 128, 128, 0.25)"
           @click="
-           setSelectedExportOption(null);
-           setSelectedOnboardingOption(null);
-          "
+          setSelectedExportOption(null);
+          setSelectedOnboardingOption(null);
+          pageables.repaymentStatus = '';
+          pageables.draw = 1;
+          pageables.searchTerm = '';
+          pageables.salesRepRefIds = '';
+          pageables.startDate = '';
+          pageables.endDate = '';
+          pageables.endDate = '';
+          pageables.start = 0;
+          pageables.length = 10;
+
+          fetchCustomersCollections();
+        "
         >
           Clear Filters
         </v-btn>
@@ -140,13 +176,13 @@ const loadItems = (options: optionsType) => {
 
 <!--  Table -->
   <v-data-table-server
-    :headers="headers"
-    :items="salesDashboardStore.upcomingCollections.data"
-    :items-per-page="pageables.recordsPerPage"
-    :items-length="pageables.totalRecords"
-    :server-items-length="salesDashboardStore.upcomingCollections.recordsTotal"
+    :headers="headers as any"
+    :items="customersCollections.data"
+    :items-per-page="pageables.length"
+    :items-length="customersCollections.recordsTotal"
+    :server-items-length="customersCollections.recordsFiltered"
     :isLoading="isLoading"
-    :search="search"
+    :search="pageables.searchTerm || pageables.onboardingStatus"
     no-data-text="No data available"
     isLoading-text="isLoading"
     :items-per-page-text="'Show'"
@@ -204,15 +240,45 @@ const loadItems = (options: optionsType) => {
       </v-chip>
     </template>
     <template v-slot:[`item.refId`]="{ item }">
-      <v-btn
-        icon
+      <a
         :href="`${kopeshaURL}/lender/index.html#/loans/loanprofile/${item.raw.refId}`"
       >
-        <v-icon
-          icon="mdi-wifi"
+        <v-btn
+          variant="outlined"
+          density="compact"
           size="small"
-        ></v-icon>
-      </v-btn>
+          class="action-btn action-btn-icon mx-1"
+          :color="'secondary'"
+        >
+          <v-icon icon="mdi mdi-eye" />
+        </v-btn>
+      </a>
+      <a
+        :href="`${kopeshaURL}/lender/index.html#/loans/loanprofile/${item.raw.refId}`"
+      >
+        <v-btn
+          variant="outlined"
+          density="compact"
+          size="small"
+          class="action-btn action-btn-icon mx-1"
+          :color="'secondary'"
+        >
+          <v-icon icon="mdi mdi-pencil" />
+        </v-btn>
+      </a>
+      <a
+        :href="`${kopeshaURL}/lender/index.html#/loans/loanprofile/${item.raw.refId}`"
+      >
+        <v-btn
+          variant="outlined"
+          density="compact"
+          size="small"
+          class="action-btn action-btn-icon mx-1"
+          :color="'secondary'"
+        >
+          <v-icon icon="mdi mdi-plus" />
+        </v-btn>
+      </a>
     </template>
   </v-data-table-server>
 </template>

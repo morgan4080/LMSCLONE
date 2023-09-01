@@ -71,6 +71,10 @@ export const useSalesDashboardStore = defineStore(
       "In Arrears",
       "Loan Approvals",
     ]);
+    const myCustomerTabs= ref([
+        "All Customers",
+        "Onboarding Approvals"
+    ]);
     const tab = ref<string | null>(null);
     const salesOverviewFilters = reactive({
       branches: {
@@ -469,6 +473,7 @@ export const useSalesDashboardStore = defineStore(
       upcomingCollections,
       overdueCollections,
       newCustomers,
+      myCustomerTabs,
       tabs,
       tab,
       salesOverviewFilters,

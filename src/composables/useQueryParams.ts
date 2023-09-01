@@ -5,18 +5,28 @@ export const useQueryParams = (pageables: any) => {
 
   async function generateParams() {
     const queryParams = new URLSearchParams();
-    if (pageables.salesRepRefIds && pageables.salesRepRefIds !== "")
-      queryParams.set("salesRepRefIds", pageables.salesRepRefIds);
-    if (pageables.searchTerm && pageables.searchTerm !== "")
+    queryParams.set("salesRepRefIds", pageables.salesRepRefIds);
+    if (pageables.branchNames) {
+      queryParams.set("branchNames", pageables.branchNames);
+    }
+    if (pageables.searchTerm) {
       queryParams.set("searchTerm", pageables.searchTerm);
-    if (pageables.productName && pageables.productName !== "")
+    }
+    if (pageables.onboardingStatus && pageables.onboardingStatus !== "") {
+      queryParams.set("onboardingStatus", pageables.onboardingStatus);
+    }
+    if (pageables.productName && pageables.productName !== "") {
       queryParams.set("productName", pageables.productName);
-    if (pageables.repaymentStatus && pageables.repaymentStatus !== "")
+    }
+    if (pageables.repaymentStatus && pageables.repaymentStatus !== "") {
       queryParams.set("repaymentStatus", pageables.repaymentStatus);
-    if (pageables.startDate && pageables.startDate !== "")
+    }
+    if (pageables.startDate && pageables.startDate !== "") {
       queryParams.set("startDate", pageables.startDate);
-    if (pageables.endDate && pageables.endDate !== "")
+    }
+    if (pageables.endDate && pageables.endDate !== "") {
       queryParams.set("endDate", pageables.endDate);
+    }
     queryParams.set("draw", pageables.draw);
     queryParams.set("start", pageables.start);
     queryParams.set("length", pageables.length);

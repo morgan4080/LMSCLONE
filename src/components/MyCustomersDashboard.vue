@@ -1,66 +1,43 @@
 <script lang="ts" setup>
-import {onBeforeMount, reactive, ref, watch} from "vue";
+import { onMounted, reactive, ref, watch } from "vue";
 import { useSalesDashboardStore } from "@/store/sales-dashboard";
 import AllCustomersTable from "@/components/mycustomers/AllCustomersTable.vue";
 import OnboardingApprovalTable from "@/components/mycustomers/OnboardingApprovalTable.vue";
 import { dateFilters } from "@/helpers";
 import OverdueCollectionsTable from "@/components/OverdueCollectionsTable.vue";
 const salesDashboardStore = useSalesDashboardStore();
+import { storeToRefs } from "pinia";
+import DueTodaytable from "@/components/collections/DueTodaytable.vue";
 
-async function initialize() {
-  await salesDashboardStore.getBranches();
-  await salesDashboardStore.getStats();
-  await salesDashboardStore.getUpcomingCollections();
-  await salesDashboardStore.getOverdueCollections();
-  await salesDashboardStore.getSalesRepByBranch("HQ");
-}
 
-const tabs = ref(["All Customers", "Onboarding Approvals"]);
-const tab = ref<string | null>(null);
+const {
 
-onBeforeMount(async () => {
-  await initialize();
-});
+  tab,
+  myCustomerTabs,
+  newCustomerFilters,
+  overdueCollectionFilters,
+  upcomingCollectionFilters,
+  upComingCollectionActions,
+  newCustomerActions,
+  collectionFilter,
+} = storeToRefs(salesDashboardStore);
 
-const salesOverviewFilters = reactive({
-  branches: {
-    text: null,
-    appendIcon: "mdi:mdi-chevron-down",
-  } as {
-    text: string | null;
-    appendIcon: string;
-  },
-  salesRep: {
-    text: null,
-    id: null,
-    appendIcon: "mdi:mdi-chevron-down",
-  } as {
-    text: string | null;
-    id: string | null;
-    appendIcon: string;
-  },
-  dateFilters: {
-    text: "All Time",
-    value: null,
-    appendIcon: "mdi:mdi-chevron-down",
-    menus: [
-      { title: "All Time", value: "all" },
-      { title: "This Year", value: "year" },
-      { title: "This Month", value: "month" },
-      { title: "This Week", value: "week" },
-    ],
-  } as {
-    text: string;
-    value: string | null;
-    appendIcon: string;
-    menus: { title: string; value: string }[];
-  },
-});
 
-const collectionFilter = ref({
-  collections: {
-    name: "Customer Listing",
-  },
+const {
+  getSalesRepByBranch,
+  getStats,
+  getBranches,
+  getUpcomingCollections,
+  getOverdueCollections,
+  salesOverviewFilters,
+} = salesDashboardStore;
+
+onMounted(() => {
+  getSalesRepByBranch();
+  getStats();
+  getBranches();
+  getUpcomingCollections();
+  getOverdueCollections();
 });
 
 watch(salesOverviewFilters, () => {
@@ -86,6 +63,33 @@ function dateReturn(text: string) {
   salesDashboardStore.stats.startDate = start;
   salesDashboardStore.stats.endDate = end;
 }
+async function initialize() {
+  await salesDashboardStore.getBranches();
+  await salesDashboardStore.getStats();
+  await salesDashboardStore.getUpcomingCollections();
+  await salesDashboardStore.getOverdueCollections();
+  await salesDashboardStore.getSalesRepByBranch("HQ");
+}
+
+
+watch(salesOverviewFilters, () => {
+  salesOverviewFilters.branches.text
+      ? ((salesDashboardStore.branchIds = [salesOverviewFilters.branches.text]),
+          salesDashboardStore.getSalesRepByBranch(
+              salesOverviewFilters.branches.text
+          ))
+      : (salesDashboardStore.branchIds = ["ALL"]);
+
+  salesOverviewFilters.salesRep.id
+      ? (salesDashboardStore.salesRepIds = [salesOverviewFilters.salesRep.id!])
+      : (salesDashboardStore.salesRepIds = ["ALL"]);
+
+  salesOverviewFilters.dateFilters.value &&
+  dateReturn(salesOverviewFilters.dateFilters.value);
+
+  salesDashboardStore.getStats();
+});
+
 
 </script>
 <template>
@@ -111,94 +115,56 @@ function dateReturn(text: string) {
         >
           <v-row class="d-flex justify-end">
             <div class="px-3">
-              <v-menu transition="slide-y-transition">
-                <template v-slot:activator="{ props }">
-                  <v-btn
-                    class="v-btn--size-default text-caption text-capitalize"
-                    density="default"
-                    :append-icon="salesOverviewFilters.branches.appendIcon"
-                    v-bind="props"
-                    flat
-                    style="border: 1px solid rgba(128, 128, 128, 0.25)"
-                  >
-                    {{ salesOverviewFilters.branches.text || "All Branches" }}
-                  </v-btn>
-                </template>
-                <v-sheet
-                  border
-                  rounded
-                >
-                  <v-list
-                    nav
-                    density="compact"
-                    role="listbox"
-                  >
-                    <v-list-item
-                      density="compact"
-                      @click="salesOverviewFilters.branches.text = ''"
-                    >All</v-list-item
-                    >
-                    <v-list-item
-                      v-for="(dropDownMenu, it) in salesDashboardStore.branches"
-                      :key="it"
-                      :value="it"
-                      density="compact"
-                      @click="
-                        salesOverviewFilters.branches.text =
-                          dropDownMenu.toString()
-                      "
-                    >{{ dropDownMenu }}</v-list-item
-                    >
-                  </v-list>
-                </v-sheet>
-              </v-menu>
+
             </div>
             <div class="px-3">
               <v-menu transition="slide-y-transition">
                 <template v-slot:activator="{ props }">
                   <v-btn
-                    class="v-btn--size-default text-caption text-capitalize"
-                    density="default"
-                    :append-icon="salesOverviewFilters.salesRep.appendIcon"
-                    v-bind="props"
-                    flat
-                    style="border: 1px solid rgba(128, 128, 128, 0.25)"
+                      class="v-btn--size-default text-caption text-capitalize"
+                      density="default"
+                      :append-icon="salesOverviewFilters.salesRep.appendIcon"
+                      v-bind="props"
+                      :flat="true"
+                      style="border: 1px solid rgba(128, 128, 128, 0.25)"
                   >
                     {{ salesOverviewFilters.salesRep.text || "All Sales Rep" }}
                   </v-btn>
                 </template>
                 <v-sheet
-                  border
-                  rounded
+                    border
+                    rounded
                 >
                   <v-list
-                    nav
-                    density="compact"
-                    role="listbox"
+                      :nav="true"
+                      density="compact"
+                      role="listbox"
                   >
                     <v-list-item
-                      density="compact"
-                      @click="
+                        density="compact"
+                        @click="
                         (salesOverviewFilters.salesRep.text = null),
                           (salesOverviewFilters.salesRep.id = null)
                       "
                     >All</v-list-item
                     >
                     <v-list-item
-                      v-for="(
+                        v-for="(
                         dropDownMenu, it
                       ) in salesDashboardStore.salesReps"
-                      :key="it"
-                      :value="it"
-                      density="compact"
-                      @click="
+                        :key="it"
+                        :value="it"
+                        density="compact"
+                        @click="
                         (salesOverviewFilters.salesRep.text =
-                          dropDownMenu.name.toString()),
+                          dropDownMenu.firstName.toString()),
                           (salesOverviewFilters.salesRep.id =
                             dropDownMenu.refId)
                       "
-                    >{{ dropDownMenu.name }}</v-list-item
+                        :title="`${dropDownMenu.firstName} ${dropDownMenu.lastName}`"
+                        :subtitle="`${dropDownMenu.phoneNumber}`"
                     >
+                    </v-list-item>
                   </v-list>
                 </v-sheet>
               </v-menu>
@@ -301,10 +267,7 @@ function dateReturn(text: string) {
                 <div class="text-h6 font-weight-regular py-2 text-green">
                   {{ salesDashboardStore.stats.overdueCollections }} Customers
                 </div>
-
               </div>
-
-
               <div class="d-flex justify-space-between">
                 <div class="text-caption font-weight-regular text-normal">
                   This Month
@@ -351,11 +314,11 @@ function dateReturn(text: string) {
                   <v-row>
                     <v-col sm="4">
                       <h1 class="text-h6 font-weight-regular">
-                        {{ collectionFilter.collections.name }}
+                       Customer Listing
                       </h1>
                       <div class="text-caption font-weight-light mb-n1">
                         Summary
-                        {{ collectionFilter.collections.name }}
+                       Of Your Customers
                       </div>
                     </v-col>
                     <v-col
@@ -385,7 +348,7 @@ function dateReturn(text: string) {
                   class="text-none px-3 -mb-1 mt-5"
                 >
                   <v-tab
-                    v-for="(t, ind) in tabs"
+                    v-for="(t, ind) in myCustomerTabs"
                     :key="ind"
                     :value="t"
                     class="text-none text-caption"
@@ -395,21 +358,28 @@ function dateReturn(text: string) {
 
                 <v-window v-model="tab">
                   <v-window-item
-                    v-for="n in tabs"
+                    v-for="n in myCustomerTabs"
                     :key="n"
                     :value="n"
                   >
                     <v-container
-                      v-if="n === tabs[0]"
+                      v-if="n === myCustomerTabs[0]"
                       :fluid="true"
                     >
-                   <all-customers-table />
+                   <all-customers-table
+                       :key="Math.random().toString(36).substr(2, 16)"
+                       :refId="salesOverviewFilters.salesRep.id"
+                   />
                     </v-container>
                     <v-container
-                      v-else-if="n === tabs[1]"
+                      v-else-if="n === myCustomerTabs[1]"
                       :fluid="true"
                     >
-                   <onboarding-approval-table/>
+                   <onboarding-approval-table
+                     :key="Math.random().toString(36).substr(2, 16)"
+                     :refId="salesOverviewFilters.salesRep.id"
+                   />
+                   />
                     </v-container>
 
                   </v-window-item>

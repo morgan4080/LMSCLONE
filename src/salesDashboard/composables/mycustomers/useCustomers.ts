@@ -1,23 +1,64 @@
-import {reactive, ref, watch} from "vue";
+import { reactive, ref, watch } from "vue";
 import { useQueryParams } from "@/composables/useQueryParams";
-import { Pageables } from "@/types";
-import {defineStore} from "pinia";
-import axios from "@/services/api/axiosKopesha"
+import { defineStore } from "pinia";
+import axios from "@/services/api/axiosKopesha";
 
-export const useCustomers = defineStore("customers", () => {
+export interface KopeshaPagination {
+  salesRepRefIds: string;
+  searchTerm: string;
+  onboardingStatus: "Approved" | "Pending" | "";
+  productName: string;
+  repaymentStatus: string;
+  draw: number;
+  start: number;
+  length: number;
+  startDate: string;
+  endDate: string;
+}
+
+export interface Collections{
+  data: {
+    refId: string,
+    created: string,
+    fullName:string
+    phoneNumber: string,
+    approvalLimit: number,
+    activeLoan: number,
+    onboardingStatus: string,
+    hasUssd: string,
+    dayJoined: string,
+    keycloakId: string,
+  }[];
+  draw: number;
+  start: number;
+  length: number;
+  recordsFiltered: number;
+  recordsTotal: number;
+}
+
+export const useCustomer = defineStore("customers", () => {
   const pageables = reactive({
-    recordsPerPage: 5,
-    totalRecords: 0,
-    totalPages: 0,
-    currentPage: 0,
-    sort: "ASC",
-    searchTerm: undefined,
-    order: "ASC",
-    group: undefined,
-    appId: undefined,
-  }) as Pageables & { group: string | undefined; appId: string | undefined }
+    salesRepRefIds: "",
+    onboardingStatus: "",
+    searchTerm: "",
+    productName: "",
+    repaymentStatus: "",
+    draw: 1,
+    start: 0,
+    length: 10,
+    startDate: "",
+    endDate: "",
+  }) as KopeshaPagination;
+
   const {params, generateParams} = useQueryParams(pageables);
-  const mycustomersCollections = ref([]);
+  const customersCollections = ref<Collections>({
+    data: [],
+    draw: 1,
+    start: 0,
+    length: 10,
+    recordsFiltered: 0,
+    recordsTotal: 0,
+  } )
   const isLoading = ref(false);
 
   // export
@@ -41,9 +82,9 @@ export const useCustomers = defineStore("customers", () => {
 
 const selectedOnboardingOption = ref<{ name: string; value: string } | null>(null);
 const onboardingOptions = ref<{ name: string; value: string }[]>([
-  { name: "All", value: "all" },
-  { name: "Approved", value: "approved" },
-  { name: "Declined", value: "declined" },
+  { name: "All", value: "" },
+  { name: "Approved", value: "Approved" },
+  { name: "Declined", value: "Pending" },
 ]);
 const setSelectedOnboardingOption = async (option: { name: string; value: string } | null) => {
   selectedOnboardingOption.value = option;
@@ -59,30 +100,30 @@ watch(selectedOnboardingOption, async (value) => {
 //   headers
   const headers = ref<
     { title: string; key: string; align: string; sortable: boolean }[]>([
-    {title: "Date Joined", align: "start", sortable: false, key: "datejoined",},
-    {title: "Names", key: "name", align: "end", sortable: false,},
-    { title: "Phone No", key: "phoneno", align: "end", sortable: false },
-    { title: "Loan Limit", key: "loanlimit", align: "end", sortable: false },
-    { title: "Active Loan", key: "activeloan", align: "end", sortable: false },
+    {title: "Date Joined", align: "start", sortable: false, key: "dayJoined",},
+    {title: "Names", key: "fullName", align: "end", sortable: false,},
+    { title: "Phone No", key: "phoneNumber", align: "end", sortable: false },
+    { title: "Loan Limit", key: "approvalLimit", align: "end", sortable: false },
+    { title: "Active Loan", key: "activeLoan", align: "end", sortable: false },
     { title: "Actions", key: "refId", align: "end", sortable: false },
   ]);
 
   //fetching on the customers
-  const fetchMyCustomers = async () => {
+  const fetchCustomersCollections = async () => {
     isLoading.value = true;
     await generateParams();
-    const {data} = await axios.get(
-      "/mycustomers", {params: params.value}
-    );
-    mycustomersCollections.value = data.data;
+    const url = `/api/v1/salesrep/customers?${params.value}`;
+     const { data } = await axios.get(url);
+    customersCollections.value = data;
     isLoading.value = false;
   }
 
   return {
     pageables,
-    fetchMyCustomers,
+    fetchCustomersCollections,
     headers,
     isLoading,
+    customersCollections,
 
     selectedOnboardingOption,
     onboardingOptions,

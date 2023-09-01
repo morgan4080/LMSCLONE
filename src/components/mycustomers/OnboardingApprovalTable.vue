@@ -1,13 +1,35 @@
 <script setup lang="ts">
 import { useSalesDashboardStore } from "@/store/sales-dashboard";
 import { formatMoney } from "@/helpers";
-import {useOnboarding} from "@/salesDashboard/composables/mycustomers/useOnboarding";
 import {useSearch} from "@/composables/useSearch";
 import {storeToRefs} from "pinia";
+import {useOnboarding} from "@/salesDashboard/composables/mycustomers/useOnboarding";
+import { toRef } from "vue";
 
-const { pageables, fetchOnboarding, setSelectedExportOption, } = useOnboarding()
-const { headers, isLoading, selectedExportOption, exportOptions } = storeToRefs(useOnboarding())
-const { search } = useSearch(pageables, fetchOnboarding)
+const {
+  pageables,
+  fetchOnBoardingCollections,
+  setSelectedExportOption,
+  setSelectedOnboardingOption,
+} = useOnboarding();
+
+const {
+  headers,
+  isLoading,
+  selectedOnboardingOption,
+  onboardingOptions,
+  selectedExportOption,
+  exportOptions,
+  onBoardingCollections,
+} = storeToRefs(useOnboarding());
+
+
+const { search } = useSearch(pageables, fetchOnBoardingCollections);
+const props = defineProps<{
+  refId: string | null;
+}>();
+
+const refId = toRef(props, "refId");
 
 const salesDashboardStore = useSalesDashboardStore();
 const kopeshaURL = import.meta.env.VITE_KOPESHA_API_URL;
@@ -17,28 +39,48 @@ type optionsType = {
   itemsPerPage: number;
   search: string;
 };
+
 const loadItems = (options: optionsType) => {
-  pageables.currentPage = options.page - 1;
-  pageables.recordsPerPage = options.itemsPerPage;
-  // fetch loan approvals again
-  fetchOnboarding()
+  if (refId.value) {
+    pageables.salesRepRefIds = refId.value;
+  }
+  if (options.page === 1) {
+    pageables.start = 0;
+  } else {
+    pageables.start = options.itemsPerPage + 1;
+  }
+  pageables.length = options.itemsPerPage;
+  // fetch due today again
+  fetchOnBoardingCollections();
+
 };
+
 </script>
 
 <template>
   <v-row class="d-flex justify-center my-2">
     <h3 class="pa-2 font-weight-regular">
-      Pending Approvals({{ pageables.totalRecords }})
+      Pending Approvals({{ onBoardingCollections.recordsTotal }})
     </h3>
     <v-spacer></v-spacer>
     <v-row class="d-flex justify-end">
       <div>
         <v-input
-          append-icon="mdi:mdi-magnify"
           hide-details
-          class="px-2 font-weight-light mx-10  border rounded "
+          class="px-2 font-weight-light border rounded mr-4"
           density="comfortable"
+          style="
+            height: 28px !important;
+            padding-left: 16px !important;
+            padding-right: 16px !important;
+          "
         >
+          <template #append>
+            <v-icon
+              icon="mdi mdi-magnify"
+              size="small"
+            />
+          </template>
           <template v-slot:default>
             <input
               class="text-caption searchField custom-input"
@@ -51,61 +93,89 @@ const loadItems = (options: optionsType) => {
         </v-input>
       </div>
       <v-menu transition="slide-y-transition">
-        <template #activator="{ props }">
-          <v-btn
-            variant="outlined"
-            density="compact"
-            append-icon="mdi:mdi-chevron-down"
-            v-bind="props"
-            class="mr-4 text-none text-caption"
-            style="border: 1px solid rgba(128, 128, 128, 0.25)"
-          >
-            {{ selectedExportOption ? selectedExportOption.name : 'Export' }}
-          </v-btn>
-        </template>
-        <v-sheet
-          border
-          rounded
-        >
-          <v-list
-            :nav="true"
-            density="compact"
-            role="listbox"
-          >
-            <v-list-item
-              v-for="(item, idx) in exportOptions"
-              :key="idx"
-              :value="item"
-              @click="setSelectedExportOption(item)"
-            >
-              {{ item.name }}</v-list-item
-            >
-          </v-list>
-        </v-sheet>
+<!--        <template #activator="{ props }">-->
+<!--          <v-btn-->
+<!--            variant="outlined"-->
+<!--            density="comfortable"-->
+<!--            append-icon="mdi:mdi-chevron-down"-->
+<!--            v-bind="props"-->
+<!--            class="mr-4 text-none text-caption"-->
+<!--            style="border: 1px solid rgba(128, 128, 128, 0.25)"-->
+<!--          >-->
+<!--            {{ selectedExportOption ? selectedExportOption.name : "Export" }}-->
+<!--          </v-btn>-->
+<!--        </template>-->
+
+<!--        <v-sheet-->
+<!--          border-->
+<!--          rounded-->
+<!--        >-->
+<!--          <v-list-->
+<!--            :nav="true"-->
+<!--            density="comfortable"-->
+<!--            role="listbox"-->
+<!--          >-->
+<!--            <v-list-item-->
+<!--              v-for="(item, idx) in exportOptions"-->
+<!--              :key="idx"-->
+<!--              :value="item"-->
+<!--              @click="setSelectedExportOption(item)"-->
+<!--            >-->
+<!--              {{ item.name }}</v-list-item-->
+<!--            >-->
+<!--          </v-list>-->
+<!--        </v-sheet>-->
+<!--        -->
+
       </v-menu>
       <v-btn
         class="v-btn--size-default text-caption text-capitalize mr-6"
-        density="compact"
+        density="comfortable"
+
+        variant="tonal"
+        style="border: 1px solid rgba(128, 128, 128, 0.25)"
+        @click="
+        ''
+        "
+      >
+        Export
+      </v-btn>
+      <v-btn
+        class="v-btn--size-default text-caption text-capitalize mr-6"
+        density="comfortable"
         append-icon="mdi:mdi-close"
         color="primary"
         variant="tonal"
         style="border: 1px solid rgba(128, 128, 128, 0.25)"
         @click="
-           setSelectedExportOption(null);
-          "
+          setSelectedExportOption(null);
+          setSelectedOnboardingOption(null);
+          pageables.repaymentStatus = '';
+          pageables.draw = 1;
+          pageables.searchTerm = '';
+          pageables.salesRepRefIds = '';
+          pageables.startDate = '';
+          pageables.endDate = '';
+          pageables.endDate = '';
+          pageables.start = 0;
+          pageables.length = 10;
+
+          fetchOnBoardingCollections();
+        "
       >
         Clear Filters
       </v-btn>
+
     </v-row>
   </v-row>
   <v-data-table-server
-    :headers="headers"
-    :items="salesDashboardStore.upcomingCollections.data"
-    :items-per-page="pageables.recordsPerPage"
-    :items-length="pageables.totalRecords"
-    :server-items-length="salesDashboardStore.upcomingCollections.recordsTotal"
+    :headers="headers as any"
+    :items="onBoardingCollections.data"
+    :items-per-page="pageables.length"
+    :items-length="onBoardingCollections.recordsTotal"
+    :server-items-length="onBoardingCollections.recordsFiltered"
     :isLoading="isLoading"
-    :search="search"
+    :search="pageables.searchTerm"
     no-data-text="No data available"
     isLoading-text="isLoading"
     :items-per-page-text="'Show'"
@@ -163,15 +233,32 @@ const loadItems = (options: optionsType) => {
       </v-chip>
     </template>
     <template v-slot:[`item.refId`]="{ item }">
-      <v-btn
-        icon
+      <a
         :href="`${kopeshaURL}/lender/index.html#/loans/loanprofile/${item.raw.refId}`"
       >
-        <v-icon
-          icon="mdi-wifi"
+        <v-btn
+          variant="outlined"
+          density="compact"
           size="small"
-        ></v-icon>
-      </v-btn>
+          class="action-btn action-btn-icon mx-0.5"
+          :color="'secondary'"
+        >
+          <v-icon icon="mdi mdi-eye" />
+        </v-btn>
+      </a>
+      <a
+        :href="`${kopeshaURL}/lender/index.html#/loans/loanprofile/${item.raw.refId}`"
+      >
+        <v-btn
+          variant="outlined"
+          density="compact"
+          size="small"
+          class="action-btn action-btn-icon mx-1"
+          :color="'secondary'"
+        >
+          <v-icon icon="mdi mdi-pencil" />
+        </v-btn>
+      </a>
     </template>
   </v-data-table-server>
 </template>
