@@ -1,13 +1,35 @@
 <script setup lang="ts">
 import { useSalesDashboardStore } from "@/store/sales-dashboard";
 import { formatMoney } from "@/helpers";
-import {useArrears} from "@/salesDashboard/composables/collections/useArrears";
-import {useSearch} from "@/composables/useSearch";
-import {storeToRefs} from "pinia";
-import {ref, onMounted, watch} from "vue";
-const { pageables, fetchArrearsCollections, setSelectedExportOption, setSelectedStatusOption, setSelectedTimePeriodOption } = useArrears()
-const { headers, isLoading, selectedStatusOption, statusOptions, selectedExportOption, exportOptions,selectedTimePeriodOption,timePeriodOptions } = storeToRefs(useArrears())
-const { search } = useSearch(pageables, fetchArrearsCollections)
+import { useArrears} from "@/salesDashboard/composables/collections/useArrears";
+import { useSearch } from "@/composables/useSearch";
+import { storeToRefs } from "pinia";
+import { toRef } from "vue";
+const {
+  pageables,
+  fetchArrearsCollections,
+  setSelectedExportOption,
+  setSelectedStatusOption,
+  setSelectedPeriodOption
+} = useArrears();
+const {
+  headers,
+  isLoading,
+  selectedStatusOption,
+  statusOptions,
+  selectedExportOption,
+  exportOptions,
+  arrearsCollections,
+  selectedPeriodOption,
+  periodOptions,
+} = storeToRefs(useArrears());
+const { search } = useSearch(pageables, fetchArrearsCollections);
+
+const props = defineProps<{
+  refId: string | null;
+}>();
+
+const refId = toRef(props, "refId");
 
 const salesDashboardStore = useSalesDashboardStore();
 const kopeshaURL = import.meta.env.VITE_KOPESHA_API_URL;
@@ -20,47 +42,18 @@ type optionsType = {
 };
 
 const loadItems = (options: optionsType) => {
-  pageables.currentPage = options.page - 1;
-  pageables.recordsPerPage = options.itemsPerPage;
-  // fetch due Arrears again
-  fetchArrearsCollections()
-};
-
-const showDateRange = ref(false);
-const dateRange = ref([]);
-//used to show date range
-const searchDateRange = () => {
-  showDateRange.value = false;
-  search();
-};
-
-onMounted(() => {
-  // Fetch initial data
-  fetchArrearsCollections();
-});
-watch(dateRange, () => {
-  if (dateRange.value && dateRange.value.length > 1) {
-    pageables.startDate = (dateRange.value[0] as Date).toLocaleDateString(
-      "en-GB"
-    );
-    pageables.endDate = (dateRange.value[1] as Date).toLocaleDateString(
-      "en-GB"
-    );
-  } else if (dateRange.value && dateRange.value.length > 0) {
-    try {
-      pageables.startDate = (dateRange.value[0] as Date).toLocaleDateString(
-        "en-GB"
-      );
-      pageables.endDate = (dateRange.value[0] as Date).toLocaleDateString(
-        "en-GB"
-      );
-    } catch {
-      pageables.startDate = null;
-      pageables.endDate = null;
-    }
+  if (refId.value) {
+    pageables.salesRepRefIds = refId.value;
   }
-});
-
+  if (options.page === 1) {
+    pageables.start = 0;
+  } else {
+    pageables.start = options.itemsPerPage + 1;
+  }
+  pageables.length = options.itemsPerPage;
+  // fetch due arrears again
+  fetchArrearsCollections();
+};
 
 </script>
 
@@ -69,7 +62,7 @@ watch(dateRange, () => {
     class="d-flex justify-center my-2"
   >
     <h3 class="pa-2 font-weight-regular">
-      In Arrears({{ pageables.totalRecords }})
+      In Arrears({{ arrearsCollections.recordsTotal }})
     </h3>
     <v-spacer></v-spacer>
     <v-row class="d-flex justify-end">
@@ -140,7 +133,7 @@ watch(dateRange, () => {
             class="mr-4 text-none text-caption"
             style="border: 1px solid rgba(128, 128, 128, 0.25)"
           >
-            {{ selectedTimePeriodOption ? selectedTimePeriodOption.name : 'Select Period' }}
+            {{ selectedPeriodOption? selectedPeriodOption.name : 'Select Period' }}
           </v-btn>
         </template>
         <v-sheet
@@ -153,10 +146,10 @@ watch(dateRange, () => {
             role="listbox"
           >
             <v-list-item
-              v-for="(item, idx) in timePeriodOptions"
+              v-for="(item, idx) in periodOptions"
               :key="idx"
               :value="item"
-              @click="setSelectedTimePeriodOption(item)"
+              @click="setSelectedPeriodOption(item)"
             >
               {{ item.name }}</v-list-item
             >
@@ -172,8 +165,19 @@ watch(dateRange, () => {
           variant="tonal"
           style="border: 1px solid rgba(128, 128, 128, 0.25)"
           @click="
-           setSelectedExportOption(null);
-           setSelectedStatusOption(null);
+             setSelectedExportOption(null);
+          setSelectedStatusOption(null);
+          pageables.repaymentStatus = '';
+          pageables.draw = 1;
+          pageables.searchTerm = '';
+          pageables.salesRepRefIds = '';
+          pageables.startDate = '';
+          pageables.endDate = '';
+          pageables.endDate = '';
+          pageables.start = 0;
+          pageables.length = 10;
+
+          fetchArrearsCollections();
           "
       >
         Clear Filters
@@ -184,13 +188,13 @@ watch(dateRange, () => {
 
 <!--  table -->
   <v-data-table-server
-    :headers="headers"
-    :items="salesDashboardStore.upcomingCollections.data"
-    :items-per-page="pageables.recordsPerPage"
-    :items-length="pageables.totalRecords"
+    :headers="headers as any"
+    :items="arrearsCollections.data"
+    :items-per-page="pageables.length"
+    :items-length="arrearsCollections.recordsTotal"
     :server-items-length="salesDashboardStore.upcomingCollections.recordsTotal"
     :isLoading="isLoading"
-    :search="search"
+    :search="pageables.searchTerm"
     no-data-text="No data available"
     isLoading-text="isLoading"
     :items-per-page-text="'Show'"

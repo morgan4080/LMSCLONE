@@ -132,9 +132,7 @@ export const useToday = defineStore("todays", () => {
   const fetchTodayCollections = async () => {
     isLoading.value = true;
     await generateParams();
-
     const url = `/api/v1/salesrep/collections/overdue?${params.value}`;
-
     const { data } = await axios.get(url);
 
     todayCollections.value = data;

@@ -1,13 +1,30 @@
 <script setup lang="ts">
 import { useSalesDashboardStore } from "@/store/sales-dashboard";
 import { formatMoney } from "@/helpers";
-import {useLoanApproval} from "@/salesDashboard/composables/collections/useLoanApproval";
-import {useSearch} from "@/composables/useSearch";
-import {storeToRefs} from "pinia";
+import { useLoanApproval } from "@/salesDashboard/composables/collections/useLoanApproval";
+import { useSearch } from "@/composables/useSearch";
+import { storeToRefs } from "pinia";
+import { toRef } from "vue";
 
-const { pageables, fetchLoanApprovals, setSelectedExportOption, } = useLoanApproval()
-const { headers, isLoading, selectedExportOption, exportOptions } = storeToRefs(useLoanApproval())
-const { search } = useSearch(pageables, fetchLoanApprovals)
+const {
+  pageables,
+  fetchApprovalCollections,
+  setSelectedExportOption,
+} = useLoanApproval();
+const {
+  headers,
+  isLoading,
+  selectedExportOption,
+  exportOptions,
+  approvalCollections,
+} = storeToRefs(useLoanApproval());
+const { search } = useSearch(pageables, fetchApprovalCollections);
+
+const props = defineProps<{
+  refId: string | null;
+}>();
+
+const refId = toRef(props, "refId");
 
 const salesDashboardStore = useSalesDashboardStore();
 const kopeshaURL = import.meta.env.VITE_KOPESHA_API_URL;
@@ -17,18 +34,27 @@ type optionsType = {
   itemsPerPage: number;
   search: string;
 };
+
 const loadItems = (options: optionsType) => {
-  pageables.currentPage = options.page - 1;
-  pageables.recordsPerPage = options.itemsPerPage;
-  // fetch loan approvals again
-  fetchLoanApprovals()
+  if (refId.value) {
+    pageables.salesRepRefIds = refId.value;
+  }
+  if (options.page === 1) {
+    pageables.start = 0;
+  } else {
+    pageables.start = options.itemsPerPage + 1;
+  }
+  pageables.length = options.itemsPerPage;
+  // fetch due arrears again
+  fetchApprovalCollections();
 };
+
 </script>
 
 <template>
   <v-row class="d-flex justify-center my-2">
     <h3 class="pa-2 font-weight-regular">
-      Pending Approvals({{ pageables.totalRecords }})
+      Pending Approvals({{ approvalCollections.recordsTotal }})
     </h3>
     <v-spacer></v-spacer>
     <v-row class="d-flex justify-end">
@@ -99,13 +125,13 @@ const loadItems = (options: optionsType) => {
     </v-row>
   </v-row>
   <v-data-table-server
-    :headers="headers"
-    :items="salesDashboardStore.upcomingCollections.data"
-    :items-per-page="pageables.recordsPerPage"
-    :items-length="pageables.totalRecords"
+    :headers="headers as any"
+    :items="approvalCollections.data"
+    :items-per-page="pageables.length"
+    :items-length="approvalCollections.recordsTotal"
     :server-items-length="salesDashboardStore.upcomingCollections.recordsTotal"
     :isLoading="isLoading"
-    :search="search"
+    :search="pageables.searchTerm"
     no-data-text="No data available"
     isLoading-text="isLoading"
     :items-per-page-text="'Show'"

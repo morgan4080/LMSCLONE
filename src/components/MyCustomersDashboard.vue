@@ -1,3 +1,93 @@
+<script lang="ts" setup>
+import {onBeforeMount, reactive, ref, watch} from "vue";
+import { useSalesDashboardStore } from "@/store/sales-dashboard";
+import AllCustomersTable from "@/components/mycustomers/AllCustomersTable.vue";
+import OnboardingApprovalTable from "@/components/mycustomers/OnboardingApprovalTable.vue";
+import { dateFilters } from "@/helpers";
+import OverdueCollectionsTable from "@/components/OverdueCollectionsTable.vue";
+const salesDashboardStore = useSalesDashboardStore();
+
+async function initialize() {
+  await salesDashboardStore.getBranches();
+  await salesDashboardStore.getStats();
+  await salesDashboardStore.getUpcomingCollections();
+  await salesDashboardStore.getOverdueCollections();
+  await salesDashboardStore.getSalesRepByBranch("HQ");
+}
+
+const tabs = ref(["All Customers", "Onboarding Approvals"]);
+const tab = ref<string | null>(null);
+
+onBeforeMount(async () => {
+  await initialize();
+});
+
+const salesOverviewFilters = reactive({
+  branches: {
+    text: null,
+    appendIcon: "mdi:mdi-chevron-down",
+  } as {
+    text: string | null;
+    appendIcon: string;
+  },
+  salesRep: {
+    text: null,
+    id: null,
+    appendIcon: "mdi:mdi-chevron-down",
+  } as {
+    text: string | null;
+    id: string | null;
+    appendIcon: string;
+  },
+  dateFilters: {
+    text: "All Time",
+    value: null,
+    appendIcon: "mdi:mdi-chevron-down",
+    menus: [
+      { title: "All Time", value: "all" },
+      { title: "This Year", value: "year" },
+      { title: "This Month", value: "month" },
+      { title: "This Week", value: "week" },
+    ],
+  } as {
+    text: string;
+    value: string | null;
+    appendIcon: string;
+    menus: { title: string; value: string }[];
+  },
+});
+
+const collectionFilter = ref({
+  collections: {
+    name: "Customer Listing",
+  },
+});
+
+watch(salesOverviewFilters, () => {
+  salesOverviewFilters.branches.text
+      ? ((salesDashboardStore.branchIds = [salesOverviewFilters.branches.text]),
+          salesDashboardStore.getSalesRepByBranch(
+              salesOverviewFilters.branches.text
+          ))
+      : (salesDashboardStore.branchIds = ["ALL"]);
+
+  salesOverviewFilters.salesRep.id
+      ? (salesDashboardStore.salesRepIds = [salesOverviewFilters.salesRep.id!])
+      : (salesDashboardStore.salesRepIds = ["ALL"]);
+
+  salesOverviewFilters.dateFilters.value &&
+  dateReturn(salesOverviewFilters.dateFilters.value);
+
+  salesDashboardStore.getStats();
+});
+
+function dateReturn(text: string) {
+  let [start, end] = dateFilters(text) as string[];
+  salesDashboardStore.stats.startDate = start;
+  salesDashboardStore.stats.endDate = end;
+}
+
+</script>
 <template>
   <div class="pa-6 fill-height bg-background">
     <div class="flex-column w-100 fill-height">
@@ -342,96 +432,7 @@
   </div>
 </template>
 
-<script lang="ts" setup>
-import {onBeforeMount, reactive, ref, watch} from "vue";
-import { useSalesDashboardStore } from "@/store/sales-dashboard";
-import AllCustomersTable from "@/components/mycustomers/AllCustomersTable.vue";
-import OnboardingApprovalTable from "@/components/mycustomers/OnboardingApprovalTable.vue";
-import { dateFilters } from "@/helpers";
-import OverdueCollectionsTable from "@/components/OverdueCollectionsTable.vue";
-const salesDashboardStore = useSalesDashboardStore();
 
-async function initialize() {
-  await salesDashboardStore.getBranches();
-  await salesDashboardStore.getStats();
-  await salesDashboardStore.getUpcomingCollections();
-  await salesDashboardStore.getOverdueCollections();
-  await salesDashboardStore.getSalesRepByBranch("HQ");
-}
-
-const tabs = ref(["All Customers", "Onboarding Approvals"]);
-const tab = ref<string | null>(null);
-
-onBeforeMount(async () => {
-  await initialize();
-});
-
-const salesOverviewFilters = reactive({
-  branches: {
-    text: null,
-    appendIcon: "mdi:mdi-chevron-down",
-  } as {
-    text: string | null;
-    appendIcon: string;
-  },
-  salesRep: {
-    text: null,
-    id: null,
-    appendIcon: "mdi:mdi-chevron-down",
-  } as {
-    text: string | null;
-    id: string | null;
-    appendIcon: string;
-  },
-  dateFilters: {
-    text: "All Time",
-    value: null,
-    appendIcon: "mdi:mdi-chevron-down",
-    menus: [
-      { title: "All Time", value: "all" },
-      { title: "This Year", value: "year" },
-      { title: "This Month", value: "month" },
-      { title: "This Week", value: "week" },
-    ],
-  } as {
-    text: string;
-    value: string | null;
-    appendIcon: string;
-    menus: { title: string; value: string }[];
-  },
-});
-
-const collectionFilter = ref({
-  collections: {
-    name: "Customer Listing",
-  },
-});
-
-watch(salesOverviewFilters, () => {
-  salesOverviewFilters.branches.text
-    ? ((salesDashboardStore.branchIds = [salesOverviewFilters.branches.text]),
-      salesDashboardStore.getSalesRepByBranch(
-        salesOverviewFilters.branches.text
-      ))
-    : (salesDashboardStore.branchIds = ["ALL"]);
-
-  salesOverviewFilters.salesRep.id
-    ? (salesDashboardStore.salesRepIds = [salesOverviewFilters.salesRep.id!])
-    : (salesDashboardStore.salesRepIds = ["ALL"]);
-
-  salesOverviewFilters.dateFilters.value &&
-  dateReturn(salesOverviewFilters.dateFilters.value);
-
-  salesDashboardStore.getStats();
-});
-
-function dateReturn(text: string) {
-  let [start, end] = dateFilters(text) as string[];
-  salesDashboardStore.stats.startDate = start;
-  salesDashboardStore.stats.endDate = end;
-}
-
-</script>
 
 <style scoped>
 .searchField:focus-visible {

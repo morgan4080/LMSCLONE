@@ -1,28 +1,55 @@
 <script setup lang="ts">
 import { useSalesDashboardStore } from "@/store/sales-dashboard";
 import { formatMoney } from "@/helpers";
-import { useWeek } from "@/salesDashboard/composables/collections/useWeek";
+import {useWeek } from "@/salesDashboard/composables/collections/useWeek";
 import { useSearch } from "@/composables/useSearch";
 import { storeToRefs } from "pinia";
-const { pageables, fetchWeekCollections, setSelectedExportOption, setSelectedStatusOption } = useWeek()
-const { headers, isLoading, selectedStatusOption, statusOptions, selectedExportOption, exportOptions } = storeToRefs(useWeek())
-const { search } = useSearch(pageables, fetchWeekCollections)
+import { toRef } from "vue";
+
+const {
+  pageables,
+  fetchWeekCollections,
+  setSelectedExportOption,
+  setSelectedStatusOption,
+} = useWeek();
+const {
+  headers,
+  isLoading,
+  selectedStatusOption,
+  statusOptions,
+  selectedExportOption,
+  exportOptions,
+  weekCollections,
+} = storeToRefs(useWeek());
+const { search } = useSearch(pageables, fetchWeekCollections);
+
+const props = defineProps<{
+  refId: string | null;
+}>();
+
+const refId = toRef(props, "refId");
 
 const salesDashboardStore = useSalesDashboardStore();
 const kopeshaURL = import.meta.env.VITE_KOPESHA_API_URL;
 
-
-type optionsType = {
+interface optionsType {
   page: number;
   itemsPerPage: number;
   search: string;
-};
+}
 
 const loadItems = (options: optionsType) => {
-  pageables.currentPage = options.page - 1;
-  pageables.recordsPerPage = options.itemsPerPage;
-  // fetch due today again
-  fetchWeekCollections()
+  if (refId.value) {
+    pageables.salesRepRefIds = refId.value;
+  }
+  if (options.page === 1) {
+    pageables.start = 0;
+  } else {
+    pageables.start = options.itemsPerPage + 1;
+  }
+  pageables.length = options.itemsPerPage;
+  // fetch due week again
+  fetchWeekCollections();
 };
 
 </script>
@@ -30,7 +57,7 @@ const loadItems = (options: optionsType) => {
 <template>
   <v-row class="d-flex justify-center my-2">
     <h3 class="pa-2 font-weight-regular">
-      Due This Week({{ pageables.totalRecords }})
+      Due This Week({{ weekCollections.recordsTotal }})
     </h3>
     <v-spacer></v-spacer>
     <v-row class="d-flex justify-end">
@@ -120,10 +147,6 @@ const loadItems = (options: optionsType) => {
           </v-list>
         </v-sheet>
       </v-menu>
-<!--      not paid/paid-->
-
-
-<!--      clear button-->
       <v-btn
         class="v-btn--size-default text-caption text-capitalize mr-6"
         density="compact"
@@ -133,22 +156,32 @@ const loadItems = (options: optionsType) => {
         style="border: 1px solid rgba(128, 128, 128, 0.25)"
         @click="
            setSelectedExportOption(null);
-           setSelectedStatusOption(null);
+          setSelectedStatusOption(null);
+          pageables.repaymentStatus = '';
+          pageables.draw = 1;
+          pageables.searchTerm = '';
+          pageables.salesRepRefIds = '';
+          pageables.startDate = '';
+          pageables.endDate = '';
+          pageables.endDate = '';
+          pageables.start = 0;
+          pageables.length = 10;
+
+          fetchWeekCollections();
+
           "
       >
         Clear Filters
       </v-btn>
 
-<!--      table -->
-
       <v-data-table-server
-        :headers="headers"
-        :items="salesDashboardStore.upcomingCollections.data"
-        :items-per-page="pageables.recordsPerPage"
-        :items-length="pageables.totalRecords"
+        :headers="headers as any"
+        :items="weekCollections.data"
+        :items-per-page="pageables.length"
+        :items-length="weekCollections.recordsTotal"
         :server-items-length="salesDashboardStore.upcomingCollections.recordsTotal"
         :isLoading="isLoading"
-        :search="search"
+        :search="pageables.searchTerm"
         no-data-text="No data available"
         isLoading-text="isLoading"
         :items-per-page-text="'Show'"
@@ -180,7 +213,6 @@ const loadItems = (options: optionsType) => {
         </template>
         <template v-slot:[`item.productName`]="{ item }">
           <p>{{ item.raw.productName }}</p>
-          <p>{{ item.raw.loanNo }}</p>
         </template>
         <template v-slot:[`item.amountDue`]="{ item }">
           <p>{{ formatMoney(item.raw.amountDue) }}</p>
@@ -193,38 +225,40 @@ const loadItems = (options: optionsType) => {
         </template>
         <template v-slot:[`item.status`]="{ item }">
           <v-chip
-            label
+            :label="true"
             :color="
-            item.raw.status === 'Paid'
-              ? 'green'
-              : item.raw.status === 'Not Paid'
-              ? 'red'
-              : 'yellow'
-          "
+          item.raw.status === 'PAID'
+            ? 'green'
+            : item.raw.status === 'NOTPAID'
+            ? 'red'
+            : 'yellow'
+        "
           >
             {{ item.raw.status }}
           </v-chip>
         </template>
         <template v-slot:[`item.refId`]="{ item }">
-          <v-btn
-            icon
+          <a
             :href="`${kopeshaURL}/lender/index.html#/loans/loanprofile/${item.raw.refId}`"
           >
-            <v-icon
-              icon="mdi-wifi"
+            <v-btn
+              variant="outlined"
+              density="compact"
               size="small"
-            ></v-icon>
-          </v-btn>
+              class="action-btn action-btn-icon mx-0.5"
+              :color="'secondary'"
+            >
+              <v-icon icon="mdi mdi-eye" />
+            </v-btn>
+          </a>
         </template>
       </v-data-table-server>
-
-
     </v-row>
   </v-row>
 </template>
 
 <style scoped>
-.custom-input{
+.custom-input {
   outline-style: none;
 }
 </style>

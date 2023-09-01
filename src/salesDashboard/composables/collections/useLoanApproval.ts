@@ -1,76 +1,154 @@
-import {reactive, ref, watch} from "vue";
+import { reactive, ref, watch } from "vue";
 import { useQueryParams } from "@/composables/useQueryParams";
-import { Pageables } from "@/types";
-import {defineStore} from "pinia";
-import axios from "@/services/api/axiosKopesha"
+import { defineStore } from "pinia";
+import axios from "@/services/api/axiosKopesha";
 
-export const useLoanApproval = defineStore("loanapproval", () => {
-  const pageables = reactive({
-    recordsPerPage: 5,
-    totalRecords: 0,
-    totalPages: 0,
-    currentPage: 0,
-    sort: "ASC",
-    searchTerm: undefined,
-    order: "ASC",
-    group: undefined,
-    appId: undefined,
-  }) as Pageables & { group: string | undefined; appId: string | undefined }
-  const {params, generateParams} = useQueryParams(pageables);
-  const loanapprovalCollections = ref([]);
-  const isLoading = ref(false);
+export interface KopeshaPagination {
+  salesRepRefIds: string;
+  searchTerm: string;
+  productName: string;
+  repaymentStatus: string;
+  draw: number;
+  start: number;
+  length: number;
+  startDate: string;
+  endDate: string;
+}
 
-//   export
-  const selectedExportOption = ref<{ name: string; value: string } | null>(null);
-  const exportOptions = ref<{ name: string; value: string }[]>([
-    { name: "CSV", value: "csv" },
-  ]);
-  const setSelectedExportOption = async (option: { name: string; value: string } | null) => {
-    selectedExportOption.value = option;
-  }
-  const exportData = async () => {
-    console.log("value changed", selectedExportOption.value);
-  }
-  watch(selectedExportOption, async (value) => {
-    if (value) {
-      await exportData();
+export interface Collections {
+  data: {
+    dueDate: string;
+    dueToday: number;
+    customerName: string;
+    productName: string;
+    phoneNumber: string;
+    loanNo: number;
+    refId: string;
+    amountDue: number;
+    loanBalance: number;
+    status: "NOTPAID" | "PAID" | "PARTIALLYPAID";
+    daysOverdue: 16;
+  }[];
+  draw: number;
+  start: number;
+  length: number;
+  recordsFiltered: number;
+  recordsTotal: number;
+}
+
+export const useLoanApproval = defineStore("weeks", () => {
+    const pageables = reactive({
+      salesRepRefIds: "",
+      searchTerm: "",
+      productName: "",
+      repaymentStatus: "",
+      draw: 1,
+      start: 0,
+      length: 10,
+      startDate: "",
+      endDate: "",
+    }) as KopeshaPagination;
+    const {params, generateParams} = useQueryParams(pageables);
+    const approvalCollections = ref<Collections>({
+      data: [],
+      draw: 1,
+      start: 0,
+      length: 10,
+      recordsFiltered: 0,
+      recordsTotal: 0,
+    } )
+    const isLoading = ref(false);
+    const selectedExportOption = ref<{ name: string; value: string } | null>(null);
+    const exportOptions = ref<{ name: string; value: string }[]>([
+      { name: "CSV", value: "csv" },
+    ]);
+    const setSelectedExportOption = async (
+      option: { name: string; value: string } | null
+    ) => {
+      selectedExportOption.value = option;
     }
-  })
+    const exportData = async () => {
+      console.log("value changed", selectedExportOption.value);
+    }
 
-// headers
-  const headers = ref<
-    { title: string; key: string; align: string; sortable: boolean }[]>([
-    {title: "Application Date", align: "start", sortable: false, key: "applicationdate",},
-    {title: "Name & Phone No", key: "namephoneno", align: "end", sortable: false,},
-    { title: "Loan Product", key: "produc", align: "end", sortable: false },
-    { title: "Principal", key: "principle", align: "end", sortable: false },
-    { title: "Fees", key: "fees", align: "end", sortable: false },
-    { title: "BF", key: "bf", align: "end", sortable: false },
-    { title: "Total", key: "total", align: "end", sortable: false },
-    { title: "Status", key: "status", align: "end", sortable: false },
-    { title: "Actions", key: "refId", align: "end", sortable: false },
-  ]);
+    watch(selectedExportOption, async (value) => {
+      if (value) {
+        await exportData();
+      }
+    })
 
-//   fetch pending loan approval
-  const fetchLoanApprovals = async () => {
-    isLoading.value = true;
-    await generateParams();
-    const { data } = await axios.get(
-      `/api/v1/collections/approval?${params.value}`
-    );
-    loanapprovalCollections.value = data.data;
-    isLoading.value = false;
+
+    const selectedStatusOption = ref<{ name: string; value: string } | null>(null);
+    const statusOptions = ref<{ name: string; value: string }[]>([
+      { name: "PAID", value: "PAID" },
+      { name: "NOT PAID", value: "NOTPAID" },
+      { name: "PARTIALLY PAID", value: "PARTIALLYPAID" },
+    ]);
+
+    const setSelectedStatusOption = async (option: { name: string; value: string } | null) => {
+      selectedStatusOption.value = option;
+    }
+    const filterStatus = async () => {
+      console.log("value changed", selectedStatusOption.value);
+    }
+
+    watch(selectedStatusOption, async (value) => {
+      if (value) {
+        await filterStatus();
+      }
+    })
+
+
+    const headers = ref<
+      { title: string; key: string; align: string; sortable: boolean }[]
+    >([
+      { title: "Loan No.", align: "start", sortable: false, key: "loanNo" },
+      { title: "Date Due", align: "start", sortable: false, key: "dueDate" },
+      {
+        title: "Name & Phone No",
+        key: "customerName",
+        align: "start",
+        sortable: false,
+      },
+      {
+        title: "Loan Product",
+        key: "productName",
+        align: "start",
+        sortable: false,
+      },
+      { title: "Due Today", key: "dueToday", align: "start", sortable: false },
+      {
+        title: "Status",
+        key: "status",
+        align: "start",
+        sortable: false,
+      },
+      { title: "Actions", key: "refId", align: "start", sortable: false },
+    ]);
+
+
+    const fetchApprovalCollections = async () => {
+      isLoading.value= true;
+      await generateParams();
+      const url = `/api/v1/salesrep/collections/overdue?${params.value}`;
+      const { data } = await axios.get(url);
+      approvalCollections.value = data;
+      isLoading.value = false;
+
+    }
+
+    return {
+      pageables,
+      fetchApprovalCollections,
+      headers,
+      isLoading,
+      approvalCollections,
+
+      selectedExportOption,
+      exportOptions,
+      setSelectedExportOption,
+
+
+    }
   }
-
-  return {
-    pageables,
-    headers,
-    isLoading,
-    fetchLoanApprovals,
-
-    selectedExportOption,
-    exportOptions,
-    setSelectedExportOption,
-
-  }
-});
+);
