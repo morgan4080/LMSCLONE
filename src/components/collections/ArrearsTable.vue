@@ -1,17 +1,16 @@
 <script setup lang="ts">
 import { useSalesDashboardStore } from "@/store/sales-dashboard";
-import { formatMoney } from "@/helpers";
-import { useArrears} from "@/salesDashboard/composables/collections/useArrears";
+import { dateFilters, formatMoney } from "@/helpers";
+import { useToday } from "@/salesDashboard/composables/collections/useToday";
 import { useSearch } from "@/composables/useSearch";
 import { storeToRefs } from "pinia";
 import { toRef } from "vue";
 const {
   pageables,
-  fetchArrearsCollections,
+  fetchTodayCollections,
   setSelectedExportOption,
   setSelectedStatusOption,
-  setSelectedPeriodOption
-} = useArrears();
+} = useToday();
 const {
   headers,
   isLoading,
@@ -19,21 +18,20 @@ const {
   statusOptions,
   selectedExportOption,
   exportOptions,
-  arrearsCollections,
-  selectedPeriodOption,
-  periodOptions,
-} = storeToRefs(useArrears());
-const { search } = useSearch(pageables, fetchArrearsCollections);
+  todayCollections,
+} = storeToRefs(useToday());
+const { search } = useSearch(pageables, fetchTodayCollections);
 
 const props = defineProps<{
   refId: string | null;
+  period: "day" | "week" | "month" | "quarter" | "year" | "all" | "arrears";
 }>();
 
 const refId = toRef(props, "refId");
+const period = toRef(props, "period");
 
 const salesDashboardStore = useSalesDashboardStore();
 const kopeshaURL = import.meta.env.VITE_KOPESHA_API_URL;
-
 
 type optionsType = {
   page: number;
@@ -45,176 +43,180 @@ const loadItems = (options: optionsType) => {
   if (refId.value) {
     pageables.salesRepRefIds = refId.value;
   }
+  const [start, end] = dateFilters(period.value);
+  pageables.startDate = start;
+  pageables.endDate = end;
   if (options.page === 1) {
     pageables.start = 0;
   } else {
     pageables.start = options.itemsPerPage + 1;
   }
   pageables.length = options.itemsPerPage;
-  // fetch due arrears again
-  fetchArrearsCollections();
+  // fetch due today again
+  fetchTodayCollections();
 };
-
 </script>
 
 <template>
-  <v-row
-    class="d-flex justify-center my-2"
-  >
-    <h3 class="pa-2 font-weight-regular">
-      In Arrears({{ arrearsCollections.recordsTotal }})
-    </h3>
+  <v-row class="v-row d-flex pl-2 gap-4 justify-start my-6">
+    <h4 class="font-weight-medium">
+      Arrears ({{ todayCollections.recordsTotal }})
+    </h4>
     <v-spacer></v-spacer>
-    <v-row class="d-flex justify-end">
-
-      <div>
-        <v-input
-          append-icon="mdi:mdi-magnify"
-          hide-details
-          class="px-2 font-weight-light mx-10   border rounded"
-          density="comfortable"
-        >
-          <template v-slot:default>
-            <input
-              class="text-caption searchField custom-input"
-              type="text"
-              placeholder="Search Here"
-              v-model="pageables.searchTerm"
-              @input="search"
-            />
-          </template>
-        </v-input>
-      </div>
-
-
-      <!--not paid-->
-
-      <v-menu transition="slide-y-transition">
-        <template #activator="{ props }">
-          <v-btn
-            variant="outlined"
-            append-icon="mdi:mdi-chevron-down"
-            v-bind="props"
-            density="compact"
-            class="mr-4 text-none text-caption"
-            style="border: 1px solid rgba(128, 128, 128, 0.25)"
-          >
-            {{ selectedStatusOption ? selectedStatusOption.name : 'Status' }}
-          </v-btn>
-        </template>
-        <v-sheet
-          border
-          rounded
-        >
-          <v-list
-            :nav="true"
-            density="compact"
-            role="listbox"
-          >
-            <v-list-item
-              v-for="(item, idx) in statusOptions"
-              :key="idx"
-              :value="item"
-              @click="setSelectedStatusOption(item)"
-            >
-              {{ item.name }}</v-list-item
-            >
-          </v-list>
-        </v-sheet>
-      </v-menu>
-<!--period-->
-      <v-menu transition="slide-y-transition">
-        <template #activator="{ props }">
-          <v-btn
-            variant="outlined"
-            append-icon="mdi:mdi-chevron-down"
-            v-bind="props"
-            density="compact"
-            class="mr-4 text-none text-caption"
-            style="border: 1px solid rgba(128, 128, 128, 0.25)"
-          >
-            {{ selectedPeriodOption? selectedPeriodOption.name : 'Select Period' }}
-          </v-btn>
-        </template>
-        <v-sheet
-          border
-          rounded
-        >
-          <v-list
-            :nav="true"
-            density="compact"
-            role="listbox"
-          >
-            <v-list-item
-              v-for="(item, idx) in periodOptions"
-              :key="idx"
-              :value="item"
-              @click="setSelectedPeriodOption(item)"
-            >
-              {{ item.name }}</v-list-item
-            >
-          </v-list>
-        </v-sheet>
-      </v-menu>
-
-      <v-btn
-          class="v-btn--size-default text-caption text-capitalize mr-6"
-          density="compact"
-          append-icon="mdi:mdi-close"
-          color="primary"
-          variant="tonal"
-          style="border: 1px solid rgba(128, 128, 128, 0.25)"
-          @click="
-             setSelectedExportOption(null);
-          setSelectedStatusOption(null);
-          pageables.repaymentStatus = '';
-          pageables.draw = 1;
-          pageables.searchTerm = '';
-          pageables.salesRepRefIds = '';
-          pageables.startDate = '';
-          pageables.endDate = '';
-          pageables.endDate = '';
-          pageables.start = 0;
-          pageables.length = 10;
-
-          fetchArrearsCollections();
-          "
+    <div>
+      <v-input
+        hide-details
+        class="px-2 font-weight-light border rounded mr-4"
+        density="comfortable"
+        style="
+          height: 28px !important;
+          padding-left: 16px !important;
+          padding-right: 16px !important;
+        "
       >
-        Clear Filters
-      </v-btn>
+        <template #append>
+          <v-icon
+            icon="mdi mdi-magnify"
+            size="small"
+          />
+        </template>
+        <template v-slot:default>
+          <input
+            class="text-caption searchField custom-input"
+            type="text"
+            placeholder="Search Here"
+            v-model="pageables.searchTerm"
+            @input="search"
+          />
+        </template>
+      </v-input>
+    </div>
+    <v-menu transition="slide-y-transition">
+      <template #activator="{ props }">
+        <v-btn
+          variant="outlined"
+          append-icon="mdi:mdi-chevron-down"
+          v-bind="props"
+          density="comfortable"
+          class="mr-4 text-none text-caption"
+          style="border: 1px solid rgba(128, 128, 128, 0.25)"
+        >
+          {{ selectedStatusOption ? selectedStatusOption.name : "Status" }}
+        </v-btn>
+      </template>
 
-    </v-row>
+      <v-sheet
+        border
+        rounded
+      >
+        <v-list
+          :nav="true"
+          density="comfortable"
+          role="listbox"
+        >
+          <v-list-item
+            v-for="(item, idx) in statusOptions"
+            :key="idx"
+            :value="item"
+            @click="
+              setSelectedStatusOption(item);
+              pageables.repaymentStatus = item.value;
+              fetchTodayCollections();
+            "
+          >
+            {{ item.name }}</v-list-item
+          >
+        </v-list>
+      </v-sheet>
+    </v-menu>
+    <v-menu transition="slide-y-transition">
+      <template #activator="{ props }">
+        <v-btn
+          variant="outlined"
+          density="comfortable"
+          append-icon="mdi:mdi-chevron-down"
+          v-bind="props"
+          class="mr-4 text-none text-caption"
+          style="border: 1px solid rgba(128, 128, 128, 0.25)"
+        >
+          {{ selectedExportOption ? selectedExportOption.name : "Export" }}
+        </v-btn>
+      </template>
+
+      <v-sheet
+        border
+        rounded
+      >
+        <v-list
+          :nav="true"
+          density="comfortable"
+          role="listbox"
+        >
+          <v-list-item
+            v-for="(item, idx) in exportOptions"
+            :key="idx"
+            :value="item"
+            @click="setSelectedExportOption(item)"
+          >
+            {{ item.name }}</v-list-item
+          >
+        </v-list>
+      </v-sheet>
+    </v-menu>
+    <v-btn
+      class="v-btn--size-default text-caption text-capitalize mr-6"
+      density="comfortable"
+      append-icon="mdi:mdi-close"
+      color="primary"
+      variant="tonal"
+      style="border: 1px solid rgba(128, 128, 128, 0.25)"
+      @click="
+        setSelectedExportOption(null);
+        setSelectedStatusOption(null);
+        pageables.repaymentStatus = '';
+        pageables.draw = 1;
+        pageables.searchTerm = '';
+        pageables.salesRepRefIds = '';
+        pageables.startDate = '';
+        pageables.endDate = '';
+        pageables.endDate = '';
+        pageables.start = 0;
+        pageables.length = 10;
+
+        fetchTodayCollections();
+      "
+    >
+      Clear Filters
+    </v-btn>
   </v-row>
-
-<!--  table -->
   <v-data-table-server
     :headers="headers as any"
-    :items="arrearsCollections.data"
+    :items="todayCollections.data"
     :items-per-page="pageables.length"
-    :items-length="arrearsCollections.recordsTotal"
+    :items-length="todayCollections.recordsTotal"
     :server-items-length="salesDashboardStore.upcomingCollections.recordsTotal"
-    :isLoading="isLoading"
+    :loading="isLoading"
     :search="pageables.searchTerm"
     no-data-text="No data available"
-    isLoading-text="isLoading"
+    loadingText="isLoading"
     :items-per-page-text="'Show'"
     :first-icon="''"
     :last-icon="''"
     :show-current-page="true"
     :items-per-page-options="[
-            {
-              title: '5',
-              value: 5,
-            },
-            {
-              title: '10',
-              value: 10,
-            },
-            {
-              title: '50',
-              value: 50,
-            },
-          ]"
+      {
+        title: '5',
+        value: 5,
+      },
+      {
+        title: '10',
+        value: 10,
+      },
+      {
+        title: '50',
+        value: 50,
+      },
+    ]"
     @update:options="loadItems"
   >
     <template v-slot:[`item.dueDate`]="{ item }">
@@ -226,7 +228,6 @@ const loadItems = (options: optionsType) => {
     </template>
     <template v-slot:[`item.productName`]="{ item }">
       <p>{{ item.raw.productName }}</p>
-      <p>{{ item.raw.loanNo }}</p>
     </template>
     <template v-slot:[`item.amountDue`]="{ item }">
       <p>{{ formatMoney(item.raw.amountDue) }}</p>
@@ -239,35 +240,38 @@ const loadItems = (options: optionsType) => {
     </template>
     <template v-slot:[`item.status`]="{ item }">
       <v-chip
-        label
+        :label="true"
         :color="
-            item.raw.status === 'Paid'
-              ? 'green'
-              : item.raw.status === 'Not Paid'
-              ? 'red'
-              : 'yellow'
-          "
+          item.raw.status === 'PAID'
+            ? 'green'
+            : item.raw.status === 'NOTPAID'
+            ? 'red'
+            : 'yellow'
+        "
       >
         {{ item.raw.status }}
       </v-chip>
     </template>
     <template v-slot:[`item.refId`]="{ item }">
-      <v-btn
-        icon
+      <a
         :href="`${kopeshaURL}/lender/index.html#/loans/loanprofile/${item.raw.refId}`"
       >
-        <v-icon
-          icon="mdi-wifi"
+        <v-btn
+          variant="outlined"
+          density="compact"
           size="small"
-        ></v-icon>
-      </v-btn>
+          class="action-btn action-btn-icon mx-0.5"
+          :color="'secondary'"
+        >
+          <v-icon icon="mdi mdi-eye" />
+        </v-btn>
+      </a>
     </template>
   </v-data-table-server>
 </template>
 
-
 <style scoped>
-.custom-input{
+.custom-input {
   outline-style: none;
 }
 </style>

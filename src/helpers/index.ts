@@ -42,15 +42,30 @@ export function formatMoney(money: string | number | null | undefined): string {
   }`;
 }
 
-export function dateFilters(filter: string) {
-  let startDate, endDate;
+export function dateFilters(
+  filter: "day" | "week" | "month" | "quarter" | "year" | "all" | "arrears"
+) {
+  let startDate: string = "";
+  let endDate: string = "";
   switch (filter.toLowerCase()) {
-    case "week":
-      startDate = moment().startOf("week").format("DD/MM/YYYY");
+    case "arrears":
+      startDate = "";
+      endDate = moment().subtract(1, "day").format("DD/MM/YYYY");
+      break;
+    case "day":
+      startDate = moment().format("DD/MM/YYYY");
       endDate = moment().format("DD/MM/YYYY");
+      break;
+    case "week":
+      startDate = moment().startOf("week").add(1, "day").format("DD/MM/YYYY");
+      endDate = moment().endOf("week").add(1, "day").format("DD/MM/YYYY");
       break;
     case "month":
       startDate = moment().startOf("month").format("DD/MM/YYYY");
+      endDate = moment().format("DD/MM/YYYY");
+      break;
+    case "quarter":
+      startDate = moment().startOf("quarter").format("DD/MM/YYYY");
       endDate = moment().format("DD/MM/YYYY");
       break;
     case "year":

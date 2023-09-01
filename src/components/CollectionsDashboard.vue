@@ -1,65 +1,41 @@
 <script lang="ts" setup>
-import { onMounted, reactive, ref, watch } from "vue";
+import { onMounted, watch } from "vue";
 import { useSalesDashboardStore } from "@/store/sales-dashboard";
-import NewCustomersTable from "@/components/NewCustomersTable.vue";
 import LoanApprovals from "@/components/collections/LoanApprovals.vue";
-import { dateFilters } from "@/helpers";
-import OverdueCollectionsTable from "@/components/OverdueCollectionsTable.vue";
 import DueTodaytable from "@/components/collections/DueTodaytable.vue";
 import DueThisWeekTable from "@/components/collections/DueThisWeekTable.vue";
 import ArrearsTable from "@/components/collections/ArrearsTable.vue";
 import { storeToRefs } from "pinia";
+import { dateFilters } from "@/helpers";
 const salesDashboardStore = useSalesDashboardStore();
-
-const {
-  tabs,
-  tab,
-  newCustomerFilters,
-  overdueCollectionFilters,
-  upcomingCollectionFilters,
-  upComingCollectionActions,
-  newCustomerActions,
-  collectionFilter,
-} = storeToRefs(salesDashboardStore);
-const {
-  getSalesRepByBranch,
-  getStats,
-  getBranches,
-  getUpcomingCollections,
-  getOverdueCollections,
-  salesOverviewFilters,
-} = salesDashboardStore;
+const { tabs, tab, collectionFilter, salesRepIds, stats, salesReps } =
+  storeToRefs(salesDashboardStore);
+const { getSalesReps, getStats, salesOverviewFilters } = salesDashboardStore;
 
 onMounted(() => {
-  getSalesRepByBranch();
+  getSalesReps();
   getStats();
-  getBranches();
-  getUpcomingCollections();
-  getOverdueCollections();
 });
 
 watch(salesOverviewFilters, () => {
-  salesOverviewFilters.branches.text
-    ? ((salesDashboardStore.branchIds = [salesOverviewFilters.branches.text]),
-      salesDashboardStore.getSalesRepByBranch(
-        salesOverviewFilters.branches.text
-      ))
-    : (salesDashboardStore.branchIds = ["ALL"]);
-
-  salesOverviewFilters.salesRep.id
-    ? (salesDashboardStore.salesRepIds = [salesOverviewFilters.salesRep.id!])
-    : (salesDashboardStore.salesRepIds = ["ALL"]);
+  if (salesOverviewFilters.salesRep.id) {
+    salesRepIds.value = [salesOverviewFilters.salesRep.id!];
+  } else {
+    salesRepIds.value = [""];
+  }
 
   salesOverviewFilters.dateFilters.value &&
     dateReturn(salesOverviewFilters.dateFilters.value);
 
-  salesDashboardStore.getStats();
+  getStats();
 });
 
-function dateReturn(text: string) {
+function dateReturn(
+  text: "day" | "week" | "month" | "quarter" | "year" | "all" | "arrears"
+) {
   let [start, end] = dateFilters(text) as string[];
-  salesDashboardStore.stats.startDate = start;
-  salesDashboardStore.stats.endDate = end;
+  stats.value.startDate = start;
+  stats.value.endDate = end;
 }
 </script>
 <template>
@@ -110,23 +86,20 @@ function dateReturn(text: string) {
                     <v-list-item
                       density="compact"
                       @click="
-                        (salesOverviewFilters.salesRep.text = null),
-                          (salesOverviewFilters.salesRep.id = null)
+                        salesOverviewFilters.salesRep.text = null;
+                        salesOverviewFilters.salesRep.id = '';
                       "
                       >All</v-list-item
                     >
                     <v-list-item
-                      v-for="(
-                        dropDownMenu, it
-                      ) in salesDashboardStore.salesReps"
+                      v-for="(dropDownMenu, it) in salesReps"
                       :key="it"
                       :value="it"
                       density="compact"
                       @click="
-                        (salesOverviewFilters.salesRep.text =
-                          dropDownMenu.firstName.toString()),
-                          (salesOverviewFilters.salesRep.id =
-                            dropDownMenu.refId)
+                        salesOverviewFilters.salesRep.text =
+                          dropDownMenu.firstName.toString();
+                        salesOverviewFilters.salesRep.id = dropDownMenu.refId;
                       "
                       :title="`${dropDownMenu.firstName} ${dropDownMenu.lastName}`"
                       :subtitle="`${dropDownMenu.phoneNumber}`"
@@ -136,11 +109,11 @@ function dateReturn(text: string) {
                 </v-sheet>
               </v-menu>
             </div>
-            <div class="px-3">
+            <!--            <div class="px-3">
               <v-menu transition="slide-y-transition">
                 <template v-slot:activator="{ props }">
                   <v-btn
-                    class="v-btn--size-default text-caption text-capitalize"
+                    class="v-btn&#45;&#45;size-default text-caption text-capitalize"
                     density="default"
                     :append-icon="salesOverviewFilters.dateFilters.appendIcon"
                     v-bind="props"
@@ -176,8 +149,7 @@ function dateReturn(text: string) {
                   </v-list>
                 </v-sheet>
               </v-menu>
-            </div>
-            <!--            button add customer-->
+            </div>-->
             <div>
               <v-btn
                 class="v-btn--size-default text-caption text-capitalize pr-2"
@@ -207,14 +179,14 @@ function dateReturn(text: string) {
                 Expected Collections
               </div>
               <div class="text-h6 font-weight-regular py-2 text-primary">
-                {{ salesDashboardStore.stats.upcomingCollections }}
+                {{ stats.upcomingCollections }}
               </div>
               <div class="d-flex justify-space-between">
                 <div class="text-caption font-weight-regular text-normal">
                   This Month
                 </div>
                 <div class="text-caption font-weight-regular text-primary">
-                  {{ salesDashboardStore.stats.upcomingCollectionsCount }} Loans
+                  {{ stats.upcomingCollectionsCount }} Loans
                 </div>
               </div>
             </v-card-text>
@@ -233,10 +205,10 @@ function dateReturn(text: string) {
               <div class="text-body-2 font-weight-light">Loans In Arrears</div>
               <div class="d-flex justify-space-between mx-1">
                 <div class="text-h6 font-weight-regular py-2 text-red">
-                  {{ salesDashboardStore.stats.overdueCollections }}
+                  {{ stats.overdueCollections }}
                 </div>
                 <div class="text-sm font-weight-regular py-2 text-red">
-                  {{ salesDashboardStore.stats.overdueCollectionsPercent }}
+                  {{ stats.overdueCollectionsPercent }}
                 </div>
               </div>
 
@@ -245,7 +217,7 @@ function dateReturn(text: string) {
                   This Month
                 </div>
                 <div class="text-caption font-weight-regular text-red">
-                  {{ salesDashboardStore.stats.overdueCollectionsCount }} Loans
+                  {{ stats.overdueCollectionsCount }} Loans
                 </div>
               </div>
             </v-card-text>
@@ -265,14 +237,14 @@ function dateReturn(text: string) {
                 Total New Customers
               </div>
               <div class="text-h6 font-weight-regular py-2 text-success">
-                {{ salesDashboardStore.stats.customersCount }} Customers
+                {{ stats.customersCount }} Customers
               </div>
               <div class="d-flex justify-space-between">
                 <div class="text-caption font-weight-regular text-normal">
                   This Month
                 </div>
                 <div class="text-caption font-weight-regular text-success">
-                  {{ salesDashboardStore.stats.customersCountIncrement }} Loans
+                  {{ stats.customersCountIncrement }} Loans
                 </div>
               </div>
             </v-card-text>
@@ -293,16 +265,6 @@ function dateReturn(text: string) {
                       <div class="text-caption font-weight-light mb-n1">
                         Summary
                         {{ collectionFilter.collections.name }}
-                      </div>
-                    </v-col>
-                    <v-col
-                      class="d-flex align-start"
-                      sm="8"
-                    >
-                      <div
-                        class="text-caption text-primary font-weight-regular text-decoration-underline pt-2"
-                      >
-                        View All
                       </div>
                     </v-col>
                   </v-row>
@@ -350,48 +312,41 @@ function dateReturn(text: string) {
                       <due-todaytable
                         :key="Math.random().toString(36).substr(2, 16)"
                         :refId="salesOverviewFilters.salesRep.id"
+                        :period="'day'"
                       />
                     </v-container>
                     <v-container
                       v-else-if="n === tabs[1]"
                       :fluid="true"
                     >
-                      <due-this-week-table />
+                      <due-this-week-table
+                        :key="Math.random().toString(36).substr(2, 16)"
+                        :ref-id="salesOverviewFilters.salesRep.id"
+                        :period="'week'"
+                      />
                     </v-container>
                     <v-container
                       v-if="n === tabs[2]"
                       :fluid="true"
                     >
-                      <arrears-table />
+                      <arrears-table
+                        :key="Math.random().toString(36).substr(2, 16)"
+                        :ref-id="salesOverviewFilters.salesRep.id"
+                        :period="'arrears'"
+                      />
                     </v-container>
                     <v-container
                       v-if="n === tabs[3]"
                       :fluid="true"
                     >
-                      <loan-approvals />
+                      <loan-approvals
+                        :key="Math.random().toString(36).substr(2, 16)"
+                        :ref-id="salesOverviewFilters.salesRep.id"
+                      />
                     </v-container>
                   </v-window-item>
                 </v-window>
               </div>
-              <v-row class="d-flex mt-9">
-                <OverdueCollectionsTable
-                  v-if="
-                    collectionFilter.collections.name.toLowerCase() ===
-                    'overdue'
-                  "
-                />
-              </v-row>
-            </v-card-text>
-          </v-card>
-        </v-col>
-      </v-row>
-      <v-row class="d-flex">
-        <v-col cols="12">
-          <v-card :loading="false">
-            <v-card-text class="px-7 py-4 mb-4">
-              <v-row class="d-flex mt-9 mx-1">
-                <NewCustomersTable />
-              </v-row>
             </v-card-text>
           </v-card>
         </v-col>
@@ -399,8 +354,3 @@ function dateReturn(text: string) {
     </div>
   </div>
 </template>
-<style scoped>
-.searchField:focus-visible {
-  outline: rgba(128, 128, 128, 0.35) solid 0.5px;
-}
-</style>

@@ -15,9 +15,9 @@ import {
 export const useSalesDashboardStore = defineStore(
   "sales-dashboard-store",
   () => {
-    const branchIds = ref(["ALL"]);
-    const salesRepIds = ref(["ALL"]);
-    const branches = ref(["ALL"]);
+    const branchIds = ref([""]);
+    const salesRepIds = ref([""]);
+    const branches = ref([""]);
     const salesReps = ref<SalesRep[]>([]);
     const stats = ref({
       startDate: moment()
@@ -86,7 +86,7 @@ export const useSalesDashboardStore = defineStore(
       },
       salesRep: {
         text: null,
-        id: null,
+        id: "",
         appendIcon: "mdi:mdi-chevron-down",
       } as {
         text: string | null;
@@ -94,20 +94,57 @@ export const useSalesDashboardStore = defineStore(
         appendIcon: string;
       },
       dateFilters: {
-        text: "All Time",
-        value: null,
+        text: "Today",
+        value: "day",
         appendIcon: "mdi:mdi-chevron-down",
         menus: [
-          { title: "All Time", value: "all" },
-          { title: "This Year", value: "year" },
-          { title: "This Month", value: "month" },
-          { title: "This Week", value: "week" },
+          {
+            title: "Today",
+            value: "day",
+          },
+          {
+            title: "This Week",
+            value: "week",
+          },
+          {
+            title: "This Month",
+            value: "month",
+          },
+          {
+            title: "This Quarter",
+            value: "quarter",
+          },
+          {
+            title: "This Year",
+            value: "year",
+          },
+          {
+            title: "All",
+            value: "all",
+          },
         ],
       } as {
         text: string;
-        value: string | null;
+        value:
+          | "day"
+          | "week"
+          | "month"
+          | "quarter"
+          | "year"
+          | "all"
+          | "arrears";
         appendIcon: string;
-        menus: { title: string; value: string }[];
+        menus: {
+          title: string;
+          value:
+            | "day"
+            | "week"
+            | "month"
+            | "quarter"
+            | "year"
+            | "all"
+            | "arrears";
+        }[];
       },
     });
     const collectionFilter = ref({
@@ -355,20 +392,11 @@ export const useSalesDashboardStore = defineStore(
 
     const params = computed<string>(() => {
       const params = new URLSearchParams();
-
-      const branchIdsL = branchIds.value?.length
-        ? branchIds.value.join(",")
-        : "ALL";
       const salesRepIdsL = salesRepIds.value?.length
         ? salesRepIds.value.join(",")
-        : "ALL";
+        : "";
 
-      params.append("branchNames", branchIdsL);
       params.append("salesRepRefIds", salesRepIdsL);
-      if (stats.value.startDate)
-        params.append("startDate", stats.value.startDate);
-      if (stats.value.endDate) params.append("endDate", stats.value.endDate);
-
       return "?" + params.toString();
     });
 
@@ -378,18 +406,10 @@ export const useSalesDashboardStore = defineStore(
       });
     }
 
-    function getSalesRepByBranch(branch?: string) {
-      if (branch) {
-        axiosKopesha
-          .get(`/api/v1/salesrep/${branch}/salesReps`)
-          .then(response => {
-            salesReps.value = response.data;
-          });
-      } else {
-        axiosKopesha.get(`/api/v1/salesrepresentative/all`).then(response => {
-          salesReps.value = response.data;
-        });
-      }
+    function getSalesReps() {
+      axiosKopesha.get(`/api/v1/salesrepresentative/all`).then(response => {
+        salesReps.value = response.data;
+      });
     }
 
     function getStats() {
@@ -410,18 +430,6 @@ export const useSalesDashboardStore = defineStore(
           stats.value.customersCountIncrement =
             response.data.customersCountIncrement;
         });
-    }
-
-    function getUpcomingCollections(filters?: string) {
-      upcomingCollections.value.loading = true;
-      let url = `/api/v1/salesrep/collections/upcoming${params.value}`;
-      filters && (url += filters);
-      axiosKopesha
-        .get(url)
-        .then(response => {
-          upcomingCollections.value = response.data;
-        })
-        .finally(() => (upcomingCollections.value.loading = false));
     }
 
     function getOverdueCollections(filters?: string) {
@@ -486,9 +494,8 @@ export const useSalesDashboardStore = defineStore(
 
       getNewCustomers,
       getOverdueCollections,
-      getUpcomingCollections,
       getStats,
-      getSalesRepByBranch,
+      getSalesReps,
       getBranches,
       newCustomerFilterFetch,
       overdueCollectionFilterFetch,
