@@ -2,6 +2,7 @@ import { reactive, ref, watch } from "vue";
 import { useQueryParams } from "@/composables/useQueryParams";
 import { defineStore } from "pinia";
 import axios from "@/services/api/axiosKopesha";
+import { saveAs } from "file-saver";
 
 export interface KopeshaPagination {
   salesRepRefIds: string;
@@ -16,18 +17,18 @@ export interface KopeshaPagination {
   endDate: string;
 }
 
-export interface Collections{
+export interface Collections {
   data: {
-    refId: string,
-    created: string,
-    fullName:string
-    phoneNumber: string,
-    approvalLimit: number,
-    activeLoan: number,
-    onboardingStatus: string,
-    hasUssd: string,
-    dayJoined: string,
-    keycloakId: string,
+    refId: string;
+    created: string;
+    fullName: string;
+    phoneNumber: string;
+    approvalLimit: number;
+    activeLoan: number;
+    onboardingStatus: string;
+    hasUssd: string;
+    dayJoined: string;
+    keycloakId: string;
   }[];
   draw: number;
   start: number;
@@ -50,7 +51,7 @@ export const useCustomer = defineStore("customers", () => {
     endDate: "",
   }) as KopeshaPagination;
 
-  const {params, generateParams} = useQueryParams(pageables);
+  const { params, generateParams } = useQueryParams(pageables);
   const customersCollections = ref<Collections>({
     data: [],
     draw: 1,
@@ -58,52 +59,66 @@ export const useCustomer = defineStore("customers", () => {
     length: 10,
     recordsFiltered: 0,
     recordsTotal: 0,
-  } )
+  });
   const isLoading = ref(false);
 
   // export
-  const selectedExportOption = ref<{ name: string; value: string } | null>(null);
+  const selectedExportOption = ref<{ name: string; value: string } | null>(
+    null
+  );
   const exportOptions = ref<{ name: string; value: string }[]>([
     { name: "CSV", value: "csv" },
   ]);
-  const setSelectedExportOption = async (option: { name: string; value: string } | null) => {
+  const setSelectedExportOption = async (
+    option: { name: string; value: string } | null
+  ) => {
     selectedExportOption.value = option;
-  }
+  };
   const exportData = async () => {
     console.log("value changed", selectedExportOption.value);
-  }
-  watch(selectedExportOption, async (value) => {
+  };
+  watch(selectedExportOption, async value => {
     if (value) {
       await exportData();
     }
-  })
+  });
 
-//   onboarding period
+  //   onboarding period
 
-const selectedOnboardingOption = ref<{ name: string; value: string } | null>(null);
-const onboardingOptions = ref<{ name: string; value: string }[]>([
-  { name: "All", value: "" },
-  { name: "Approved", value: "Approved" },
-  { name: "Declined", value: "Pending" },
-]);
-const setSelectedOnboardingOption = async (option: { name: string; value: string } | null) => {
-  selectedOnboardingOption.value = option;
-}
-const onboardingData = async () => {
-  console.log("value changed", selectedOnboardingOption.value);
-}
-watch(selectedOnboardingOption, async (value) => {
-  if (value) {
-    await onboardingData();
-  }
-})
-//   headers
+  const selectedOnboardingOption = ref<{ name: string; value: string } | null>(
+    null
+  );
+  const onboardingOptions = ref<{ name: string; value: string }[]>([
+    { name: "All", value: "" },
+    { name: "Approved", value: "Approved" },
+    { name: "Declined", value: "Pending" },
+  ]);
+  const setSelectedOnboardingOption = async (
+    option: { name: string; value: string } | null
+  ) => {
+    selectedOnboardingOption.value = option;
+  };
+  const onboardingData = async () => {
+    console.log("value changed", selectedOnboardingOption.value);
+  };
+  watch(selectedOnboardingOption, async value => {
+    if (value) {
+      await onboardingData();
+    }
+  });
+  //   headers
   const headers = ref<
-    { title: string; key: string; align: string; sortable: boolean }[]>([
-    {title: "Date Joined", align: "start", sortable: false, key: "dayJoined",},
-    {title: "Names", key: "fullName", align: "end", sortable: false,},
+    { title: string; key: string; align: string; sortable: boolean }[]
+  >([
+    { title: "Date Joined", align: "start", sortable: false, key: "dayJoined" },
+    { title: "Names", key: "fullName", align: "end", sortable: false },
     { title: "Phone No", key: "phoneNumber", align: "end", sortable: false },
-    { title: "Loan Limit", key: "approvalLimit", align: "end", sortable: false },
+    {
+      title: "Loan Limit",
+      key: "approvalLimit",
+      align: "end",
+      sortable: false,
+    },
     { title: "Active Loan", key: "activeLoan", align: "end", sortable: false },
     { title: "Actions", key: "refId", align: "end", sortable: false },
   ]);
@@ -113,10 +128,27 @@ watch(selectedOnboardingOption, async (value) => {
     isLoading.value = true;
     await generateParams();
     const url = `/api/v1/salesrep/customers?${params.value}`;
-     const { data } = await axios.get(url);
+    const { data } = await axios.get(url);
     customersCollections.value = data;
     isLoading.value = false;
-  }
+  };
+  //fetching on the customers
+  const exportCustomers = async () => {
+    isLoading.value = true;
+    await generateParams();
+    const url = `${
+      import.meta.env.VITE_KOPESHA_API_URL
+    }/api/v1/salesrep/customers/export?${params.value}`;
+    try {
+      const res = await fetch(url);
+      const blob = await res.blob();
+      saveAs(blob, `Customer_List_${pageables.startDate}_${pageables.endDate}`);
+    } catch {
+      return "";
+    } finally {
+      isLoading.value = false;
+    }
+  };
 
   return {
     pageables,
@@ -132,9 +164,6 @@ watch(selectedOnboardingOption, async (value) => {
     selectedExportOption,
     exportOptions,
     setSelectedExportOption,
-  }
+    exportCustomers,
+  };
 });
-
-
-
-

@@ -11,6 +11,7 @@ const {
   fetchCustomersCollections,
   setSelectedExportOption,
   setSelectedOnboardingOption,
+  exportCustomers,
 } = useCustomer();
 
 const {
@@ -117,7 +118,7 @@ const loadItems = (options: optionsType) => {
                 type="search"
                 placeholder="Search Here"
                 v-model="pageables.searchTerm"
-                @input="search()"
+                @input="search"
               />
             </template>
           </v-input>
@@ -128,6 +129,7 @@ const loadItems = (options: optionsType) => {
           density="comfortable"
           variant="tonal"
           style="border: 1px solid rgba(128, 128, 128, 0.25)"
+          @click="exportCustomers"
         >
           Export
         </v-btn>
