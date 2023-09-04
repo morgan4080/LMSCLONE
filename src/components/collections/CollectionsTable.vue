@@ -4,6 +4,8 @@ import { dateFilters, formatMoney } from "@/helpers";
 import { useToday } from "@/salesDashboard/composables/collections/useToday";
 import { useSearch } from "@/composables/useSearch";
 import { storeToRefs } from "pinia";
+import { onBeforeMount } from "vue";
+import { debounce } from "lodash";
 const {
   pageables,
   fetchTodayCollections,
@@ -15,17 +17,23 @@ const {
   isLoading,
   selectedStatusOption,
   statusOptions,
-  selectedExportOption,
   exportOptions,
   todayCollections,
 } = storeToRefs(useToday());
-const { search } = useSearch(pageables, fetchTodayCollections);
+const { search } = useSearch(
+  pageables,
+  debounce(() => {
+    fetchTodayCollections();
+  }, 1000)
+);
 
 const props = defineProps<{
-  refId: string | null;
+  refId: string;
   period: "day" | "week" | "month" | "quarter" | "year" | "all" | "arrears";
   title: string;
 }>();
+
+const emit = defineEmits(["clearFilters"]);
 
 const salesDashboardStore = useSalesDashboardStore();
 const kopeshaURL = import.meta.env.VITE_KOPESHA_API_URL;
@@ -37,9 +45,7 @@ type optionsType = {
 };
 
 const loadItems = (options: optionsType) => {
-  if (props.refId) {
-    pageables.salesRepRefIds = props.refId;
-  }
+  pageables.salesRepRefIds = props.refId;
   const [start, end] = dateFilters(props.period);
   pageables.startDate = start;
   pageables.endDate = end;
@@ -49,9 +55,12 @@ const loadItems = (options: optionsType) => {
     pageables.start = options.itemsPerPage + 1;
   }
   pageables.length = options.itemsPerPage;
-  // fetch due today again
   fetchTodayCollections();
 };
+
+onBeforeMount(() => {
+  fetchTodayCollections();
+});
 </script>
 
 <template>
@@ -143,6 +152,7 @@ const loadItems = (options: optionsType) => {
       variant="tonal"
       style="border: 1px solid rgba(128, 128, 128, 0.25)"
       @click="
+        emit('clearFilters');
         setSelectedExportOption(null);
         setSelectedStatusOption(null);
         pageables.repaymentStatus = '';

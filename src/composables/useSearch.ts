@@ -2,7 +2,7 @@ import { KopeshaPagination } from "@/salesDashboard/composables/collections/useT
 
 export const useSearch = (
   pageables: KopeshaPagination,
-  callback: () => Promise<void>
+  callback: () => any
 ) => {
   async function search() {
     if (pageables.searchTerm?.length === 0) pageables.searchTerm = "";

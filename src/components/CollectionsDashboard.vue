@@ -21,45 +21,61 @@ function dateReturn(
   stats.value.endDate = end;
 }
 
-watch(salesOverviewFilters, async salesOverView => {
-  if (salesOverviewFilters.salesRep.id) {
-    salesRepIds.value = [salesOverviewFilters.salesRep.id!];
-  } else {
-    salesRepIds.value = [""];
-  }
-
-  const withValues: Record<string, string | number> = {};
-
-  if (salesOverView.salesRep.id) {
-    withValues["salesRep"] = salesOverView.salesRep.id;
-    await router.push({ path: route.path, query: withValues });
-  }
-
-  salesOverviewFilters.dateFilters.value &&
-    dateReturn(salesOverviewFilters.dateFilters.value);
-
-  getStats();
-});
-
-watch(tab, async currentTab => {
-  if (currentTab) {
-    const withValues: Record<string, string | number> = {};
-    withValues["tab"] = currentTab;
-    await router.push({ path: route.path, query: withValues });
-  }
-});
-
+// react to existing query parameters
 watch(
-  () => route.query,
-  async query => {
+  [() => route.query, salesReps],
+  async ([query, reps]) => {
     if (JSON.stringify(query) !== "{}") {
-      console.log(query);
       if (Object.keys(query).includes("tab")) {
         tab.value = `${query.tab}`;
+      }
+      if (Object.keys(query).includes("salesRep")) {
+        const rep = reps.find(rep => rep.refId === `${query.salesRep}`);
+        if (rep) {
+          salesOverviewFilters.salesRep.text = rep.firstName.toString();
+          salesOverviewFilters.salesRep.id = rep.refId;
+        }
       }
     }
   },
   { immediate: true }
+);
+
+const loadParams = async (
+  salesOverView: typeof salesOverviewFilters,
+  currentTab: typeof tab.value
+) => {
+  const withValues: Record<string, string | number> = {};
+
+  if (salesOverView.salesRep.id) {
+    if (salesOverviewFilters.salesRep.id) {
+      salesRepIds.value = [salesOverviewFilters.salesRep.id!];
+    } else {
+      salesRepIds.value = [""];
+    }
+
+    if (salesOverviewFilters.dateFilters.value) {
+      dateReturn(salesOverviewFilters.dateFilters.value);
+    }
+
+    withValues["salesRep"] = salesOverView.salesRep.id;
+  }
+  if (currentTab) {
+    withValues["tab"] = currentTab;
+  }
+
+  await router.push({ path: route.path, query: withValues });
+
+  getStats();
+};
+
+// set query parameters
+watch(
+  [salesOverviewFilters, tab],
+  async ([salesOverView, currentTab]) => {
+    await loadParams(salesOverView, currentTab);
+  },
+  { deep: true }
 );
 
 onMounted(() => {
@@ -342,10 +358,15 @@ onMounted(() => {
                       :fluid="true"
                     >
                       <CollectionsTable
-                        :key="Math.random().toString(36).substr(2, 16)"
+                        :key="`${Math.random().toString(36).substr(2, 16)}`"
                         :refId="salesOverviewFilters.salesRep.id"
                         :period="'day'"
                         title="Due Today"
+                        @clearFilters="
+                          salesOverviewFilters.salesRep.text = null;
+                          salesOverviewFilters.salesRep.id = '';
+                          loadParams(salesOverviewFilters, tab);
+                        "
                       />
                     </v-container>
 
@@ -354,10 +375,15 @@ onMounted(() => {
                       :fluid="true"
                     >
                       <CollectionsTable
-                        :key="Math.random().toString(36).substr(2, 16)"
+                        :key="`${Math.random().toString(36).substr(2, 16)}`"
                         :ref-id="salesOverviewFilters.salesRep.id"
                         :period="'week'"
                         title="Due This Week"
+                        @clearFilters="
+                          salesOverviewFilters.salesRep.text = null;
+                          salesOverviewFilters.salesRep.id = '';
+                          loadParams(salesOverviewFilters, tab);
+                        "
                       />
                     </v-container>
 
@@ -366,10 +392,15 @@ onMounted(() => {
                       :fluid="true"
                     >
                       <CollectionsTable
-                        :key="Math.random().toString(36).substr(2, 16)"
+                        :key="`${Math.random().toString(36).substr(2, 16)}`"
                         :ref-id="salesOverviewFilters.salesRep.id"
                         :period="'arrears'"
                         title="Arrears"
+                        @clearFilters="
+                          salesOverviewFilters.salesRep.text = null;
+                          salesOverviewFilters.salesRep.id = '';
+                          loadParams(salesOverviewFilters, tab);
+                        "
                       />
                     </v-container>
 
@@ -378,8 +409,13 @@ onMounted(() => {
                       :fluid="true"
                     >
                       <loan-approvals
-                        :key="Math.random().toString(36).substr(2, 16)"
+                        :key="`${Math.random().toString(36).substr(2, 16)}`"
                         :ref-id="salesOverviewFilters.salesRep.id"
+                        @clearFilters="
+                          salesOverviewFilters.salesRep.text = null;
+                          salesOverviewFilters.salesRep.id = '';
+                          loadParams(salesOverviewFilters, tab);
+                        "
                       />
                     </v-container>
                   </v-window-item>

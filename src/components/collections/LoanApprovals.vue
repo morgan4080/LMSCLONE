@@ -1,29 +1,29 @@
 <script setup lang="ts">
-import { useSalesDashboardStore } from "@/store/sales-dashboard";
 import { formatMoney } from "@/helpers";
 import { useLoanApproval } from "@/salesDashboard/composables/collections/useLoanApproval";
 import { useSearch } from "@/composables/useSearch";
 import { storeToRefs } from "pinia";
-import { toRef } from "vue";
+import { onBeforeMount } from "vue";
+import { debounce } from "lodash";
 
 const { pageables, fetchApprovalCollections, setSelectedExportOption } =
   useLoanApproval();
-const {
-  headers,
-  isLoading,
-  selectedExportOption,
-  exportOptions,
-  approvalCollections,
-} = storeToRefs(useLoanApproval());
-const { search } = useSearch(pageables, fetchApprovalCollections);
+const { headers, isLoading, exportOptions, approvalCollections } = storeToRefs(
+  useLoanApproval()
+);
+const { search } = useSearch(
+  pageables,
+  debounce(() => {
+    fetchApprovalCollections();
+  }, 1000)
+);
 
 const props = defineProps<{
-  refId: string | null;
+  refId: string;
 }>();
 
-const refId = toRef(props, "refId");
+const emit = defineEmits(["clearFilters"]);
 
-const salesDashboardStore = useSalesDashboardStore();
 const kopeshaURL = import.meta.env.VITE_KOPESHA_API_URL;
 
 type optionsType = {
@@ -33,18 +33,18 @@ type optionsType = {
 };
 
 const loadItems = (options: optionsType) => {
-  if (refId.value) {
-    pageables.salesRepRefIds = refId.value;
-  }
+  pageables.salesRepRefIds = props.refId;
   if (options.page === 1) {
     pageables.start = 0;
   } else {
     pageables.start = options.itemsPerPage + 1;
   }
   pageables.length = options.itemsPerPage;
-  // fetch due arrears again
   fetchApprovalCollections();
 };
+onBeforeMount(() => {
+  fetchApprovalCollections();
+});
 </script>
 
 <template>
@@ -93,7 +93,20 @@ const loadItems = (options: optionsType) => {
         color="primary"
         variant="tonal"
         style="border: 1px solid rgba(128, 128, 128, 0.25)"
-        @click="setSelectedExportOption(null)"
+        @click="
+          emit('clearFilters');
+          setSelectedExportOption(null);
+          pageables.draw = 1;
+          pageables.searchTerm = '';
+          pageables.salesRepRefIds = '';
+          pageables.startDate = '';
+          pageables.endDate = '';
+          pageables.endDate = '';
+          pageables.start = 0;
+          pageables.length = 10;
+
+          fetchApprovalCollections();
+        "
       >
         Clear Filters
       </v-btn>

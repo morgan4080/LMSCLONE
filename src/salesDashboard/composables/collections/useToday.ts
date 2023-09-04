@@ -135,12 +135,17 @@ export const useToday = defineStore("todays", () => {
   ]);
 
   const fetchTodayCollections = async () => {
-    isLoading.value = true;
-    await generateParams();
-    const url = `/api/v1/salesrep/collections/overdue?${params.value}`;
-    const { data } = await axios.get(url);
-    todayCollections.value = data;
-    isLoading.value = false;
+    try {
+      isLoading.value = true;
+      await generateParams();
+      const url = `/api/v1/salesrep/collections/overdue?${params.value}`;
+      const { data } = await axios.get(url);
+      todayCollections.value = data;
+    } catch (e) {
+      console.log(e);
+    } finally {
+      isLoading.value = false;
+    }
   };
 
   return {
