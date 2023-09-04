@@ -63,7 +63,7 @@ const loadItems = (options: optionsType) => {
     <div>
       <v-input
         hide-details
-        class="px-2 font-weight-light border rounded mr-4"
+        class="px-2 py-1 font-weight-light border rounded mr-4"
         density="comfortable"
         style="
           height: 28px !important;
@@ -126,40 +126,15 @@ const loadItems = (options: optionsType) => {
         </v-list>
       </v-sheet>
     </v-menu>
-    <v-menu transition="slide-y-transition">
-      <template #activator="{ props }">
-        <v-btn
-          variant="outlined"
-          density="comfortable"
-          append-icon="mdi:mdi-chevron-down"
-          v-bind="props"
-          class="mr-4 text-none text-caption"
-          style="border: 1px solid rgba(128, 128, 128, 0.25)"
-        >
-          {{ selectedExportOption ? selectedExportOption.name : "Export" }}
-        </v-btn>
-      </template>
-
-      <v-sheet
-        border
-        rounded
-      >
-        <v-list
-          :nav="true"
-          density="comfortable"
-          role="listbox"
-        >
-          <v-list-item
-            v-for="(item, idx) in exportOptions"
-            :key="idx"
-            :value="item"
-            @click="setSelectedExportOption(item)"
-          >
-            {{ item.name }}</v-list-item
-          >
-        </v-list>
-      </v-sheet>
-    </v-menu>
+    <v-btn
+      class="v-btn--size-default text-caption text-capitalize mr-4"
+      density="comfortable"
+      variant="tonal"
+      style="border: 1px solid rgba(128, 128, 128, 0.25)"
+      @click="setSelectedExportOption(exportOptions[0])"
+    >
+      Export
+    </v-btn>
     <v-btn
       class="v-btn--size-default text-caption text-capitalize mr-6"
       density="comfortable"
@@ -235,6 +210,14 @@ const loadItems = (options: optionsType) => {
     <template v-slot:[`item.loanBalance`]="{ item }">
       <p>{{ formatMoney(item.raw.loanBalance) }}</p>
     </template>
+    <template v-slot:[`item.dueToday`]="{ item }">
+      <p
+        style="color: #4d99d4"
+        class="font-weight-regular"
+      >
+        {{ formatMoney(item.raw.dueToday) }}
+      </p>
+    </template>
     <template v-slot:[`item.status`]="{ item }">
       <v-chip
         :label="true"
@@ -242,8 +225,8 @@ const loadItems = (options: optionsType) => {
           item.raw.status === 'PAID'
             ? 'green'
             : item.raw.status === 'NOTPAID'
-            ? 'red'
-            : 'yellow'
+            ? '#FB6B27'
+            : '#D90000'
         "
       >
         {{ item.raw.status }}

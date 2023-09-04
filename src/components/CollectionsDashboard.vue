@@ -5,28 +5,13 @@ import LoanApprovals from "@/components/collections/LoanApprovals.vue";
 import { storeToRefs } from "pinia";
 import { dateFilters } from "@/helpers";
 import CollectionsTable from "@/components/collections/CollectionsTable.vue";
+import { useRoute, useRouter } from "vue-router";
+const router = useRouter();
+const route = useRoute();
 const { tabs, tab, salesRepIds, collectionFilter, stats, salesReps } =
   storeToRefs(useSalesDashboardStore());
 const { getSalesReps, getStats, salesOverviewFilters } =
   useSalesDashboardStore();
-
-onMounted(() => {
-  getSalesReps();
-  getStats();
-});
-
-watch(salesOverviewFilters, () => {
-  if (salesOverviewFilters.salesRep.id) {
-    salesRepIds.value = [salesOverviewFilters.salesRep.id!];
-  } else {
-    salesRepIds.value = [""];
-  }
-
-  salesOverviewFilters.dateFilters.value &&
-    dateReturn(salesOverviewFilters.dateFilters.value);
-
-  getStats();
-});
 
 function dateReturn(
   text: "day" | "week" | "month" | "quarter" | "year" | "all" | "arrears"
@@ -35,6 +20,52 @@ function dateReturn(
   stats.value.startDate = start;
   stats.value.endDate = end;
 }
+
+watch(salesOverviewFilters, async salesOverView => {
+  if (salesOverviewFilters.salesRep.id) {
+    salesRepIds.value = [salesOverviewFilters.salesRep.id!];
+  } else {
+    salesRepIds.value = [""];
+  }
+
+  const withValues: Record<string, string | number> = {};
+
+  if (salesOverView.salesRep.id) {
+    withValues["salesRep"] = salesOverView.salesRep.id;
+    await router.push({ path: route.path, query: withValues });
+  }
+
+  salesOverviewFilters.dateFilters.value &&
+    dateReturn(salesOverviewFilters.dateFilters.value);
+
+  getStats();
+});
+
+watch(tab, async currentTab => {
+  if (currentTab) {
+    const withValues: Record<string, string | number> = {};
+    withValues["tab"] = currentTab;
+    await router.push({ path: route.path, query: withValues });
+  }
+});
+
+watch(
+  () => route.query,
+  async query => {
+    if (JSON.stringify(query) !== "{}") {
+      console.log(query);
+      if (Object.keys(query).includes("tab")) {
+        tab.value = `${query.tab}`;
+      }
+    }
+  },
+  { immediate: true }
+);
+
+onMounted(() => {
+  getSalesReps();
+  getStats();
+});
 </script>
 <template>
   <div class="pa-6 fill-height bg-background">
@@ -45,11 +76,11 @@ function dateReturn(
           sm="7"
         >
           <h1 class="text-h6 font-weight-regular text-grey-darken-2">
-            Dashboard Overview
+            Sales Overview
           </h1>
           <div class="text-caption font-weight-light mb-n1">
-            <span class="font-weight-medium">An Overview Performance</span> For
-            The Period Between
+            <span class="font-weight-medium">A Loans Overview Performance</span>
+            For The Period Between
             <span class="font-weight-medium">01/04/2023 - 30/04/2023</span>
           </div>
         </v-col>
@@ -251,7 +282,10 @@ function dateReturn(
       </v-row>
       <v-row class="d-flex">
         <v-col cols="12">
-          <v-card :loading="false">
+          <v-card
+            :loading="false"
+            variant="flat"
+          >
             <v-card-text class="px-7 py-9">
               <v-row>
                 <v-col sm="9">

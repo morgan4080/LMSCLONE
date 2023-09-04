@@ -119,7 +119,12 @@ export const useToday = defineStore("todays", () => {
       align: "start",
       sortable: false,
     },
-    { title: "Due Today", key: "dueToday", align: "start", sortable: false },
+    {
+      title: "Total Due Today",
+      key: "dueToday",
+      align: "start",
+      sortable: false,
+    },
     {
       title: "Status",
       key: "status",

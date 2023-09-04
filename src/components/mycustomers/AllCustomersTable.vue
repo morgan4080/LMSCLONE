@@ -221,8 +221,8 @@ const loadItems = (options: optionsType) => {
           item.raw.status === 'Paid'
             ? 'green'
             : item.raw.status === 'Not Paid'
-            ? 'red'
-            : 'yellow'
+            ? '#FB6B27'
+            : '#D90000'
         "
       >
         {{ item.raw.status }}

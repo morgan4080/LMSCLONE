@@ -84,8 +84,8 @@ watch([currentPage, itemsPerPage], (newValues: [number, number]) => {
           item.raw.status === 'Paid'
             ? 'green'
             : item.raw.status === 'Not Paid'
-            ? 'red'
-            : 'yellow'
+            ? '#FB6B27'
+            : '#D90000'
         "
       >
         {{ item.raw.status }}
@@ -103,5 +103,4 @@ watch([currentPage, itemsPerPage], (newValues: [number, number]) => {
       </v-btn>
     </template>
   </v-data-table-server>
-
 </template>

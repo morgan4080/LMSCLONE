@@ -3,7 +3,7 @@ import axios from "axios";
 import moment from "moment";
 import { formatMoney } from "@/helpers";
 import axiosKopesha from "@/services/api/axiosKopesha";
-import { computed, reactive, ref } from "vue";
+import { computed, reactive, ref, watch } from "vue";
 import {
   Customer,
   OverdueCollection,
@@ -71,10 +71,7 @@ export const useSalesDashboardStore = defineStore(
       "In Arrears",
       "Loan Approvals",
     ]);
-    const myCustomerTabs= ref([
-        "All Customers",
-        "Onboarding Approvals"
-    ]);
+    const myCustomerTabs = ref(["All Customers", "Onboarding Approvals"]);
     const tab = ref<string | null>(null);
     const salesOverviewFilters = reactive({
       branches: {
