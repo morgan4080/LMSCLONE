@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { onMounted, watch } from "vue";
+import { onBeforeMount, onMounted, watch } from "vue";
 import { useSalesDashboardStore } from "@/store/sales-dashboard";
 import LoanApprovals from "@/components/collections/LoanApprovals.vue";
 import { storeToRefs } from "pinia";
@@ -32,7 +32,7 @@ watch(
       if (Object.keys(query).includes("salesRep")) {
         const rep = reps.find(rep => rep.refId === `${query.salesRep}`);
         if (rep) {
-          salesOverviewFilters.salesRep.text = rep.firstName.toString();
+          salesOverviewFilters.salesRep.text = `${rep.firstName} ${rep.lastName}`;
           salesOverviewFilters.salesRep.id = rep.refId;
         }
       }
@@ -60,13 +60,12 @@ const loadParams = async (
 
     withValues["salesRep"] = salesOverView.salesRep.id;
   }
+
   if (currentTab) {
     withValues["tab"] = currentTab;
   }
 
   await router.push({ path: route.path, query: withValues });
-
-  getStats();
 };
 
 // set query parameters
@@ -74,11 +73,12 @@ watch(
   [salesOverviewFilters, tab],
   async ([salesOverView, currentTab]) => {
     await loadParams(salesOverView, currentTab);
+    getStats();
   },
   { deep: true }
 );
 
-onMounted(() => {
+onBeforeMount(() => {
   getSalesReps();
   getStats();
 });
@@ -133,6 +133,7 @@ onMounted(() => {
                       @click="
                         salesOverviewFilters.salesRep.text = null;
                         salesOverviewFilters.salesRep.id = '';
+                        salesRepIds = [''];
                       "
                       >All</v-list-item
                     >
@@ -142,8 +143,7 @@ onMounted(() => {
                       :value="it"
                       density="compact"
                       @click="
-                        salesOverviewFilters.salesRep.text =
-                          dropDownMenu.firstName.toString();
+                        salesOverviewFilters.salesRep.text = `${dropDownMenu.firstName} ${dropDownMenu.lastName}`;
                         salesOverviewFilters.salesRep.id = dropDownMenu.refId;
                       "
                       :title="`${dropDownMenu.firstName} ${dropDownMenu.lastName}`"
@@ -365,6 +365,7 @@ onMounted(() => {
                         @clearFilters="
                           salesOverviewFilters.salesRep.text = null;
                           salesOverviewFilters.salesRep.id = '';
+                          salesRepIds = [''];
                           loadParams(salesOverviewFilters, tab);
                         "
                       />
@@ -382,6 +383,7 @@ onMounted(() => {
                         @clearFilters="
                           salesOverviewFilters.salesRep.text = null;
                           salesOverviewFilters.salesRep.id = '';
+                          salesRepIds = [''];
                           loadParams(salesOverviewFilters, tab);
                         "
                       />
@@ -399,6 +401,7 @@ onMounted(() => {
                         @clearFilters="
                           salesOverviewFilters.salesRep.text = null;
                           salesOverviewFilters.salesRep.id = '';
+                          salesRepIds = [''];
                           loadParams(salesOverviewFilters, tab);
                         "
                       />
@@ -414,6 +417,7 @@ onMounted(() => {
                         @clearFilters="
                           salesOverviewFilters.salesRep.text = null;
                           salesOverviewFilters.salesRep.id = '';
+                          salesRepIds = [''];
                           loadParams(salesOverviewFilters, tab);
                         "
                       />
