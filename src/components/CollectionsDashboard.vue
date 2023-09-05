@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { onBeforeMount, onMounted, watch } from "vue";
+import { onBeforeMount, watch } from "vue";
 import { useSalesDashboardStore } from "@/store/sales-dashboard";
 import LoanApprovals from "@/components/collections/LoanApprovals.vue";
 import { storeToRefs } from "pinia";
