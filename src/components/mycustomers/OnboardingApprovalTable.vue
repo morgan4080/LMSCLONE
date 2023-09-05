@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import { useSalesDashboardStore } from "@/store/sales-dashboard";
-import { formatMoney } from "@/helpers";
+import {dateFilters, formatMoney} from "@/helpers";
 import { useSearch } from "@/composables/useSearch";
 import { storeToRefs } from "pinia";
 import { useOnboarding } from "@/salesDashboard/composables/mycustomers/useOnboarding";
@@ -16,7 +15,6 @@ const {
 const {
   headers,
   isLoading,
-  selectedExportOption,
   exportOptions,
   onBoardingCollections,
 } = storeToRefs(useOnboarding());
@@ -24,6 +22,7 @@ const {
 const { search } = useSearch(pageables, fetchOnBoardingCollections);
 const props = defineProps<{
   refId: string | null;
+  period: "day" | "week" | "month" | "quarter" | "year" | "all" | "arrears";
 }>();
 
 const refId = toRef(props, "refId");
@@ -35,11 +34,11 @@ type optionsType = {
   itemsPerPage: number;
   search: string;
 };
-
 const loadItems = (options: optionsType) => {
   if (refId.value) {
     pageables.salesRepRefIds = refId.value;
   }
+  dateReturn(props.period);
   if (options.page === 1) {
     pageables.start = 0;
   } else {
@@ -49,6 +48,13 @@ const loadItems = (options: optionsType) => {
   // fetch due today again
   fetchOnBoardingCollections();
 };
+function dateReturn(
+    text: "day" | "week" | "month" | "quarter" | "year" | "all" | "arrears"
+) {
+  let [start, end] = dateFilters(text);
+  pageables.startDate = start;
+  pageables.endDate = end;
+}
 </script>
 
 <template>
@@ -160,26 +166,17 @@ const loadItems = (options: optionsType) => {
     </template>
     <template v-slot:[`item.productName`]="{ item }">
       <p>{{ item.raw.phoneNumber }}</p>
-      <p>{{ item.raw.phoneNumber }}</p>
     </template>
     <template v-slot:[`item.approvalLimit`]="{ item }">
       <p>{{ formatMoney(item.raw.approvalLimit) }}</p>
     </template>
+
     <template v-slot:[`item.onboardingStatus`]="{ item }">
-      <p>{{ formatMoney(item.raw.onboardingStatus) }}</p>
-    </template>
-    <template v-slot:[`item.status`]="{ item }">
       <v-chip
         label
-        :color="
-          item.raw.status === 'Paid'
-            ? 'green'
-            : item.raw.status === 'Not Paid'
-            ? 'red'
-            : 'yellow'
-        "
+        :color="'red'"
       >
-        {{ item.raw.status }}
+        {{ item.raw.onboardingStatus }}
       </v-chip>
     </template>
     <template v-slot:[`item.refId`]="{ item }">

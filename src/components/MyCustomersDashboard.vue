@@ -25,6 +25,7 @@ onMounted(() => {
   getOverdueCollections();
   getStatsCustomer();
 });
+
 const kopeshaURL = import.meta.env.VITE_KOPESHA_API_URL;
 const loadParams = async (
   salesOverView: typeof salesOverviewFilters,
@@ -38,7 +39,6 @@ const loadParams = async (
     } else {
       salesRepIds.value = [""];
     }
-
     withValues["salesRep"] = salesOverView.salesRep.id;
   }
 

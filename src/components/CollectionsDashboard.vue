@@ -89,7 +89,6 @@ onBeforeMount(() => {
   getSalesReps();
   getStats();
 });
-
 const openUserCreation = () => {
   window.location.href = `${kopeshaURL}lender/index.html#/customers/customer_form`;
 };
@@ -98,6 +97,7 @@ onBeforeMount(() => {
   salesOverviewFilters.dateFilters.text = "This Month";
   salesOverviewFilters.dateFilters.value = "month";
 });
+
 </script>
 <template>
   <div class="pa-6 fill-height bg-background">
