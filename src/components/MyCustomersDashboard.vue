@@ -5,12 +5,13 @@ import AllCustomersTable from "@/components/mycustomers/AllCustomersTable.vue";
 import OnboardingApprovalTable from "@/components/mycustomers/OnboardingApprovalTable.vue";
 import { dateFilters } from "@/helpers";
 import { storeToRefs } from "pinia";
+import { useRoute, useRouter } from "vue-router";
+const router = useRouter();
+const route = useRoute();
 const { tab, myCustomerTabs, salesRepIds, stats, salesReps } = storeToRefs(
   useSalesDashboardStore()
 );
-
 const {
-  getStats,
   getBranches,
   getOverdueCollections,
   salesOverviewFilters,
@@ -25,23 +26,48 @@ onMounted(() => {
   getStatsCustomer();
 });
 
-watch(salesOverviewFilters, () => {
-  if (salesOverviewFilters.salesRep.id) {
-    salesRepIds.value = [salesOverviewFilters.salesRep.id!];
-  } else {
-    salesRepIds.value = [""];
-  }
-  salesOverviewFilters.dateFilters.value &&
-    dateReturn(salesOverviewFilters.dateFilters.value);
+const loadParams = async (
+  salesOverView: typeof salesOverviewFilters,
+  currentTab: typeof tab.value
+) => {
+  const withValues: Record<string, string | number> = {};
 
-  getStats();
-  getStatsCustomer();
-});
+  if (salesOverView.salesRep.id) {
+    if (salesOverviewFilters.salesRep.id) {
+      salesRepIds.value = [salesOverviewFilters.salesRep.id!];
+    } else {
+      salesRepIds.value = [""];
+    }
+
+    withValues["salesRep"] = salesOverView.salesRep.id;
+  }
+
+  if (salesOverviewFilters.dateFilters.value) {
+    dateReturn(salesOverviewFilters.dateFilters.value);
+    withValues["startDate"] = stats.value.startDate;
+    withValues["endDate"] = stats.value.endDate;
+  }
+
+  if (currentTab) {
+    withValues["tab"] = currentTab;
+  }
+
+  await router.push({ path: route.path, query: withValues });
+};
+
+watch(
+  [salesOverviewFilters, tab],
+  async ([salesOverView, currentTab]) => {
+    await loadParams(salesOverView, currentTab);
+    getStatsCustomer();
+  },
+  { deep: true }
+);
 
 function dateReturn(
   text: "day" | "week" | "month" | "quarter" | "year" | "all" | "arrears"
 ) {
-  let [start, end] = dateFilters(text) as string[];
+  let [start, end] = dateFilters(text);
   stats.value.startDate = start;
   stats.value.endDate = end;
 }
@@ -60,7 +86,9 @@ function dateReturn(
           <div class="text-caption font-weight-light mb-n1">
             <span class="font-weight-medium">An Overview of Customers</span> For
             The Period Between
-            <span class="font-weight-medium">01/04/2023 - 30/04/2023</span>
+            <span class="font-weight-medium"
+              >{{ stats.startDate }} - {{ stats.endDate }}</span
+            >
           </div>
         </v-col>
         <v-col
@@ -161,7 +189,7 @@ function dateReturn(
             </div>
             <div>
               <v-btn
-                class="v-btn--size-default text-caption text-capitalize pr-2"
+                class="v-btn--size-default text-caption text-capitalize"
                 density="default"
                 :flat="true"
                 color="primary"

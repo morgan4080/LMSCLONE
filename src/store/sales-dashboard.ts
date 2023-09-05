@@ -40,7 +40,6 @@ export const useSalesDashboardStore = defineStore(
       newCustomersPercent: "0%",
       onBoardingApprovals: "0",
       onboardingApprovals: "0",
-
     });
 
     const upcomingCollections = ref<
@@ -406,7 +405,17 @@ export const useSalesDashboardStore = defineStore(
       return "?" + params.toString();
     });
 
+    const paramsCustomers = computed<string>(() => {
+      const params = new URLSearchParams();
+      const salesRepIdsL = salesRepIds.value?.length
+        ? salesRepIds.value.join(",")
+        : "";
 
+      params.append("salesRepRefIds", salesRepIdsL);
+      params.append("startDate", stats.value.startDate);
+      params.append("endDate", stats.value.endDate);
+      return "?" + params.toString();
+    });
 
     function getBranches() {
       axiosKopesha.get(`/api/v1/salesrep/branches`).then(response => {
@@ -479,24 +488,18 @@ export const useSalesDashboardStore = defineStore(
       getOverdueCollections(newParam);
     }
     function getStatsCustomer() {
-          axiosKopesha
-              .get(`/api/v1/salesrep/customer${params.value}`)
-              .then(response => {
-                  stats.value.totalCustomers =
-                      response.data.totalCustomers;
-                  stats.value.newCustomers =
-                      response.data.newCustomers;
-                  stats.value.onBoardingApprovals =
-                      response.data.onBoardingApprovals;
-                  stats.value.newCustomersPercent=
-                      response.data.newCustomersPercent;
-                stats.value.customersCountIncrement =
-                    response.data.customersCountIncrement;
-                stats.value.onboardingApprovals =
-                    response.data.onboardingApprovals;
-              });
+      axiosKopesha
+        .get(`/api/v1/salesrep/customer${paramsCustomers.value}`)
+        .then(response => {
+          stats.value.totalCustomers = response.data.totalCustomers;
+          stats.value.newCustomers = response.data.newCustomers;
+          stats.value.onBoardingApprovals = response.data.onBoardingApprovals;
+          stats.value.newCustomersPercent = response.data.newCustomersPercent;
+          stats.value.customersCountIncrement =
+            response.data.customersCountIncrement;
+          stats.value.onboardingApprovals = response.data.onboardingApprovals;
+        });
     }
-
 
     return {
       branchIds,
@@ -517,7 +520,6 @@ export const useSalesDashboardStore = defineStore(
       upComingCollectionActions,
       newCustomerFilters,
       newCustomerActions,
-
 
       getNewCustomers,
       getOverdueCollections,

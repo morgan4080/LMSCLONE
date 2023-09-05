@@ -3,20 +3,21 @@ import { formatMoney } from "@/helpers";
 import { useLoanApproval } from "@/salesDashboard/composables/collections/useLoanApproval";
 import { useSearch } from "@/composables/useSearch";
 import { storeToRefs } from "pinia";
-import { onBeforeMount } from "vue";
 import { debounce } from "lodash";
 
 const { pageables, fetchApprovalCollections, setSelectedExportOption } =
   useLoanApproval();
+
 const { headers, isLoading, exportOptions, approvalCollections } = storeToRefs(
   useLoanApproval()
 );
-const { search } = useSearch(
-  pageables,
-  debounce(() => {
-    fetchApprovalCollections();
-  }, 1000)
-);
+
+const reload = debounce(() => {
+  fetchApprovalCollections();
+  isLoading.value = false;
+}, 1000);
+
+const { search } = useSearch(pageables, reload);
 
 const props = defineProps<{
   refId: string;
@@ -33,6 +34,7 @@ type optionsType = {
 };
 
 const loadItems = (options: optionsType) => {
+  isLoading.value = true;
   pageables.salesRepRefIds = props.refId;
   if (options.page === 1) {
     pageables.start = 0;
@@ -40,11 +42,8 @@ const loadItems = (options: optionsType) => {
     pageables.start = options.itemsPerPage + 1;
   }
   pageables.length = options.itemsPerPage;
-  fetchApprovalCollections();
+  reload();
 };
-onBeforeMount(() => {
-  fetchApprovalCollections();
-});
 </script>
 
 <template>

@@ -12,11 +12,11 @@ const { tabs, tab, salesRepIds, collectionFilter, stats, salesReps } =
   storeToRefs(useSalesDashboardStore());
 const { getSalesReps, getStats, salesOverviewFilters } =
   useSalesDashboardStore();
-
+const kopeshaURL = import.meta.env.VITE_KOPESHA_API_URL;
 function dateReturn(
   text: "day" | "week" | "month" | "quarter" | "year" | "all" | "arrears"
 ) {
-  let [start, end] = dateFilters(text) as string[];
+  let [start, end] = dateFilters(text);
   stats.value.startDate = start;
   stats.value.endDate = end;
 }
@@ -82,6 +82,10 @@ onBeforeMount(() => {
   getSalesReps();
   getStats();
 });
+
+const openUserCreation = () => {
+  window.location.href = `${kopeshaURL}lender/index.html#/customers/customer_form`;
+};
 </script>
 <template>
   <div class="pa-6 fill-height bg-background">
@@ -96,8 +100,6 @@ onBeforeMount(() => {
           </h1>
           <div class="text-caption font-weight-light mb-n1">
             <span class="font-weight-medium">A Loans Overview Performance</span>
-            For The Period Between
-            <span class="font-weight-medium">01/04/2023 - 30/04/2023</span>
           </div>
         </v-col>
         <v-col
@@ -202,6 +204,7 @@ onBeforeMount(() => {
                 :flat="true"
                 color="primary"
                 style="border: 1px solid rgba(128, 128, 128, 0.25)"
+                @click="openUserCreation"
               >
                 Add Customer
               </v-btn>
