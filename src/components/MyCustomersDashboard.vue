@@ -25,7 +25,7 @@ onMounted(() => {
   getOverdueCollections();
   getStatsCustomer();
 });
-
+const kopeshaURL = import.meta.env.VITE_KOPESHA_API_URL;
 const loadParams = async (
   salesOverView: typeof salesOverviewFilters,
   currentTab: typeof tab.value
@@ -71,6 +71,10 @@ function dateReturn(
   stats.value.startDate = start;
   stats.value.endDate = end;
 }
+const openUserCreation = () => {
+  window.location.href = `${kopeshaURL}lender/index.html#/customers/customer_form`;
+};
+
 </script>
 <template>
   <div class="pa-6 fill-height bg-background">
@@ -194,6 +198,7 @@ function dateReturn(
                 :flat="true"
                 color="primary"
                 style="border: 1px solid rgba(128, 128, 128, 0.25)"
+                @click="openUserCreation"
               >
                 Add Customer
               </v-btn>

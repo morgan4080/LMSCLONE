@@ -100,11 +100,11 @@ export const useOnboarding = defineStore("onboarding", () => {
 //   headers
   const headers = ref<
     { title: string; key: string; align: string; sortable: boolean }[]>([
-    {title: "Application Date", align: "start", sortable: false, key: "dayJoined",},
+    {title: "Application Date", align: "start", sortable: false, key: "created",},
     {title: "Names", key: "fullName", align: "end", sortable: false,},
     { title: "Phone No", key: "phoneNumber", align: "end", sortable: false },
     { title: "Loan Limit", key: "approvalLimit", align: "end", sortable: false },
-    { title: "Onboarding", key: "activeLoan", align: "end", sortable: false },
+    { title: "Onboarding", key: "onboardingStatus", align: "end", sortable: false },
     { title: "Actions", key: "refId", align: "start", sortable: false },
   ]);
 

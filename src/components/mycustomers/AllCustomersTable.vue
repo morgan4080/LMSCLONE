@@ -202,8 +202,8 @@ const loadItems = (options: optionsType) => {
     ]"
     @update:options="loadItems"
   >
-    <template v-slot:[`item.dueDate`]="{ item }">
-      <p>{{ item.raw.dueDate }}</p>
+    <template v-slot:[`item.created`]="{ item }">
+      <p>{{ item.raw.created }}</p>
     </template>
     <template v-slot:[`item.customerName`]="{ item }">
       <p>{{ item.raw.customerName }}</p>
@@ -238,20 +238,28 @@ const loadItems = (options: optionsType) => {
     </template>
     <template v-slot:[`item.refId`]="{ item }">
       <a
-        :href="`${kopeshaURL}/lender/index.html#/loans/loanprofile/${item.raw.refId}`"
+        :href="`${kopeshaURL}/lender/index.html#/customers/customer-profile/${item.raw.refId}`"
       >
+
         <v-btn
+
           variant="outlined"
           density="compact"
           size="small"
           class="action-btn action-btn-icon mx-1"
           :color="'secondary'"
         >
+
           <v-icon icon="mdi mdi-eye" />
+          <v-tooltip
+            activator="parent"
+            location="top"
+          >View</v-tooltip>
         </v-btn>
+
       </a>
       <a
-        :href="`${kopeshaURL}/lender/index.html#/loans/loanprofile/${item.raw.refId}`"
+        :href="`${kopeshaURL}/lender/index.html#/customers/customer_form/${item.raw.refId}`"
       >
         <v-btn
           variant="outlined"
@@ -261,10 +269,14 @@ const loadItems = (options: optionsType) => {
           :color="'secondary'"
         >
           <v-icon icon="mdi mdi-pencil" />
+          <v-tooltip
+            activator="parent"
+            location="top"
+          >Edit</v-tooltip>
         </v-btn>
       </a>
       <a
-        :href="`${kopeshaURL}/lender/index.html#/loans/loanprofile/${item.raw.refId}`"
+        :href="`${kopeshaURL}/lender/index.html#/loans/create_loan/${item.raw.refId}`"
       >
         <v-btn
           variant="outlined"
@@ -274,6 +286,10 @@ const loadItems = (options: optionsType) => {
           :color="'secondary'"
         >
           <v-icon icon="mdi mdi-plus" />
+          <v-tooltip
+            activator="parent"
+            location="top"
+          >Create Loan</v-tooltip>
         </v-btn>
       </a>
     </template>

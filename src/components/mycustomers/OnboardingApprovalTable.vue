@@ -105,7 +105,6 @@ const loadItems = (options: optionsType) => {
         style="border: 1px solid rgba(128, 128, 128, 0.25)"
         @click="
           setSelectedExportOption(null);
-          setSelectedOnboardingOption(null);
           pageables.repaymentStatus = '';
           pageables.draw = 1;
           pageables.searchTerm = '';
@@ -153,25 +152,21 @@ const loadItems = (options: optionsType) => {
     ]"
     @update:options="loadItems"
   >
-    <template v-slot:[`item.dueDate`]="{ item }">
-      <p>{{ item.raw.dueDate }}</p>
+    <template v-slot:[`item.dayJoined`]="{ item }">
+      <p>{{ item.raw.dayJoined }}</p>
     </template>
-    <template v-slot:[`item.customerName`]="{ item }">
-      <p>{{ item.raw.customerName }}</p>
-      <p>{{ item.raw.phoneNumber }}</p>
+    <template v-slot:[`item.fullName`]="{ item }">
+      <p>{{ item.raw.fullName}}</p>
     </template>
     <template v-slot:[`item.productName`]="{ item }">
-      <p>{{ item.raw.productName }}</p>
-      <p>{{ item.raw.loanNo }}</p>
+      <p>{{ item.raw.phoneNumber }}</p>
+      <p>{{ item.raw.phoneNumber }}</p>
     </template>
-    <template v-slot:[`item.amountDue`]="{ item }">
-      <p>{{ formatMoney(item.raw.amountDue) }}</p>
+    <template v-slot:[`item.approvalLimit`]="{ item }">
+      <p>{{ formatMoney(item.raw.approvalLimit) }}</p>
     </template>
-    <template v-slot:[`item.amountPaid`]="{ item }">
-      <p>{{ formatMoney(item.raw.amountPaid) }}</p>
-    </template>
-    <template v-slot:[`item.loanBalance`]="{ item }">
-      <p>{{ formatMoney(item.raw.loanBalance) }}</p>
+    <template v-slot:[`item.onboardingStatus`]="{ item }">
+      <p>{{ formatMoney(item.raw.onboardingStatus) }}</p>
     </template>
     <template v-slot:[`item.status`]="{ item }">
       <v-chip

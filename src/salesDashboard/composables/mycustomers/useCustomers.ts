@@ -189,7 +189,7 @@ export const useCustomer = defineStore("customers", () => {
   const headers = ref<
     { title: string; key: string; align: string; sortable: boolean }[]
   >([
-    { title: "Date Joined", align: "start", sortable: false, key: "dayJoined" },
+    { title: "Date Joined", align: "start", sortable: false, key: "created" },
     { title: "Names", key: "fullName", align: "end", sortable: false },
     { title: "Phone No", key: "phoneNumber", align: "end", sortable: false },
     {
