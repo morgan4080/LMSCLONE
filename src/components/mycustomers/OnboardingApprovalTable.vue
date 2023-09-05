@@ -10,14 +10,12 @@ const {
   pageables,
   fetchOnBoardingCollections,
   setSelectedExportOption,
-  setSelectedOnboardingOption,
+  exportOnBoarding
 } = useOnboarding();
 
 const {
   headers,
   isLoading,
-  selectedOnboardingOption,
-  onboardingOptions,
   selectedExportOption,
   exportOptions,
   onBoardingCollections,
@@ -31,7 +29,6 @@ const props = defineProps<{
 
 const refId = toRef(props, "refId");
 
-const salesDashboardStore = useSalesDashboardStore();
 const kopeshaURL = import.meta.env.VITE_KOPESHA_API_URL;
 
 type optionsType = {
@@ -93,39 +90,6 @@ const loadItems = (options: optionsType) => {
         </v-input>
       </div>
       <v-menu transition="slide-y-transition">
-<!--        <template #activator="{ props }">-->
-<!--          <v-btn-->
-<!--            variant="outlined"-->
-<!--            density="comfortable"-->
-<!--            append-icon="mdi:mdi-chevron-down"-->
-<!--            v-bind="props"-->
-<!--            class="mr-4 text-none text-caption"-->
-<!--            style="border: 1px solid rgba(128, 128, 128, 0.25)"-->
-<!--          >-->
-<!--            {{ selectedExportOption ? selectedExportOption.name : "Export" }}-->
-<!--          </v-btn>-->
-<!--        </template>-->
-
-<!--        <v-sheet-->
-<!--          border-->
-<!--          rounded-->
-<!--        >-->
-<!--          <v-list-->
-<!--            :nav="true"-->
-<!--            density="comfortable"-->
-<!--            role="listbox"-->
-<!--          >-->
-<!--            <v-list-item-->
-<!--              v-for="(item, idx) in exportOptions"-->
-<!--              :key="idx"-->
-<!--              :value="item"-->
-<!--              @click="setSelectedExportOption(item)"-->
-<!--            >-->
-<!--              {{ item.name }}</v-list-item-->
-<!--            >-->
-<!--          </v-list>-->
-<!--        </v-sheet>-->
-<!--        -->
 
       </v-menu>
       <v-btn
@@ -134,9 +98,7 @@ const loadItems = (options: optionsType) => {
 
         variant="tonal"
         style="border: 1px solid rgba(128, 128, 128, 0.25)"
-        @click="
-        ''
-        "
+        @click="exportOnBoarding"
       >
         Export
       </v-btn>

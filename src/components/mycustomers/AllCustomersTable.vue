@@ -1,10 +1,9 @@
 <script setup lang="ts">
-import { formatMoney } from "@/helpers";
+import {dateFilters, formatMoney} from "@/helpers";
 import { useSearch } from "@/composables/useSearch";
 import { storeToRefs } from "pinia";
 import { useCustomer } from "@/salesDashboard/composables/mycustomers/useCustomers";
-import { toRef } from "vue";
-import { ref } from "vue";
+import {toRef } from "vue";
 
 const {
   pageables,
@@ -12,13 +11,12 @@ const {
   setSelectedExportOption,
   setSelectedOnboardingOption,
   exportCustomers,
+  salesOverviewFilters
 } = useCustomer();
 
 const {
   headers,
   isLoading,
-  selectedOnboardingOption,
-  onboardingOptions,
   customersCollections,
 } = storeToRefs(useCustomer());
 
@@ -28,7 +26,6 @@ const props = defineProps<{
 }>();
 
 const refId = toRef(props, "refId");
-const selectedOption = ref<{ name: string; value: string } | null>(null);
 const kopeshaURL = import.meta.env.VITE_KOPESHA_API_URL;
 
 type optionsType = {
@@ -37,63 +34,76 @@ type optionsType = {
   search: string;
 };
 
-const loadItems = (options: optionsType) => {
-  if (refId.value) {
-    pageables.salesRepRefIds = refId.value;
+const dateUpdated = () => {
+  if(salesOverviewFilters.dateFilters.value){
+    const [start, end] = dateFilters(salesOverviewFilters.dateFilters.value);
+    console.log(start, end);
+    pageables.startDate = start;
+    pageables.endDate = end;
   }
+}
+const loadItems = (options: optionsType) => {
+  if (props.refId) {
+    pageables.salesRepRefIds = props.refId;
+  }
+  dateUpdated();
   if (options.page === 1) {
     pageables.start = 0;
   } else {
     pageables.start = options.itemsPerPage + 1;
   }
   pageables.length = options.itemsPerPage;
-  // fetch due today again
+
   fetchCustomersCollections();
 };
+
+
 </script>
 <template>
   <v-col>
     <v-row class="d-flex justify-center my-2 mx-1">
-      <v-menu
-        transition="slide-y-transition"
-        v-model="selectedOnboardingOption"
-      >
-        <template #activator="{ props }">
+      <v-menu transition="slide-y-transition">
+        <template v-slot:activator="{ props }">
           <v-btn
-            variant="outlined"
-            density="comfortable"
-            append-icon="mdi:mdi-chevron-down"
+            class="v-btn--size-default text-caption text-capitalize"
+            density="default"
+            :append-icon="salesOverviewFilters.dateFilters.appendIcon"
             v-bind="props"
-            class="mr-4 text-none text-caption"
+            :flat="true"
             style="border: 1px solid rgba(128, 128, 128, 0.25)"
           >
-            {{ selectedOption ? selectedOption.name : "Onboarded Date" }}
+            {{ salesOverviewFilters.dateFilters.text || "All Time" }}
           </v-btn>
         </template>
-
         <v-sheet
           border
           rounded
         >
           <v-list
             :nav="true"
-            density="comfortable"
+            density="compact"
             role="listbox"
           >
             <v-list-item
-              v-for="(item, idx) in onboardingOptions"
-              :key="idx"
-              :value="item"
-              @click="selectedOnboardingOption = item"
+              v-for="(dropDownMenu, it) in salesOverviewFilters
+              .dateFilters.menus"
+            :key="it"
+              :value="it"
+              density="compact"
+              @click="
+                        salesOverviewFilters.dateFilters.text =
+                          dropDownMenu.title;
+                        salesOverviewFilters.dateFilters.value =
+                          dropDownMenu.value;
+                        dateUpdated();
+                        fetchCustomersCollections();
+                     "
+            >{{ dropDownMenu.title }}</v-list-item
             >
-              {{ item.name }}
-            </v-list-item>
           </v-list>
         </v-sheet>
       </v-menu>
-
       <v-spacer></v-spacer>
-
       <v-row class="d-flex justify-end">
         <div>
           <v-input
@@ -123,7 +133,6 @@ const loadItems = (options: optionsType) => {
             </template>
           </v-input>
         </div>
-
         <v-btn
           class="v-btn--size-default text-caption text-capitalize mr-6"
           density="comfortable"
@@ -133,7 +142,6 @@ const loadItems = (options: optionsType) => {
         >
           Export
         </v-btn>
-        <!--  clearing options -->
         <v-btn
           class="v-btn--size-default text-caption text-capitalize mr-6"
           density="comfortable"

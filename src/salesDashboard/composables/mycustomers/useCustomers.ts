@@ -3,6 +3,7 @@ import { useQueryParams } from "@/composables/useQueryParams";
 import { defineStore } from "pinia";
 import axios from "@/services/api/axiosKopesha";
 import { saveAs } from "file-saver";
+import moment from "moment/moment";
 
 export interface KopeshaPagination {
   salesRepRefIds: string;
@@ -50,7 +51,13 @@ export const useCustomer = defineStore("customers", () => {
     startDate: "",
     endDate: "",
   }) as KopeshaPagination;
-
+  const stats = ref({
+    startDate: moment()
+      .add("-6", "years")
+      .startOf("year")
+      .format("DD/MM/YYYY"),
+    endDate: moment().format("DD/MM/YYYY"),
+  });
   const { params, generateParams } = useQueryParams(pageables);
   const customersCollections = ref<Collections>({
     data: [],
@@ -60,6 +67,78 @@ export const useCustomer = defineStore("customers", () => {
     recordsFiltered: 0,
     recordsTotal: 0,
   });
+  const salesOverviewFilters = reactive({
+    branches: {
+      text: null,
+      appendIcon: "mdi:mdi-chevron-down",
+    } as {
+      text: string | null;
+      appendIcon: string;
+    },
+    salesRep: {
+      text: null,
+      id: "",
+      appendIcon: "mdi:mdi-chevron-down",
+    } as {
+      text: string | null;
+      id: string | null;
+      appendIcon: string;
+    },
+    dateFilters: {
+      text: "Today",
+      value: "day",
+      appendIcon: "mdi:mdi-chevron-down",
+      menus: [
+        {
+          title: "Today",
+          value: "day",
+        },
+        {
+          title: "This Week",
+          value: "week",
+        },
+        {
+          title: "This Month",
+          value: "month",
+        },
+        {
+          title: "This Quarter",
+          value: "quarter",
+        },
+        {
+          title: "This Year",
+          value: "year",
+        },
+        {
+          title: "All",
+          value: "all",
+        },
+      ],
+    } as {
+      text: string;
+      value:
+        | "day"
+        | "week"
+        | "month"
+        | "quarter"
+        | "year"
+        | "all"
+        | "arrears";
+      appendIcon: string;
+      menus: {
+        title: string;
+        value:
+          | "day"
+          | "week"
+          | "month"
+          | "quarter"
+          | "year"
+          | "all"
+          | "arrears";
+      }[];
+    },
+  });
+
   const isLoading = ref(false);
 
   // export
@@ -132,7 +211,7 @@ export const useCustomer = defineStore("customers", () => {
     customersCollections.value = data;
     isLoading.value = false;
   };
-  //fetching on the customers
+
   const exportCustomers = async () => {
     isLoading.value = true;
     await generateParams();
@@ -156,6 +235,8 @@ export const useCustomer = defineStore("customers", () => {
     headers,
     isLoading,
     customersCollections,
+    stats,
+    salesOverviewFilters,
 
     selectedOnboardingOption,
     onboardingOptions,
