@@ -427,7 +427,7 @@ export const useSalesDashboardStore = defineStore(
     }
 
     function getSalesReps() {
-      axiosKopesha.get(`/api/v1/salesrepresentative/all`).then(response => {
+      axiosKopesha.get(`/api/v1/salesrep/list`).then(response => {
         salesReps.value = response.data;
       });
     }

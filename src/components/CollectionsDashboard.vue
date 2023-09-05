@@ -158,7 +158,7 @@ onBeforeMount(() => {
                       density="compact"
                       @click="
                         salesOverviewFilters.salesRep.text = `${dropDownMenu.firstName} ${dropDownMenu.lastName}`;
-                        salesOverviewFilters.salesRep.id = dropDownMenu.refId;
+                        salesOverviewFilters.salesRep.id = dropDownMenu.keycloakId;
                       "
                       :title="`${dropDownMenu.firstName} ${dropDownMenu.lastName}`"
                       :subtitle="`${dropDownMenu.phoneNumber}`"

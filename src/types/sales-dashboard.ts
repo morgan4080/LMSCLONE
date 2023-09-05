@@ -25,16 +25,12 @@ export interface Branch {
 
 export interface SalesRep {
   refId: string;
+  name: string;
+  keycloakId: string;
   firstName: string;
   lastName: string;
-  fullName: string;
-  emailAddress: string;
   phoneNumber: string;
-  keycloakPhoneNumber: string;
-  keycloakId: string;
-  keycloakFullName: string;
-  isLoginUser: number;
-  enableAccess: number;
+  email: string;
 }
 
 export interface UpcomingCollection {
