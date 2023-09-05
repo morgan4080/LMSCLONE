@@ -5,8 +5,12 @@ import { useSearch } from "@/composables/useSearch";
 import { storeToRefs } from "pinia";
 import { debounce } from "lodash";
 
-const { pageables, fetchApprovalCollections, setSelectedExportOption } =
-  useLoanApproval();
+const {
+  pageables,
+  fetchApprovalCollections,
+  setSelectedExportOption,
+  exportApprovals,
+} = useLoanApproval();
 
 const { headers, isLoading, exportOptions, approvalCollections } = storeToRefs(
   useLoanApproval()
@@ -81,7 +85,10 @@ const loadItems = (options: optionsType) => {
         density="comfortable"
         variant="tonal"
         style="border: 1px solid rgba(128, 128, 128, 0.25)"
-        @click="setSelectedExportOption(exportOptions[0])"
+        @click="
+          setSelectedExportOption(exportOptions[0]);
+          exportApprovals();
+        "
       >
         Export
       </v-btn>

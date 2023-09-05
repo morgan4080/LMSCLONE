@@ -1,7 +1,7 @@
 import { defineStore } from "pinia";
 import axios from "axios";
 import moment from "moment";
-import { formatMoney } from "@/helpers";
+import { dateFilters, formatMoney } from "@/helpers";
 import axiosKopesha from "@/services/api/axiosKopesha";
 import { computed, reactive, ref, watch } from "vue";
 import {
@@ -116,6 +116,10 @@ export const useSalesDashboardStore = defineStore(
             value: "month",
           },
           {
+            title: "Last Month",
+            value: "last-month",
+          },
+          {
             title: "This Quarter",
             value: "quarter",
           },
@@ -134,6 +138,7 @@ export const useSalesDashboardStore = defineStore(
           | "day"
           | "week"
           | "month"
+          | "last-month"
           | "quarter"
           | "year"
           | "all"
@@ -145,6 +150,7 @@ export const useSalesDashboardStore = defineStore(
             | "day"
             | "week"
             | "month"
+            | "last-month"
             | "quarter"
             | "year"
             | "all"
@@ -395,26 +401,23 @@ export const useSalesDashboardStore = defineStore(
       },
     ]);
 
-    const params = computed<string>(() => {
-      const params = new URLSearchParams();
-      const salesRepIdsL = salesRepIds.value?.length
-        ? salesRepIds.value.join(",")
-        : "";
-
-      params.append("salesRepRefIds", salesRepIdsL);
-      return "?" + params.toString();
-    });
-
-    const paramsCustomers = computed<string>(() => {
-      const params = new URLSearchParams();
-      const salesRepIdsL = salesRepIds.value?.length
-        ? salesRepIds.value.join(",")
-        : "";
-
-      params.append("salesRepRefIds", salesRepIdsL);
-      params.append("startDate", stats.value.startDate);
-      params.append("endDate", stats.value.endDate);
-      return "?" + params.toString();
+    const params = computed<any>({
+      get: () => {
+        const params = new URLSearchParams();
+        const salesRepIdsL = salesRepIds.value?.length
+          ? salesRepIds.value.join(",")
+          : "";
+        console.log(stats.value.startDate);
+        console.log(stats.value.endDate);
+        params.append("salesRepRefIds", salesRepIdsL);
+        params.append("startDate", stats.value.startDate);
+        params.append("endDate", stats.value.endDate);
+        return "?" + params.toString();
+      },
+      set: ({ start, end }: { start: string; end: string }) => {
+        stats.value.startDate = start;
+        stats.value.endDate = end;
+      },
     });
 
     function getBranches() {
@@ -489,7 +492,7 @@ export const useSalesDashboardStore = defineStore(
     }
     function getStatsCustomer() {
       axiosKopesha
-        .get(`/api/v1/salesrep/customer${paramsCustomers.value}`)
+        .get(`/api/v1/salesrep/customer${params.value}`)
         .then(response => {
           stats.value.totalCustomers = response.data.totalCustomers;
           stats.value.newCustomers = response.data.newCustomers;
@@ -500,6 +503,10 @@ export const useSalesDashboardStore = defineStore(
           stats.value.onboardingApprovals = response.data.onboardingApprovals;
         });
     }
+
+    const setStatsDates = (start: string, end: string) => {
+      params.value = { start, end };
+    };
 
     return {
       branchIds,
@@ -529,6 +536,7 @@ export const useSalesDashboardStore = defineStore(
       getStatsCustomer,
       newCustomerFilterFetch,
       overdueCollectionFilterFetch,
+      setStatsDates,
     };
   }
 );

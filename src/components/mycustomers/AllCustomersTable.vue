@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {dateFilters, formatMoney} from "@/helpers";
+import { dateFilters, formatMoney } from "@/helpers";
 import { useSearch } from "@/composables/useSearch";
 import { storeToRefs } from "pinia";
 import { useCustomer } from "@/salesDashboard/composables/mycustomers/useCustomers";
@@ -10,19 +10,22 @@ const {
   setSelectedExportOption,
   setSelectedOnboardingOption,
   exportCustomers,
-  salesOverviewFilters
 } = useCustomer();
 
-const {
-  headers,
-  isLoading,
-  customersCollections,
-} = storeToRefs(useCustomer());
+const { headers, isLoading, customersCollections } = storeToRefs(useCustomer());
 
 const { search } = useSearch(pageables, fetchCustomersCollections);
 const props = defineProps<{
   refId: string | null;
-  period: "day" | "week" | "month" | "quarter" | "year" | "all" | "arrears";
+  period:
+    | "day"
+    | "week"
+    | "month"
+    | "last-month"
+    | "quarter"
+    | "year"
+    | "all"
+    | "arrears";
 }>();
 
 const kopeshaURL = import.meta.env.VITE_KOPESHA_API_URL;
@@ -33,12 +36,11 @@ type optionsType = {
   search: string;
 };
 
-
 const loadItems = (options: optionsType) => {
   if (props.refId) {
     pageables.salesRepRefIds = props.refId;
   }
-    dateReturn(props.period);
+  dateReturn(props.period);
   if (options.page === 1) {
     pageables.start = 0;
   } else {
@@ -49,83 +51,90 @@ const loadItems = (options: optionsType) => {
   fetchCustomersCollections();
 };
 function dateReturn(
-  text: "day" | "week" | "month" | "quarter" | "year" | "all" | "arrears"
+  text:
+    | "day"
+    | "week"
+    | "month"
+    | "last-month"
+    | "quarter"
+    | "year"
+    | "all"
+    | "arrears"
 ) {
-    let [start, end] = dateFilters(text);
-    pageables.startDate = start;
-    pageables.endDate = end;
+  let [start, end] = dateFilters(text);
+  pageables.startDate = start;
+  pageables.endDate = end;
 }
-
 </script>
 <template>
-    <v-row class="v-row d-flex pl-2 gap-4 justify-start my-6">
-        <h3 class="pa-2 font-weight-regular">
-            Customers ({{ customersCollections.recordsFiltered }})
-        </h3>
-        <v-spacer></v-spacer>
-        <div>
-            <v-input
-                    hide-details
-                    class="px-2 font-weight-light border rounded mr-4"
-                    density="comfortable"
-                    style="
-              height: 28px !important;
-              padding-left: 16px !important;
-              padding-right: 16px !important;
-            "
-            >
-                <template #append>
-                    <v-icon
-                            icon="mdi mdi-magnify"
-                            size="small"
-                    />
-                </template>
-                <template v-slot:default>
-                    <input
-                            class="text-caption searchField custom-input"
-                            type="search"
-                            placeholder="Search Here"
-                            v-model="pageables.searchTerm"
-                            @input="search"
-                    />
-                </template>
-            </v-input>
-        </div>
-        <v-btn
-                class="v-btn--size-default text-caption text-capitalize mr-6"
-                density="comfortable"
-                variant="tonal"
-                style="border: 1px solid rgba(128, 128, 128, 0.25)"
-                @click="exportCustomers"
-        >
-            Export
-        </v-btn>
-        <v-btn
-                class="v-btn--size-default text-caption text-capitalize mr-6"
-                density="comfortable"
-                append-icon="mdi:mdi-close"
-                color="primary"
-                variant="tonal"
-                style="border: 1px solid rgba(128, 128, 128, 0.25)"
-                @click="
-            setSelectedExportOption(null);
-            setSelectedOnboardingOption(null);
-            pageables.repaymentStatus = '';
-            pageables.draw = 1;
-            pageables.searchTerm = '';
-            pageables.salesRepRefIds = '';
-            pageables.startDate = '';
-            pageables.endDate = '';
-            pageables.endDate = '';
-            pageables.start = 0;
-            pageables.length = 10;
+  <v-row class="v-row d-flex pl-2 gap-4 justify-start my-6">
+    <h3 class="pa-2 font-weight-regular">
+      Customers ({{ customersCollections.recordsFiltered }})
+    </h3>
+    <v-spacer></v-spacer>
+    <div>
+      <v-input
+        hide-details
+        class="px-2 font-weight-light border rounded mr-4"
+        density="comfortable"
+        style="
+          height: 28px !important;
+          padding-left: 16px !important;
+          padding-right: 16px !important;
+        "
+      >
+        <template #append>
+          <v-icon
+            icon="mdi mdi-magnify"
+            size="small"
+          />
+        </template>
+        <template v-slot:default>
+          <input
+            class="text-caption searchField custom-input"
+            type="search"
+            placeholder="Search Here"
+            v-model="pageables.searchTerm"
+            @input="search"
+          />
+        </template>
+      </v-input>
+    </div>
+    <v-btn
+      class="v-btn--size-default text-caption text-capitalize mr-6"
+      density="comfortable"
+      variant="tonal"
+      style="border: 1px solid rgba(128, 128, 128, 0.25)"
+      @click="exportCustomers"
+    >
+      Export
+    </v-btn>
+    <v-btn
+      class="v-btn--size-default text-caption text-capitalize mr-6"
+      density="comfortable"
+      append-icon="mdi:mdi-close"
+      color="primary"
+      variant="tonal"
+      style="border: 1px solid rgba(128, 128, 128, 0.25)"
+      @click="
+        setSelectedExportOption(null);
+        setSelectedOnboardingOption(null);
+        pageables.repaymentStatus = '';
+        pageables.draw = 1;
+        pageables.searchTerm = '';
+        pageables.salesRepRefIds = '';
+        pageables.startDate = '';
+        pageables.endDate = '';
+        pageables.endDate = '';
+        pageables.start = 0;
+        pageables.length = 10;
 
-            fetchCustomersCollections();
-          "
-        >
-            Clear Filters
-        </v-btn>
-    </v-row>
+        fetchCustomersCollections();
+      "
+    >
+      Clear Filters
+    </v-btn>
+  </v-row>
 
   <!--  Table -->
   <v-data-table-server
@@ -196,23 +205,20 @@ function dateReturn(
       <a
         :href="`${kopeshaURL}/lender/index.html#/customers/customer-profile/${item.raw.refId}`"
       >
-
         <v-btn
-
           variant="outlined"
           density="compact"
           size="small"
           class="action-btn action-btn-icon mx-1"
           :color="'secondary'"
         >
-
           <v-icon icon="mdi mdi-eye" />
           <v-tooltip
             activator="parent"
             location="top"
-          >View</v-tooltip>
+            >View</v-tooltip
+          >
         </v-btn>
-
       </a>
       <a
         :href="`${kopeshaURL}/lender/index.html#/customers/customer_form/${item.raw.refId}`"
@@ -228,7 +234,8 @@ function dateReturn(
           <v-tooltip
             activator="parent"
             location="top"
-          >Edit</v-tooltip>
+            >Edit</v-tooltip
+          >
         </v-btn>
       </a>
       <a
@@ -245,7 +252,8 @@ function dateReturn(
           <v-tooltip
             activator="parent"
             location="top"
-          >Create Loan</v-tooltip>
+            >Create Loan</v-tooltip
+          >
         </v-btn>
       </a>
     </template>

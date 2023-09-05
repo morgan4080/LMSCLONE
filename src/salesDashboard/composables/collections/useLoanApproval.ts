@@ -2,6 +2,7 @@ import { reactive, ref, watch } from "vue";
 import { useQueryParams } from "@/composables/useQueryParams";
 import { defineStore } from "pinia";
 import axios from "@/services/api/axiosKopesha";
+import { saveAs } from "file-saver";
 
 export interface KopeshaPagination {
   salesRepRefIds: string;
@@ -159,6 +160,23 @@ export const useLoanApproval = defineStore("weeks", () => {
     }
   };
 
+  const exportApprovals = async () => {
+    isLoading.value = true;
+    await generateParams();
+    const url = `${
+      import.meta.env.VITE_KOPESHA_API_URL
+    }/api/v1/salesrep/loanrequests/export?${params.value}`;
+    try {
+      const res = await fetch(url);
+      const blob = await res.blob();
+      saveAs(blob, `Approval_List_${pageables.startDate}_${pageables.endDate}`);
+    } catch {
+      return "";
+    } finally {
+      isLoading.value = false;
+    }
+  };
+
   return {
     pageables,
     fetchApprovalCollections,
@@ -169,5 +187,6 @@ export const useLoanApproval = defineStore("weeks", () => {
     selectedExportOption,
     exportOptions,
     setSelectedExportOption,
+    exportApprovals,
   };
 });

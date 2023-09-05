@@ -2,6 +2,7 @@ import { reactive, ref } from "vue";
 import { useQueryParams } from "@/composables/useQueryParams";
 import { defineStore } from "pinia";
 import axios from "@/services/api/axiosKopesha";
+import { saveAs } from "file-saver";
 
 export interface KopeshaPagination {
   salesRepRefIds: string;
@@ -71,8 +72,24 @@ export const useToday = defineStore("todays", () => {
   ) => {
     selectedExportOption.value = option;
   };
-  const exportData = async () => {
-    console.log("value changed", selectedExportOption.value);
+  const exportCollectionsData = async () => {
+    isLoading.value = true;
+    await generateParams();
+    const url = `${
+      import.meta.env.VITE_KOPESHA_API_URL
+    }/api/v1/salesrep/collections/overdue/export?${params.value}`;
+    try {
+      const res = await fetch(url);
+      const blob = await res.blob();
+      saveAs(
+        blob,
+        `Collections_List_${pageables.startDate}_${pageables.endDate}`
+      );
+    } catch {
+      return "";
+    } finally {
+      isLoading.value = false;
+    }
   };
 
   const selectedStatusOption = ref<{ name: string; value: string } | null>(
@@ -159,7 +176,7 @@ export const useToday = defineStore("todays", () => {
     statusOptions,
     setSelectedStatusOption,
     selectedStatusOption,
-    exportData,
+    exportCollectionsData,
     $reset,
   };
 });

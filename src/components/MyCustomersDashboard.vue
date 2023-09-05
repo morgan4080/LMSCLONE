@@ -65,7 +65,15 @@ watch(
 );
 
 function dateReturn(
-  text: "day" | "week" | "month" | "quarter" | "year" | "all" | "arrears"
+  text:
+    | "day"
+    | "week"
+    | "month"
+    | "last-month"
+    | "quarter"
+    | "year"
+    | "all"
+    | "arrears"
 ) {
   let [start, end] = dateFilters(text);
   stats.value.startDate = start;
@@ -74,7 +82,6 @@ function dateReturn(
 const openUserCreation = () => {
   window.location.href = `${kopeshaURL}lender/index.html#/customers/customer_form`;
 };
-
 </script>
 <template>
   <div class="pa-6 fill-height bg-background">
@@ -247,7 +254,7 @@ const openUserCreation = () => {
               </div>
               <div class="d-flex justify-space-between">
                 <div class="text-caption font-weight-regular text-normal">
-                    {{ salesOverviewFilters.dateFilters.text}}
+                  {{ salesOverviewFilters.dateFilters.text }}
                 </div>
                 <div class="text-caption font-weight-regular text-green">
                   {{ stats.customersCountIncrement }}
@@ -341,7 +348,7 @@ const openUserCreation = () => {
                       <all-customers-table
                         :key="Math.random().toString(36).substr(2, 16)"
                         :refId="salesOverviewFilters.salesRep.id"
-                       :period="salesOverviewFilters.dateFilters.value"
+                        :period="salesOverviewFilters.dateFilters.value"
                       />
                     </v-container>
                     <v-container

@@ -12,7 +12,7 @@ const {
   fetchTodayCollections,
   setSelectedExportOption,
   setSelectedStatusOption,
-  exportData,
+  exportCollectionsData,
   $reset,
 } = useToday();
 const {
@@ -33,7 +33,15 @@ const { search } = useSearch(pageables, reload);
 
 const props = defineProps<{
   refId: string;
-  period: "day" | "week" | "month" | "quarter" | "year" | "all" | "arrears";
+  period:
+    | "day"
+    | "week"
+    | "month"
+    | "last-month"
+    | "quarter"
+    | "year"
+    | "all"
+    | "arrears";
   title: string;
 }>();
 
@@ -146,7 +154,7 @@ onBeforeUnmount(() => {
       style="border: 1px solid rgba(128, 128, 128, 0.25)"
       @click="
         setSelectedExportOption(exportOptions[0]);
-        exportData();
+        exportCollectionsData();
       "
     >
       Export

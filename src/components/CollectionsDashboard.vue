@@ -10,16 +10,23 @@ const router = useRouter();
 const route = useRoute();
 const { tabs, tab, salesRepIds, collectionFilter, stats, salesReps } =
   storeToRefs(useSalesDashboardStore());
-const { getSalesReps, getStats, salesOverviewFilters } =
+const { getSalesReps, getStats, salesOverviewFilters, setStatsDates } =
   useSalesDashboardStore();
 const kopeshaURL = import.meta.env.VITE_KOPESHA_API_URL;
-function dateReturn(
-  text: "day" | "week" | "month" | "quarter" | "year" | "all" | "arrears"
-) {
+const dateReturn = (
+  text:
+    | "day"
+    | "week"
+    | "month"
+    | "last-month"
+    | "quarter"
+    | "year"
+    | "all"
+    | "arrears"
+) => {
   let [start, end] = dateFilters(text);
-  stats.value.startDate = start;
-  stats.value.endDate = end;
-}
+  setStatsDates(start, end);
+};
 
 // react to existing query parameters
 watch(
@@ -54,11 +61,11 @@ const loadParams = async (
       salesRepIds.value = [""];
     }
 
-    if (salesOverviewFilters.dateFilters.value) {
-      dateReturn(salesOverviewFilters.dateFilters.value);
-    }
-
     withValues["salesRep"] = salesOverView.salesRep.id;
+  }
+
+  if (salesOverviewFilters.dateFilters.value) {
+    dateReturn(salesOverviewFilters.dateFilters.value);
   }
 
   if (currentTab) {
@@ -86,6 +93,11 @@ onBeforeMount(() => {
 const openUserCreation = () => {
   window.location.href = `${kopeshaURL}lender/index.html#/customers/customer_form`;
 };
+
+onBeforeMount(() => {
+  salesOverviewFilters.dateFilters.text = "This Month";
+  salesOverviewFilters.dateFilters.value = "month";
+});
 </script>
 <template>
   <div class="pa-6 fill-height bg-background">
@@ -107,7 +119,7 @@ const openUserCreation = () => {
           sm="5"
         >
           <v-row class="d-flex justify-end">
-            <div class="px-3">
+            <div>
               <v-menu transition="slide-y-transition">
                 <template v-slot:activator="{ props }">
                   <v-btn
@@ -156,11 +168,11 @@ const openUserCreation = () => {
                 </v-sheet>
               </v-menu>
             </div>
-            <!--            <div class="px-3">
+            <div class="px-3">
               <v-menu transition="slide-y-transition">
                 <template v-slot:activator="{ props }">
                   <v-btn
-                    class="v-btn&#45;&#45;size-default text-caption text-capitalize"
+                    class="v-btn--size-default text-caption text-capitalize"
                     density="default"
                     :append-icon="salesOverviewFilters.dateFilters.appendIcon"
                     v-bind="props"
@@ -196,7 +208,7 @@ const openUserCreation = () => {
                   </v-list>
                 </v-sheet>
               </v-menu>
-            </div>-->
+            </div>
             <div>
               <v-btn
                 class="v-btn--size-default text-caption text-capitalize"
@@ -231,7 +243,7 @@ const openUserCreation = () => {
               </div>
               <div class="d-flex justify-space-between">
                 <div class="text-caption font-weight-regular text-normal">
-                  This Month
+                  {{ salesOverviewFilters.dateFilters.text }}
                 </div>
                 <div class="text-caption font-weight-regular text-primary">
                   {{ stats.upcomingCollectionsCount }} Loans
@@ -262,7 +274,7 @@ const openUserCreation = () => {
 
               <div class="d-flex justify-space-between">
                 <div class="text-caption font-weight-regular text-normal">
-                  This Month
+                  {{ salesOverviewFilters.dateFilters.text }}
                 </div>
                 <div class="text-caption font-weight-regular text-red">
                   {{ stats.overdueCollectionsCount }} Loans
@@ -289,7 +301,7 @@ const openUserCreation = () => {
               </div>
               <div class="d-flex justify-space-between">
                 <div class="text-caption font-weight-regular text-normal">
-                  This Month
+                  {{ salesOverviewFilters.dateFilters.text }}
                 </div>
                 <div class="text-caption font-weight-regular text-success">
                   {{ stats.customersCountIncrement }} Loans
