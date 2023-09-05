@@ -170,22 +170,17 @@ function dateReturn(
     <template v-slot:[`item.created`]="{ item }">
       <p>{{ item.raw.created }}</p>
     </template>
-    <template v-slot:[`item.customerName`]="{ item }">
-      <p>{{ item.raw.customerName }}</p>
+    <template v-slot:[`item.fullName`]="{ item }">
+      <p>{{ item.raw.fullName }}</p>
+    </template>
+    <template v-slot:[`item.phoneNumber`]="{ item }">
       <p>{{ item.raw.phoneNumber }}</p>
     </template>
-    <template v-slot:[`item.productName`]="{ item }">
-      <p>{{ item.raw.productName }}</p>
-      <p>{{ item.raw.loanNo }}</p>
+    <template v-slot:[`item.approvalLimit`]="{ item }">
+      <p>{{ formatMoney(item.raw.approvalLimit) }}</p>
     </template>
-    <template v-slot:[`item.amountDue`]="{ item }">
-      <p>{{ formatMoney(item.raw.amountDue) }}</p>
-    </template>
-    <template v-slot:[`item.amountPaid`]="{ item }">
-      <p>{{ formatMoney(item.raw.amountPaid) }}</p>
-    </template>
-    <template v-slot:[`item.loanBalance`]="{ item }">
-      <p>{{ formatMoney(item.raw.loanBalance) }}</p>
+    <template v-slot:[`item.activeLoan`]="{ item }">
+      <p>{{ formatMoney(item.raw.activeLoan) }}</p>
     </template>
     <template v-slot:[`item.status`]="{ item }">
       <v-chip
