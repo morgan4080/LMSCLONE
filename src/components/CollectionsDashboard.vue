@@ -5,14 +5,25 @@ import LoanApprovals from "@/components/collections/LoanApprovals.vue";
 import { storeToRefs } from "pinia";
 import { dateFilters } from "@/helpers";
 import CollectionsTable from "@/components/collections/CollectionsTable.vue";
-const { tabs, tab, salesRepIds, collectionFilter, stats, salesReps } =
-  storeToRefs(useSalesDashboardStore());
-const { getSalesReps, getStats, salesOverviewFilters } =
-  useSalesDashboardStore();
+const {
+    tabs,
+    tab,
+    salesRepIds,
+    collectionFilter,
+    stats,
+    salesReps
+} = storeToRefs(useSalesDashboardStore());
+const {
+    getSalesReps,
+    getStats,
+    getStatsCustomer,
+    salesOverviewFilters
+} = useSalesDashboardStore();
 
 onMounted(() => {
   getSalesReps();
   getStats();
+  getStatsCustomer()
 });
 
 watch(salesOverviewFilters, () => {
@@ -26,6 +37,7 @@ watch(salesOverviewFilters, () => {
     dateReturn(salesOverviewFilters.dateFilters.value);
 
   getStats();
+  getStatsCustomer()
 });
 
 function dateReturn(
@@ -35,6 +47,7 @@ function dateReturn(
   stats.value.startDate = start;
   stats.value.endDate = end;
 }
+
 </script>
 <template>
   <div class="pa-6 fill-height bg-background">
@@ -107,7 +120,8 @@ function dateReturn(
                 </v-sheet>
               </v-menu>
             </div>
-            <!--            <div class="px-3">
+
+            <!--<div class="px-3">
               <v-menu transition="slide-y-transition">
                 <template v-slot:activator="{ props }">
                   <v-btn

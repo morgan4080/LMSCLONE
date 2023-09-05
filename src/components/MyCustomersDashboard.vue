@@ -4,10 +4,14 @@ import { useSalesDashboardStore } from "@/store/sales-dashboard";
 import AllCustomersTable from "@/components/mycustomers/AllCustomersTable.vue";
 import OnboardingApprovalTable from "@/components/mycustomers/OnboardingApprovalTable.vue";
 import { dateFilters } from "@/helpers";
-import OverdueCollectionsTable from "@/components/OverdueCollectionsTable.vue";
 import { storeToRefs } from "pinia";
-const { tab, myCustomerTabs, collectionFilter, salesRepIds, stats, salesReps } =
-  storeToRefs(useSalesDashboardStore());
+const {
+  tab,
+  myCustomerTabs,
+  salesRepIds,
+  stats,
+  salesReps
+} = storeToRefs(useSalesDashboardStore());
 
 const {
   getStats,
@@ -15,13 +19,14 @@ const {
   getOverdueCollections,
   salesOverviewFilters,
   getSalesReps,
+  getStatsCustomer
 } = useSalesDashboardStore();
 
 onMounted(() => {
   getSalesReps();
-  getStats();
   getBranches();
   getOverdueCollections();
+  getStatsCustomer();
 });
 
 watch(salesOverviewFilters, () => {
@@ -30,11 +35,11 @@ watch(salesOverviewFilters, () => {
   } else {
     salesRepIds.value = [""];
   }
-
   salesOverviewFilters.dateFilters.value &&
     dateReturn(salesOverviewFilters.dateFilters.value);
 
   getStats();
+  getStatsCustomer();
 });
 
 function dateReturn(
@@ -157,8 +162,8 @@ function dateReturn(
                   </v-list>
                 </v-sheet>
               </v-menu>
+
             </div>
-            <!--            button add customer-->
             <div>
               <v-btn
                 class="v-btn--size-default text-caption text-capitalize pr-2"
@@ -186,7 +191,7 @@ function dateReturn(
             <v-card-text>
               <div class="text-body-2 font-weight-light">Total Customers</div>
               <div class="text-h6 font-weight-regular py-2 text-primary">
-                {{ stats.upcomingCollections }} Customers
+                {{ stats.totalCustomers }} Customers
               </div>
               <div class="d-flex justify-space-between">
                 <div class="text-caption font-weight-regular text-normal">
@@ -209,7 +214,7 @@ function dateReturn(
               <div class="text-body-2 font-weight-light">New Customers</div>
               <div class="d-flex justify-space-between mx-1">
                 <div class="text-h6 font-weight-regular py-2 text-green">
-                  {{ stats.overdueCollections }} Customers
+                  {{ stats.newCustomers }} Customers
                 </div>
               </div>
               <div class="d-flex justify-space-between">
@@ -217,7 +222,7 @@ function dateReturn(
                   This Month
                 </div>
                 <div class="text-caption font-weight-regular text-green">
-                  {{ stats.overdueCollectionsCount }}
+                  {{ stats.customersCountIncrement }}
                 </div>
               </div>
             </v-card-text>
@@ -237,7 +242,7 @@ function dateReturn(
                 Onboarding Approvals
               </div>
               <div class="text-h6 font-weight-regular py-2 text-red">
-                {{ stats.customersCount }} Customers
+                {{ stats.onboardingApprovals }} Customers
               </div>
               <div class="d-flex justify-space-between">
                 <div class="text-caption font-weight-regular text-normal">

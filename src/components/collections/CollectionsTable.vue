@@ -40,9 +40,11 @@ const loadItems = (options: optionsType) => {
   if (props.refId) {
     pageables.salesRepRefIds = props.refId;
   }
+
   const [start, end] = dateFilters(props.period);
   pageables.startDate = start;
   pageables.endDate = end;
+
   if (options.page === 1) {
     pageables.start = 0;
   } else {
