@@ -1,4 +1,4 @@
-import { reactive, ref, watch } from "vue";
+import { reactive, ref } from "vue";
 import { useQueryParams } from "@/composables/useQueryParams";
 import { defineStore } from "pinia";
 import axios from "@/services/api/axiosKopesha";
@@ -74,11 +74,6 @@ export const useToday = defineStore("todays", () => {
   const exportData = async () => {
     console.log("value changed", selectedExportOption.value);
   };
-  watch(selectedExportOption, async value => {
-    if (value) {
-      await exportData();
-    }
-  });
 
   const selectedStatusOption = ref<{ name: string; value: string } | null>(
     null
@@ -93,14 +88,16 @@ export const useToday = defineStore("todays", () => {
   ) => {
     selectedStatusOption.value = option;
   };
-  const filterStatus = async () => {
-    console.log("value changed", selectedStatusOption.value);
-  };
-  watch(selectedStatusOption, async value => {
-    if (value) {
-      await filterStatus();
-    }
-  });
+  function $reset() {
+    todayCollections.value = {
+      data: [],
+      draw: 1,
+      start: 0,
+      length: 10,
+      recordsFiltered: 0,
+      recordsTotal: 0,
+    };
+  }
 
   const headers = ref<
     { title: string; key: string; align: string; sortable: boolean }[]
@@ -162,5 +159,7 @@ export const useToday = defineStore("todays", () => {
     statusOptions,
     setSelectedStatusOption,
     selectedStatusOption,
+    exportData,
+    $reset,
   };
 });

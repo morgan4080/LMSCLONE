@@ -4,13 +4,15 @@ import { dateFilters, formatMoney } from "@/helpers";
 import { useToday } from "@/salesDashboard/composables/collections/useToday";
 import { useSearch } from "@/composables/useSearch";
 import { storeToRefs } from "pinia";
-import { onBeforeMount } from "vue";
+import { onBeforeUnmount } from "vue";
 import { debounce } from "lodash";
 const {
   pageables,
   fetchTodayCollections,
   setSelectedExportOption,
   setSelectedStatusOption,
+  exportData,
+  $reset,
 } = useToday();
 const {
   headers,
@@ -44,7 +46,13 @@ type optionsType = {
   search: string;
 };
 
+const deb = debounce(() => {
+  fetchTodayCollections();
+  isLoading.value = false;
+}, 1000);
+
 const loadItems = (options: optionsType) => {
+  isLoading.value = true;
   pageables.salesRepRefIds = props.refId;
   const [start, end] = dateFilters(props.period);
   pageables.startDate = start;
@@ -55,11 +63,11 @@ const loadItems = (options: optionsType) => {
     pageables.start = options.itemsPerPage + 1;
   }
   pageables.length = options.itemsPerPage;
-  fetchTodayCollections();
+  deb();
 };
 
-onBeforeMount(() => {
-  fetchTodayCollections();
+onBeforeUnmount(() => {
+  $reset();
 });
 </script>
 
@@ -140,7 +148,10 @@ onBeforeMount(() => {
       density="comfortable"
       variant="tonal"
       style="border: 1px solid rgba(128, 128, 128, 0.25)"
-      @click="setSelectedExportOption(exportOptions[0])"
+      @click="
+        setSelectedExportOption(exportOptions[0]);
+        exportData();
+      "
     >
       Export
     </v-btn>

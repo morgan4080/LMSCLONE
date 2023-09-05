@@ -5,13 +5,9 @@ import AllCustomersTable from "@/components/mycustomers/AllCustomersTable.vue";
 import OnboardingApprovalTable from "@/components/mycustomers/OnboardingApprovalTable.vue";
 import { dateFilters } from "@/helpers";
 import { storeToRefs } from "pinia";
-const {
-  tab,
-  myCustomerTabs,
-  salesRepIds,
-  stats,
-  salesReps
-} = storeToRefs(useSalesDashboardStore());
+const { tab, myCustomerTabs, salesRepIds, stats, salesReps } = storeToRefs(
+  useSalesDashboardStore()
+);
 
 const {
   getStats,
@@ -19,7 +15,7 @@ const {
   getOverdueCollections,
   salesOverviewFilters,
   getSalesReps,
-  getStatsCustomer
+  getStatsCustomer,
 } = useSalesDashboardStore();
 
 onMounted(() => {
@@ -162,7 +158,6 @@ function dateReturn(
                   </v-list>
                 </v-sheet>
               </v-menu>
-
             </div>
             <div>
               <v-btn
@@ -322,7 +317,6 @@ function dateReturn(
                       <onboarding-approval-table
                         :key="Math.random().toString(36).substr(2, 16)"
                         :refId="salesOverviewFilters.salesRep.id"
-                      />
                       />
                     </v-container>
                   </v-window-item>
