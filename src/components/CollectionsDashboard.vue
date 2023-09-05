@@ -197,7 +197,7 @@ onBeforeMount(() => {
             </div>-->
             <div>
               <v-btn
-                class="v-btn--size-default text-caption text-capitalize pr-2"
+                class="v-btn--size-default text-caption text-capitalize"
                 density="default"
                 :flat="true"
                 color="primary"
