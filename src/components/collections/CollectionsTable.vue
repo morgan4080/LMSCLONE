@@ -6,6 +6,7 @@ import { useSearch } from "@/composables/useSearch";
 import { storeToRefs } from "pinia";
 import { onBeforeUnmount } from "vue";
 import { debounce } from "lodash";
+const salesDashboardStore = useSalesDashboardStore();
 const {
   pageables,
   fetchTodayCollections,
@@ -22,12 +23,13 @@ const {
   exportOptions,
   todayCollections,
 } = storeToRefs(useToday());
-const { search } = useSearch(
-  pageables,
-  debounce(() => {
-    fetchTodayCollections();
-  }, 1000)
-);
+
+const reload = debounce(() => {
+  fetchTodayCollections();
+  isLoading.value = false;
+}, 1000);
+
+const { search } = useSearch(pageables, reload);
 
 const props = defineProps<{
   refId: string;
@@ -37,7 +39,6 @@ const props = defineProps<{
 
 const emit = defineEmits(["clearFilters"]);
 
-const salesDashboardStore = useSalesDashboardStore();
 const kopeshaURL = import.meta.env.VITE_KOPESHA_API_URL;
 
 type optionsType = {
@@ -45,11 +46,6 @@ type optionsType = {
   itemsPerPage: number;
   search: string;
 };
-
-const deb = debounce(() => {
-  fetchTodayCollections();
-  isLoading.value = false;
-}, 1000);
 
 const loadItems = (options: optionsType) => {
   isLoading.value = true;
@@ -63,7 +59,7 @@ const loadItems = (options: optionsType) => {
     pageables.start = options.itemsPerPage + 1;
   }
   pageables.length = options.itemsPerPage;
-  deb();
+  reload();
 };
 
 onBeforeUnmount(() => {
