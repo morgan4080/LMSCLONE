@@ -1,16 +1,26 @@
 import { defineStore } from "pinia";
-import { SalesDashboardState } from "@/types/sales-dashboard";
 import axios from "axios";
 import moment from "moment";
-import { formatMoney } from "@/helpers";
+import { dateFilters, formatMoney } from "@/helpers";
+import axiosKopesha from "@/services/api/axiosKopesha";
+import { computed, reactive, ref, watch } from "vue";
+import {
+  Customer,
+  OverdueCollection,
+  Pagination,
+  SalesRep,
+  UpcomingCollection,
+} from "@/types/sales-dashboard";
 
-export const useSalesDashboardStore = defineStore("sales-dashboard-store", {
-  state: (): SalesDashboardState => ({
-    branchIds: ["ALL"],
-    salesRepIds: ["ALL"],
-    branches: [],
-    salesReps: [],
-    stats: {
+export const useSalesDashboardStore = defineStore(
+  "sales-dashboard-store",
+  () => {
+    const branchIds = ref([""]);
+    const salesRepIds = ref([""]);
+    const branches = ref([""]);
+    const salesReps = ref<SalesRep[]>([]);
+
+    const stats = ref({
       startDate: moment()
         .add("-6", "years")
         .startOf("year")
@@ -18,12 +28,23 @@ export const useSalesDashboardStore = defineStore("sales-dashboard-store", {
       endDate: moment().format("DD/MM/YYYY"),
       upcomingCollections: "0.0",
       overdueCollections: "0.0",
+      overdueCollectionsPercent: "0%",
       upcomingCollectionsCount: "0",
       overdueCollectionsCount: "0",
       customersCount: "0",
+
+      // my customers
       customersCountIncrement: "+0%",
-    },
-    upcomingCollections: {
+      totalCustomers: "0",
+      newCustomers: "0",
+      newCustomersPercent: "0%",
+      onBoardingApprovals: "0",
+      onboardingApprovals: "0",
+    });
+
+    const upcomingCollections = ref<
+      { data: UpcomingCollection | [] } & Pagination
+    >({
       data: [],
       loading: false,
       draw: 0,
@@ -31,8 +52,10 @@ export const useSalesDashboardStore = defineStore("sales-dashboard-store", {
       recordsFiltered: 0,
       recordsTotal: 0,
       start: 0,
-    },
-    overdueCollections: {
+    });
+    const overdueCollections = ref<
+      { data: OverdueCollection | [] } & Pagination
+    >({
       data: [],
       loading: false,
       draw: 0,
@@ -40,8 +63,8 @@ export const useSalesDashboardStore = defineStore("sales-dashboard-store", {
       recordsFiltered: 0,
       recordsTotal: 0,
       start: 0,
-    },
-    newCustomers: {
+    });
+    const newCustomers = ref<{ data: Customer | [] } & Pagination>({
       data: [],
       loading: false,
       draw: 0,
@@ -49,112 +72,471 @@ export const useSalesDashboardStore = defineStore("sales-dashboard-store", {
       recordsFiltered: 0,
       recordsTotal: 0,
       start: 0,
-    },
-  }),
+    });
+    const tabs = ref([
+      "Due Today",
+      "Due This Week",
+      "In Arrears",
+      "Loan Approvals",
+    ]);
+    const myCustomerTabs = ref(["All Customers", "Onboarding Approvals"]);
+    const tab = ref<string | null>(null);
+    const salesOverviewFilters = reactive({
+      branches: {
+        text: null,
+        appendIcon: "mdi:mdi-chevron-down",
+      } as {
+        text: string | null;
+        appendIcon: string;
+      },
+      salesRep: {
+        text: null,
+        id: "",
+        appendIcon: "mdi:mdi-chevron-down",
+      } as {
+        text: string | null;
+        id: string | null;
+        appendIcon: string;
+      },
+      dateFilters: {
+        text: "Today",
+        value: "day",
+        appendIcon: "mdi:mdi-chevron-down",
+        menus: [
+          {
+            title: "Today",
+            value: "day",
+          },
+          {
+            title: "This Week",
+            value: "week",
+          },
+          {
+            title: "This Month",
+            value: "month",
+          },
+          {
+            title: "Last Month",
+            value: "last-month",
+          },
+          {
+            title: "This Quarter",
+            value: "quarter",
+          },
+          {
+            title: "This Year",
+            value: "year",
+          },
+          {
+            title: "All",
+            value: "all",
+          },
+        ],
+      } as {
+        text: string;
+        value:
+          | "day"
+          | "week"
+          | "month"
+          | "last-month"
+          | "quarter"
+          | "year"
+          | "all"
+          | "arrears";
+        appendIcon: string;
+        menus: {
+          title: string;
+          value:
+            | "day"
+            | "week"
+            | "month"
+            | "last-month"
+            | "quarter"
+            | "year"
+            | "all"
+            | "arrears";
+        }[];
+      },
+    });
+    const collectionFilter = ref({
+      collections: {
+        name: "Collections",
+        appendIcon: "mdi:mdi-chevron-down",
+        menu: ["Upcoming", "Overdue"],
+      },
+    });
 
-  getters: {
-    params: state => {
-      const params = new URLSearchParams();
+    const upcomingCollectionFilters = ref({
+      product: {
+        text: null,
+        appendIcon: "mdi:mdi-chevron-down",
+        menus: [
+          "Biashara",
+          "PRESTA LMS",
+          "Corporate Loan",
+          "Okoa",
+          "Salary Advance",
+        ],
+      } as { text: string | null; appendIcon: string; menus: string[] },
+      status: {
+        text: null,
+        appendIcon: "mdi:mdi-chevron-down",
+        menus: [
+          {
+            title: "Paid",
+            value: "Paid",
+          },
+          {
+            title: "Not Paid",
+            value: "NOTPAID",
+          },
+          {
+            title: "Partially Paid",
+            value: "Partially Paid",
+          },
+        ],
+      } as {
+        text: string | null;
+        appendIcon: string;
+        menus: { title: string; value: string }[];
+      },
+    });
 
-      const branchIds = state.branchIds?.length
-        ? state.branchIds.join(",")
-        : "ALL";
-      const salesRepIds = state.salesRepIds?.length
-        ? state.salesRepIds.join(",")
-        : "ALL";
+    const overdueCollectionFilters = ref({
+      product: {
+        text: null,
+        appendIcon: "mdi:mdi-chevron-down",
+        filterParam: "",
+        menus: [
+          "Biashara",
+          "PRESTA LMS",
+          "Corporate Loan",
+          "Okoa",
+          "Salary Advance",
+        ],
+      } as {
+        text: string | null;
+        appendIcon: string;
+        filterParam: string;
+        menus: string[];
+      },
+      status: {
+        text: null,
+        appendIcon: "mdi:mdi-chevron-down",
+        filterParam: "",
+        menus: [
+          {
+            title: "Paid",
+            value: "&status=Paid",
+          },
+          {
+            title: "Not Paid",
+            value: "&status=NOTPAID",
+          },
+          {
+            title: "Partially Paid",
+            value: "&status=Partially Paid",
+          },
+        ],
+      } as {
+        text: string | null;
+        appendIcon: string;
+        filterParam: string;
+        menus: { title: string; value: string }[];
+      },
+    });
+    const upComingCollectionActions = ref([
+      {
+        text: "Export",
+        appendIcon: "mdi:mdi-chevron-down",
+        menus: [
+          {
+            text: "Op 1",
+          },
+          {
+            text: "Op 2",
+          },
+          {
+            text: "Op 3",
+          },
+        ],
+      },
+      {
+        text: "Show/Hide",
+        appendIcon: "mdi:mdi-chevron-down",
+        menus: [
+          {
+            text: "Op 1",
+          },
+          {
+            text: "Op 2",
+          },
+          {
+            text: "Op 3",
+          },
+        ],
+      },
+      {
+        text: "This Week",
+        appendIcon: "mdi:mdi-chevron-down",
+        menus: [
+          {
+            text: "Op 1",
+          },
+          {
+            text: "Op 2",
+          },
+          {
+            text: "Op 3",
+          },
+        ],
+      },
+      {
+        text: null,
+        appendIcon: "mdi:mdi-dots-vertical",
+        menus: [
+          {
+            text: "Op 1",
+          },
+          {
+            text: "Op 2",
+          },
+          {
+            text: "Op 3",
+          },
+        ],
+      },
+    ]);
 
-      params.append("branchNames", branchIds);
-      params.append("salesRepRefIds", salesRepIds);
-      if (state.stats.startDate)
-        params.append("startDate", state.stats.startDate);
-      if (state.stats.endDate) params.append("endDate", state.stats.endDate);
+    const newCustomerFilters = ref({
+      status: {
+        text: "Select Onboarding ",
+        filterParam: "",
+        appendIcon: "mdi:mdi-chevron-down",
+        menus: [
+          {
+            title: "Approved",
+            param: "&onboardingStatus=Approved",
+          },
+          { title: "Denied", param: "&onboardingStatus=Denied" },
+        ],
+      },
+      ussd: {
+        text: "Select USSD Status",
+        filterParam: "",
+        appendIcon: "mdi:mdi-chevron-down",
+        menus: [
+          {
+            text: "Has USSD",
+            param: "&hasUssd=YES",
+          },
+          {
+            text: "Lacks USSD",
+            param: "&hasUssd=NO",
+          },
+        ],
+      },
+    });
 
-      return "?" + params.toString();
-    },
-  },
+    const newCustomerActions = ref([
+      {
+        text: "Export",
+        appendIcon: "mdi:mdi-chevron-down",
+        menus: [
+          {
+            text: "Op 1",
+          },
+          {
+            text: "Op 2",
+          },
+          {
+            text: "Op 3",
+          },
+        ],
+      },
+      {
+        text: "Show/Hide",
+        appendIcon: "mdi:mdi-chevron-down",
+        menus: [
+          {
+            text: "Op 1",
+          },
+          {
+            text: "Op 2",
+          },
+          {
+            text: "Op 3",
+          },
+        ],
+      },
+      {
+        text: "This Week",
+        appendIcon: "mdi:mdi-chevron-down",
+        menus: [
+          {
+            text: "Op 1",
+          },
+          {
+            text: "Op 2",
+          },
+          {
+            text: "Op 3",
+          },
+        ],
+      },
+      {
+        text: null,
+        appendIcon: "mdi:mdi-dots-vertical",
+        menus: [
+          {
+            text: "Op 1",
+          },
+          {
+            text: "Op 2",
+          },
+          {
+            text: "Op 3",
+          },
+        ],
+      },
+    ]);
 
-  actions: {
-    getBranches: function () {
-      axios
-        .get(`${import.meta.env.VITE_KOPESHA_API_URL}/api/v1/salesrep/branches`)
+    const params = computed<any>({
+      get: () => {
+        const params = new URLSearchParams();
+        const salesRepIdsL = salesRepIds.value?.length
+          ? salesRepIds.value.join(",")
+          : "";
+        console.log(stats.value.startDate);
+        console.log(stats.value.endDate);
+        params.append("salesRepRefIds", salesRepIdsL);
+        params.append("startDate", stats.value.startDate);
+        params.append("endDate", stats.value.endDate);
+        return "?" + params.toString();
+      },
+      set: ({ start, end }: { start: string; end: string }) => {
+        stats.value.startDate = start;
+        stats.value.endDate = end;
+      },
+    });
+
+    function getBranches() {
+      axiosKopesha.get(`/api/v1/salesrep/branches`).then(response => {
+        branches.value = response.data;
+      });
+    }
+
+    function getSalesReps() {
+      axiosKopesha.get(`/api/v1/salesrep/list`).then(response => {
+        salesReps.value = response.data;
+      });
+    }
+
+    function getStats() {
+      axiosKopesha
+        .get(`/api/v1/salesrep/overview${params.value}`)
         .then(response => {
-          this.branches = response.data;
-        });
-    },
-    getSalesRepByBranch: function (branch: string) {
-      axios
-        .get(
-          `${
-            import.meta.env.VITE_KOPESHA_API_URL
-          }/api/v1/salesrep/${branch}/salesReps`
-        )
-        .then(response => {
-          this.salesReps = response.data;
-        });
-    },
-    getStats: function () {
-      axios
-        .get(
-          `${import.meta.env.VITE_KOPESHA_API_URL}/api/v1/salesrep/overview${
-            this.params
-          }`
-        )
-        .then(response => {
-          this.stats.upcomingCollections = formatMoney(
+          stats.value.upcomingCollections = formatMoney(
             response.data.upcomingCollections
           );
-          this.stats.overdueCollections = formatMoney(
+          stats.value.overdueCollections = formatMoney(
             response.data.overdueCollections
           );
-          this.stats.upcomingCollectionsCount =
+          stats.value.upcomingCollectionsCount =
             response.data.upcomingCollectionsCount;
-          this.stats.overdueCollectionsCount =
+          stats.value.overdueCollectionsCount =
             response.data.overdueCollectionsCount;
-          this.stats.customersCount = response.data.customersCount;
-          this.stats.customersCountIncrement =
+          stats.value.customersCount = response.data.customersCount;
+          stats.value.customersCountIncrement =
             response.data.customersCountIncrement;
         });
-    },
-    getUpcomingCollections: function (filters?: string) {
-      this.upcomingCollections.loading = true;
-      let url = `${
-        import.meta.env.VITE_KOPESHA_API_URL
-      }/api/v1/salesrep/collections/upcoming${this.params}`;
-      filters && (url += filters);
-      axios
-        .get(url)
-        .then(response => {
-          this.upcomingCollections = response.data;
-        })
-        .finally(() => (this.upcomingCollections.loading = false));
-    },
-    getOverdueCollections: function (filters?: string) {
-      this.overdueCollections.loading = true;
-      let url = `${
-        import.meta.env.VITE_KOPESHA_API_URL
-      }/api/v1/salesrep/collections/overdue${this.params}`;
+    }
 
+    function getOverdueCollections(filters?: string) {
+      overdueCollections.value.loading = true;
+      let url = `/api/v1/salesrep/collections/overdue${params.value}`;
+      filters && (url += filters);
+      axiosKopesha
+        .get(url)
+        .then(response => {
+          overdueCollections.value = response.data;
+        })
+        .finally(() => (overdueCollections.value.loading = false));
+    }
+
+    function getNewCustomers(filters?: string) {
+      newCustomers.value.loading = true;
+      let url = `/api/v1/salesrep/customers${params.value}`;
       filters && (url += filters);
       axios
         .get(url)
         .then(response => {
-          this.overdueCollections = response.data;
+          newCustomers.value = response.data;
         })
-        .finally(() => (this.overdueCollections.loading = false));
-    },
-    //TODO: add param for thing
-    getNewCustomers: function (filters?: string) {
-      this.newCustomers.loading = true;
-      let url = `${
-        import.meta.env.VITE_KOPESHA_API_URL
-      }/api/v1/salesrep/customers${this.params}`;
-      filters && (url += filters);
-      axios
-        .get(url)
+        .finally(() => (newCustomers.value.loading = false));
+    }
+
+    function newCustomerFilterFetch() {
+      const newParam = newCustomerFilters.value.ussd.filterParam.concat(
+        newCustomerFilters.value.status.filterParam
+      );
+      getNewCustomers(newParam);
+    }
+
+    function overdueCollectionFilterFetch() {
+      const newParam =
+        overdueCollectionFilters.value.product.filterParam.concat(
+          overdueCollectionFilters.value.status.filterParam
+        );
+      getOverdueCollections(newParam);
+    }
+    function getStatsCustomer() {
+      axiosKopesha
+        .get(`/api/v1/salesrep/customer${params.value}`)
         .then(response => {
-          this.newCustomers = response.data;
-        })
-        .finally(() => (this.newCustomers.loading = false));
-    },
-  },
-});
+          stats.value.totalCustomers = response.data.totalCustomers;
+          stats.value.newCustomers = response.data.newCustomers;
+          stats.value.onBoardingApprovals = response.data.onBoardingApprovals;
+          stats.value.newCustomersPercent = response.data.newCustomersPercent;
+          stats.value.customersCountIncrement =
+            response.data.customersCountIncrement;
+          stats.value.onboardingApprovals = response.data.onboardingApprovals;
+        });
+    }
+
+    const setStatsDates = (start: string, end: string) => {
+      params.value = { start, end };
+    };
+
+    return {
+      branchIds,
+      salesRepIds,
+      branches,
+      salesReps,
+      stats,
+      upcomingCollections,
+      overdueCollections,
+      newCustomers,
+      myCustomerTabs,
+      tabs,
+      tab,
+      salesOverviewFilters,
+      collectionFilter,
+      upcomingCollectionFilters,
+      overdueCollectionFilters,
+      upComingCollectionActions,
+      newCustomerFilters,
+      newCustomerActions,
+
+      getNewCustomers,
+      getOverdueCollections,
+      getStats,
+      getSalesReps,
+      getBranches,
+      getStatsCustomer,
+      newCustomerFilterFetch,
+      overdueCollectionFilterFetch,
+      setStatsDates,
+    };
+  }
+);

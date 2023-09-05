@@ -8,3 +8,23 @@
 // @use 'vuetify' with (
 //   $color-pack: false
 // );
+
+.action-btn {
+  align-self: center;
+  border: 0.2px solid #E4E4E4 !important;
+  height: 1.5rem !important;
+}
+
+.action-btn-icon {
+  min-width: 0 !important;
+  padding: 0 6px !important;
+}
+
+.v-data-table-footer {
+  padding-top: 40px;
+}
+
+.v-data-table-header__content {
+  font-weight: bold !important;
+  color: #081419 !important;
+}

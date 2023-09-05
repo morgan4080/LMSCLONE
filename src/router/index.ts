@@ -35,7 +35,13 @@ const routes = [
         name: "Bank Listing",
         component: () => import("@/views/Scoring/Bank.vue"),
       },
+      {
+        path: "/sales-customers",
+        name: "My Customers",
+        component: () => import("@/components/MyCustomersDashboard.vue"),
+      },
       ...agentSalesRouter,
+
     ],
     meta: { requiresAuth: true },
   },

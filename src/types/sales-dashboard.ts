@@ -7,6 +7,7 @@ export interface SalesDashboardState {
     startDate: string | null;
     endDate: string | null;
     upcomingCollections: string;
+    overdueCollectionsPercent: string;
     overdueCollections: string;
     upcomingCollectionsCount: string;
     overdueCollectionsCount: string;
@@ -25,6 +26,11 @@ export interface Branch {
 export interface SalesRep {
   refId: string;
   name: string;
+  keycloakId: string;
+  firstName: string;
+  lastName: string;
+  phoneNumber: string;
+  email: string;
 }
 
 export interface UpcomingCollection {

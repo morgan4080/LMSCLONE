@@ -20,13 +20,10 @@
         justify="space-between"
         class="pr-8"
       >
-        <v-avatar
-          size="55"
-          image="@/assets/user.png"
-          style="border: 5px solid white"
-        ></v-avatar>
+        <v-avatar size="55" style="border: 5px"  image="@/assets/user.png" class="solid white" />
+
         <div>
-          <div class="text-caption text-grey-lighten-1">Welcome,</div>
+          <div class="text-caption text-grey-lighten-1">Welcome</div>
           <div class="text-subtitle-2 font-weight-light text-white">
             {{
               authStore.getLoggedInUser
@@ -390,7 +387,7 @@ import { useBreakpoints } from "@vueuse/core";
 import stores from "../store";
 
 const authStore = stores.authStore;
-
+const kopeshaURL = import.meta.env.VITE_KOPESHA_API_URL;
 const breakpoints = useBreakpoints({
   mobile: 320,
   tablet: 600,
@@ -419,19 +416,19 @@ const items = ref<
     subItems: [
       {
         text: "Ops Dashboard",
-        href: "https://lending.presta.co.ke/kopesha/lender/index.html#/dashboard/operations",
+        href: `${kopeshaURL}/lender/index.html#/dashboard/operations`,
       },
       {
         text: "Income Dashboard",
-        href: "https://lending.presta.co.ke/kopesha/lender/index.html#/dashboard/income_analysis",
+        href: `${kopeshaURL}/lender/index.html#/dashboard/income_analysis`,
       },
       {
         text: "Collections Dashboard",
-        href: "https://lending.presta.co.ke/kopesha/lender/index.html#/dashboard/collections_analysis",
+        href: `${kopeshaURL}/lender/index.html#/dashboard/collections_analysis`,
       },
       {
         text: "Accounts Analysis",
-        href: "https://lending.presta.co.ke/kopesha/lender/index.html#/dashboard/accounts-analysis",
+        href: `${kopeshaURL}/lender/index.html#/dashboard/accounts-analysis`,
       },
     ],
   },
@@ -442,31 +439,31 @@ const items = ref<
     subItems: [
       {
         text: "All Loans",
-        href: "https://lending.presta.co.ke/kopesha/lender/index.html#/loans/loans_listings",
+        href: `${kopeshaURL}/lender/index.html#/loans/loans_listings`,
       },
       {
         text: "Due Loans",
-        href: "https://lending.presta.co.ke/kopesha/lender/index.html#/loans/due_loans",
+        href: `${kopeshaURL}/lender/index.html#/loans/due_loans`,
       },
       {
         text: "Collections",
-        href: "https://lending.presta.co.ke/kopesha/lender/index.html#/loans/collectionsbreakdown",
+        href: `${kopeshaURL}/lender/index.html#/loans/collectionsbreakdown`,
       },
       {
         text: "Tracker",
-        href: "https://lending.presta.co.ke/kopesha/lender/index.html#/loans/tracker",
+        href: `${kopeshaURL}/lender/index.html#/loans/tracker`,
       },
       {
         text: "Arrears Report",
-        href: "https://lending.presta.co.ke/kopesha/lender/index.html#/loans/loan-arrears",
+        href: `${kopeshaURL}/lender/index.html#/loans/loan-arrears`,
       },
       {
         text: "Current Balances",
-        href: "https://lending.presta.co.ke/kopesha/lender/index.html#/loans/loan-balances",
+        href: `${kopeshaURL}/lender/index.html#/loans/loan-balances`,
       },
       {
         text: "Loan Payments",
-        href: "https://lending.presta.co.ke/kopesha/lender/index.html#/transactions/payments",
+        href: `${kopeshaURL}/lender/index.html#/transactions/payments`,
       },
     ],
   },
@@ -477,23 +474,23 @@ const items = ref<
     subItems: [
       {
         text: "C2B (In)",
-        href: "https://lending.presta.co.ke/kopesha/lender/index.html#/transactions/receipts",
+        href: `{kopeshaURL}/lender/index.html#/transactions/receipts`,
       },
       {
         text: "B2C (Out)",
-        href: "https://lending.presta.co.ke/kopesha/lender/index.html#/transactions/disbursements",
+        href: `${kopeshaURL}/lender/index.html#/transactions/disbursements`,
       },
       {
         text: "Checkoff",
-        href: "https://lending.presta.co.ke/kopesha/lender/index.html#/transactions/checkoffs",
+        href: `${kopeshaURL}/lender/index.html#/transactions/checkoffs`,
       },
       {
         text: "Import Balances",
-        href: "https://lending.presta.co.ke/kopesha/lender/index.html#/transactions/member-balances",
+        href: `${kopeshaURL}/lender/index.html#/transactions/member-balances`,
       },
       {
         text: "Manual Journal",
-        href: "https://lending.presta.co.ke/kopesha/lender/index.html#/transactions/journal",
+        href: `${kopeshaURL}/lender/index.html#/transactions/journal`,
       },
     ],
   },
@@ -504,33 +501,48 @@ const items = ref<
     subItems: [
       {
         text: "Customers",
-        href: "https://lending.presta.co.ke/kopesha/lender/index.html#/customers/customer_listing",
+        href: `${kopeshaURL}/lender/index.html#/customers/customer_listing`,
       },
       {
         text: "New Applications",
-        href: "https://lending.presta.co.ke/kopesha/lender/index.html#/customers/customer_applications",
+        href: `${kopeshaURL}/lender/index.html#/customers/customer_applications`,
       },
       {
         text: "Customer Groups",
-        href: "https://lending.presta.co.ke/kopesha/lender/index.html#/customers/customercategories",
+        href: `${kopeshaURL}/lender/index.html#/customers/customercategories`,
       },
       {
         text: "Member Savings",
-        href: "https://lending.presta.co.ke/kopesha/lender/index.html#/investment/contributions",
+        href: `${kopeshaURL}/lender/index.html#/investment/contributions`,
       },
       {
         text: "Member Settings",
-        href: "https://lending.presta.co.ke/kopesha/lender/index.html#/customers/membership_settings",
+        href: `${kopeshaURL}/lender/index.html#/customers/membership_settings`,
       },
       {
         text: "Sales Representatives",
-        href: "https://lending.presta.co.ke/kopesha/lender/index.html#/customers/sales_representatives",
+        href: `${kopeshaURL}/lender/index.html#/customers/sales_representatives`,
       },
       {
         text: "Scoring",
-        href: "/lms/scoring",
+        href: `/lms/scoring`,
       },
     ],
+  },
+  {
+    text: "Sales",
+    icon: "fa fa-pie-chart",
+    href: "#",
+    subItems: [
+      {
+        text: "My Loans Overview",
+        href: `/lms/`,
+      },
+      {
+        text: "My Customers",
+        href: `/lms/sales-customers`,
+      },
+    ]
   },
   {
     text: "Setup",
@@ -539,62 +551,62 @@ const items = ref<
     subItems: [
       {
         text: "App Settings",
-        href: "https://lending.presta.co.ke/kopesha/lender/index.html#/setup/lender_setup",
+        href: `${kopeshaURL}/lender/index.html#/setup/lender_setup`,
       },
       {
         text: "Loan Products",
-        href: "https://lending.presta.co.ke/kopesha/lender/index.html#/setup/loan_products",
+        href: `${kopeshaURL}/lender/index.html#/setup/loan_products`,
       },
       {
         text: "Loan Fees",
-        href: "https://lending.presta.co.ke/kopesha/lender/index.html#/setup/loan_fees",
+        href: `${kopeshaURL}/lender/index.html#/setup/loan_fees`,
       },
       {
         text: "System Fees",
-        href: "https://lending.presta.co.ke/kopesha/lender/index.html#/setup/lender_fees",
+        href: `${kopeshaURL}/lender/index.html#/setup/lender_fees`,
       },
       {
         text: "Penalty Setup",
-        href: "https://lending.presta.co.ke/kopesha/lender/index.html#/setup/penalty_setup",
+        href: `${kopeshaURL}/lender/index.html#/setup/penalty_setup`,
       },
       {
         text: "GL Setup",
-        href: "https://lending.presta.co.ke/kopesha/lender/index.html#/setup/gl_setup",
+        href: `${kopeshaURL}/lender/index.html#/setup/gl_setup`,
       },
       {
         text: "Journal Templates",
-        href: "https://lending.presta.co.ke/kopesha/lender/index.html#/setup/ledgertemplates",
+        href: `${kopeshaURL}/lender/index.html#/setup/ledgertemplates`,
       },
       {
         text: "KYC Settings",
-        href: "https://lending.presta.co.ke/kopesha/lender/index.html#/setup/kyc_settings",
+        href: `${kopeshaURL}/lender/index.html#/setup/kyc_settings`,
       },
       {
         text: "Utility Accounts",
-        href: "https://lending.presta.co.ke/kopesha/lender/index.html#/setup/utilityaccounts",
+        href: `${kopeshaURL}/lender/index.html#/setup/utilityaccounts`,
       },
       {
         text: "Branches",
-        href: "https://lending.presta.co.ke/kopesha/lender/index.html#/setup/branches",
+        href: `${kopeshaURL}/lender/index.html#/setup/branches`,
       },
       {
         text: "Regions",
-        href: "https://lending.presta.co.ke/kopesha/lender/index.html#/setup/regions",
+        href: `${kopeshaURL}/lender/index.html#/setup/regions`,
       },
       {
         text: "SMS Templates",
-        href: "https://lending.presta.co.ke/kopesha/lender/index.html#/setup/sms_templates",
+        href: `${kopeshaURL}/lender/index.html#/setup/sms_templates`,
       },
       {
         text: "Metadata",
-        href: "https://lending.presta.co.ke/kopesha/lender/index.html#/setup/metadata",
+        href: `${kopeshaURL}/lender/index.html#/setup/metadata`,
       },
     ],
   },
   {
     text: "Reports",
     icon: "fa fa-bar-chart-o",
-    href: "https://lending.presta.co.ke/kopesha/lender/index.html#/reports/all-reports",
+    href: `${kopeshaURL}/lender/index.html#/reports/all-reports`,
     subItems: [],
   },
   {
@@ -604,27 +616,27 @@ const items = ref<
     subItems: [
       {
         text: "Beneficiaries",
-        href: "https://lending.presta.co.ke/kopesha/lender/index.html#/investment/beneficiaries",
+        href: `${kopeshaURL}/lender/index.html#/investment/beneficiaries`,
       },
       {
         text: "Transfer Money",
-        href: "https://lending.presta.co.ke/kopesha/lender/index.html#/investment/transfers",
+        href: `${kopeshaURL}/lender/index.html#/investment/transfers`,
       },
       {
         text: "Investment Methods",
-        href: "https://lending.presta.co.ke/kopesha/lender/index.html#/investment/investment_methods",
+        href: `${kopeshaURL}/lender/index.html#/investment/investment_methods`,
       },
       {
         text: "Investments",
-        href: "https://lending.presta.co.ke/kopesha/lender/index.html#/investment/investment_listing",
+        href: `${kopeshaURL}/lender/index.html#/investment/investment_listing`,
       },
       {
         text: "Withdraw",
-        href: "https://lending.presta.co.ke/kopesha/lender/index.html#/investment/withdrawal",
+        href: `${kopeshaURL}/lender/index.html#/investment/withdrawal`,
       },
       {
         text: "Lock Capital",
-        href: "https://lending.presta.co.ke/kopesha/lender/index.html#/investment/capital",
+        href: `${kopeshaURL}/lender/index.html#/investment/capital`,
       },
     ],
   },
@@ -635,15 +647,15 @@ const items = ref<
     subItems: [
       {
         text: "Payment History",
-        href: "https://lending.presta.co.ke/kopesha/lender/index.html#/billing/payment_history",
+        href: `${kopeshaURL}/lender/index.html#/billing/payment_history`,
       },
       {
         text: "About",
-        href: "https://lending.presta.co.ke/kopesha/lender/index.html#/billing/about",
+        href: `${kopeshaURL}/lender/index.html#/billing/about`,
       },
       {
         text: "Settings",
-        href: "https://lending.presta.co.ke/kopesha/lender/index.html#/billing/account-settings",
+        href: `${kopeshaURL}/lender/index.html#/billing/account-settings`,
       },
     ],
   },

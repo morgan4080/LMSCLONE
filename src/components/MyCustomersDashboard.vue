@@ -1,53 +1,32 @@
 <script lang="ts" setup>
-import { onBeforeMount, watch } from "vue";
+import { onMounted, watch } from "vue";
 import { useSalesDashboardStore } from "@/store/sales-dashboard";
-import LoanApprovals from "@/components/collections/LoanApprovals.vue";
-import { storeToRefs } from "pinia";
+import AllCustomersTable from "@/components/mycustomers/AllCustomersTable.vue";
+import OnboardingApprovalTable from "@/components/mycustomers/OnboardingApprovalTable.vue";
 import { dateFilters } from "@/helpers";
-import CollectionsTable from "@/components/collections/CollectionsTable.vue";
+import { storeToRefs } from "pinia";
 import { useRoute, useRouter } from "vue-router";
 const router = useRouter();
 const route = useRoute();
-const { tabs, tab, salesRepIds, collectionFilter, stats, salesReps } =
-  storeToRefs(useSalesDashboardStore());
-const { getSalesReps, getStats, salesOverviewFilters, setStatsDates } =
-  useSalesDashboardStore();
-const kopeshaURL = import.meta.env.VITE_KOPESHA_API_URL;
-const dateReturn = (
-  text:
-    | "day"
-    | "week"
-    | "month"
-    | "last-month"
-    | "quarter"
-    | "year"
-    | "all"
-    | "arrears"
-) => {
-  let [start, end] = dateFilters(text);
-  setStatsDates(start, end);
-};
-
-// react to existing query parameters
-watch(
-  [() => route.query, salesReps],
-  async ([query, reps]) => {
-    if (JSON.stringify(query) !== "{}") {
-      if (Object.keys(query).includes("tab")) {
-        tab.value = `${query.tab}`;
-      }
-      if (Object.keys(query).includes("salesRep")) {
-        const rep = reps.find(rep => rep.refId === `${query.salesRep}`);
-        if (rep) {
-          salesOverviewFilters.salesRep.text = `${rep.firstName} ${rep.lastName}`;
-          salesOverviewFilters.salesRep.id = rep.refId;
-        }
-      }
-    }
-  },
-  { immediate: true }
+const { tab, myCustomerTabs, salesRepIds, stats, salesReps } = storeToRefs(
+  useSalesDashboardStore()
 );
+const {
+  getBranches,
+  getOverdueCollections,
+  salesOverviewFilters,
+  getSalesReps,
+  getStatsCustomer,
+} = useSalesDashboardStore();
 
+onMounted(() => {
+  getSalesReps();
+  getBranches();
+  getOverdueCollections();
+  getStatsCustomer();
+});
+
+const kopeshaURL = import.meta.env.VITE_KOPESHA_API_URL;
 const loadParams = async (
   salesOverView: typeof salesOverviewFilters,
   currentTab: typeof tab.value
@@ -60,12 +39,13 @@ const loadParams = async (
     } else {
       salesRepIds.value = [""];
     }
-
     withValues["salesRep"] = salesOverView.salesRep.id;
   }
 
   if (salesOverviewFilters.dateFilters.value) {
     dateReturn(salesOverviewFilters.dateFilters.value);
+    withValues["startDate"] = stats.value.startDate;
+    withValues["endDate"] = stats.value.endDate;
   }
 
   if (currentTab) {
@@ -75,29 +55,33 @@ const loadParams = async (
   await router.push({ path: route.path, query: withValues });
 };
 
-// set query parameters
 watch(
   [salesOverviewFilters, tab],
   async ([salesOverView, currentTab]) => {
     await loadParams(salesOverView, currentTab);
-    getStats();
+    getStatsCustomer();
   },
   { deep: true }
 );
 
-onBeforeMount(() => {
-  getSalesReps();
-  getStats();
-});
+function dateReturn(
+  text:
+    | "day"
+    | "week"
+    | "month"
+    | "last-month"
+    | "quarter"
+    | "year"
+    | "all"
+    | "arrears"
+) {
+  let [start, end] = dateFilters(text);
+  stats.value.startDate = start;
+  stats.value.endDate = end;
+}
 const openUserCreation = () => {
   window.location.href = `${kopeshaURL}lender/index.html#/customers/customer_form`;
 };
-
-onBeforeMount(() => {
-  salesOverviewFilters.dateFilters.text = "This Month";
-  salesOverviewFilters.dateFilters.value = "month";
-});
-
 </script>
 <template>
   <div class="pa-6 fill-height bg-background">
@@ -108,10 +92,14 @@ onBeforeMount(() => {
           sm="7"
         >
           <h1 class="text-h6 font-weight-regular text-grey-darken-2">
-            Sales Overview
+            My Customers
           </h1>
           <div class="text-caption font-weight-light mb-n1">
-            <span class="font-weight-medium">A Loans Overview Performance</span>
+            <span class="font-weight-medium">An Overview of Customers</span> For
+            The Period Between
+            <span class="font-weight-medium"
+              >{{ stats.startDate }} - {{ stats.endDate }}</span
+            >
           </div>
         </v-col>
         <v-col
@@ -119,7 +107,8 @@ onBeforeMount(() => {
           sm="5"
         >
           <v-row class="d-flex justify-end">
-            <div>
+            <div class="px-3"></div>
+            <div class="px-3">
               <v-menu transition="slide-y-transition">
                 <template v-slot:activator="{ props }">
                   <v-btn
@@ -146,8 +135,7 @@ onBeforeMount(() => {
                       density="compact"
                       @click="
                         salesOverviewFilters.salesRep.text = null;
-                        salesOverviewFilters.salesRep.id = '';
-                        salesRepIds = [''];
+                        salesOverviewFilters.salesRep.id = null;
                       "
                       >All</v-list-item
                     >
@@ -157,7 +145,8 @@ onBeforeMount(() => {
                       :value="it"
                       density="compact"
                       @click="
-                        salesOverviewFilters.salesRep.text = `${dropDownMenu.firstName} ${dropDownMenu.lastName}`;
+                        salesOverviewFilters.salesRep.text =
+                          dropDownMenu.firstName.toString();
                         salesOverviewFilters.salesRep.id = dropDownMenu.keycloakId;
                       "
                       :title="`${dropDownMenu.firstName} ${dropDownMenu.lastName}`"
@@ -235,18 +224,13 @@ onBeforeMount(() => {
             :loading="false"
           >
             <v-card-text>
-              <div class="text-body-2 font-weight-light">
-                Expected Collections
-              </div>
+              <div class="text-body-2 font-weight-light">Total Customers</div>
               <div class="text-h6 font-weight-regular py-2 text-primary">
-                {{ stats.upcomingCollections }}
+                {{ stats.totalCustomers }} Customers
               </div>
               <div class="d-flex justify-space-between">
                 <div class="text-caption font-weight-regular text-normal">
-                  {{ salesOverviewFilters.dateFilters.text }}
-                </div>
-                <div class="text-caption font-weight-regular text-primary">
-                  {{ stats.upcomingCollectionsCount }} Loans
+                  Onboarded
                 </div>
               </div>
             </v-card-text>
@@ -262,22 +246,18 @@ onBeforeMount(() => {
             :loading="false"
           >
             <v-card-text>
-              <div class="text-body-2 font-weight-light">Loans In Arrears</div>
+              <div class="text-body-2 font-weight-light">New Customers</div>
               <div class="d-flex justify-space-between mx-1">
-                <div class="text-h6 font-weight-regular py-2 text-red">
-                  {{ stats.overdueCollections }}
-                </div>
-                <div class="text-sm font-weight-regular py-2 text-red">
-                  {{ stats.overdueCollectionsPercent }}
+                <div class="text-h6 font-weight-regular py-2 text-green">
+                  {{ stats.newCustomers }} Customers
                 </div>
               </div>
-
               <div class="d-flex justify-space-between">
                 <div class="text-caption font-weight-regular text-normal">
                   {{ salesOverviewFilters.dateFilters.text }}
                 </div>
-                <div class="text-caption font-weight-regular text-red">
-                  {{ stats.overdueCollectionsCount }} Loans
+                <div class="text-caption font-weight-regular text-green">
+                  {{ stats.customersCountIncrement }}
                 </div>
               </div>
             </v-card-text>
@@ -294,17 +274,14 @@ onBeforeMount(() => {
           >
             <v-card-text>
               <div class="text-body-2 font-weight-light">
-                Total New Customers
+                Onboarding Approvals
               </div>
-              <div class="text-h6 font-weight-regular py-2 text-success">
-                {{ stats.customersCount }} Customers
+              <div class="text-h6 font-weight-regular py-2 text-red">
+                {{ stats.onboardingApprovals }} Customers
               </div>
               <div class="d-flex justify-space-between">
                 <div class="text-caption font-weight-regular text-normal">
-                  {{ salesOverviewFilters.dateFilters.text }}
-                </div>
-                <div class="text-caption font-weight-regular text-success">
-                  {{ stats.customersCountIncrement }} Loans
+                  Pending
                 </div>
               </div>
             </v-card-text>
@@ -313,21 +290,17 @@ onBeforeMount(() => {
       </v-row>
       <v-row class="d-flex">
         <v-col cols="12">
-          <v-card
-            :loading="false"
-            variant="flat"
-          >
+          <v-card :loading="false">
             <v-card-text class="px-7 py-9">
               <v-row>
                 <v-col sm="9">
                   <v-row>
                     <v-col sm="4">
                       <h1 class="text-h6 font-weight-regular">
-                        {{ collectionFilter.collections.name }}
+                        Customer Listing
                       </h1>
                       <div class="text-caption font-weight-light mb-n1">
-                        Summary
-                        {{ collectionFilter.collections.name }}
+                        Summary Of Your Customers
                       </div>
                     </v-col>
                   </v-row>
@@ -347,7 +320,7 @@ onBeforeMount(() => {
                   class="text-none px-3 -mb-1 mt-5"
                 >
                   <v-tab
-                    v-for="(t, ind) in tabs"
+                    v-for="(t, ind) in myCustomerTabs"
                     :key="ind"
                     :value="t"
                     class="text-none text-caption"
@@ -364,77 +337,28 @@ onBeforeMount(() => {
 
                 <v-window v-model="tab">
                   <v-window-item
-                    v-for="n in tabs"
+                    v-for="n in myCustomerTabs"
                     :key="n"
                     :value="n"
                   >
                     <v-container
-                      v-if="tab === tabs[0]"
+                      v-if="n === myCustomerTabs[0]"
                       :fluid="true"
                     >
-                      <CollectionsTable
-                        :key="`${Math.random().toString(36).substr(2, 16)}`"
+                      <all-customers-table
+                        :key="Math.random().toString(36).substr(2, 16)"
                         :refId="salesOverviewFilters.salesRep.id"
-                        :period="'day'"
-                        title="Due Today"
-                        @clearFilters="
-                          salesOverviewFilters.salesRep.text = null;
-                          salesOverviewFilters.salesRep.id = '';
-                          salesRepIds = [''];
-                          loadParams(salesOverviewFilters, tab);
-                        "
+                        :period="salesOverviewFilters.dateFilters.value"
                       />
                     </v-container>
-
                     <v-container
-                      v-if="tab === tabs[1]"
+                      v-else-if="n === myCustomerTabs[1]"
                       :fluid="true"
                     >
-                      <CollectionsTable
-                        :key="`${Math.random().toString(36).substr(2, 16)}`"
-                        :ref-id="salesOverviewFilters.salesRep.id"
-                        :period="'week'"
-                        title="Due This Week"
-                        @clearFilters="
-                          salesOverviewFilters.salesRep.text = null;
-                          salesOverviewFilters.salesRep.id = '';
-                          salesRepIds = [''];
-                          loadParams(salesOverviewFilters, tab);
-                        "
-                      />
-                    </v-container>
-
-                    <v-container
-                      v-if="tab === tabs[2]"
-                      :fluid="true"
-                    >
-                      <CollectionsTable
-                        :key="`${Math.random().toString(36).substr(2, 16)}`"
-                        :ref-id="salesOverviewFilters.salesRep.id"
-                        :period="'arrears'"
-                        title="Arrears"
-                        @clearFilters="
-                          salesOverviewFilters.salesRep.text = null;
-                          salesOverviewFilters.salesRep.id = '';
-                          salesRepIds = [''];
-                          loadParams(salesOverviewFilters, tab);
-                        "
-                      />
-                    </v-container>
-
-                    <v-container
-                      v-if="tab === tabs[3]"
-                      :fluid="true"
-                    >
-                      <loan-approvals
-                        :key="`${Math.random().toString(36).substr(2, 16)}`"
-                        :ref-id="salesOverviewFilters.salesRep.id"
-                        @clearFilters="
-                          salesOverviewFilters.salesRep.text = null;
-                          salesOverviewFilters.salesRep.id = '';
-                          salesRepIds = [''];
-                          loadParams(salesOverviewFilters, tab);
-                        "
+                      <onboarding-approval-table
+                        :key="Math.random().toString(36).substr(2, 16)"
+                        :refId="salesOverviewFilters.salesRep.id"
+                        :period="salesOverviewFilters.dateFilters.value"
                       />
                     </v-container>
                   </v-window-item>
