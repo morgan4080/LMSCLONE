@@ -3,7 +3,6 @@ import {dateFilters, formatMoney} from "@/helpers";
 import { useSearch } from "@/composables/useSearch";
 import { storeToRefs } from "pinia";
 import { useCustomer } from "@/salesDashboard/composables/mycustomers/useCustomers";
-import {toRef } from "vue";
 
 const {
   pageables,
@@ -23,9 +22,9 @@ const {
 const { search } = useSearch(pageables, fetchCustomersCollections);
 const props = defineProps<{
   refId: string | null;
+  period: "day" | "week" | "month" | "quarter" | "year" | "all" | "arrears";
 }>();
 
-const refId = toRef(props, "refId");
 const kopeshaURL = import.meta.env.VITE_KOPESHA_API_URL;
 
 type optionsType = {
@@ -34,19 +33,12 @@ type optionsType = {
   search: string;
 };
 
-const dateUpdated = () => {
-  if(salesOverviewFilters.dateFilters.value){
-    const [start, end] = dateFilters(salesOverviewFilters.dateFilters.value);
-    console.log(start, end);
-    pageables.startDate = start;
-    pageables.endDate = end;
-  }
-}
+
 const loadItems = (options: optionsType) => {
   if (props.refId) {
     pageables.salesRepRefIds = props.refId;
   }
-  dateUpdated();
+    dateReturn(props.period);
   if (options.page === 1) {
     pageables.start = 0;
   } else {
@@ -56,100 +48,66 @@ const loadItems = (options: optionsType) => {
 
   fetchCustomersCollections();
 };
-
+function dateReturn(
+  text: "day" | "week" | "month" | "quarter" | "year" | "all" | "arrears"
+) {
+    let [start, end] = dateFilters(text);
+    pageables.startDate = start;
+    pageables.endDate = end;
+}
 
 </script>
 <template>
-  <v-col>
-    <v-row class="d-flex justify-center my-2 mx-1">
-      <v-menu transition="slide-y-transition">
-        <template v-slot:activator="{ props }">
-          <v-btn
-            class="v-btn--size-default text-caption text-capitalize"
-            density="default"
-            :append-icon="salesOverviewFilters.dateFilters.appendIcon"
-            v-bind="props"
-            :flat="true"
-            style="border: 1px solid rgba(128, 128, 128, 0.25)"
-          >
-            {{ salesOverviewFilters.dateFilters.text || "All Time" }}
-          </v-btn>
-        </template>
-        <v-sheet
-          border
-          rounded
-        >
-          <v-list
-            :nav="true"
-            density="compact"
-            role="listbox"
-          >
-            <v-list-item
-              v-for="(dropDownMenu, it) in salesOverviewFilters
-              .dateFilters.menus"
-            :key="it"
-              :value="it"
-              density="compact"
-              @click="
-                        salesOverviewFilters.dateFilters.text =
-                          dropDownMenu.title;
-                        salesOverviewFilters.dateFilters.value =
-                          dropDownMenu.value;
-                        dateUpdated();
-                        fetchCustomersCollections();
-                     "
-            >{{ dropDownMenu.title }}</v-list-item
-            >
-          </v-list>
-        </v-sheet>
-      </v-menu>
-      <v-spacer></v-spacer>
-      <v-row class="d-flex justify-end">
+    <v-row class="v-row d-flex pl-2 gap-4 justify-start my-6">
+        <h3 class="pa-2 font-weight-regular">
+            Customers ({{ customersCollections.recordsFiltered }})
+        </h3>
+        <v-spacer></v-spacer>
         <div>
-          <v-input
-            hide-details
-            class="px-2 font-weight-light border rounded mr-4"
-            density="comfortable"
-            style="
+            <v-input
+                    hide-details
+                    class="px-2 font-weight-light border rounded mr-4"
+                    density="comfortable"
+                    style="
               height: 28px !important;
               padding-left: 16px !important;
               padding-right: 16px !important;
             "
-          >
-            <template #append>
-              <v-icon
-                icon="mdi mdi-magnify"
-                size="small"
-              />
-            </template>
-            <template v-slot:default>
-              <input
-                class="text-caption searchField custom-input"
-                type="search"
-                placeholder="Search Here"
-                v-model="pageables.searchTerm"
-                @input="search"
-              />
-            </template>
-          </v-input>
+            >
+                <template #append>
+                    <v-icon
+                            icon="mdi mdi-magnify"
+                            size="small"
+                    />
+                </template>
+                <template v-slot:default>
+                    <input
+                            class="text-caption searchField custom-input"
+                            type="search"
+                            placeholder="Search Here"
+                            v-model="pageables.searchTerm"
+                            @input="search"
+                    />
+                </template>
+            </v-input>
         </div>
         <v-btn
-          class="v-btn--size-default text-caption text-capitalize mr-6"
-          density="comfortable"
-          variant="tonal"
-          style="border: 1px solid rgba(128, 128, 128, 0.25)"
-          @click="exportCustomers"
+                class="v-btn--size-default text-caption text-capitalize mr-6"
+                density="comfortable"
+                variant="tonal"
+                style="border: 1px solid rgba(128, 128, 128, 0.25)"
+                @click="exportCustomers"
         >
-          Export
+            Export
         </v-btn>
         <v-btn
-          class="v-btn--size-default text-caption text-capitalize mr-6"
-          density="comfortable"
-          append-icon="mdi:mdi-close"
-          color="primary"
-          variant="tonal"
-          style="border: 1px solid rgba(128, 128, 128, 0.25)"
-          @click="
+                class="v-btn--size-default text-caption text-capitalize mr-6"
+                density="comfortable"
+                append-icon="mdi:mdi-close"
+                color="primary"
+                variant="tonal"
+                style="border: 1px solid rgba(128, 128, 128, 0.25)"
+                @click="
             setSelectedExportOption(null);
             setSelectedOnboardingOption(null);
             pageables.repaymentStatus = '';
@@ -165,11 +123,9 @@ const loadItems = (options: optionsType) => {
             fetchCustomersCollections();
           "
         >
-          Clear Filters
+            Clear Filters
         </v-btn>
-      </v-row>
     </v-row>
-  </v-col>
 
   <!--  Table -->
   <v-data-table-server

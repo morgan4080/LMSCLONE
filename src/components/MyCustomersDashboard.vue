@@ -247,7 +247,7 @@ const openUserCreation = () => {
               </div>
               <div class="d-flex justify-space-between">
                 <div class="text-caption font-weight-regular text-normal">
-                  This Month
+                    {{ salesOverviewFilters.dateFilters.text}}
                 </div>
                 <div class="text-caption font-weight-regular text-green">
                   {{ stats.customersCountIncrement }}
@@ -341,6 +341,7 @@ const openUserCreation = () => {
                       <all-customers-table
                         :key="Math.random().toString(36).substr(2, 16)"
                         :refId="salesOverviewFilters.salesRep.id"
+                       :period="salesOverviewFilters.dateFilters.value"
                       />
                     </v-container>
                     <v-container
@@ -350,6 +351,7 @@ const openUserCreation = () => {
                       <onboarding-approval-table
                         :key="Math.random().toString(36).substr(2, 16)"
                         :refId="salesOverviewFilters.salesRep.id"
+                        :period="salesOverviewFilters.dateFilters.value"
                       />
                     </v-container>
                   </v-window-item>
