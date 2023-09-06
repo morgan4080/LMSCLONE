@@ -166,7 +166,7 @@ watch(upload, val => {
   <VDataTableServer
     class="text-caption"
     v-model:items-per-page="itemsPerPage"
-    :headers="headers"
+    :headers="headers as any"
     :items-length="totalItems"
     :items="apiData"
     :loading="loading"
