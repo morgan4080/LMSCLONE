@@ -24,12 +24,7 @@ const {
   todayCollections,
 } = storeToRefs(useToday());
 
-const reload = debounce(() => {
-  fetchTodayCollections();
-  isLoading.value = false;
-}, 1000);
-
-const { search } = useSearch(pageables, reload);
+const { search } = useSearch(pageables, fetchTodayCollections);
 
 const props = defineProps<{
   refId: string;
@@ -55,7 +50,7 @@ type optionsType = {
   search: string;
 };
 
-const loadItems = (options: optionsType) => {
+const loadItems = async (options: optionsType) => {
   isLoading.value = true;
   pageables.salesRepRefIds = props.refId;
   const [start, end] = dateFilters(props.period);
@@ -67,7 +62,8 @@ const loadItems = (options: optionsType) => {
     pageables.start = options.itemsPerPage + 1;
   }
   pageables.length = options.itemsPerPage;
-  reload();
+  await fetchTodayCollections();
+  isLoading.value = false;
 };
 
 onBeforeUnmount(() => {
