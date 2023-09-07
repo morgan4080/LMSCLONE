@@ -144,7 +144,12 @@ const loadData = async (filters?: string) => {
         if (filters) url += filters;
         return await axiosBankInstance.get(url);
       } else {
-        let url = `/e_statement/get_uploaded_statements?pageSize=${itemsPerPage.value}&sortBy=id`;
+        let url = ``;
+        if (props.duplicateFileId) {
+          url = `/e_statement/get_uploaded_statements?fileUniqueId=${props.duplicateFileId}`;
+        } else {
+          url = `/e_statement/get_uploaded_statements?pageSize=${itemsPerPage.value}&sortBy=id`;
+        }
         if (filters) url += filters;
         return await axiosMobileInstance.get(url);
       }
