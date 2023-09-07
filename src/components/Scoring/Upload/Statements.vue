@@ -15,6 +15,8 @@ const props = defineProps<{
 
 const duplicateId = toRef(props, "duplicateFileId")
 
+console.log('emitting dup to scoring statemnets', duplicateId)
+
 const flow = ref<string>("MOBILE");
 const banks = ref<string[]>([]);
 const mobile = ["MPESA", "Airtel Money"];
