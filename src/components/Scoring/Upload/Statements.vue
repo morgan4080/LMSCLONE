@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, reactive, ref, watch } from "vue";
+import { onMounted, reactive, ref, toRef, watch } from "vue";
 import axiosInstance from "@/services/api/axiosInstance";
 
 import CustomTable from "@/components/Scoring/Upload/CustomTable.vue";
@@ -8,6 +8,12 @@ interface Bank {
   bankName: string;
   bankCode: string;
 }
+
+const props = defineProps<{
+  duplicateFileId: string | null;
+}>()
+
+const duplicateId = toRef(props, "duplicateFileId")
 
 const flow = ref<string>("MOBILE");
 const banks = ref<string[]>([]);
@@ -365,6 +371,17 @@ onMounted(() => {
                     </v-list>
                   </v-sheet>
                 </v-menu>
+
+                <v-btn
+                  variant="outlined"
+                  append-icon="mdi:mdi-chevron-down"
+                  class="ml-4 text-none text-caption"
+                  color="primary"
+                  style="border: 1px solid rgba(128, 128, 128, 0.25)"
+                  @click="duplicateId = null"
+                >
+                  Clear Filters
+                </v-btn>
               </v-col>
               <v-col class="justify-end d-flex">
                 <v-menu transition="slide-y-transition">
@@ -443,12 +460,14 @@ onMounted(() => {
               :params="params"
               :headers="headers"
               :flow="flow"
+              :duplicateFileId="duplicateId"
             />
             <CustomTable
               v-if="flow == 'MOBILE'"
               :params="params"
               :headers="headers"
               :flow="flow"
+              :duplicateFileId="duplicateId"
             />
           </v-container>
         </v-col>

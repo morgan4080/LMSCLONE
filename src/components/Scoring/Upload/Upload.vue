@@ -154,6 +154,12 @@ watch(
 const setCheckingPassword = (val: boolean) => {
   checkingPassword.value = val;
 };
+
+const emit = defineEmits(["pushDuplicate"])
+
+const emitDuplicateId = (id: string) => {
+  emit("pushDuplicate", id)
+}
 </script>
 
 <template>
@@ -286,6 +292,7 @@ const setCheckingPassword = (val: boolean) => {
                   :uploaded_doc_ids="uploaded_doc_ids"
                   @clear="uploads.splice(i, 1)"
                   @checkingPassword="setCheckingPassword"
+                  @pushDuplicate="emitDuplicateId"
                 >
                   <template v-slot:divider>
                     <v-divider class="mb-2"></v-divider>
