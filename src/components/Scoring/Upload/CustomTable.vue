@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch, toRef } from "vue";
+import { ref, watch, toRef, onMounted } from "vue";
 import { storeToRefs } from "pinia";
 import { useUploadStore } from "@/store/uploadStore";
 import axiosBankInstance from "@/services/api/axiosbank";
@@ -60,7 +60,6 @@ const totalItems = ref(0);
 const headers = toRef(props, "headers");
 const params = toRef(props, "params");
 const flow = toRef(props, "flow");
-const duplicateFileId = toRef(props, "duplicateFileId");
 
 const { setUploadFalse } = useUploadStore();
 const { upload } = storeToRefs(useUploadStore());
@@ -137,8 +136,8 @@ const loadData = async (filters?: string) => {
     const request = async () => {
       if (flow.value == "BANK") {
         let url = ``;
-        if (duplicateFileId.value) {
-          url = `/bank_analysis/get_uploaded_statements?fileUniqueId=${duplicateFileId.value}`;
+        if (props.duplicateFileId) {
+          url = `/bank_analysis/get_uploaded_statements?fileUniqueId=${props.duplicateFileId}`;
         } else {
           url = `/bank_analysis/get_uploaded_statements?pageSize=${itemsPerPage.value}&sortBy=id`;
         }
@@ -166,6 +165,11 @@ watch(params, () => {
 
 watch(upload, val => {
   val ? loadData(params.value) : "";
+});
+
+onMounted(() => {
+  console.log('in custom table', props.duplicateFileId)
+  if (props.duplicateFileId) loadData(params.value)
 });
 </script>
 
