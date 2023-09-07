@@ -15,8 +15,6 @@ const props = defineProps<{
 
 const duplicateId = toRef(props, "duplicateFileId")
 
-console.log('emitting dup to scoring statemnets', duplicateId)
-
 const flow = ref<string>("MOBILE");
 const banks = ref<string[]>([]);
 const mobile = ["MPESA", "Airtel Money"];
@@ -376,7 +374,6 @@ onMounted(() => {
 
                 <v-btn
                   variant="outlined"
-                  append-icon="mdi:mdi-chevron-down"
                   class="ml-4 text-none text-caption"
                   color="primary"
                   style="border: 1px solid rgba(128, 128, 128, 0.25)"

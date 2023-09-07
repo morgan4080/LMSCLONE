@@ -158,7 +158,6 @@ const setCheckingPassword = (val: boolean) => {
 const emit = defineEmits(["pushDuplicate"])
 
 const emitDuplicateId = (id: string) => {
-  console.log('emitting dup to scoring statemnets', id)
   emit("pushDuplicate", id)
 }
 </script>
