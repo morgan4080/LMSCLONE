@@ -103,7 +103,7 @@ const uploadFile = async () => {
     call()
       .then(response => {
         if (response.data.status === "400" && response.data.error === "DUPLICATE") {
-          message.value = "Duplicate statement uploaded, check below.";
+          message.value = "Duplicate statement uploaded.";
           duplicateFileId.value = response.data.fileUniqueId;
           uploaded.value = false;
         } else {
@@ -180,8 +180,9 @@ const reUploadWithNewPassword = () => {
   popupOpen.value = !popupOpen.value;
 };
 
-const showFileDuplicateStatement = async () => {
+const showFileDuplicateStatement = () => {
   if (duplicateFileId.value) {
+    console.log("ëmiting to uploader")
     emit("pushDuplicate", duplicateFileId.value)
   }
 }
@@ -297,7 +298,7 @@ const showFileDuplicateStatement = async () => {
       class="text-caption mt-1"
     >
       {{ message }}
-      <button v-if="duplicateFileId" @click="showFileDuplicateStatement">View Statement</button>
+      <a v-if="duplicateFileId" @click="showFileDuplicateStatement" style="color: #2196f3">View Statement</a>
     </p>
   </v-list-item>
   <slot name="divider"></slot>

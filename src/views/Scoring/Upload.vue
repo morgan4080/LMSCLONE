@@ -12,5 +12,5 @@ const setDuplicateId = (id: string) => {
 <template>
   <Header />
   <Upload @pushDuplicate="setDuplicateId" />
-  <Statements :duplicateFileId="duplicateFileId" />
+  <Statements :key="duplicateFileId" :duplicateFileId="duplicateFileId" />
 </template>
