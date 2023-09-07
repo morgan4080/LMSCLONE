@@ -7,7 +7,7 @@ import { useUploadStore } from "@/store/uploadStore";
 import stores from "@/store";
 const { checkForPassword } = useUploadStore();
 const authStore = stores.authStore;
-const emit = defineEmits(["clear", "checkingPassword"]);
+const emit = defineEmits(["clear", "checkingPassword", "pushDuplicate"]);
 
 const props = defineProps<{
   statement: {
@@ -28,6 +28,7 @@ const confirmed = ref(false);
 const uploading = ref(false);
 const uploaded = ref(false);
 const message = ref("");
+const duplicateFileId = ref(null);
 const timing = ref<number | undefined>();
 const progress = ref<number | undefined>();
 const progressbar: ComputedRef<number> = computed(() =>
@@ -101,14 +102,20 @@ const uploadFile = async () => {
 
     call()
       .then(response => {
-        if (response.data.status === "200") {
-          uploaded.value = true;
-          uploadStore.setUploadTrue();
-        } else {
+        if (response.data.status === "400" && response.data.error === "DUPLICATE") {
+          message.value = "Duplicate statement uploaded, check below.";
+          duplicateFileId.value = response.data.fileUniqueId;
           uploaded.value = false;
-        }
+        } else {
+          if (response.data.status === "200") {
+            uploaded.value = true;
+            uploadStore.setUploadTrue();
+          } else {
+            uploaded.value = false;
+          }
 
-        message.value = response.data.message;
+          message.value = response.data.message;
+        }
       })
       .catch(error => {
         progress.value = undefined;
@@ -173,9 +180,13 @@ const reUploadWithNewPassword = () => {
   popupOpen.value = !popupOpen.value;
 };
 
-onMounted(() => {
-  console.log("document", props.statement);
-});
+const showFileDuplicateStatement = async () => {
+  if (duplicateFileId.value) {
+    emit("pushDuplicate", duplicateFileId.value)
+  }
+}
+
+
 </script>
 
 <template>
@@ -286,6 +297,7 @@ onMounted(() => {
       class="text-caption mt-1"
     >
       {{ message }}
+      <button v-if="duplicateFileId" @click="showFileDuplicateStatement">View Statement</button>
     </p>
   </v-list-item>
   <slot name="divider"></slot>

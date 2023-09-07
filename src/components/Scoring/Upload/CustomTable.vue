@@ -52,6 +52,7 @@ const props = defineProps<{
   headers: { title: string; key: string; align: string; sortable: boolean }[];
   params: string;
   flow: string;
+  duplicateFileId: string| null;
 }>();
 const loading = ref(true);
 const itemsPerPage = ref(5);
@@ -59,6 +60,7 @@ const totalItems = ref(0);
 const headers = toRef(props, "headers");
 const params = toRef(props, "params");
 const flow = toRef(props, "flow");
+const duplicateFileId = toRef(props, "duplicateFileId");
 
 const { setUploadFalse } = useUploadStore();
 const { upload } = storeToRefs(useUploadStore());
@@ -134,7 +136,12 @@ const loadData = async (filters?: string) => {
   try {
     const request = async () => {
       if (flow.value == "BANK") {
-        let url = `/bank_analysis/get_uploaded_statements?pageSize=${itemsPerPage.value}&sortBy=id`;
+        let url = ``;
+        if (duplicateFileId.value) {
+          url = `/bank_analysis/get_uploaded_statements?fileUniqueId=${duplicateFileId.value}`;
+        } else {
+          url = `/bank_analysis/get_uploaded_statements?pageSize=${itemsPerPage.value}&sortBy=id`;
+        }
         if (filters) url += filters;
         return await axiosBankInstance.get(url);
       } else {
