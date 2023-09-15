@@ -7,8 +7,10 @@ import { dateFilters } from "@/helpers";
 import { storeToRefs } from "pinia";
 import { useRoute, useRouter } from "vue-router";
 import {useCustomer} from "@/salesDashboard/composables/mycustomers/useCustomers";
+import stores from "@/store";
 const router = useRouter();
 const route = useRoute();
+const authStore = stores.authStore;
 const { tab, myCustomerTabs, salesRepIds, stats, salesReps } = storeToRefs(
   useSalesDashboardStore()
 );
@@ -148,6 +150,7 @@ salesOverviewFilters.dateFilters.value =
                     role="listbox"
                   >
                     <v-list-item
+                        v-if="authStore.getCurrentUser && authStore.getCurrentUser.permissions && authStore.getCurrentUser.permissions.includes('CAN_VIEW_SALES_DASHBOARD')"
                       density="compact"
                       @click="
                         salesOverviewFilters.salesRep.text = null;
@@ -162,10 +165,10 @@ salesOverviewFilters.dateFilters.value =
                       density="compact"
                       @click="
                         salesOverviewFilters.salesRep.text =
-                          dropDownMenu.firstName.toString();
-                        salesOverviewFilters.salesRep.id = dropDownMenu.keycloakId;
+                          dropDownMenu.fullName.toString();
+                        salesOverviewFilters.salesRep.id = dropDownMenu.refId;
                       "
-                      :title="`${dropDownMenu.firstName} ${dropDownMenu.lastName}`"
+                      :title="`${dropDownMenu.fullName}`"
                       :subtitle="`${dropDownMenu.phoneNumber}`"
                     >
                     </v-list-item>
