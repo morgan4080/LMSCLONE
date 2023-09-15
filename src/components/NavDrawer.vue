@@ -214,9 +214,8 @@
             <v-divider class="my-3 mb-4" />
 
             <v-list-item
-              link
-              href="https://accounts.presta.co.ke/"
               density="compact"
+              @click="doLogout"
             >
               <template v-slot:append>
                 <v-icon icon="mdi:mdi-logout-variant"></v-icon>
@@ -691,6 +690,21 @@ const items = ref<
     ],
   },*/
 ]);
+
+const doLogout = async () => {
+  try {
+    await fetch(`${import.meta.env.VITE_APP_ROOT}/logout`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+  } catch (e: any) {
+    console.log(e.message);
+  } finally {
+    window.location.reload();
+  }
+};
 
 const redirectAuth = () => {
   authStore.setAuthPrompt(false);
