@@ -146,10 +146,10 @@ const openUserCreation = () => {
                       density="compact"
                       @click="
                         salesOverviewFilters.salesRep.text =
-                          dropDownMenu.firstName.toString();
+                          dropDownMenu.fullName.toString();
                         salesOverviewFilters.salesRep.id = dropDownMenu.refId;
                       "
-                      :title="`${dropDownMenu.firstName} ${dropDownMenu.lastName}`"
+                      :title="`${dropDownMenu.fullName}`"
                       :subtitle="`${dropDownMenu.phoneNumber}`"
                     >
                     </v-list-item>
