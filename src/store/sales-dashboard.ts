@@ -3,7 +3,7 @@ import axios from "axios";
 import moment from "moment";
 import { formatMoney } from "@/helpers";
 import axiosKopesha from "@/services/api/axiosKopesha";
-import { computed, onBeforeMount, onMounted, reactive, ref } from "vue";
+import { computed, onBeforeMount, reactive, ref } from "vue";
 import {
   Customer,
   OverdueCollection,
@@ -426,42 +426,34 @@ export const useSalesDashboardStore = defineStore(
       });
     }
 
-    onBeforeMount(() => {
-      authStore.initialize();
-    })
-
-    const currentUser = computed(() => {
-      console.log("::::::authStore.getCurrentUser::::::")
-      console.log(authStore.getCurrentUser)
-      return authStore.getCurrentUser
-    })
-
     async function getSalesReps() {
       try {
-        if (currentUser.value) {
-          axiosKopesha.get(`/api/v1/salesrepresentative/all`)
-            .then(response => {
-            console.log(currentUser.value)
-            if (
-              currentUser.value &&
-              currentUser.value.permissions &&
-              currentUser.value.permissions.includes("CAN_VIEW_SALES_DASHBOARD")
-            ) {
-              salesReps.value = response.data;
-            } else {
-              salesReps.value = response.data.filter((rep: SalesRep) => rep.keycloakId === currentUser.value?.keycloakId);
-              if (salesReps.value.length > 0) {
-                salesOverviewFilters.salesRep.id = salesReps.value[0].refId;
-                salesOverviewFilters.salesRep.text = `${salesReps.value[0].fullName}`;
-              }
-            }
-          }).catch(e => console.log(e));
-        } else {
-          axiosKopesha.get(`/api/v1/salesrepresentative/all`)
-            .then(response => {
-              salesReps.value = response.data;
-            }).catch(e => console.log(e));
-        }
+        authStore.initialize().then(() => {
+          if (authStore.getCurrentUser) {
+            axiosKopesha.get(`/api/v1/salesrepresentative/all`)
+              .then(response => {
+                console.log(authStore.getCurrentUser)
+                if (
+                  authStore.getCurrentUser &&
+                  authStore.getCurrentUser.permissions &&
+                  authStore.getCurrentUser.permissions.includes("CAN_VIEW_SALES_DASHBOARD")
+                ) {
+                  salesReps.value = response.data;
+                } else {
+                  salesReps.value = response.data.filter((rep: SalesRep) => rep.keycloakId === authStore.getCurrentUser?.keycloakId);
+                  if (salesReps.value.length > 0) {
+                    salesOverviewFilters.salesRep.id = salesReps.value[0].refId;
+                    salesOverviewFilters.salesRep.text = `${salesReps.value[0].fullName}`;
+                  }
+                }
+              }).catch(e => console.log(e));
+          } else {
+            axiosKopesha.get(`/api/v1/salesrepresentative/all`)
+              .then(response => {
+                salesReps.value = response.data;
+              }).catch(e => console.log(e));
+          }
+        });
       } catch (e) {
         console.log(e)
       }
