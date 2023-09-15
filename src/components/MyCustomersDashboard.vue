@@ -84,6 +84,8 @@ function dateReturn(
 const openUserCreation = () => {
   window.location.href = `${kopeshaURL}/lender/index.html#/customers/customer_form`;
 };
+
+console.log(authStore.getCurrentUser)
 </script>
 <template>
   <div class="pa-6 fill-height bg-background">
@@ -134,7 +136,7 @@ const openUserCreation = () => {
                     role="listbox"
                   >
                     <v-list-item
-                      v-if="authStore.getCurrentUser && authStore.getCurrentUser.permissions.includes('CAN_VIEW_SALES_DASHBOARD')"
+                      v-if="authStore.getCurrentUser && authStore.getCurrentUser.permissions && authStore.getCurrentUser.permissions.includes('CAN_VIEW_SALES_DASHBOARD')"
                       density="compact"
                       @click="
                         salesOverviewFilters.salesRep.text = null;

@@ -433,10 +433,11 @@ export const useSalesDashboardStore = defineStore(
         axiosKopesha
         .get(`/api/v1/salesrepresentative/all`)
         .then(response => {
-          if (authStore.getCurrentUser && authStore.getCurrentUser.permissions.includes("CAN_VIEW_SALES_DASHBOARD")) {
+          console.log(authStore.getCurrentUser)
+          if (authStore.getCurrentUser && authStore.getCurrentUser.permissions && authStore.getCurrentUser.permissions.includes("CAN_VIEW_SALES_DASHBOARD")) {
             salesReps.value = response.data.data;
           } else {
-            salesReps.value = response.data.data.filter((rep: SalesRep) => rep.keycloakId === authStore.getCurrentUser?.keycloakId);
+            salesReps.value = response.data.filter((rep: SalesRep) => rep.keycloakId === authStore.getCurrentUser?.keycloakId);
             if (salesReps.value.length > 0) {
               salesOverviewFilters.salesRep.id = salesReps.value[0].refId;
               salesOverviewFilters.salesRep.text = `${salesReps.value[0].fullName}`;

@@ -147,7 +147,7 @@ console.log(salesReps.value)
                     role="listbox"
                   >
                     <v-list-item
-                      v-if="authStore.getCurrentUser && authStore.getCurrentUser.permissions.includes('CAN_VIEW_SALES_DASHBOARD')"
+                      v-if="authStore.getCurrentUser && authStore.getCurrentUser.permissions && authStore.getCurrentUser.permissions.includes('CAN_VIEW_SALES_DASHBOARD')"
                       density="compact"
                       @click="
                         salesOverviewFilters.salesRep.text = null;
