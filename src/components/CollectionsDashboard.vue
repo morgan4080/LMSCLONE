@@ -378,6 +378,7 @@ console.log(salesReps.value)
                       :fluid="true"
                     >
                       <CollectionsTable
+                        :key="salesOverviewFilters.salesRep.id+tabs[0]"
                         :refId="salesOverviewFilters.salesRep.id"
                         :period="'day'"
                         title="Due Today"
@@ -395,6 +396,7 @@ console.log(salesReps.value)
                       :fluid="true"
                     >
                       <CollectionsTable
+                        :key="salesOverviewFilters.salesRep.id+tabs[1]"
                         :ref-id="salesOverviewFilters.salesRep.id"
                         :period="'week'"
                         title="Due This Week"
@@ -412,6 +414,7 @@ console.log(salesReps.value)
                       :fluid="true"
                     >
                       <CollectionsTable
+                        :key="salesOverviewFilters.salesRep.id+tabs[2]"
                         :ref-id="salesOverviewFilters.salesRep.id"
                         :period="'arrears'"
                         title="Arrears"
