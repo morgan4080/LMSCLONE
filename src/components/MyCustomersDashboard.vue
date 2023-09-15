@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { onMounted, watch } from "vue";
+import { onBeforeMount, watch } from "vue";
 import { useSalesDashboardStore } from "@/store/sales-dashboard";
 import AllCustomersTable from "@/components/mycustomers/AllCustomersTable.vue";
 import OnboardingApprovalTable from "@/components/mycustomers/OnboardingApprovalTable.vue";
@@ -25,7 +25,7 @@ const {
   salesOverviewFilter,
 }= useCustomer();
 
-onMounted(() => {
+onBeforeMount(() => {
   getSalesReps();
   getBranches();
   getOverdueCollections();
