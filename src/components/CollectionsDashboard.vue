@@ -91,22 +91,16 @@ const currentUser = computed(() => {
   return authStore.currentUser
 });
 
-watch(currentUser, (curr) => {
-  if (curr) getSalesReps(curr);
-})
-
-onBeforeMount(() => {
-  authStore.initialize()
+onBeforeMount(async () => {
+  await authStore.initialize()
   getStats();
+  salesOverviewFilters.dateFilters.text = "This Month";
+  salesOverviewFilters.dateFilters.value = "month";
+  if (currentUser.value) await getSalesReps(currentUser.value);
 });
 const openUserCreation = () => {
   window.location.href = `${kopeshaURL}/lender/index.html#/customers/customer_form`;
 };
-
-onBeforeMount(() => {
-  salesOverviewFilters.dateFilters.text = "This Month";
-  salesOverviewFilters.dateFilters.value = "month";
-});
 
 console.log(salesReps.value)
 

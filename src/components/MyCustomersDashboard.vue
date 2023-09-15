@@ -29,15 +29,12 @@ const currentUser = computed(() => {
   return authStore.currentUser
 });
 
-watch(currentUser, (curr) => {
-  if (curr) getSalesReps(curr);
-})
-
-onBeforeMount(() => {
-  authStore.initialize()
+onBeforeMount(async () => {
+  await authStore.initialize()
   getBranches();
   getOverdueCollections();
   getStatsCustomer();
+  if (currentUser.value) await getSalesReps(currentUser.value);
 });
 
 const kopeshaURL = import.meta.env.VITE_KOPESHA_API_URL;
