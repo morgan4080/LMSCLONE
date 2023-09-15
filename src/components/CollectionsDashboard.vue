@@ -98,6 +98,8 @@ onBeforeMount(() => {
   salesOverviewFilters.dateFilters.value = "month";
 });
 
+console.log(salesReps)
+
 </script>
 <template>
   <div class="pa-6 fill-height bg-background">
