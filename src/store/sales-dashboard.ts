@@ -429,13 +429,11 @@ export const useSalesDashboardStore = defineStore(
 
     async function getSalesReps() {
       if (authStore.getCurrentUser) {
-        await authStore.initialize()
-        axiosKopesha
-        .get(`/api/v1/salesrepresentative/all`)
+        authStore.initialize().then(() => axiosKopesha.get(`/api/v1/salesrepresentative/all`))
         .then(response => {
           console.log(authStore.getCurrentUser)
           if (authStore.getCurrentUser && authStore.getCurrentUser.permissions && authStore.getCurrentUser.permissions.includes("CAN_VIEW_SALES_DASHBOARD")) {
-            salesReps.value = response.data.data;
+            salesReps.value = response.data;
           } else {
             salesReps.value = response.data.filter((rep: SalesRep) => rep.keycloakId === authStore.getCurrentUser?.keycloakId);
             if (salesReps.value.length > 0) {
