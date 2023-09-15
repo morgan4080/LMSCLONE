@@ -147,7 +147,7 @@ const openUserCreation = () => {
                       @click="
                         salesOverviewFilters.salesRep.text =
                           dropDownMenu.firstName.toString();
-                        salesOverviewFilters.salesRep.id = dropDownMenu.keycloakId;
+                        salesOverviewFilters.salesRep.id = dropDownMenu.refId;
                       "
                       :title="`${dropDownMenu.firstName} ${dropDownMenu.lastName}`"
                       :subtitle="`${dropDownMenu.phoneNumber}`"
