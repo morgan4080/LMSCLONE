@@ -3,7 +3,7 @@ import axios from "axios";
 import moment from "moment";
 import { formatMoney } from "@/helpers";
 import axiosKopesha from "@/services/api/axiosKopesha";
-import { computed, onBeforeMount, reactive, ref } from "vue";
+import { computed, onBeforeMount, onMounted, reactive, ref } from "vue";
 import {
   Customer,
   OverdueCollection,
@@ -20,7 +20,7 @@ export const useSalesDashboardStore = defineStore(
     const branches = ref([""]);
     const salesReps = ref<SalesRep[]>([]);
     const authStore = useAuthStore();
-
+    authStore.initialize();
     const stats = ref({
       startDate: moment()
         .add("-6", "years")
@@ -427,34 +427,37 @@ export const useSalesDashboardStore = defineStore(
       });
     }
 
-    onBeforeMount(async () => {
-      await authStore.initialize()
+    const currentUser = computed(() => {
+      console.log("::::::authStore.getCurrentUser::::::")
+      console.log(authStore.getCurrentUser)
+      return authStore.getCurrentUser
     })
 
     async function getSalesReps() {
       try {
-        if (authStore.getCurrentUser) {
+        if (currentUser.value) {
           axiosKopesha.get(`/api/v1/salesrepresentative/all`)
             .then(response => {
-            console.log(authStore.getCurrentUser)
+            console.log(currentUser.value)
             if (
-              authStore.getCurrentUser &&
-              authStore.getCurrentUser.permissions &&
-              authStore.getCurrentUser.permissions.includes("CAN_VIEW_SALES_DASHBOARD")
+              currentUser.value &&
+              currentUser.value.permissions &&
+              currentUser.value.permissions.includes("CAN_VIEW_SALES_DASHBOARD")
             ) {
-              console.log("::::::response.data:::::")
-              console.log(response.data)
               salesReps.value = response.data;
             } else {
-              salesReps.value = response.data.filter((rep: SalesRep) => rep.keycloakId === authStore.getCurrentUser?.keycloakId);
-              console.log("::::::salesReps.value:::::")
-              console.log(salesReps.value)
+              salesReps.value = response.data.filter((rep: SalesRep) => rep.keycloakId === currentUser.value?.keycloakId);
               if (salesReps.value.length > 0) {
                 salesOverviewFilters.salesRep.id = salesReps.value[0].refId;
                 salesOverviewFilters.salesRep.text = `${salesReps.value[0].fullName}`;
               }
             }
-          });
+          }).catch(e => console.log(e));
+        } else {
+          axiosKopesha.get(`/api/v1/salesrepresentative/all`)
+            .then(response => {
+              salesReps.value = response.data;
+            }).catch(e => console.log(e));
         }
       } catch (e) {
         console.log(e)
