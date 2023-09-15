@@ -20,7 +20,6 @@ export const useSalesDashboardStore = defineStore(
     const branches = ref([""]);
     const salesReps = ref<SalesRep[]>([]);
     const authStore = useAuthStore();
-    authStore.initialize();
     const stats = ref({
       startDate: moment()
         .add("-6", "years")
@@ -426,6 +425,10 @@ export const useSalesDashboardStore = defineStore(
         branches.value = response.data;
       });
     }
+
+    onBeforeMount(() => {
+      authStore.initialize();
+    })
 
     const currentUser = computed(() => {
       console.log("::::::authStore.getCurrentUser::::::")
