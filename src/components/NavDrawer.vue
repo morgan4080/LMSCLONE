@@ -551,11 +551,11 @@ const items = ref<
     subItems: [
       {
         text: "My Loans Overview",
-        href: `/`,
+        href: `/sales/overview`,
       },
       {
         text: "My Customers",
-        href: `/sales-customers`,
+        href: `/sales/customers`,
       },
     ]
   },
