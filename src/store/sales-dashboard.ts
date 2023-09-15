@@ -429,8 +429,8 @@ export const useSalesDashboardStore = defineStore(
 
     async function getSalesReps() {
       if (authStore.getCurrentUser) {
-        authStore.initialize().then(() => axiosKopesha.get(`/api/v1/salesrepresentative/all`))
-        .then(response => {
+        await authStore.initialize()
+        axiosKopesha.get(`/api/v1/salesrepresentative/all`).then(response => {
           console.log(authStore.getCurrentUser)
           if (authStore.getCurrentUser && authStore.getCurrentUser.permissions && authStore.getCurrentUser.permissions.includes("CAN_VIEW_SALES_DASHBOARD")) {
             salesReps.value = response.data;
