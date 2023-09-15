@@ -22,7 +22,7 @@ const {
 const { search } = useSearch(pageables, fetchOnBoardingCollections);
 const props = defineProps<{
   refId: string | null;
-  period: "day" | "week" | "month" | "last-month" | "quarter" | "year" | "all" | "arrears";
+  // period: "day" | "week" | "month" | "quarter" | "year" | "all" | "arrears";
 }>();
 
 const refId = toRef(props, "refId");
@@ -38,7 +38,7 @@ const loadItems = (options: optionsType) => {
   if (refId.value) {
     pageables.salesRepRefIds = refId.value;
   }
-  dateReturn(props.period);
+  // dateReturn(props.period);
   if (options.page === 1) {
     pageables.start = 0;
   } else {
@@ -48,8 +48,9 @@ const loadItems = (options: optionsType) => {
   // fetch due today again
   fetchOnBoardingCollections();
 };
+
 function dateReturn(
-    text: "day" | "week" | "month" | "quarter" | "year" | "all" | "arrears"
+  text: "day" | "week" | "month" | "quarter" | "year" | "all" | "arrears"
 ) {
   let [start, end] = dateFilters(text);
   pageables.startDate = start;

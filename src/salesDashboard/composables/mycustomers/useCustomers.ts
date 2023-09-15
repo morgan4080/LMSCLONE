@@ -67,23 +67,7 @@ export const useCustomer = defineStore("customers", () => {
     recordsFiltered: 0,
     recordsTotal: 0,
   });
-  const salesOverviewFilters = reactive({
-    branches: {
-      text: null,
-      appendIcon: "mdi:mdi-chevron-down",
-    } as {
-      text: string | null;
-      appendIcon: string;
-    },
-    salesRep: {
-      text: null,
-      id: "",
-      appendIcon: "mdi:mdi-chevron-down",
-    } as {
-      text: string | null;
-      id: string | null;
-      appendIcon: string;
-    },
+  const salesOverviewFilter = reactive({
     dateFilters: {
       text: "Today",
       value: "day",
@@ -236,7 +220,7 @@ export const useCustomer = defineStore("customers", () => {
     isLoading,
     customersCollections,
     stats,
-    salesOverviewFilters,
+    salesOverviewFilter,
 
     selectedOnboardingOption,
     onboardingOptions,

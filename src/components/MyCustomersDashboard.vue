@@ -6,8 +6,7 @@ import OnboardingApprovalTable from "@/components/mycustomers/OnboardingApproval
 import { dateFilters } from "@/helpers";
 import { storeToRefs } from "pinia";
 import { useRoute, useRouter } from "vue-router";
-import stores from "@/store";
-const authStore = stores.authStore;
+import {useCustomer} from "@/salesDashboard/composables/mycustomers/useCustomers";
 const router = useRouter();
 const route = useRoute();
 const { tab, myCustomerTabs, salesRepIds, stats, salesReps } = storeToRefs(
@@ -20,6 +19,9 @@ const {
   getSalesReps,
   getStatsCustomer,
 } = useSalesDashboardStore();
+const {
+  salesOverviewFilter,
+}= useCustomer();
 
 onMounted(() => {
   getSalesReps();
@@ -82,10 +84,20 @@ function dateReturn(
   stats.value.endDate = end;
 }
 const openUserCreation = () => {
-  window.location.href = `${kopeshaURL}/lender/index.html#/customers/customer_form`;
+  window.location.href = `${kopeshaURL}lender/index.html#/customers/customer_form`;
 };
 
-console.log(authStore.getCurrentUser)
+const filterValue = {
+  title: "This Month",
+    value: "month",
+}
+
+salesOverviewFilters.dateFilters.text =
+  filterValue.title;
+salesOverviewFilters.dateFilters.value =
+  filterValue.value as any;
+
+
 </script>
 <template>
   <div class="pa-6 fill-height bg-background">
@@ -136,7 +148,6 @@ console.log(authStore.getCurrentUser)
                     role="listbox"
                   >
                     <v-list-item
-                      v-if="authStore.getCurrentUser && authStore.getCurrentUser.permissions && authStore.getCurrentUser.permissions.includes('CAN_VIEW_SALES_DASHBOARD')"
                       density="compact"
                       @click="
                         salesOverviewFilters.salesRep.text = null;
@@ -150,10 +161,11 @@ console.log(authStore.getCurrentUser)
                       :value="it"
                       density="compact"
                       @click="
-                        salesOverviewFilters.salesRep.text = dropDownMenu.fullName.toString();
-                        salesOverviewFilters.salesRep.id = dropDownMenu.refId;
+                        salesOverviewFilters.salesRep.text =
+                          dropDownMenu.firstName.toString();
+                        salesOverviewFilters.salesRep.id = dropDownMenu.keycloakId;
                       "
-                      :title="`${dropDownMenu.fullName}`"
+                      :title="`${dropDownMenu.firstName} ${dropDownMenu.lastName}`"
                       :subtitle="`${dropDownMenu.phoneNumber}`"
                     >
                     </v-list-item>
@@ -161,7 +173,7 @@ console.log(authStore.getCurrentUser)
                 </v-sheet>
               </v-menu>
             </div>
-            <div class="px-3">
+            <div class="px-3 hidden" style="display: none">
               <v-menu transition="slide-y-transition">
                 <template v-slot:activator="{ props }">
                   <v-btn
@@ -352,7 +364,7 @@ console.log(authStore.getCurrentUser)
                       <all-customers-table
                         :key="Math.random().toString(36).substr(2, 16)"
                         :refId="salesOverviewFilters.salesRep.id"
-                        :period="salesOverviewFilters.dateFilters.value"
+                        :period="salesOverviewFilter.dateFilters.value"
                       />
                     </v-container>
                     <v-container
@@ -362,7 +374,7 @@ console.log(authStore.getCurrentUser)
                       <onboarding-approval-table
                         :key="Math.random().toString(36).substr(2, 16)"
                         :refId="salesOverviewFilters.salesRep.id"
-                        :period="salesOverviewFilters.dateFilters.value"
+                        :period="salesOverviewFilter.dateFilters.value"
                       />
                     </v-container>
                   </v-window-item>

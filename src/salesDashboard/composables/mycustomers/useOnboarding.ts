@@ -105,7 +105,7 @@ export const useOnboarding = defineStore("onboarding", () => {
     { title: "Phone No", key: "phoneNumber", align: "end", sortable: false },
     { title: "Loan Limit", key: "approvalLimit", align: "end", sortable: false },
     { title: "Onboarding", key: "onboardingStatus", align: "end", sortable: false },
-    { title: "Actions", key: "refId", align: "start", sortable: false },
+    // { title: "Actions", key: "refId", align: "start", sortable: false },
   ]);
 
   //fetching on the customers

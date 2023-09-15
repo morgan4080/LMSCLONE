@@ -49,6 +49,7 @@
           color="primary"
           expand-icon="mdi:mdi-chevron-down"
           collapse-icon="mdi:mdi-chevron-up"
+          @click="toggleSubItem(item)"
         >
           <template v-slot:activator="{ props }">
             <v-list-item
@@ -74,6 +75,7 @@
             color="primary"
             class="subItems"
             :href="it.href"
+            @click="setActiveSubItem(item)"
           >
             <v-list-item-title>{{ it.text }}</v-list-item-title>
           </v-list-item>
@@ -714,6 +716,41 @@ const redirectAuth = () => {
     import.meta.env.VITE_APP_ROOT
   }?redirect_url=${currentUrl}`;
 };
+const activeSubItem = ref(null);
+
+const toggleSubItem = (item: any) => {
+  if (activeSubItem.value === item) {
+    activeSubItem.value = null;
+  } else {
+    activeSubItem.value = item;
+  }
+  saveState()
+};
+
+const setActiveSubItem = (item: any) => {
+  activeSubItem.value = item;
+  saveState()
+};
+
+const saveState = () => {
+  localStorage.setItem('drawerState', JSON.stringify(drawer.value));
+  localStorage.setItem('activeSubItem', JSON.stringify(activeSubItem.value));
+};
+
+const loadState = () => {
+  const drawerState = localStorage.getItem('drawerState');
+  const activeSubItemState = localStorage.getItem('activeSubItem');
+  if (drawerState) {
+    drawer.value = JSON.parse(drawerState);
+  }
+  if (activeSubItemState) {
+    activeSubItem.value = JSON.parse(activeSubItemState);
+  }
+}
+
+loadState();
+
+
 </script>
 
 <style scoped>
