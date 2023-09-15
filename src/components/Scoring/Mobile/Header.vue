@@ -57,14 +57,14 @@ onMounted(() => {
               >
                 Upload Statement
               </v-btn>
-              <v-btn
+<!--              <v-btn
                 prepend-icon="mdi:mdi-file-download-outline"
                 variant="flat"
                 color="info"
                 class="mx-4 text-none text-caption"
               >
                 Download Summary
-              </v-btn>
+              </v-btn>-->
             </v-row>
           </v-col>
         </v-row>
