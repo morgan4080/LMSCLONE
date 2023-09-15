@@ -1,9 +1,9 @@
 import { defineStore } from "pinia";
 import axios from "axios";
 import moment from "moment";
-import { dateFilters, formatMoney } from "@/helpers";
+import { formatMoney } from "@/helpers";
 import axiosKopesha from "@/services/api/axiosKopesha";
-import { computed, reactive, ref, watch } from "vue";
+import { computed, reactive, ref } from "vue";
 import {
   Customer,
   OverdueCollection,
@@ -11,8 +11,7 @@ import {
   SalesRep,
   UpcomingCollection,
 } from "@/types/sales-dashboard";
-import stores from "@/store/index";
-
+import { useAuthStore } from "@/store/auth-store";
 export const useSalesDashboardStore = defineStore(
   "sales-dashboard-store",
   () => {
@@ -20,7 +19,7 @@ export const useSalesDashboardStore = defineStore(
     const salesRepIds = ref([""]);
     const branches = ref([""]);
     const salesReps = ref<SalesRep[]>([]);
-    const authStore = stores.authStore;
+    const authStore = useAuthStore();
 
     const stats = ref({
       startDate: moment()
