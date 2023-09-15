@@ -24,13 +24,18 @@ export interface Branch {
 }
 
 export interface SalesRep {
-  refId: string;
-  name: string;
-  keycloakId: string;
+  enableAccess: number;
+  branchName: string;
   firstName: string;
+  fullName: string;
+  isLoginUser: number;
   lastName: string;
+  emailAddress: string;
   phoneNumber: string;
-  email: string;
+  refId: string;
+  loansCount: number;
+  valueInLoans: number;
+  customersCount: number;
 }
 
 export interface UpcomingCollection {
