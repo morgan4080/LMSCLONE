@@ -427,8 +427,9 @@ export const useSalesDashboardStore = defineStore(
       });
     }
 
-    function getSalesReps() {
+    async function getSalesReps() {
       if (authStore.getCurrentUser) {
+        await authStore.initialize()
         axiosKopesha
         .get(`/api/v1/salesrepresentative/all`)
         .then(response => {
