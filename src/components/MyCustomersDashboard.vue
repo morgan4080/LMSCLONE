@@ -145,8 +145,7 @@ const openUserCreation = () => {
                       :value="it"
                       density="compact"
                       @click="
-                        salesOverviewFilters.salesRep.text =
-                          dropDownMenu.fullName.toString();
+                        salesOverviewFilters.salesRep.text = dropDownMenu.fullName.toString();
                         salesOverviewFilters.salesRep.id = dropDownMenu.refId;
                       "
                       :title="`${dropDownMenu.fullName}`"
