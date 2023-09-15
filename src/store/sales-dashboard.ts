@@ -11,6 +11,7 @@ import {
   SalesRep,
   UpcomingCollection,
 } from "@/types/sales-dashboard";
+import stores from "@/store/index";
 
 export const useSalesDashboardStore = defineStore(
   "sales-dashboard-store",
@@ -19,6 +20,7 @@ export const useSalesDashboardStore = defineStore(
     const salesRepIds = ref([""]);
     const branches = ref([""]);
     const salesReps = ref<SalesRep[]>([]);
+    const authStore = stores.authStore;
 
     const stats = ref({
       startDate: moment()
@@ -427,9 +429,21 @@ export const useSalesDashboardStore = defineStore(
     }
 
     function getSalesReps() {
-      axiosKopesha.get(`/api/v1/salesrepresentative?draw=1&start=0&length=1000`).then(response => {
-        salesReps.value = response.data.data;
-      });
+      if (authStore.getCurrentUser) {
+        axiosKopesha
+        .get(`/api/v1/salesrepresentative/all`)
+        .then(response => {
+          if (authStore.getCurrentUser && authStore.getCurrentUser.permissions.includes("CAN_VIEW_SALES_DASHBOARD")) {
+            salesReps.value = response.data.data;
+          } else {
+            salesReps.value = response.data.data.filter((rep: SalesRep) => rep.keycloakId === authStore.getCurrentUser?.keycloakId);
+            if (salesReps.value.length > 0) {
+              salesOverviewFilters.salesRep.id = salesReps.value[0].refId;
+              salesOverviewFilters.salesRep.text = `${salesReps.value[0].fullName}`;
+            }
+          }
+        });
+      }
     }
 
     function getStats() {

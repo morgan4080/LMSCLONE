@@ -26,6 +26,7 @@ export interface Branch {
 export interface SalesRep {
   enableAccess: number;
   branchName: string;
+  keycloakId: string;
   firstName: string;
   fullName: string;
   isLoginUser: number;

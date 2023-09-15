@@ -6,6 +6,8 @@ import OnboardingApprovalTable from "@/components/mycustomers/OnboardingApproval
 import { dateFilters } from "@/helpers";
 import { storeToRefs } from "pinia";
 import { useRoute, useRouter } from "vue-router";
+import stores from "@/store";
+const authStore = stores.authStore;
 const router = useRouter();
 const route = useRoute();
 const { tab, myCustomerTabs, salesRepIds, stats, salesReps } = storeToRefs(
@@ -132,6 +134,7 @@ const openUserCreation = () => {
                     role="listbox"
                   >
                     <v-list-item
+                      v-if="authStore.getCurrentUser && authStore.getCurrentUser.permissions.includes('CAN_VIEW_SALES_DASHBOARD')"
                       density="compact"
                       @click="
                         salesOverviewFilters.salesRep.text = null;

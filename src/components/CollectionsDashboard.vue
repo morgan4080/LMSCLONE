@@ -6,12 +6,14 @@ import { storeToRefs } from "pinia";
 import { dateFilters } from "@/helpers";
 import CollectionsTable from "@/components/collections/CollectionsTable.vue";
 import { useRoute, useRouter } from "vue-router";
+import stores from "@/store";
 const router = useRouter();
 const route = useRoute();
 const { tabs, tab, salesRepIds, collectionFilter, stats, salesReps } =
   storeToRefs(useSalesDashboardStore());
 const { getSalesReps, getStats, salesOverviewFilters, setStatsDates } =
   useSalesDashboardStore();
+const authStore = stores.authStore;
 const kopeshaURL = import.meta.env.VITE_KOPESHA_API_URL;
 const dateReturn = (
   text:
@@ -145,6 +147,7 @@ console.log(salesReps.value)
                     role="listbox"
                   >
                     <v-list-item
+                      v-if="authStore.getCurrentUser && authStore.getCurrentUser.permissions.includes('CAN_VIEW_SALES_DASHBOARD')"
                       density="compact"
                       @click="
                         salesOverviewFilters.salesRep.text = null;
