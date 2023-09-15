@@ -378,7 +378,6 @@ console.log(salesReps.value)
                       :fluid="true"
                     >
                       <CollectionsTable
-                        :key="`${Math.random().toString(36).substr(2, 16)}`"
                         :refId="salesOverviewFilters.salesRep.id"
                         :period="'day'"
                         title="Due Today"
@@ -396,7 +395,6 @@ console.log(salesReps.value)
                       :fluid="true"
                     >
                       <CollectionsTable
-                        :key="`${Math.random().toString(36).substr(2, 16)}`"
                         :ref-id="salesOverviewFilters.salesRep.id"
                         :period="'week'"
                         title="Due This Week"
@@ -414,7 +412,6 @@ console.log(salesReps.value)
                       :fluid="true"
                     >
                       <CollectionsTable
-                        :key="`${Math.random().toString(36).substr(2, 16)}`"
                         :ref-id="salesOverviewFilters.salesRep.id"
                         :period="'arrears'"
                         title="Arrears"
