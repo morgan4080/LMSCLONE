@@ -6,6 +6,7 @@ import OnboardingApprovalTable from "@/components/mycustomers/OnboardingApproval
 import { dateFilters } from "@/helpers";
 import { storeToRefs } from "pinia";
 import { useRoute, useRouter } from "vue-router";
+import {useCustomer} from "@/salesDashboard/composables/mycustomers/useCustomers";
 const router = useRouter();
 const route = useRoute();
 const { tab, myCustomerTabs, salesRepIds, stats, salesReps } = storeToRefs(
@@ -18,6 +19,9 @@ const {
   getSalesReps,
   getStatsCustomer,
 } = useSalesDashboardStore();
+const {
+  salesOverviewFilter,
+}= useCustomer();
 
 onMounted(() => {
   getSalesReps();
@@ -82,6 +86,18 @@ function dateReturn(
 const openUserCreation = () => {
   window.location.href = `${kopeshaURL}lender/index.html#/customers/customer_form`;
 };
+
+const filterValue = {
+  title: "This Month",
+    value: "month",
+}
+
+salesOverviewFilters.dateFilters.text =
+  filterValue.title;
+salesOverviewFilters.dateFilters.value =
+  filterValue.value as any;
+
+
 </script>
 <template>
   <div class="pa-6 fill-height bg-background">
@@ -157,7 +173,7 @@ const openUserCreation = () => {
                 </v-sheet>
               </v-menu>
             </div>
-            <div class="px-3">
+            <div class="px-3 hidden" style="display: none">
               <v-menu transition="slide-y-transition">
                 <template v-slot:activator="{ props }">
                   <v-btn
@@ -348,7 +364,7 @@ const openUserCreation = () => {
                       <all-customers-table
                         :key="Math.random().toString(36).substr(2, 16)"
                         :refId="salesOverviewFilters.salesRep.id"
-                        :period="salesOverviewFilters.dateFilters.value"
+                        :period="salesOverviewFilter.dateFilters.value"
                       />
                     </v-container>
                     <v-container
@@ -358,7 +374,7 @@ const openUserCreation = () => {
                       <onboarding-approval-table
                         :key="Math.random().toString(36).substr(2, 16)"
                         :refId="salesOverviewFilters.salesRep.id"
-                        :period="salesOverviewFilters.dateFilters.value"
+                        :period="salesOverviewFilter.dateFilters.value"
                       />
                     </v-container>
                   </v-window-item>
