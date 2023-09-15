@@ -1,6 +1,8 @@
 // Utilities
 import { defineStore } from "pinia";
 
+
+
 export interface User {
   keycloakId: string;
   username: string;
@@ -10,6 +12,27 @@ export interface User {
   tenantId: string;
   companyName: string;
   roles: {};
+}
+
+export interface CurrentUser {
+  UUID: string;
+  email: string;
+  fullName: string;
+  firstName: string;
+  lastName: string;
+  roles: string[];
+  permissions: string[];
+  scopes: string[];
+  accounts: any[];
+  accountName: string;
+  accountCode: string;
+  subscriptionPackage: string;
+  hasChangeRequest: boolean;
+  isForceUpdate: boolean;
+  auth: string;
+  domain: string;
+  keycloakId: string;
+  currency: string;
 }
 
 type AlertTypes = "warning" | "error" | "success";
@@ -22,6 +45,7 @@ type Alert = {
 export interface AuthState {
   isLoggedIn: boolean;
   user: null | User;
+  currentUser: null | CurrentUser;
   loading: Boolean;
   authPrompt: Boolean;
   alerts: Alert;
@@ -30,6 +54,7 @@ export const useAuthStore = defineStore("auth-store", {
   state: (): AuthState => ({
     isLoggedIn: false,
     user: null,
+    currentUser: null,
     loading: false,
     authPrompt: false,
     alerts: [],
@@ -50,6 +75,9 @@ export const useAuthStore = defineStore("auth-store", {
     getLoggedInUser(state): null | User {
       return state.user;
     },
+    getCurrentUser(state): null | CurrentUser {
+      return state.currentUser;
+    },
     getLoadingState(state) {
       return state.loading;
     },
@@ -61,6 +89,21 @@ export const useAuthStore = defineStore("auth-store", {
     setAuthPrompt(payload: boolean): void {
       this.authPrompt = payload;
     },
+    async fetchCurrentUser(): Promise<void> {
+      const url = `${import.meta.env.VITE_CURRENT_USER}`;
+      try {
+        const response = await fetch(url, {
+          method: "GET",
+          credentials: "include",
+        });
+
+        if (response.status === 200) {
+          this.currentUser = await response.json()
+        }
+      } catch (e: any) {
+        console.log(e.message);
+      }
+    },
     async initialize(): Promise<any> {
       const url = `${import.meta.env.VITE_APP_USER}`;
       try {
@@ -68,6 +111,8 @@ export const useAuthStore = defineStore("auth-store", {
           method: "GET",
           credentials: "include",
         });
+
+        await this.fetchCurrentUser()
 
         if (response.status === 200) {
           return response.json();

@@ -37,7 +37,7 @@
 
     <v-list
       :lines="false"
-      nav
+      :nav="true"
     >
       <template
         v-for="(item, i) in items"
@@ -67,16 +67,32 @@
 
           <div class="py-1" />
 
-          <v-list-item
-            v-for="(it, i) in item.subItems"
-            :key="i"
-            :value="it"
-            color="primary"
-            class="subItems"
-            :href="it.href"
-          >
-            <v-list-item-title>{{ it.text }}</v-list-item-title>
-          </v-list-item>
+          <template v-if="item.text == 'Sales'">
+            <v-list-item
+              v-for="(it, i) in item.subItems"
+              :link="true"
+              :to="it.href"
+              :key="i"
+              :value="it"
+              color="primary"
+              class="subItems"
+            >
+              <v-list-item-title>{{ it.text }}</v-list-item-title>
+            </v-list-item>
+          </template>
+
+          <template v-else>
+            <v-list-item
+              v-for="(it, i) in item.subItems"
+              :key="i"
+              :value="it"
+              color="primary"
+              class="subItems"
+              :href="it.href"
+            >
+              <v-list-item-title>{{ it.text }}</v-list-item-title>
+            </v-list-item>
+          </template>
 
           <div class="py-1" />
         </v-list-group>
@@ -214,9 +230,8 @@
             <v-divider class="my-3 mb-4" />
 
             <v-list-item
-              link
-              href="https://accounts.presta.co.ke/"
               density="compact"
+              @click="doLogout"
             >
               <template v-slot:append>
                 <v-icon icon="mdi:mdi-logout-variant"></v-icon>
@@ -536,11 +551,11 @@ const items = ref<
     subItems: [
       {
         text: "My Loans Overview",
-        href: `/lms/`,
+        href: `/sales/overview`,
       },
       {
         text: "My Customers",
-        href: `/lms/sales-customers`,
+        href: `/sales/customers`,
       },
     ]
   },
@@ -692,13 +707,30 @@ const items = ref<
   },*/
 ]);
 
+const doLogout = async () => {
+  try {
+    await fetch(`${import.meta.env.VITE_APP_ROOT}/logout`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+  } catch (e: any) {
+    console.log(e.message);
+  } finally {
+    window.location.reload();
+  }
+};
+
 const redirectAuth = () => {
   authStore.setAuthPrompt(false);
   const currentUrl = window.location.href;
+  console.log(import.meta.env.VITE_APP_ROOT)
   window.location.href = `${
     import.meta.env.VITE_APP_ROOT
   }?redirect_url=${currentUrl}`;
 };
+
 </script>
 
 <style scoped>

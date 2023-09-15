@@ -1,9 +1,9 @@
 import { defineStore } from "pinia";
 import axios from "axios";
 import moment from "moment";
-import { dateFilters, formatMoney } from "@/helpers";
+import { formatMoney } from "@/helpers";
 import axiosKopesha from "@/services/api/axiosKopesha";
-import { computed, reactive, ref, watch } from "vue";
+import { computed, onBeforeMount, reactive, ref } from "vue";
 import {
   Customer,
   OverdueCollection,
@@ -11,7 +11,7 @@ import {
   SalesRep,
   UpcomingCollection,
 } from "@/types/sales-dashboard";
-
+import { CurrentUser, useAuthStore } from "@/store/auth-store";
 export const useSalesDashboardStore = defineStore(
   "sales-dashboard-store",
   () => {
@@ -19,7 +19,7 @@ export const useSalesDashboardStore = defineStore(
     const salesRepIds = ref([""]);
     const branches = ref([""]);
     const salesReps = ref<SalesRep[]>([]);
-
+    const authStore = useAuthStore();
     const stats = ref({
       startDate: moment()
         .add("-6", "years")
@@ -426,42 +426,77 @@ export const useSalesDashboardStore = defineStore(
       });
     }
 
-    function getSalesReps() {
-      axiosKopesha.get(`/api/v1/salesrepresentative?draw=1&start=0&length=1000`).then(response => {
-        salesReps.value = response.data;
-      });
+    async function getSalesReps(currentUser: CurrentUser) {
+      try {
+        authStore.initialize().then(() => {
+          if (currentUser) {
+            axiosKopesha.get(`/api/v1/salesrepresentative/all`)
+              .then(response => {
+                console.log(currentUser)
+                if (
+                  currentUser &&
+                  currentUser.permissions &&
+                  currentUser.permissions.includes("CAN_VIEW_SALES_DASHBOARD")
+                ) {
+                  salesReps.value = response.data;
+                } else {
+                  salesReps.value = response.data.filter((rep: SalesRep) => rep.keycloakId === currentUser.keycloakId);
+                  if (salesReps.value.length > 0) {
+                    salesOverviewFilters.salesRep.id = salesReps.value[0].refId;
+                    salesOverviewFilters.salesRep.text = `${salesReps.value[0].fullName}`;
+                  }
+                }
+              }).catch(e => console.log(e));
+          } else {
+            axiosKopesha.get(`/api/v1/salesrepresentative/all`)
+              .then(response => {
+                salesReps.value = response.data;
+              }).catch(e => console.log(e));
+          }
+        });
+      } catch (e) {
+        console.log(e)
+      }
     }
 
     function getStats() {
-      axiosKopesha
-        .get(`/api/v1/salesrep/overview${params.value}`)
-        .then(response => {
-          stats.value.upcomingCollections = formatMoney(
-            response.data.upcomingCollections
-          );
-          stats.value.overdueCollections = formatMoney(
-            response.data.overdueCollections
-          );
-          stats.value.upcomingCollectionsCount =
-            response.data.upcomingCollectionsCount;
-          stats.value.overdueCollectionsCount =
-            response.data.overdueCollectionsCount;
-          stats.value.customersCount = response.data.customersCount;
-          stats.value.customersCountIncrement =
-            response.data.customersCountIncrement;
-        });
+      try {
+        axiosKopesha
+          .get(`/api/v1/salesrep/overview${params.value}`)
+          .then(response => {
+            stats.value.upcomingCollections = formatMoney(
+              response.data.upcomingCollections
+            );
+            stats.value.overdueCollections = formatMoney(
+              response.data.overdueCollections
+            );
+            stats.value.upcomingCollectionsCount =
+              response.data.upcomingCollectionsCount;
+            stats.value.overdueCollectionsCount =
+              response.data.overdueCollectionsCount;
+            stats.value.customersCount = response.data.customersCount;
+            stats.value.customersCountIncrement =
+              response.data.customersCountIncrement;
+          });
+      } catch (e) {
+        console.log(e)
+      }
     }
 
     function getOverdueCollections(filters?: string) {
-      overdueCollections.value.loading = true;
-      let url = `/api/v1/salesrep/collections/overdue${params.value}`;
-      filters && (url += filters);
-      axiosKopesha
-        .get(url)
-        .then(response => {
-          overdueCollections.value = response.data;
-        })
-        .finally(() => (overdueCollections.value.loading = false));
+      try {
+        overdueCollections.value.loading = true;
+        let url = `/api/v1/salesrep/collections/overdue${params.value}`;
+        filters && (url += filters);
+        axiosKopesha
+          .get(url)
+          .then(response => {
+            overdueCollections.value = response.data;
+          })
+          .finally(() => (overdueCollections.value.loading = false));
+      } catch (e) {
+        console.log(e)
+      }
     }
 
     function getNewCustomers(filters?: string) {

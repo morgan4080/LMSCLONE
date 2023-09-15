@@ -9,6 +9,7 @@ const {
   fetchCustomersCollections,
   setSelectedExportOption,
   setSelectedOnboardingOption,
+  salesOverviewFilter,
   exportCustomers,
 } = useCustomer();
 
@@ -17,15 +18,7 @@ const { headers, isLoading, customersCollections } = storeToRefs(useCustomer());
 const { search } = useSearch(pageables, fetchCustomersCollections);
 const props = defineProps<{
   refId: string | null;
-  period:
-    | "day"
-    | "week"
-    | "month"
-    | "last-month"
-    | "quarter"
-    | "year"
-    | "all"
-    | "arrears";
+  period: "day" | "week" | "month" | "quarter" | "year" | "all" | "arrears";
 }>();
 
 const kopeshaURL = import.meta.env.VITE_KOPESHA_API_URL;
@@ -99,6 +92,47 @@ function dateReturn(
           />
         </template>
       </v-input>
+    </div>
+    <div class="px-3">
+      <v-menu transition="slide-y-transition">
+        <template v-slot:activator="{ props }">
+          <v-btn
+            class="v-btn--size-default text-caption text-capitalize"
+            density="comfortable"
+            :append-icon="salesOverviewFilter.dateFilters.appendIcon"
+            v-bind="props"
+            :flat="true"
+            style="border: 1px solid rgba(128, 128, 128, 0.25)"
+          >
+            {{ salesOverviewFilter.dateFilters.text || "All Time" }}
+          </v-btn>
+        </template>
+        <v-sheet
+          border
+          rounded
+        >
+          <v-list
+            :nav="true"
+            density="compact"
+            role="listbox"
+          >
+            <v-list-item
+              v-for="(dropDownMenu, it) in salesOverviewFilter
+                        .dateFilters.menus"
+              :key="it"
+              :value="it"
+              density="compact"
+              @click="
+                        salesOverviewFilter.dateFilters.text =
+                          dropDownMenu.title;
+                        salesOverviewFilter.dateFilters.value =
+                          dropDownMenu.value;
+                      "
+            >{{ dropDownMenu.title }}</v-list-item
+            >
+          </v-list>
+        </v-sheet>
+      </v-menu>
     </div>
     <v-btn
       class="v-btn--size-default text-caption text-capitalize mr-6"

@@ -1,17 +1,19 @@
 <script lang="ts" setup>
-import { onBeforeMount, watch } from "vue";
+import { computed, onBeforeMount, watch } from "vue";
 import { useSalesDashboardStore } from "@/store/sales-dashboard";
 import LoanApprovals from "@/components/collections/LoanApprovals.vue";
 import { storeToRefs } from "pinia";
 import { dateFilters } from "@/helpers";
 import CollectionsTable from "@/components/collections/CollectionsTable.vue";
 import { useRoute, useRouter } from "vue-router";
+import stores from "@/store";
 const router = useRouter();
 const route = useRoute();
 const { tabs, tab, salesRepIds, collectionFilter, stats, salesReps } =
   storeToRefs(useSalesDashboardStore());
 const { getSalesReps, getStats, salesOverviewFilters, setStatsDates } =
   useSalesDashboardStore();
+const authStore = stores.authStore;
 const kopeshaURL = import.meta.env.VITE_KOPESHA_API_URL;
 const dateReturn = (
   text:
@@ -85,18 +87,22 @@ watch(
   { deep: true }
 );
 
-onBeforeMount(() => {
-  getSalesReps();
-  getStats();
+const currentUser = computed(() => {
+  return authStore.currentUser
 });
-const openUserCreation = () => {
-  window.location.href = `${kopeshaURL}lender/index.html#/customers/customer_form`;
-};
 
-onBeforeMount(() => {
+onBeforeMount(async () => {
+  await authStore.initialize()
+  getStats();
   salesOverviewFilters.dateFilters.text = "This Month";
   salesOverviewFilters.dateFilters.value = "month";
+  if (currentUser.value) await getSalesReps(currentUser.value);
 });
+const openUserCreation = () => {
+  window.location.href = `${kopeshaURL}/lender/index.html#/customers/customer_form`;
+};
+
+console.log(salesReps.value)
 
 </script>
 <template>
@@ -143,6 +149,7 @@ onBeforeMount(() => {
                     role="listbox"
                   >
                     <v-list-item
+                      v-if="authStore.getCurrentUser && authStore.getCurrentUser.permissions && authStore.getCurrentUser.permissions.includes('CAN_VIEW_SALES_DASHBOARD')"
                       density="compact"
                       @click="
                         salesOverviewFilters.salesRep.text = null;
@@ -373,7 +380,7 @@ onBeforeMount(() => {
                       :fluid="true"
                     >
                       <CollectionsTable
-                        :key="`${Math.random().toString(36).substr(2, 16)}`"
+                        :key="salesOverviewFilters.salesRep.id+tabs[0]"
                         :refId="salesOverviewFilters.salesRep.id"
                         :period="'day'"
                         title="Due Today"
@@ -391,7 +398,7 @@ onBeforeMount(() => {
                       :fluid="true"
                     >
                       <CollectionsTable
-                        :key="`${Math.random().toString(36).substr(2, 16)}`"
+                        :key="salesOverviewFilters.salesRep.id+tabs[1]"
                         :ref-id="salesOverviewFilters.salesRep.id"
                         :period="'week'"
                         title="Due This Week"
@@ -409,7 +416,7 @@ onBeforeMount(() => {
                       :fluid="true"
                     >
                       <CollectionsTable
-                        :key="`${Math.random().toString(36).substr(2, 16)}`"
+                        :key="salesOverviewFilters.salesRep.id+tabs[2]"
                         :ref-id="salesOverviewFilters.salesRep.id"
                         :period="'arrears'"
                         title="Arrears"

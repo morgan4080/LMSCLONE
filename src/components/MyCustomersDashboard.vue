@@ -1,13 +1,16 @@
 <script lang="ts" setup>
-import { onMounted, watch } from "vue";
+import { computed, onBeforeMount, watch } from "vue";
 import { useSalesDashboardStore } from "@/store/sales-dashboard";
 import AllCustomersTable from "@/components/mycustomers/AllCustomersTable.vue";
 import OnboardingApprovalTable from "@/components/mycustomers/OnboardingApprovalTable.vue";
 import { dateFilters } from "@/helpers";
 import { storeToRefs } from "pinia";
 import { useRoute, useRouter } from "vue-router";
+import {useCustomer} from "@/salesDashboard/composables/mycustomers/useCustomers";
+import stores from "@/store";
 const router = useRouter();
 const route = useRoute();
+const authStore = stores.authStore;
 const { tab, myCustomerTabs, salesRepIds, stats, salesReps } = storeToRefs(
   useSalesDashboardStore()
 );
@@ -18,12 +21,20 @@ const {
   getSalesReps,
   getStatsCustomer,
 } = useSalesDashboardStore();
+const {
+  salesOverviewFilter,
+}= useCustomer();
 
-onMounted(() => {
-  getSalesReps();
+const currentUser = computed(() => {
+  return authStore.currentUser
+});
+
+onBeforeMount(async () => {
+  await authStore.initialize()
   getBranches();
   getOverdueCollections();
   getStatsCustomer();
+  if (currentUser.value) await getSalesReps(currentUser.value);
 });
 
 const kopeshaURL = import.meta.env.VITE_KOPESHA_API_URL;
@@ -82,6 +93,18 @@ function dateReturn(
 const openUserCreation = () => {
   window.location.href = `${kopeshaURL}lender/index.html#/customers/customer_form`;
 };
+
+const filterValue = {
+  title: "This Month",
+    value: "month",
+}
+
+salesOverviewFilters.dateFilters.text =
+  filterValue.title;
+salesOverviewFilters.dateFilters.value =
+  filterValue.value as any;
+
+
 </script>
 <template>
   <div class="pa-6 fill-height bg-background">
@@ -132,6 +155,7 @@ const openUserCreation = () => {
                     role="listbox"
                   >
                     <v-list-item
+                        v-if="authStore.getCurrentUser && authStore.getCurrentUser.permissions && authStore.getCurrentUser.permissions.includes('CAN_VIEW_SALES_DASHBOARD')"
                       density="compact"
                       @click="
                         salesOverviewFilters.salesRep.text = null;
@@ -145,7 +169,8 @@ const openUserCreation = () => {
                       :value="it"
                       density="compact"
                       @click="
-                        salesOverviewFilters.salesRep.text = dropDownMenu.fullName.toString();
+                        salesOverviewFilters.salesRep.text =
+                          dropDownMenu.fullName.toString();
                         salesOverviewFilters.salesRep.id = dropDownMenu.refId;
                       "
                       :title="`${dropDownMenu.fullName}`"
@@ -156,7 +181,7 @@ const openUserCreation = () => {
                 </v-sheet>
               </v-menu>
             </div>
-            <div class="px-3">
+            <div class="px-3 hidden" style="display: none">
               <v-menu transition="slide-y-transition">
                 <template v-slot:activator="{ props }">
                   <v-btn
@@ -347,7 +372,7 @@ const openUserCreation = () => {
                       <all-customers-table
                         :key="Math.random().toString(36).substr(2, 16)"
                         :refId="salesOverviewFilters.salesRep.id"
-                        :period="salesOverviewFilters.dateFilters.value"
+                        :period="salesOverviewFilter.dateFilters.value"
                       />
                     </v-container>
                     <v-container
@@ -357,7 +382,7 @@ const openUserCreation = () => {
                       <onboarding-approval-table
                         :key="Math.random().toString(36).substr(2, 16)"
                         :refId="salesOverviewFilters.salesRep.id"
-                        :period="salesOverviewFilters.dateFilters.value"
+                        :period="salesOverviewFilter.dateFilters.value"
                       />
                     </v-container>
                   </v-window-item>

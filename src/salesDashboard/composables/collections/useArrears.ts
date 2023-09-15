@@ -147,13 +147,16 @@ export const useArrears = defineStore("arrears" , () => {
 
 
     const fetchArrearsCollections = async () => {
-      isLoading.value= true;
-      await generateParams();
-      const url = `/api/v1/salesrep/collections/overdue?${params.value}`;
-      const { data } = await axios.get(url);
-      arrearsCollections.value = data;
-      isLoading.value = false;
-
+      try {
+        isLoading.value= true;
+        await generateParams();
+        const url = `/api/v1/salesrep/collections/overdue?${params.value}`;
+        const { data } = await axios.get(url);
+        arrearsCollections.value = data;
+        isLoading.value = false;
+      } catch (e) {
+        console.log(e)
+      }
     }
 
     return {
