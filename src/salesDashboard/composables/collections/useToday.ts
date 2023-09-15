@@ -73,22 +73,26 @@ export const useToday = defineStore("todays", () => {
     selectedExportOption.value = option;
   };
   const exportCollectionsData = async () => {
-    isLoading.value = true;
-    await generateParams();
-    const url = `${
-      import.meta.env.VITE_KOPESHA_API_URL
-    }/api/v1/salesrep/collections/overdue/export?${params.value}`;
     try {
-      const res = await fetch(url);
-      const blob = await res.blob();
-      saveAs(
-        blob,
-        `Collections_List_${pageables.startDate}_${pageables.endDate}`
-      );
-    } catch {
-      return "";
-    } finally {
-      isLoading.value = false;
+      isLoading.value = true;
+      await generateParams();
+      const url = `${
+        import.meta.env.VITE_KOPESHA_API_URL
+      }/api/v1/salesrep/collections/overdue/export?${params.value}`;
+      try {
+        const res = await fetch(url);
+        const blob = await res.blob();
+        saveAs(
+          blob,
+          `Collections_List_${pageables.startDate}_${pageables.endDate}`
+        );
+      } catch {
+        return "";
+      } finally {
+        isLoading.value = false;
+      }
+    } catch (e) {
+      console.log(e)
     }
   };
 

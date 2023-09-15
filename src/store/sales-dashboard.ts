@@ -454,35 +454,43 @@ export const useSalesDashboardStore = defineStore(
     }
 
     function getStats() {
-      axiosKopesha
-        .get(`/api/v1/salesrep/overview${params.value}`)
-        .then(response => {
-          stats.value.upcomingCollections = formatMoney(
-            response.data.upcomingCollections
-          );
-          stats.value.overdueCollections = formatMoney(
-            response.data.overdueCollections
-          );
-          stats.value.upcomingCollectionsCount =
-            response.data.upcomingCollectionsCount;
-          stats.value.overdueCollectionsCount =
-            response.data.overdueCollectionsCount;
-          stats.value.customersCount = response.data.customersCount;
-          stats.value.customersCountIncrement =
-            response.data.customersCountIncrement;
-        });
+      try {
+        axiosKopesha
+          .get(`/api/v1/salesrep/overview${params.value}`)
+          .then(response => {
+            stats.value.upcomingCollections = formatMoney(
+              response.data.upcomingCollections
+            );
+            stats.value.overdueCollections = formatMoney(
+              response.data.overdueCollections
+            );
+            stats.value.upcomingCollectionsCount =
+              response.data.upcomingCollectionsCount;
+            stats.value.overdueCollectionsCount =
+              response.data.overdueCollectionsCount;
+            stats.value.customersCount = response.data.customersCount;
+            stats.value.customersCountIncrement =
+              response.data.customersCountIncrement;
+          });
+      } catch (e) {
+        console.log(e)
+      }
     }
 
     function getOverdueCollections(filters?: string) {
-      overdueCollections.value.loading = true;
-      let url = `/api/v1/salesrep/collections/overdue${params.value}`;
-      filters && (url += filters);
-      axiosKopesha
-        .get(url)
-        .then(response => {
-          overdueCollections.value = response.data;
-        })
-        .finally(() => (overdueCollections.value.loading = false));
+      try {
+        overdueCollections.value.loading = true;
+        let url = `/api/v1/salesrep/collections/overdue${params.value}`;
+        filters && (url += filters);
+        axiosKopesha
+          .get(url)
+          .then(response => {
+            overdueCollections.value = response.data;
+          })
+          .finally(() => (overdueCollections.value.loading = false));
+      } catch (e) {
+        console.log(e)
+      }
     }
 
     function getNewCustomers(filters?: string) {
