@@ -428,24 +428,28 @@ export const useSalesDashboardStore = defineStore(
     }
 
     async function getSalesReps() {
-      if (authStore.getCurrentUser) {
-        await authStore.initialize()
-        axiosKopesha.get(`/api/v1/salesrepresentative/all`).then(response => {
-          console.log(authStore.getCurrentUser)
-          if (authStore.getCurrentUser && authStore.getCurrentUser.permissions && authStore.getCurrentUser.permissions.includes("CAN_VIEW_SALES_DASHBOARD")) {
-            console.log("::::::response.data:::::")
-            console.log(response.data)
-            salesReps.value = response.data;
-          } else {
-            salesReps.value = response.data.filter((rep: SalesRep) => rep.keycloakId === authStore.getCurrentUser?.keycloakId);
-            console.log("::::::salesReps.value:::::")
-            console.log(salesReps.value)
-            if (salesReps.value.length > 0) {
-              salesOverviewFilters.salesRep.id = salesReps.value[0].refId;
-              salesOverviewFilters.salesRep.text = `${salesReps.value[0].fullName}`;
+      try {
+        if (authStore.getCurrentUser) {
+          await authStore.initialize()
+          axiosKopesha.get(`/api/v1/salesrepresentative/all`).then(response => {
+            console.log(authStore.getCurrentUser)
+            if (authStore.getCurrentUser && authStore.getCurrentUser.permissions && authStore.getCurrentUser.permissions.includes("CAN_VIEW_SALES_DASHBOARD")) {
+              console.log("::::::response.data:::::")
+              console.log(response.data)
+              salesReps.value = response.data;
+            } else {
+              salesReps.value = response.data.filter((rep: SalesRep) => rep.keycloakId === authStore.getCurrentUser?.keycloakId);
+              console.log("::::::salesReps.value:::::")
+              console.log(salesReps.value)
+              if (salesReps.value.length > 0) {
+                salesOverviewFilters.salesRep.id = salesReps.value[0].refId;
+                salesOverviewFilters.salesRep.text = `${salesReps.value[0].fullName}`;
+              }
             }
-          }
-        });
+          });
+        }
+      } catch (e) {
+        console.log(e)
       }
     }
 
