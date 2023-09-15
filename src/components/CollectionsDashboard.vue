@@ -157,10 +157,10 @@ onBeforeMount(() => {
                       :value="it"
                       density="compact"
                       @click="
-                        salesOverviewFilters.salesRep.text = `${dropDownMenu.firstName} ${dropDownMenu.lastName}`;
+                        salesOverviewFilters.salesRep.text = `${dropDownMenu.fullName}`;
                         salesOverviewFilters.salesRep.id = dropDownMenu.refId;
                       "
-                      :title="`${dropDownMenu.firstName} ${dropDownMenu.lastName}`"
+                      :title="`${dropDownMenu.fullName}`"
                       :subtitle="`${dropDownMenu.phoneNumber}`"
                     >
                     </v-list-item>
