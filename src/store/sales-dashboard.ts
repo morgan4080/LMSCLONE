@@ -11,7 +11,7 @@ import {
   SalesRep,
   UpcomingCollection,
 } from "@/types/sales-dashboard";
-import { useAuthStore } from "@/store/auth-store";
+import { CurrentUser, useAuthStore } from "@/store/auth-store";
 export const useSalesDashboardStore = defineStore(
   "sales-dashboard-store",
   () => {
@@ -426,21 +426,21 @@ export const useSalesDashboardStore = defineStore(
       });
     }
 
-    async function getSalesReps() {
+    async function getSalesReps(currentUser: CurrentUser) {
       try {
         authStore.initialize().then(() => {
-          if (authStore.getCurrentUser) {
+          if (currentUser) {
             axiosKopesha.get(`/api/v1/salesrepresentative/all`)
               .then(response => {
-                console.log(authStore.getCurrentUser)
+                console.log(currentUser)
                 if (
-                  authStore.getCurrentUser &&
-                  authStore.getCurrentUser.permissions &&
-                  authStore.getCurrentUser.permissions.includes("CAN_VIEW_SALES_DASHBOARD")
+                  currentUser &&
+                  currentUser.permissions &&
+                  currentUser.permissions.includes("CAN_VIEW_SALES_DASHBOARD")
                 ) {
                   salesReps.value = response.data;
                 } else {
-                  salesReps.value = response.data.filter((rep: SalesRep) => rep.keycloakId === authStore.getCurrentUser?.keycloakId);
+                  salesReps.value = response.data.filter((rep: SalesRep) => rep.keycloakId === currentUser.keycloakId);
                   if (salesReps.value.length > 0) {
                     salesOverviewFilters.salesRep.id = salesReps.value[0].refId;
                     salesOverviewFilters.salesRep.text = `${salesReps.value[0].fullName}`;

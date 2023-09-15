@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { onBeforeMount, watch } from "vue";
+import { computed, onBeforeMount, watch } from "vue";
 import { useSalesDashboardStore } from "@/store/sales-dashboard";
 import AllCustomersTable from "@/components/mycustomers/AllCustomersTable.vue";
 import OnboardingApprovalTable from "@/components/mycustomers/OnboardingApprovalTable.vue";
@@ -25,8 +25,16 @@ const {
   salesOverviewFilter,
 }= useCustomer();
 
+const currentUser = computed(() => {
+  return authStore.currentUser
+});
+
+watch(currentUser, (curr) => {
+  if (curr) getSalesReps(curr);
+})
+
 onBeforeMount(() => {
-  getSalesReps();
+  authStore.initialize()
   getBranches();
   getOverdueCollections();
   getStatsCustomer();

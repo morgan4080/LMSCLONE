@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { onBeforeMount, watch } from "vue";
+import { computed, onBeforeMount, watch } from "vue";
 import { useSalesDashboardStore } from "@/store/sales-dashboard";
 import LoanApprovals from "@/components/collections/LoanApprovals.vue";
 import { storeToRefs } from "pinia";
@@ -87,8 +87,16 @@ watch(
   { deep: true }
 );
 
+const currentUser = computed(() => {
+  return authStore.currentUser
+});
+
+watch(currentUser, (curr) => {
+  if (curr) getSalesReps(curr);
+})
+
 onBeforeMount(() => {
-  getSalesReps();
+  authStore.initialize()
   getStats();
 });
 const openUserCreation = () => {
