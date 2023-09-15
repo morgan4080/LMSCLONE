@@ -98,7 +98,7 @@ onBeforeMount(() => {
   salesOverviewFilters.dateFilters.value = "month";
 });
 
-console.log(salesReps)
+console.log(salesReps.value)
 
 </script>
 <template>

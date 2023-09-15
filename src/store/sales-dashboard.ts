@@ -428,7 +428,7 @@ export const useSalesDashboardStore = defineStore(
 
     function getSalesReps() {
       axiosKopesha.get(`/api/v1/salesrepresentative?draw=1&start=0&length=1000`).then(response => {
-        salesReps.value = response.data;
+        salesReps.value = response.data.data;
       });
     }
 
