@@ -69,8 +69,8 @@ export const useCustomer = defineStore("customers", () => {
   });
   const salesOverviewFilter = reactive({
     dateFilters: {
-      text: "Today",
-      value: "day",
+      text: "Date Joined",
+      value: "all",
       appendIcon: "mdi:mdi-chevron-down",
       menus: [
         {
@@ -94,7 +94,7 @@ export const useCustomer = defineStore("customers", () => {
           value: "year",
         },
         {
-          title: "All",
+          title: "Date Joined",
           value: "all",
         },
       ],
