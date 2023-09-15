@@ -3,7 +3,7 @@ import axios from "axios";
 import moment from "moment";
 import { formatMoney } from "@/helpers";
 import axiosKopesha from "@/services/api/axiosKopesha";
-import { computed, reactive, ref } from "vue";
+import { computed, onBeforeMount, reactive, ref } from "vue";
 import {
   Customer,
   OverdueCollection,
@@ -427,13 +427,21 @@ export const useSalesDashboardStore = defineStore(
       });
     }
 
+    onBeforeMount(async () => {
+      await authStore.initialize()
+    })
+
     async function getSalesReps() {
       try {
         if (authStore.getCurrentUser) {
-          await authStore.initialize()
-          axiosKopesha.get(`/api/v1/salesrepresentative/all`).then(response => {
+          axiosKopesha.get(`/api/v1/salesrepresentative/all`)
+            .then(response => {
             console.log(authStore.getCurrentUser)
-            if (authStore.getCurrentUser && authStore.getCurrentUser.permissions && authStore.getCurrentUser.permissions.includes("CAN_VIEW_SALES_DASHBOARD")) {
+            if (
+              authStore.getCurrentUser &&
+              authStore.getCurrentUser.permissions &&
+              authStore.getCurrentUser.permissions.includes("CAN_VIEW_SALES_DASHBOARD")
+            ) {
               console.log("::::::response.data:::::")
               console.log(response.data)
               salesReps.value = response.data;
