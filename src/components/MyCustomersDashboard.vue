@@ -80,7 +80,7 @@ function dateReturn(
   stats.value.endDate = end;
 }
 const openUserCreation = () => {
-  window.location.href = `${kopeshaURL}lender/index.html#/customers/customer_form`;
+  window.location.href = `${kopeshaURL}/lender/index.html#/customers/customer_form`;
 };
 </script>
 <template>

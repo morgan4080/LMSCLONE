@@ -90,7 +90,7 @@ onBeforeMount(() => {
   getStats();
 });
 const openUserCreation = () => {
-  window.location.href = `${kopeshaURL}lender/index.html#/customers/customer_form`;
+  window.location.href = `${kopeshaURL}/lender/index.html#/customers/customer_form`;
 };
 
 onBeforeMount(() => {

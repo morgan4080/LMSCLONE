@@ -22,7 +22,7 @@ const {
 const { search } = useSearch(pageables, fetchOnBoardingCollections);
 const props = defineProps<{
   refId: string | null;
-  period: "day" | "week" | "month" | "quarter" | "year" | "all" | "arrears";
+  period: "day" | "week" | "month" | "last-month" | "quarter" | "year" | "all" | "arrears";
 }>();
 
 const refId = toRef(props, "refId");
