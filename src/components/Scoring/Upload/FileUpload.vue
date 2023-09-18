@@ -298,12 +298,12 @@ const showFileDuplicateStatement = () => {
       class="text-caption mt-1"
     >
       {{ message }}
-      <a v-if="duplicateFileId" @click="showFileDuplicateStatement" style="color: #2196f3">View Statement</a>
+      <button v-if="duplicateFileId" @click="showFileDuplicateStatement" style="color: #2196f3">View Statement</button>
     </p>
   </v-list-item>
   <slot name="divider"></slot>
   <v-dialog
-    persistent
+    :persistent="true"
     v-model="popupOpen"
     class="w-50"
   >
